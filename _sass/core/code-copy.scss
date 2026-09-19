@@ -357,14 +357,33 @@ pre.highlight > button:focus {
   opacity: 1;
 }
 
-.button,
-button:not(.copy) {
-  display: inline-block;
-  padding: 0 20px;
-  border-radius: 4px;
-  border: 1px solid #bbb;
-  font-size: 11px;
-  cursor: pointer;
+// Extra actions inside a code block — SCOPED TO THIS COMPONENT (#412).
+//
+// This block used to read `.button, button:not(.copy)` with no scope at all.
+// An element selector in a component partial is a site-wide rule: it restyled
+// EVERY button on a consumer site that was not the theme's own copy button —
+// `padding: 0 20px`, `font-size: 11px`, and a hardcoded `#bbb` border that
+// bypassed the design tokens entirely. At specificity (0,1,1) it also outranked
+// `.btn` and any consumer's own `.my-button`, so escaping it meant a
+// specificity fight rather than a cascade (it-journey#634 had to scope to
+// `.code-block-header .itj-clip-btn` to win). A component partial styles its
+// own component and nothing else.
+//
+// The rule is kept, not deleted: a consumer that adds an action to the header
+// (see the `zer0:code-block-ready` contract in assets/js/code-copy.js) should
+// inherit the copy button's shape instead of arriving unstyled. Values are
+// tokens now, so a skin moves them.
+.code-block-header,
+pre.highlight {
+  > .button,
+  > button:not(.copy) {
+    display: inline-block;
+    padding: 0 var(--zer0-space-3);
+    border-radius: var(--zer0-radius-sm);
+    border: 1px solid var(--zer0-color-border);
+    font-size: var(--zer0-text-sm);
+    cursor: pointer;
+  }
 }
 
 // Non-highlight fenced code blocks

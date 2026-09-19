@@ -1,4 +1,53 @@
 // Feature: ZER0-030
+//
+// CONSUMER CONTRACT — code-block extension points (#412).
+// ------------------------------------------------------
+// `.code-block-header` is built HERE, at runtime, not emitted at build time, so
+// a consumer adding a second action to code blocks has nothing in the markup to
+// hook. Before this contract existed the only route was a `MutationObserver`
+// over `#main-content` plus a guess at the wrapper's shape — and wrapper
+// nesting is exactly what a theme refactor changes, so the guess was one
+// release away from breaking. it-journey#634 got it wrong and silently rendered
+// two buttons on every block (26 across 13) until it added a claim marker.
+//
+// Two ways in, both stable:
+//
+//   document.addEventListener('zer0:code-block-ready', function (e) {
+//     e.detail; // { wrapper, header, pre, code, lang }
+//   });
+//
+//   window.zer0OnCodeBlock(function (detail) { … });   // same shape, REPLAYED
+//
+// The event bubbles from the wrapper, fires exactly once per code block, and is
+// dispatched after the block is fully decorated — line numbers, a11y attributes
+// and the copy button are all in place before a consumer sees it. `header` is
+// null for a standalone `<pre>` outside a Rouge wrapper, which has no header
+// row; `lang` is null when the block declares no language.
+//
+// Because the sweep runs on `DOMContentLoaded`, a listener registered later
+// would miss every block — so `window.__zer0CodeBlocks` holds the detail of
+// every block already processed, and `zer0OnCodeBlock` replays that array
+// before subscribing. Late registration is the NORMAL case for a deferred
+// consumer script, not an edge case.
+//
+// Docs: docs/development/EXTENSION-POINTS.md
+window.__zer0CodeBlocks = window.__zer0CodeBlocks || [];
+
+window.zer0OnCodeBlock = function (listener) {
+  if (typeof listener !== 'function') return function () {};
+  window.__zer0CodeBlocks.forEach(function (detail) {
+    listener(detail);
+  });
+  var handler = function (event) {
+    listener(event.detail);
+  };
+  document.addEventListener('zer0:code-block-ready', handler);
+  // Returned so a consumer can stop listening; harmless to ignore.
+  return function () {
+    document.removeEventListener('zer0:code-block-ready', handler);
+  };
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   var LANG_LABELS = {
     shell: 'bash',
@@ -157,12 +206,18 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
+    var wrapper;
+    var header = null;
     if (rougeWrapper) {
-      var header = ensureHeader(rougeWrapper, lang);
+      wrapper = rougeWrapper;
+      header = ensureHeader(rougeWrapper, lang);
       header.appendChild(button);
       rougeWrapper.classList.toggle('code-block--single-line', isSingleLine);
       rougeWrapper.closest('.highlighter-rouge').classList.add('has-code-header');
     } else {
+      // A standalone <pre> is its own wrapper and has no header row: the copy
+      // button is positioned against the <pre> itself.
+      wrapper = preElement;
       if (getComputedStyle(preElement).position === 'static') {
         preElement.style.position = 'relative';
       }
@@ -171,5 +226,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     preElement.classList.add('has-copy-button');
+
+    // Published LAST, so a consumer never sees a half-decorated block. Exactly
+    // once per block: `preElements` is a Set, and the `.copy` guard above makes
+    // a second sweep over the same block a no-op. See the contract at the top.
+    var detail = {
+      wrapper: wrapper,
+      header: header,
+      pre: preElement,
+      code: codeElement,
+      lang: lang
+    };
+    window.__zer0CodeBlocks.push(detail);
+    wrapper.dispatchEvent(new CustomEvent('zer0:code-block-ready', {
+      bubbles: true,
+      detail: detail
+    }));
   });
 });

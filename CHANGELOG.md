@@ -14,6 +14,16 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Added
+
+- **Four consumer extension points** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)), documented at [`/docs/customization/extension-points/`](pages/_docs/customization/extension-points.md) and [`docs/development/extension-points.md`](docs/development/extension-points.md):
+  - `zer0:code-block-ready` — a bubbling `CustomEvent` dispatched once per code block carrying `{ wrapper, header, pre, code, lang }`, plus `window.zer0OnCodeBlock(fn)`, which **replays** already-decorated blocks before subscribing, and `window.__zer0CodeBlocks`. This replaces the `MutationObserver` and wrapper-shape guessing a consumer previously needed — the guess is what silently rendered two buttons on every block downstream.
+  - `styles:` / `scripts:` frontmatter — per-page CSS and JS resolved through `relative_url`, with `scripts:` deferred after the theme bundle. A page that declares neither emits nothing at all.
+  - `lastmod` and `description` on every `/assets/data/wiki-index.json` entry — ISO-8601 and the authored subtitle, always defined (`null` when the document has neither), no new traversal.
+
+### Fixed
+
+- **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
 ### Fixed
 
 - **Exactly one `main` landmark again on post, notebook and note pages.**
