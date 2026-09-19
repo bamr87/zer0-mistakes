@@ -383,6 +383,8 @@ GEM
     webrick (1.9.2)
     yell (2.2.2)
     zeitwerk (2.8.3)
+    zer0-image-generator (0.6.0)
+      jekyll (>= 3.9, < 5.0)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -411,6 +413,7 @@ DEPENDENCIES
   tzinfo-data
   wdm
   webrick
+  zer0-image-generator
 
 BUNDLED WITH
    2.7.2
