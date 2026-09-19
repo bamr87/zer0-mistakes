@@ -104,14 +104,32 @@
 
 // "Draft saved" acknowledgement. Kept in the layout (no display toggling) so
 // its appearance never shifts the header.
+//
+// That was always the intent of this rule, and for a long time it was only the
+// intent: the markup carried `hidden` and setup-wizard.js cleared it on the
+// first debounced save, so the chip went from `display: none` to a 26px box
+// while the "Start over" `.btn-sm` beside it is 19px. The header grew and
+// stayed grown, one-way, taking `#wizardTabContent` and every Back/Next row
+// below it down with it (issue #265) — 7px where the header's right-hand block
+// had already wrapped onto its own line, a whole wrapped line where those 7px
+// were what tipped it over.
+//
+// `visibility` rather than `display` is what makes the prose above true: the
+// box is reserved from first paint, so nothing moves when the chip appears,
+// and `visibility: hidden` still keeps it out of the accessibility tree while
+// it has nothing to say. The `visibility` transition is discrete — it flips to
+// visible at the start of the fade in and back to hidden at the end of the
+// fade out, so the text is never readable at opacity 0.
 .wizard-draft-chip {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   color: var(--bs-success, #198754);
+  visibility: hidden;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 
   &.is-visible {
+    visibility: visible;
     opacity: 1;
   }
 }
