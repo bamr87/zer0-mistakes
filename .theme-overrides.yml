@@ -1,0 +1,19 @@
+# =============================================================================
+# .theme-overrides.yml — theme files this site intentionally forks
+# =============================================================================
+#
+# Format: templates/consumer/.theme-overrides.yml. Read by
+# scripts/bin/audit-consumer and reported on by `zer0-cms doctor`.
+#
+# This repository IS the theme: its docs site (zer0-mistakes.com) renders from
+# the very _layouts/, _includes/, _sass/ and assets/ it publishes, so nothing
+# here shadows a theme file — every one of the 556 tracked themable files is
+# the theme's own copy (checked 2026-09-14 with a byte comparison against a
+# theme checkout: 556 IDENTICAL, 0 DIFFERS, 0 UNIQUE).
+#
+# Keep the list empty. If the docs site ever needs a page-specific variant of a
+# theme file, give it a new name instead of forking — a fork here would ship
+# to every consumer through the gem and the remote theme.
+# =============================================================================
+
+overrides: []
