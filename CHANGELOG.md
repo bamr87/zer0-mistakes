@@ -12,6 +12,19 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-09-19)
+
+
+### Features
+
+* **theme:** four consumer extension points for notes/knowledge-base builds ([#492](https://github.com/bamr87/zer0-mistakes/issues/492)) ([1e2b228](https://github.com/bamr87/zer0-mistakes/commit/1e2b2283303012b28b9e81209fb66d0344aa0597))
+
+
+### Bug Fixes
+
+* **layouts:** one main landmark per page on post, notebook and note ([#487](https://github.com/bamr87/zer0-mistakes/issues/487)) ([78b0910](https://github.com/bamr87/zer0-mistakes/commit/78b0910fb2258591eab9ba13efb5ac037eee80c5))
+* **navigation:** stop Liquid whitespace-trim gluing navbar attributes ([#477](https://github.com/bamr87/zer0-mistakes/issues/477)) ([4349ea1](https://github.com/bamr87/zer0-mistakes/commit/4349ea17d690e5e6b8585f1d3a33b3ea4d3bf4fe))
+
 ## [Unreleased]
 
 ### Added
