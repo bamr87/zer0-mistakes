@@ -43,6 +43,23 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   like one step with bad CSS. The companion `heights` assertion keeps a comment
   saying it is step-invariant by construction, so it is never again read as
   evidence about anything above the container.
+- **Exactly one `main` landmark again on post, notebook and note pages.**
+  `_layouts/{article,notebook,note}.html` each rendered
+  `<article id="main" role="main">` *inside* root.html's
+  `<main id="main-content">`, so every such page exposed two `main` landmarks —
+  ambiguous "skip to main content" and landmark-rotor navigation in
+  NVDA/JAWS/VoiceOver (WCAG 2.1 SC 1.3.1) — and the `role` additionally
+  overrode the element's native `article` landmark, so the post was no longer
+  announced as an article. This is the same class of defect as #299, arriving on
+  a `role` attribute instead of a nested `<main>` element. The generic
+  `id="main"` is gone with it: nothing in the theme referenced it, and the skip
+  link targets `#main-content`. Microdata (`h-entry`, `itemscope`,
+  `BlogPosting`/`TechArticle`/`Article`) is unchanged, and the rendered pixels
+  are identical. Pinned by `test/visual/core/landmarks.spec.js`
+  ([#484](https://github.com/bamr87/zer0-mistakes/issues/484)) (evidence:
+  [`test/visual/evidence/agent-issue-484/`](test/visual/evidence/agent-issue-484/README.md)
+  — base vs head on a post and a note page, page overflow 0px → 0px across 6
+  widths, 9 pixel baselines unchanged).
 
 ## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
 
