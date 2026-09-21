@@ -23,7 +23,7 @@
 # ------------------------------------------------------------------------------
 # Note: Using Ruby 3.3 instead of :latest (3.4) for compatibility with gems
 # Ruby 3.4 breaks compatibility with some older native extensions
-FROM ruby:3.3-slim AS base
+FROM ruby:3.4-slim AS base
 
 # Minimal packages for native gems and Jekyll (no Node/Mermaid/Jupyter here)
 RUN apt-get update -qq && \
@@ -110,7 +110,7 @@ RUN bundle exec jekyll build --config _config.yml,docker/config/docker-build.yml
 # ------------------------------------------------------------------------------
 # Stage 4: Production Runtime Stage
 # ------------------------------------------------------------------------------
-FROM ruby:3.3-slim AS production
+FROM ruby:3.4-slim AS production
 
 # The CMD below serves static files with Ruby's built-in `un.rb` httpd, which
 # needs nothing but the stdlib already present in ruby:3.3-slim — no gems, no
