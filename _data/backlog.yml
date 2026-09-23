@@ -999,7 +999,7 @@ tasks:
 
   - id: T-037
     title: "Navbar width recovery: two clean label tiers, merged chevron, centered grid, no subtitle"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -1018,13 +1018,32 @@ tasks:
       the navbar subtitle (_includes/core/branding.html — home hero only).
       Clarify the three toggles: labeled "Menu" text button below lg, gear moves
       into the unified drawer on mobile so only two toggles coexist.
+      Done 2026-09-23: collapsed the three container-query tiers to two (icon+label
+      >=51rem, icon-only below — the old 41-50.99rem bare-label tier and its
+      text-overflow: ellipsis safety net are gone), merged the dropdown chevron
+      into the parent link's hover row, gave the desktop grid's side tracks a
+      shared floor (--zer0-navbar-side-min), moved site.subtitle to the home hero,
+      and labeled the mobile menu toggle "Menu" (with aria-label mirroring the
+      visible text for WCAG 2.5.3). `grid-template-columns: 1fr auto 1fr` as
+      literally proposed breaks the container queries (track 2 must stay a
+      definite 1fr for `.bd-navbar-nav-viewport`'s `width: 100%` to resolve) —
+      used a shared side-track minimum instead; documented in-source. A prior
+      attempt (#454) reached the same design but was closed as stale — its author
+      had no Docker/Jekyll to run the Playwright suite or regenerate evidence.
+      This finishes it against a real local build (bundle + jekyll build +
+      Playwright), and additionally caught and fixed a collision the earlier
+      attempt's tooling couldn't check: the new visible "Menu" text reused the
+      already-defined `ui.menu_label` ("Toggle menu"), which would have shipped
+      wrong text — added a dedicated `ui.nav_menu_toggle_label` key instead.
+      49/49 Playwright checks pass (37 existing navbar.spec.js + 12 new
+      navbar-tiers.spec.js).
     acceptance:
       - "At 1024px and 1280px with 5 nav items every label is fully visible or the whole row is icon-only — no ellipses anywhere."
       - "Dropdown chevron shares the parent row's hover zone; no dead zone between link and chevron."
       - "Navbar carries logo + title only; subtitle appears on the home hero."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 405, pr: null, roadmap: null }
     created: 2026-08-18
     updated: 2026-08-18
 

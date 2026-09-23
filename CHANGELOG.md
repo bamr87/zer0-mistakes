@@ -36,6 +36,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   reserves, and hover applies to the whole row, so there is no dead zone
   between the label and its chevron. It remains a real `<button>` with
   `aria-expanded`, `aria-haspopup` and its visually-hidden label unchanged.
+  (evidence: [`test/visual/evidence/navbar-tiers-405/`](test/visual/evidence/navbar-tiers-405/README.md) — chevron dead zone up to 4px → overlapping; 0 truncated labels across 6 widths)
 - **The navbar carries logo + title only** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
   `site.subtitle` moved out of `_includes/core/branding.html` and onto the home
   hero (`_layouts/home.html`), returning its width to the menubar. Consumers
