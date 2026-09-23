@@ -1,0 +1,55 @@
+{
+  "slug": "navbar-tiers-405",
+  "base": "http://localhost:4500",
+  "route": "/",
+  "sweep": [
+    {
+      "width": 992,
+      "labelsShown": 0,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": 0
+    },
+    {
+      "width": 1024,
+      "labelsShown": 0,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": 0
+    },
+    {
+      "width": 1150,
+      "labelsShown": 0,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": 0
+    },
+    {
+      "width": 1280,
+      "labelsShown": 7,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": -20
+    },
+    {
+      "width": 1440,
+      "labelsShown": 7,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": -20
+    },
+    {
+      "width": 1920,
+      "labelsShown": 7,
+      "iconsShown": 7,
+      "truncated": 0,
+      "beforeChevronGapPx": 4,
+      "afterChevronGapPx": -20
+    }
+  ]
+}

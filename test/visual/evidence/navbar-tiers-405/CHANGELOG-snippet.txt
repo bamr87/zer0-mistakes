@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/navbar-tiers-405/ -->
+  (evidence: [`test/visual/evidence/navbar-tiers-405/`](test/visual/evidence/navbar-tiers-405/README.md) — chevron dead zone up to 4px -> overlapping; 0 truncated labels across 6 widths)
