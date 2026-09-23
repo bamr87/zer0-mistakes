@@ -1043,7 +1043,7 @@ tasks:
       - "Navbar carries logo + title only; subtitle appears on the home hero."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: 405, pr: null, roadmap: null }
+    links: { issue: 405, pr: 495, roadmap: null }
     created: 2026-08-18
     updated: 2026-08-18
 
