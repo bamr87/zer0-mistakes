@@ -1,5 +1,5 @@
 ---
-title: Configuration de la machine
+title: 'Configuration de la machine : installer Docker, Git et les outils de développement'
 author: Zer0-Mistakes Development Team
 layout: default
 description: Installez Docker, Git et les outils de développement essentiels pour
@@ -16,15 +16,14 @@ tags:
 - development
 - cross-platform
 keywords:
-  primary:
-  - docker installation
-  - development environment setup
-  secondary:
-  - homebrew
-  - winget
-  - git configuration
-  - vs code
-lastmod: 2026-05-30 00:00:00.000000000 Z
+- docker installation
+- development environment setup
+- homebrew
+- winget
+- git configuration
+- vs code
+date: 2025-07-01 00:00:00.000000000 Z
+lastmod: 2026-09-05 00:00:00.000000000 Z
 draft: false
 sidebar:
   nav: quickstart
@@ -38,12 +37,14 @@ permalink: "/fr/quickstart/machine-setup/"
 translation_of: pages/_quickstart/machine-setup.md
 translation_source_url: "/quickstart/machine-setup/"
 machine_translated: true
-translated_from_sha: 02d96d7d4b84
+translated_from_sha: 75ac6f087cec
 ---
 
 # Configuration de la machine
 
 Installez les outils dont vous avez besoin avant de commencer le développement Jekyll. Ce guide couvre **macOS**, **Windows** et **Linux**.
+
+> **Vous préférez une configuration guidée ?** Le [Site Builder](/quickstart/site-builder/) exécute ces mêmes vérifications en direct sur votre machine, affiche la commande d'installation adaptée à votre système d'exploitation, puis vous accompagne dans la configuration et le lancement d'un site complet avec Claude à vos côtés. Cette page est la référence manuelle derrière son étape Prérequis.
 
 ```mermaid
 flowchart LR
@@ -55,7 +56,7 @@ flowchart LR
     F --> G([Ready for Jekyll Setup])
 ```
 
-## Prérequis en un coup d'œil
+## Aperçu des prérequis
 
 | Outil | macOS | Windows | Linux | Requis ? |
 |------|-------|---------|-------|-----------|
@@ -66,7 +67,7 @@ flowchart LR
 
 ## Étape 1 — Installer Docker Desktop
 
-Docker exécute votre site Jekyll dans un conteneur isolé afin que vous n'ayez jamais à gérer les conflits de versions de Ruby.
+Docker exécute votre site Jekyll dans un conteneur isolé afin de ne jamais vous confronter aux conflits de versions de Ruby.
 
 **macOS (Homebrew)**
 
@@ -91,7 +92,7 @@ sudo usermod -aG docker $USER
 newgrp docker          # apply group without logging out
 ```
 
-Vérifiez :
+Vérifier :
 
 ```bash
 docker --version && docker compose version
@@ -128,7 +129,7 @@ git config --global user.email "ID+username@users.noreply.github.com"
 git config --global core.editor "code --wait"
 ```
 
-Vérifiez :
+Vérifier :
 
 ```bash
 git config --global --list
@@ -157,7 +158,7 @@ sudo apt install gh        # Debian/Ubuntu (after adding the gh apt repo)
 # Full instructions: https://cli.github.com/manual/installation
 ```
 
-Authentifiez-vous :
+S'authentifier :
 
 ```bash
 gh auth login
@@ -214,7 +215,7 @@ Si vous êtes sous macOS et que vous n'avez pas encore Homebrew, installez-le d'
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Puis installez tout d'un seul coup :
+Installez ensuite tout en une seule fois :
 
 ```bash
 brew install git gh
@@ -233,7 +234,7 @@ sudo usermod -aG docker $USER && newgrp docker
 
 **Docker Desktop ne démarre pas (Windows)**
 
-Assurez-vous que Hyper-V ou WSL 2 est activé. Exécutez `wsl --install` dans un PowerShell avec privilèges élevés, puis redémarrez.
+Assurez-vous que Hyper-V ou WSL 2 est activé. Exécutez `wsl --install` dans une invite PowerShell avec privilèges élevés, puis redémarrez.
 
 **Le port 4000 est déjà utilisé**
 
@@ -242,11 +243,20 @@ lsof -i :4000          # find the PID
 kill <PID>             # free the port
 ```
 
+## Ressources connexes
+
+- [Site Builder](/quickstart/site-builder/) — le parcours guidé qui exécute pour vous ces
+  vérifications de prérequis.
+- [Référence du Site Builder](/docs/features/site-builder/) — ce que l'assistant
+  génère, les outils qu'il expose et ses limites de sécurité.
+- [Configuration de Jekyll](/quickstart/jekyll-setup/) — l'étape suivante une fois ces outils
+  installés.
+
 ---
 
 <div class="d-flex justify-content-between mt-5">
   <a href="/quickstart/" class="btn btn-outline-secondary">
-    <i class="bi bi-arrow-left"></i> Retour : Vue d'ensemble du démarrage rapide
+    <i class="bi bi-arrow-left"></i> Précédent : Aperçu du démarrage rapide
   </a>
   <a href="/quickstart/jekyll-setup/" class="btn btn-primary">
     Suivant : Configuration de Jekyll <i class="bi bi-arrow-right"></i>
