@@ -46,6 +46,8 @@ Some of the checks above are grep-and-exit-code assertions, and two of them sile
 inside a `find | while` subshell, and the gem-content check ran `tar -tzf` on a
 `.gem` (an *uncompressed* tar) and fell through to a warning on both branches (issue #460). `test_core_checks.sh` sources `test_core.sh` — which only runs its suite when executed directly, not when sourced — and drives `test_liquid_templates` and `check_gem_contents` against known-good and known-bad fixtures, so a check that can no longer fail is itself a test failure.
 
+The layout balance check is line-based (lines containing `{%` vs lines containing `%}`) and blanks Liquid `comment` blocks first, since Liquid never evaluates them — prose in a comment that quotes a delimiter is not a tag.
+
 ```bash
 # Run the meta-specs on their own (also runs inside test_core.sh)
 ./test/test_core_checks.sh

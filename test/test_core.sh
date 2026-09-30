@@ -647,8 +647,22 @@ test_liquid_templates() {
             local open_tags
             local close_tags
 
-            open_tags=$(grep -c "{%" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
-            close_tags=$(grep -c "%}" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
+            # Count against the layout with Liquid comment bodies blanked out
+            # (newlines kept, so the line structure is unchanged). Liquid never
+            # evaluates a comment, so prose there that quotes a delimiter --
+            # root.html's "hence the `-%}` on both" -- is not a tag and must
+            # not unbalance the count.
+            # A stripper failure must fail loudly: empty output would count
+            # 0 == 0 and make this check inert again.
+            local stripped
+            if ! stripped=$(perl -0pe 's/(\{%-?\s*comment\s*-?%\}.*?\{%-?\s*endcomment\s*-?%\})/"\n" x ($1 =~ tr{\n}{})/gse' "$layout"); then
+                log_error "Could not strip Liquid comments from $layout"
+                failed=1
+                continue
+            fi
+
+            open_tags=$(grep -c "{%" <<< "$stripped" | tr -d '[:space:]' || echo "0")
+            close_tags=$(grep -c "%}" <<< "$stripped" | tr -d '[:space:]' || echo "0")
 
             # Ensure we have valid numbers
             [[ -z "$open_tags" ]] && open_tags=0

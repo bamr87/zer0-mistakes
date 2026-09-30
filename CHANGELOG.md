@@ -122,7 +122,10 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   The nested-tag pattern is now {% raw %}`{{[^}]*{{`{% endraw %} (cannot cross the first `}`, so
   siblings do not match), both loops read from a process substitution so a
   failure propagates, and the gem check extracts `data.tar.gz` and asserts
-  `_layouts/` and `assets/` are really in it. New `test/test_core_checks.sh`
+  `_layouts/` and `assets/` are really in it. The layout balance check, now
+  live, blanks Liquid comment bodies before counting, so prose in a comment that
+  quotes a closing delimiter (as `_layouts/root.html`'s per-page-scripts note
+  does) is no longer read as an unbalanced tag. New `test/test_core_checks.sh`
   drives both checks against known-good and known-bad fixtures, so a check that
   stops being able to fail is itself a test failure. `./test/test_core.sh` now
   runs clean: 26/26, no `[ERROR]` line, no gzip/tar noise.

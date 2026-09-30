@@ -107,6 +107,22 @@ printf '<html>\n{%% if page.title\n</html>\n' \
 expect_check fail "an unbalanced Liquid tag in a layout fails the check" \
     liquid_check_in "$UNBALANCED_SITE"
 
+# Prose inside a Liquid comment that quotes a delimiter is not a tag -- as in
+# _layouts/root.html, whose per-page-scripts comment explains "the `-%}` on
+# both". Liquid never evaluates it, so the balance check must not count it.
+COMMENTED_SITE="$(make_site commented)"
+printf '<html>\n{%% comment %%} Why\n     the `-%%}` on both. {%% endcomment -%%}\n</html>\n' \
+    > "$COMMENTED_SITE/_layouts/commented.html"
+expect_check pass "a delimiter quoted inside a Liquid comment is not an unbalanced tag" \
+    liquid_check_in "$COMMENTED_SITE"
+
+# ...and blanking comments must not hide a real open tag sitting next to one.
+COMMENTED_BROKEN_SITE="$(make_site commented-broken)"
+printf '<html>\n{%% comment %%} note {%% endcomment %%}\n{%% if page.title\n</html>\n' \
+    > "$COMMENTED_BROKEN_SITE/_layouts/broken.html"
+expect_check fail "an unbalanced tag beside a Liquid comment still fails the check" \
+    liquid_check_in "$COMMENTED_BROKEN_SITE"
+
 # --------------------------------------------------------------------------
 # check_gem_contents
 #
