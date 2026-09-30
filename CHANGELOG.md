@@ -12,6 +12,38 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Added
+
+- **Four consumer extension points** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)), documented at [`/docs/customization/extension-points/`](pages/_docs/customization/extension-points.md) and [`docs/development/extension-points.md`](docs/development/extension-points.md):
+  - `zer0:code-block-ready` — a bubbling `CustomEvent` dispatched once per code block carrying `{ wrapper, header, pre, code, lang }`, plus `window.zer0OnCodeBlock(fn)`, which **replays** already-decorated blocks before subscribing, and `window.__zer0CodeBlocks`. This replaces the `MutationObserver` and wrapper-shape guessing a consumer previously needed — the guess is what silently rendered two buttons on every block downstream.
+  - `styles:` / `scripts:` frontmatter — per-page CSS and JS resolved through `relative_url`, with `scripts:` deferred after the theme bundle. A page that declares neither emits nothing at all.
+  - `lastmod` and `description` on every `/assets/data/wiki-index.json` entry — ISO-8601 and the authored subtitle, always defined (`null` when the document has neither), no new traversal.
+
+### Fixed
+
+- **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
+### Fixed
+
+- **Exactly one `main` landmark again on post, notebook and note pages.**
+  `_layouts/{article,notebook,note}.html` each rendered
+  `<article id="main" role="main">` *inside* root.html's
+  `<main id="main-content">`, so every such page exposed two `main` landmarks —
+  ambiguous "skip to main content" and landmark-rotor navigation in
+  NVDA/JAWS/VoiceOver (WCAG 2.1 SC 1.3.1) — and the `role` additionally
+  overrode the element's native `article` landmark, so the post was no longer
+  announced as an article. This is the same class of defect as #299, arriving on
+  a `role` attribute instead of a nested `<main>` element. The generic
+  `id="main"` is gone with it: nothing in the theme referenced it, and the skip
+  link targets `#main-content`. Microdata (`h-entry`, `itemscope`,
+  `BlogPosting`/`TechArticle`/`Article`) is unchanged, and the rendered pixels
+  are identical. Pinned by `test/visual/core/landmarks.spec.js`
+  ([#484](https://github.com/bamr87/zer0-mistakes/issues/484)) (evidence:
+  [`test/visual/evidence/agent-issue-484/`](test/visual/evidence/agent-issue-484/README.md)
+  — base vs head on a post and a note page, page overflow 0px → 0px across 6
+  widths, 9 pixel baselines unchanged).
+
 ## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
 
 

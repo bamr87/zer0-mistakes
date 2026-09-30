@@ -193,6 +193,28 @@
             {% include_cached components/js-cdn.html %}
         </div>
 
+        {% comment %} Per-page scripts from frontmatter (#412):
+
+               ---
+               scripts:
+                 - /assets/js/notes-clipper.js
+               ---
+
+             The counterpart of `styles:` in _includes/core/head.html, loaded here
+             so a page script runs AFTER the theme's own bundle (js-cdn.html) and
+             can rely on the contracts it publishes — `zer0:code-block-ready`, for
+             one. Deferred, so it never blocks the parse. A single string is
+             accepted as well as a list; site-relative paths go through
+             relative_url, absolute URLs pass through untouched.
+
+             Emits NOTHING when the key is absent, so a page without `scripts:`
+             is byte-identical to its previous build — hence the `-%}` on both
+             the comment and the `endif`. {% endcomment -%}
+        {% if page.scripts %}{% assign page_scripts = page.scripts %}{% if page_scripts.first == nil %}{% assign page_scripts = page_scripts | split: "||" %}{% endif %}{% for script_src in page_scripts %}
+        <script defer src="{% if script_src contains '//' %}{{ script_src }}{% else %}{{ script_src | relative_url }}{% endif %}"></script>
+        {%- endfor %}
+        {% endif -%}
+
         {% comment %} Analytics Integration {% endcomment %}
         {%- include analytics/posthog.html -%}
 

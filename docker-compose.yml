@@ -49,8 +49,8 @@ services:
       - jekyll_cache:/site/.jekyll-cache
     
     ports:
-      - "4000:4000"
-      - "35729:35729"  # LiveReload port
+      - "127.0.0.1:${ZER0_MISTAKES_PORT:-4000}:4000"
+      - "127.0.0.1:${ZER0_MISTAKES_LIVERELOAD_PORT:-35729}:35729"  # LiveReload port
     
     working_dir: /site
     

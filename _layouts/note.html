@@ -38,7 +38,8 @@ layout: default
   ===================================================================
 {% endcomment %}
 
-<article id="main" class="note-article h-entry" role="main" itemscope itemtype="https://schema.org/Article">
+{% comment %} No main role and no generic main id — see article.html (issue #484). {% endcomment %}
+<article class="note-article h-entry" itemscope itemtype="https://schema.org/Article">
   
   {% comment %} ================================ {% endcomment %}
   {% comment %} NOTE HEADER                      {% endcomment %}

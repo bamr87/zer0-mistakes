@@ -47,6 +47,25 @@
 #   gem_unconstrained   `gem 'jekyll-theme-zer0'` with no version — resolves
 #                       whatever RubyGems has at `bundle update` time; tracked
 #                       only (like resolved_lockfile), never reports drift
+#
+# ------------------------------------------------------------------------------
+# Stack fields (optional; informational — scripts/bin/propagate ignores them)
+# ------------------------------------------------------------------------------
+#   How far each consumer is aligned with the zer0 stack (one theme, one image
+#   engine, one CMS — templates/consumer/README.md § The zer0 stack). A dated
+#   snapshot of each consumer's default branch, not a live reading: refresh it
+#   from `zer0-cms doctor <checkout>` (bamr87/zer0-CMS), never from memory.
+#
+#   stack:
+#     checked             date the default branch was read
+#     image_gem           Gemfile requires zer0-image-generator
+#     preview_images      _config.yml has a preview_images: block
+#     vendored_generator  copies of the image engine the gem replaces
+#                         (_plugins/preview_*.rb forks, scripts/lib/
+#                         preview_generator.py, scripts/generate-preview-images.sh);
+#                         a deliberate local generator is NOT listed
+#     zer0_json           a zer0.json (zer0-CMS project file) is committed
+#     doctor              .github/workflows/zer0-doctor.yml caller is committed
 # ==============================================================================
 
 version: 1
@@ -77,6 +96,16 @@ consumers:
       hook, enabled by `user_overrides: true`, not a shadow — and no fix
       numbered #338 could be substantiated in that repo. Keep this field
       derived from audit-consumer output, not hand-maintained estimates.
+    stack:
+      checked: "2026-09-14"
+      image_gem: true
+      preview_images: true
+      vendored_generator:
+        - _plugins/preview_image_generator.rb
+        - _plugins/preview_generator.rb
+        - scripts/lib/preview_generator.py
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -90,6 +119,14 @@ consumers:
     risk: >-
       Unpinned, same exposure as it-journey. Small override surface (2 includes).
       Recommend pinning and joining the fan-out.
+    stack:
+      checked: "2026-09-14"
+      image_gem: true
+      preview_images: true
+      vendored_generator:
+        - scripts/generate-preview-images.sh
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -106,6 +143,15 @@ consumers:
       Gemfile.azure + _config.azure.yml, and local dev mounts a path gem. A bump
       must move the remote_theme tag and the gem constraint together or the two
       production stacks render different theme versions.
+    stack:
+      checked: "2026-09-14"
+      image_gem: false
+      preview_images: true
+      vendored_generator:
+        - _plugins/preview_image_generator.rb
+        - scripts/generate-preview-images.sh
+      zer0_json: true
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -139,6 +185,15 @@ consumers:
       render different theme versions with nothing here to notice. Recommend
       pinning remote_theme and constraining Gemfile.azure together and joining
       the fan-out.
+    stack:
+      checked: "2026-09-14"
+      image_gem: false
+      preview_images: true
+      vendored_generator:
+        - _plugins/preview_image_generator.rb
+        - scripts/generate-preview-images.sh
+      zer0_json: true
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -165,6 +220,14 @@ consumers:
       so one bump here re-rolls the whole org (12 sites). The hub's own
       _config.yml and hub.yml must move together — they are read by different
       code paths and drift silently otherwise.
+    stack:
+      checked: "2026-09-14"
+      image_gem: true
+      preview_images: true
+      vendored_generator:
+        - scripts/generate-preview-images.sh
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -189,6 +252,14 @@ consumers:
       Unpinned, and an org hub: a theme break here reaches every auto-discovered
       member site at once. Recommend pinning both files together and joining
       the fan-out (dispatch: true) like year-of-ai.
+    stack:
+      checked: "2026-09-14"
+      image_gem: true
+      preview_images: true
+      vendored_generator:
+        - scripts/generate-preview-images.sh
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -220,6 +291,13 @@ consumers:
       Gemfile.lock resolved 1.25.0 while the Gemfile constraint (~> 1.25)
       already permitted 1.28.0 — stale purely because nothing was nudging it.
       Keeps two deliberate include forks, declared in its .theme-overrides.yml.
+    stack:
+      checked: "2026-09-14"
+      image_gem: true
+      preview_images: true
+      vendored_generator: []
+      zer0_json: false
+      doctor: false
     pins:
       - file: Gemfile
         kind: gem_constraint
@@ -246,6 +324,13 @@ consumers:
       Unpinned, and with no local preview path a contributor cannot see a theme
       break before pushing. Keeps three deliberate overrides, declared in its
       .theme-overrides.yml.
+    stack:
+      checked: "2026-09-14"
+      image_gem: false
+      preview_images: false
+      vendored_generator: []
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -264,6 +349,13 @@ consumers:
     risk: >-
       Unpinned, and its only build runs on push to main (jekyll-gh-pages.yml),
       so a break ships before anyone sees it.
+    stack:
+      checked: "2026-09-14"
+      image_gem: false
+      preview_images: false
+      vendored_generator: []
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -289,6 +381,13 @@ consumers:
       "unreachable" rather than reading its pin — drift reporting needs a token
       here even though it is read-only. CI already supplies one; a bare local
       run will not.
+    stack:
+      checked: "2026-09-14"
+      image_gem: false
+      preview_images: false
+      vendored_generator: []
+      zer0_json: false
+      doctor: false
     pins:
       - file: _config.yml
         kind: remote_theme

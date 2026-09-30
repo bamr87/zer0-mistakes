@@ -76,7 +76,12 @@ layout: default
   {% endif %}
 {% endif %}
 
-<article id="main" class="post h-entry" role="main" itemscope itemtype="https://schema.org/BlogPosting">
+{% comment %} No main role and no generic main id on this element: root.html already
+     provides the page's single <main id="main-content"> landmark, and a main role here
+     both duplicated it and suppressed this element's native `article` landmark (issue
+     #484, the same class of defect as #299). The generic id had no referents either —
+     the skip link targets #main-content. Asserted by test/visual/core/landmarks.spec.js. {% endcomment %}
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
   
   {% comment %} ================================ {% endcomment %}
   {% comment %} BREAKING NEWS ALERT BANNER      {% endcomment %}
