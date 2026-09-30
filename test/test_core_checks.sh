@@ -110,8 +110,11 @@ expect_check fail "an unbalanced Liquid tag in a layout fails the check" \
 # Prose inside a Liquid comment that quotes a delimiter is not a tag -- as in
 # _layouts/root.html, whose per-page-scripts comment explains "the `-%}` on
 # both". Liquid never evaluates it, so the balance check must not count it.
+# The quoted delimiter sits on a line of its own, as it does in root.html: that
+# line has a closing marker and no opening one, which is what the line count
+# tripped on (on a line that also holds `{% endcomment` it would cancel out).
 COMMENTED_SITE="$(make_site commented)"
-printf '<html>\n{%% comment %%} Why\n     the `-%%}` on both. {%% endcomment -%%}\n</html>\n' \
+printf '<html>\n{%% comment %%} Why\n     hence the `-%%}` on both\n     the comment and the endif. {%% endcomment -%%}\n</html>\n' \
     > "$COMMENTED_SITE/_layouts/commented.html"
 expect_check pass "a delimiter quoted inside a Liquid comment is not an unbalanced tag" \
     liquid_check_in "$COMMENTED_SITE"
