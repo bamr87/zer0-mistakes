@@ -153,6 +153,18 @@ publish_gem "1.2.0"
 create_github_release "1.2.0"
 ```
 
+### 🖼️ `preview_generator.py` - Preview Image Engine
+
+The Python engine behind `scripts/generate-preview-images.sh`. Renderer defaults when `preview_images.model` is empty:
+
+| provider | default model | credential |
+| --- | --- | --- |
+| `openai` (default) | `gpt-image-2` | `OPENAI_API_KEY` |
+| `xai` | `grok-imagine-image-2.0` | `XAI_API_KEY` |
+| `gemini` | `gemini-2.5-flash-image` | `GEMINI_API_KEY` |
+
+Unit specs: `python3 test/test_preview_generator.py`.
+
 ## Testing
 
 Each library has comprehensive unit tests in `scripts/test/lib/`.

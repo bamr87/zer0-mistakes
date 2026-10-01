@@ -23,6 +23,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **The xAI preview-image renderer defaults to `grok-imagine-image-2.0`** ([#474](https://github.com/bamr87/zer0-mistakes/issues/474)). `XAIProvider.default_model()` in `scripts/lib/preview_generator.py` still returned the retired `grok-2-image`, so a site with `preview_images.provider: xai` and no explicit `model:` sent a retired model upstream. An explicitly configured `grok-2-image` is still accepted as an xAI-family model.
 - **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
 ### Fixed
 
