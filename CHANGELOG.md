@@ -39,8 +39,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   (evidence: [`test/visual/evidence/navbar-tiers-405/`](test/visual/evidence/navbar-tiers-405/README.md) — chevron dead zone up to 4px → overlapping; 0 truncated labels across 6 widths)
 - **The navbar carries logo + title only** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
   `site.subtitle` moved out of `_includes/core/branding.html` and onto the home
-  hero (`_layouts/home.html`), returning its width to the menubar. Consumers
-  that configure a navbar subtitle will see it on the homepage instead.
+  hero (`_layouts/home.html`), returning its width to the menubar. It renders
+  under the page heading on pages that use the `home` layout, and is hidden
+  with it by `hide_title` or `hide_intro`. A homepage on another layout, such
+  as `landing`, no longer shows the subtitle at all; add `site.subtitle` to
+  that layout's hero to keep it.
 - **The below-`lg` menu toggle is labelled "Menu"** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)),
   so it is distinguishable from the sidebar hamburger beside it. Override the
   string with `ui.nav_menu_toggle_label`.
