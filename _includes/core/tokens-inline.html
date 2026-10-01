@@ -16,18 +16,32 @@
 
   Only emits a key if the config value is present, so the default cascade
   remains intact when consumers omit `theme_color` from _config.yml.
+
+  Precedence (issue #459): the active skin wins over `theme_color` for every
+  token the skin palette mixin sets — --zer0-color-primary, -link, -accent.
+  Those three are emitted under a selector that stops matching while a
+  palette skin is active, so the skin's values (and their -rgb / derived
+  companions) apply as one set. Under a skin without a palette (dark,
+  contrast) `theme_color` still applies. The :where() keeps specificity at
+  (0,1,0), the same as a bare :root, so user-overrides.css still wins.
+  `palette_skins` MUST list exactly the skins `_sass/theme/_skins.scss`
+  includes zer0-skin-palette for — test/visual/features/skin-tokens.spec.js
+  fails if they drift.
   ===================================================================
 {%- endcomment -%}
 {%- assign tc = site.theme_color -%}
 {%- if tc -%}
+{%- assign palette_skins = "air,aqua,dirt,neon,mint,plum,sunrise" | split: "," -%}
 <style id="zer0-tokens-inline">
 :root {
-  {%- if tc.main %} --zer0-color-primary: {{ tc.main }};{%- endif %}
   {%- if tc.secondary %} --zer0-color-secondary: {{ tc.secondary }};{%- endif %}
   {%- if tc.red %} --zer0-color-danger: {{ tc.red }};{%- endif %}
   {%- if tc.yellow %} --zer0-color-warning: {{ tc.yellow }};{%- endif %}
   {%- if tc.green %} --zer0-color-success: {{ tc.green }};{%- endif %}
   {%- if tc.teal %} --zer0-color-info: {{ tc.teal }};{%- endif %}
+}
+:root:not(:where({% for s in palette_skins %}[data-theme-skin="{{ s }}"]{% unless forloop.last %}, {% endunless %}{% endfor %})) {
+  {%- if tc.main %} --zer0-color-primary: {{ tc.main }};{%- endif %}
   {%- if tc.blue %} --zer0-color-link: {{ tc.blue }};{%- endif %}
   {%- if tc.purple %} --zer0-color-accent: {{ tc.purple }};{%- endif %}
 }
