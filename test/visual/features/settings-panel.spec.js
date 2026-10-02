@@ -103,6 +103,46 @@ test.describe('Settings offcanvas (rebuilt)', () => {
     await expect(dark).toHaveAttribute('aria-pressed', 'false');
   });
 
+  // Issue #467 (WCAG 4.1.2). The skin group used to convey selection with the
+  // Bootstrap `.active` class alone, which carries no accessibility semantics,
+  // so SR users heard nine identical unlabelled buttons. It must keep
+  // aria-pressed in sync exactly as the color-mode group above does.
+  //
+  // Deliberately NOT an axe assertion: no wcag2a/wcag2aa rule fires on a
+  // toggle button missing aria-pressed, so an axe check passes on the broken
+  // markup and the fixed markup alike and proves nothing. Same trap as the
+  // method note in test/visual/core/accessibility.spec.js.
+  test('skin buttons expose selected state via aria-pressed', { tag: '@critical' }, async ({ page }) => {
+    await openSettings(page);
+    const group = page.locator('#zer0SkinButtons');
+
+    // First paint: exactly one button is pressed, and it is the same one
+    // Liquid marked `.active` — the two must never disagree.
+    await expect(group.locator('[data-skin]')).toHaveCount(9);
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+    await expect(group.locator('[data-skin].active')).toHaveCount(1);
+    const initialSkin = await group.locator('[data-skin].active').getAttribute('data-skin');
+    const initialBtn = group.locator(`[data-skin="${initialSkin}"]`);
+    await expect(initialBtn).toHaveAttribute('aria-pressed', 'true');
+
+    // Clicking another skin moves the pressed state along with the class.
+    const target = initialSkin === 'neon' ? 'aqua' : 'neon';
+    const targetBtn = group.locator(`[data-skin="${target}"]`);
+    await targetBtn.click();
+    await expect(targetBtn).toHaveClass(/active/);
+    await expect(targetBtn).toHaveAttribute('aria-pressed', 'true');
+    await expect(initialBtn).toHaveAttribute('aria-pressed', 'false');
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+
+    // "Reset background" restores the configured skin's pressed state, not
+    // merely its `.active` class.
+    await page.locator('#zer0BgReset').click();
+    await expect(initialBtn).toHaveClass(/active/);
+    await expect(initialBtn).toHaveAttribute('aria-pressed', 'true');
+    await expect(targetBtn).toHaveAttribute('aria-pressed', 'false');
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+  });
+
   test('Site tab surfaces environment, copyable URL, and live admin links', async ({ page }) => {
     await openSettings(page);
     await page.click('#site-tab');

@@ -214,6 +214,28 @@ window.MathJax = {
 <link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
 {% endif %}
 
+{% comment %} Per-page stylesheets from frontmatter (#412):
+
+       ---
+       styles:
+         - /assets/css/notes.css
+         - https://cdn.example.com/x.css
+       ---
+
+     A contract, not a convention. Before this, attaching CSS to one page meant a
+     literal <link> inside the content file or a custom layout — which works, and
+     puts asset tags in prose. A single string is accepted as well as a list.
+     Site-relative paths go through relative_url so a baseurl deployment is
+     correct; absolute URLs are passed through untouched.
+
+     Emits NOTHING when the key is absent — the whitespace control here keeps a
+     page without `styles:` byte-identical to its previous build, which is why
+     the comment and the `endif` both close with `-%}`. {% endcomment -%}
+{% if page.styles %}{% assign page_styles = page.styles %}{% if page_styles.first == nil %}{% assign page_styles = page_styles | split: "||" %}{% endif %}{% for style_href in page_styles %}
+<link rel="stylesheet" href="{% if style_href contains '//' %}{{ style_href }}{% else %}{{ style_href | relative_url }}{% endif %}">
+{%- endfor %}
+{% endif -%}
+
 {% comment %} Consumer hook: end of <head>. Inject JSON-LD, font preloads, verification
      tags, or extra meta by shadowing _includes/custom/head.html in your site —
      no fork of this file needed. The theme ships the stub empty. {% endcomment %}

@@ -12,6 +12,177 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Added
+
+- **Four consumer extension points** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)), documented at [`/docs/customization/extension-points/`](pages/_docs/customization/extension-points.md) and [`docs/development/extension-points.md`](docs/development/extension-points.md):
+  - `zer0:code-block-ready` — a bubbling `CustomEvent` dispatched once per code block carrying `{ wrapper, header, pre, code, lang }`, plus `window.zer0OnCodeBlock(fn)`, which **replays** already-decorated blocks before subscribing, and `window.__zer0CodeBlocks`. This replaces the `MutationObserver` and wrapper-shape guessing a consumer previously needed — the guess is what silently rendered two buttons on every block downstream.
+  - `styles:` / `scripts:` frontmatter — per-page CSS and JS resolved through `relative_url`, with `scripts:` deferred after the theme bundle. A page that declares neither emits nothing at all.
+  - `lastmod` and `description` on every `/assets/data/wiki-index.json` entry — ISO-8601 and the authored subtitle, always defined (`null` when the document has neither), no new traversal.
+
+### Changed
+
+- **Navbar label tiers reduced from three to two** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  Top-level nav items now render as icon + full label above 51rem of centre
+  track and icon-only below it; `text-overflow: ellipsis` is gone, so a label
+  is never cut to "Quicksta…". Icons now survive in **both** tiers — the old
+  41–50.99rem tier dropped them to buy width for bare labels. **Behaviour
+  change:** centre-track widths between 41rem and 51rem (roughly 992–1200px
+  viewports) previously showed bare labels and now show icons, with the
+  existing `.nav-tooltip` carrying the name on hover.
+- **Dropdown chevrons merged into their parent row** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  The split toggle is now absolutely positioned inside padding the parent link
+  reserves, and hover applies to the whole row, so there is no dead zone
+  between the label and its chevron. It remains a real `<button>` with
+  `aria-expanded`, `aria-haspopup` and its visually-hidden label unchanged.
+  (evidence: [`test/visual/evidence/navbar-tiers-405/`](test/visual/evidence/navbar-tiers-405/README.md) — chevron dead zone up to 4px → overlapping; 0 truncated labels across 6 widths)
+- **The navbar carries logo + title only** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  `site.subtitle` moved out of `_includes/core/branding.html` and onto the home
+  hero (`_layouts/home.html`), returning its width to the menubar. It renders
+  under the page heading on pages that use the `home` layout, and is hidden
+  with it by `hide_title` or `hide_intro`. A homepage on another layout, such
+  as `landing`, no longer shows the subtitle at all; add `site.subtitle` to
+  that layout's hero to keep it.
+- **The below-`lg` menu toggle is labelled "Menu"** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)),
+  so it is distinguishable from the sidebar hamburger beside it. Override the
+  string with `ui.nav_menu_toggle_label`.
+- The desktop navbar grid gives its two side tracks a shared minimum
+  (`--zer0-navbar-side-min`, default `9rem`) so the menubar is optically
+  centred in the bar rather than only within its own track.
+
+### Fixed
+
+- **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
+- **The article hero no longer lazy-loads its LCP image or shoves the article down when it arrives** ([#485](https://github.com/bamr87/zer0-mistakes/issues/485)). `figure.featured-hero` inherited `components/preview-image.html`'s `loading="lazy"` default and had no reserved box. It now passes `loading="eager" fetchpriority="high" decoding="async"`, and its box is pinned by `.featured-hero img { aspect-ratio: 3 / 2 }`. The box is set in CSS rather than with `width`/`height` attributes, because preview assets vary in shape and `object-fit: cover` crops a portrait instead of stretching it. `preview-image.html` gained optional `fetchpriority`/`decoding` parameters that are emitted only when passed, so every other consumer renders byte-identically (evidence: [`test/visual/evidence/hero-lcp/`](test/visual/evidence/hero-lcp/README.md) — hero loading lazy → eager + fetchpriority=high; content shift when the hero lands 476px → 0px across 2 widths × landscape/portrait).
+### Fixed
+
+- **Exactly one `main` landmark again on post, notebook and note pages.**
+  `_layouts/{article,notebook,note}.html` each rendered
+  `<article id="main" role="main">` *inside* root.html's
+  `<main id="main-content">`, so every such page exposed two `main` landmarks —
+  ambiguous "skip to main content" and landmark-rotor navigation in
+  NVDA/JAWS/VoiceOver (WCAG 2.1 SC 1.3.1) — and the `role` additionally
+  overrode the element's native `article` landmark, so the post was no longer
+  announced as an article. This is the same class of defect as #299, arriving on
+  a `role` attribute instead of a nested `<main>` element. The generic
+  `id="main"` is gone with it: nothing in the theme referenced it, and the skip
+  link targets `#main-content`. Microdata (`h-entry`, `itemscope`,
+  `BlogPosting`/`TechArticle`/`Article`) is unchanged, and the rendered pixels
+  are identical. Pinned by `test/visual/core/landmarks.spec.js`
+  ([#484](https://github.com/bamr87/zer0-mistakes/issues/484)) (evidence:
+  [`test/visual/evidence/agent-issue-484/`](test/visual/evidence/agent-issue-484/README.md)
+  — base vs head on a post and a note page, page overflow 0px → 0px across 6
+  widths, 9 pixel baselines unchanged).
+
+## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
+
+
+### Features
+
+* **ci:** produce visual evidence and baselines on PRs, not just verify them ([#462](https://github.com/bamr87/zer0-mistakes/issues/462)) ([a377fae](https://github.com/bamr87/zer0-mistakes/commit/a377fae6ea31a0bb015479dea6d1a7c41e141c3f))
+* **includes:** add background-image.html for CSS-painted cover art ([#451](https://github.com/bamr87/zer0-mistakes/issues/451)) ([9b15a67](https://github.com/bamr87/zer0-mistakes/commit/9b15a673f57b8f7f1f9dae9262191742d99d8080))
+* **includes:** Claude or Grok sessions in the Site Builder ([#473](https://github.com/bamr87/zer0-mistakes/issues/473)) ([e1c5753](https://github.com/bamr87/zer0-mistakes/commit/e1c57531fc23be8d071757cd1941e1ae15285da7))
+* **includes:** file the fleet issue contract from the feedback widget ([#472](https://github.com/bamr87/zer0-mistakes/issues/472)) ([24d4e2c](https://github.com/bamr87/zer0-mistakes/commit/24d4e2c6380541a894e9e671f0f0b0b859a29b05))
+* **includes:** make theme-color track the page surface, not the accent ([#447](https://github.com/bamr87/zer0-mistakes/issues/447)) ([f1fda85](https://github.com/bamr87/zer0-mistakes/commit/f1fda857bb0cf5bd64bebfc1215ba0a906f05e5c))
+* **includes:** themed Mermaid figures + toolbar ([#455](https://github.com/bamr87/zer0-mistakes/issues/455)) ([96776fa](https://github.com/bamr87/zer0-mistakes/commit/96776fa48bbe7b63058d1d246962019c745d7b93))
+* **scripts:** adopt the shared ai-runner kit for claude-run; consumers registry fixes; hub baseline ([#475](https://github.com/bamr87/zer0-mistakes/issues/475)) ([feb4133](https://github.com/bamr87/zer0-mistakes/commit/feb41332eb15d2c13fe0c0f6d15b61007e14daa3))
+
+
+### Bug Fixes
+
+* **a11y:** decouple heading size from heading level in theme chrome ([#450](https://github.com/bamr87/zer0-mistakes/issues/450)) ([bb92eb5](https://github.com/bamr87/zer0-mistakes/commit/bb92eb583c955e76339a9c7ab98532b35e226b36))
+* **a11y:** give footer icon links an accessible name, announce search results ([#441](https://github.com/bamr87/zer0-mistakes/issues/441)) ([a1811e8](https://github.com/bamr87/zer0-mistakes/commit/a1811e81ac0c17b0836994be7c48eba51252bae7))
+* **a11y:** stop emitting sidebar/TOC controls on layouts that render no offcanvas ([#443](https://github.com/bamr87/zer0-mistakes/issues/443)) ([619322d](https://github.com/bamr87/zer0-mistakes/commit/619322d8fd7c6e2a700ba154e065bf65caf67461))
+* **ci:** run the autogen lane's tooling from the base branch, not the PR ([#464](https://github.com/bamr87/zer0-mistakes/issues/464)) ([8473050](https://github.com/bamr87/zer0-mistakes/commit/8473050be2b4ddfd994c7bea8a8c35e37a66b7f8))
+* **ci:** stop the UI audit reporting a measurement blackout as a clean run ([#471](https://github.com/bamr87/zer0-mistakes/issues/471)) ([ab92619](https://github.com/bamr87/zer0-mistakes/commit/ab9261946e088417dabe4291590da1c7a964d4fa))
+* **content:** raw-protect Liquid that is written as documentation ([#446](https://github.com/bamr87/zer0-mistakes/issues/446)) ([6123c1f](https://github.com/bamr87/zer0-mistakes/commit/6123c1f1e6ffd167376d4ef421b0a9f78af3985e))
+* **includes:** declare charset inside the 1024-byte window, make the feed discoverable ([#440](https://github.com/bamr87/zer0-mistakes/issues/440)) ([4025205](https://github.com/bamr87/zer0-mistakes/commit/40252050ec21c70aa1d84820fdcde6d564e03478)), closes [#372](https://github.com/bamr87/zer0-mistakes/issues/372) [#371](https://github.com/bamr87/zer0-mistakes/issues/371)
+* **includes:** expose skin-button selected state via aria-pressed ([#469](https://github.com/bamr87/zer0-mistakes/issues/469)) ([6579b16](https://github.com/bamr87/zer0-mistakes/commit/6579b1621a5eff147e224977633728aadc960505)), closes [#467](https://github.com/bamr87/zer0-mistakes/issues/467)
+* **install:** stop seeding the theme's own navigation into consumers ([#449](https://github.com/bamr87/zer0-mistakes/issues/449)) ([232857c](https://github.com/bamr87/zer0-mistakes/commit/232857c66d7c3abccb166b5151a7f80a74dd17ca))
+* **navigation:** scroll spy bolds the section actually being read ([#456](https://github.com/bamr87/zer0-mistakes/issues/456)) ([5ff38bf](https://github.com/bamr87/zer0-mistakes/commit/5ff38bf98faf96cdc3bf63ea3f0e7b10e21f3aab))
+* **sass:** stop navbar controls flickering under a stationary pointer ([#453](https://github.com/bamr87/zer0-mistakes/issues/453)) ([fc84b9a](https://github.com/bamr87/zer0-mistakes/commit/fc84b9a4c714f8e04b8a0f940bed9e3795c144bc)), closes [#404](https://github.com/bamr87/zer0-mistakes/issues/404)
+* **scripts:** restore nested translation placeholders instead of leaking them ([#452](https://github.com/bamr87/zer0-mistakes/issues/452)) ([00cab73](https://github.com/bamr87/zer0-mistakes/commit/00cab73d915f4e116040ef6ca4c0381669ae4eb2))
+
+
+### Performance Improvements
+
+* **ci:** run the critical PR gate on 3 workers instead of 1 ([#481](https://github.com/bamr87/zer0-mistakes/issues/481)) ([b3fcbc7](https://github.com/bamr87/zer0-mistakes/commit/b3fcbc76a1af2a3a5e43eb28fbff7b3057751de6))
+* **includes:** strip developer doc banners from delivered HTML ([#445](https://github.com/bamr87/zer0-mistakes/issues/445)) ([89b10f1](https://github.com/bamr87/zer0-mistakes/commit/89b10f1ff361c919fd631d0e7e664ed6d7c28a14))
+
+## [Unreleased]
+
+### Changed
+
+- **`claude-run` is now the fleet's shared `ai-runner` kit.** The composite
+  action and its new `scripts/ai/run.sh` are byte-identical copies of
+  lifehacker.dev's (the kit source of truth) instead of a hand-rolled variant.
+  What changes for the two callers (`issue-autopilot.yml`,
+  `visual-evidence-autogen.yml`): an AI call that was attempted and rejected —
+  revoked credential, exhausted quota, `is_error` payload, CLI install failure
+  — now fails the step with the reason as a `::error::` annotation, where the
+  old action exited 0 and a dead run read green; the OAuth-first rule is
+  enforced with `env -u ANTHROPIC_API_KEY`; the model override is the canonical
+  `AI_MODEL` (or the new `model` input) rather than `ZER0_AI_MODEL`, and
+  `max-turns` is a new input. Metering (`scripts/ai/usage.rb`,
+  `usage_report.rb`, prices in `_data/ai_pricing.yml`) and the Claude API
+  fallback (`scripts/ai/api_call.rb`) ride along as optional companions. The
+  exit-code contract is pinned by `scripts/ci/test_ai_runner.sh`, wired into
+  `./scripts/bin/test`. The action's six existing inputs are unchanged.
+- **`claude-run` is consumed by reference from the hub.** `issue-autopilot.yml` and `visual-evidence-autogen.yml` now call `bamr87/bamr87/.github/actions/claude-run@main` (identical inputs) instead of a vendored `./.github/actions/claude-run`; the local action, `scripts/ai/run.sh`, and the vendored contract test (`scripts/ci/test_ai_runner.sh` + its `scripts/test/lib/` bridge) are deleted, while the consumer companions the hub runner probes for — `scripts/ai/usage.rb`, `usage_report.rb`, `api_call.rb`, `_data/ai.yml`, `_data/ai_pricing.yml`, `tools/unwrap-prose.py` — stay ([bamr87/bamr87#254](https://github.com/bamr87/bamr87/pull/254)).
+- **Consumer registry corrections.** `ai-world-view/ai-world-view.github.io`
+  is `remote_theme_floating` (both its `_config.yml` and `hub.yml` pins are
+  untagged), not `remote_theme_pinned`; `amr-bash/bash-365.com` is registered
+  as a consumer (floating `remote_theme`, unconstrained gem on Azure, path gem
+  for dev).
+
+### Fixed
+
+- **Every navbar link emitted invalid HTML — attributes glued together with no
+  separating whitespace (#465)** — the Liquid whitespace-trim markers around the
+  conditional `aria-current` in `_includes/navigation/navbar.html` ate the
+  newlines that separated the surrounding attributes, so the primary nav
+  rendered `aria-label="News"aria-current="page"title="News"` (the WHATWG
+  `missing-whitespace-between-attributes` parse error). The leading {% raw %}`{%-`{% endraw %}
+  stripped the newline after `aria-label` and the trailing {% raw %}`-%}`{% endraw %} the whitespace
+  before `title`, which means **two of the four sites were broken on every page,
+  not just the current one**: where the conditional sits between two
+  unconditional attributes both markers fire even when the `if` emits nothing.
+  Parsers recover, so nothing looked broken — but the attributes affected are
+  exactly `aria-label`, `aria-current` and `title`, and a stricter parser is
+  entitled to drop the "you are here" announcement for screen-reader users. All
+  four sites now use the non-trimming {% raw %}`{% if %}`{% endraw %} form already present at line 26
+  of the same file, with the separator outside the tag. Two guards in
+  `test/test_core.sh`: `test_navbar_attribute_whitespace` renders the real
+  include through Liquid across both `aria-current` branches and both nav modes
+  (6 of 8 rendered variants were invalid before the fix), and
+  `test_attribute_whitespace_in_markup` models the trim rules over every include
+  and layout with no gem dependency — it found a second live instance, a literal
+  missing space in `components/theme-preview-gallery.html`, fixed here too.
+  `test_jekyll_build` re-checks the delivered `_site` bytes. No visual change.
+- **The weekly UI/UX audit was blind, and reported it as clean.** `sweep.mjs`
+  built its pages with `browser.newPage()`, which `@axe-core/playwright`
+  refuses; the throw was caught by a single per-route `try` that also discarded
+  the overflow, console-error and link-collection data already gathered for
+  that route. Screenshots still succeeded, so the harness looked alive while
+  every accessibility, console, overflow and broken-link result on every route
+  was silently dropped — and the report rendered the absence as "0 axe
+  violations / 0 broken links". Pages are now built from `browser.newContext()`,
+  each measurement fails independently, a scan that errored is reported as
+  UNKNOWN rather than clean, and a measurement that fails on every route turns
+  the sweep red the way a total capture failure already did. On the demo site
+  the sweep goes from 18/21 captured with 21 blackout entries to **21/21
+  captured, 0 harness errors, 191 links crawled and 8 genuinely broken links
+  found** ([#468](https://github.com/bamr87/zer0-mistakes/issues/468)).
+- **Theme-skin buttons now announce which skin is applied.** The Theme Skin
+  group in Settings → Appearance conveyed selection only through the Bootstrap
+  `.active` class, which carries no accessibility semantics, so screen readers
+  announced nine identical unlabelled buttons — WCAG 2.1 SC 4.1.2 (Name, Role,
+  Value). Each button now ships `aria-pressed`, and the click and "Reset
+  background" handlers keep it in sync with `.active` through one shared
+  helper, matching the sibling color-mode group
+  ([#467](https://github.com/bamr87/zer0-mistakes/issues/467)).
+
 ## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-09-01)
 
 

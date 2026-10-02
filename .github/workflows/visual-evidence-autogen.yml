@@ -172,7 +172,7 @@ jobs:
       # narrative; `decide` below is what turns its verdict into an action.
       - name: Review the diff images (visual-evidence-reviewer)
         if: steps.ai-gate.outputs.enabled == 'true'
-        uses: ./.github/actions/claude-run
+        uses: bamr87/bamr87/.github/actions/claude-run@main
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

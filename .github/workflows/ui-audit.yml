@@ -199,22 +199,38 @@ jobs:
           TOTAL=$(node -e '
             const r = require("./test/ui-audit/output/report.json");
             console.log((r.capture && r.capture.attempted) ?? 0);' 2>/dev/null || echo 0)
-          # Only file when something was actually flagged.
+          # Only file when something was actually flagged. FINDINGS (something
+          # is wrong with the page) and HARNESS errors (we failed to look) are
+          # counted separately: folding them together is why a library misuse
+          # that blacked out four measurements was headlined as "21 flagged"
+          # UI problems (#468). The sweep computes both; the fallbacks keep this
+          # step working against a report.json written by an older sweep.
           FLAGGED=$(node -e '
             const r = require("./test/ui-audit/output/report.json");
+            if (typeof r.flagged === "number") { console.log(r.flagged); process.exit(0); }
             const n = r.broken_links.length + r.routes.filter(x =>
-              x.error || (x.status && x.status >= 400) ||
+              (x.status && x.status >= 400) ||
               (x.overflow && x.overflow.page_wider_than_viewport) ||
               (x.axe_violations && x.axe_violations.length) ||
               (x.console_errors && x.console_errors.length)).length;
             console.log(n);' 2>/dev/null || echo 0)
+          HARNESS_ERRORS=$(node -e '
+            const r = require("./test/ui-audit/output/report.json");
+            if (typeof r.harness_errors === "number") { console.log(r.harness_errors); process.exit(0); }
+            console.log(r.routes.filter(x => x.error || x.errors).length);' 2>/dev/null || echo 0)
+          BLACKED_OUT=$(node -e '
+            const r = require("./test/ui-audit/output/report.json");
+            console.log(((r.harness && r.harness.blacked_out) || []).join(", "));' 2>/dev/null || echo "")
           # The agent's verdict line says CLEAN when it found nothing.
           AGENT_CLEAN=true
           if [ -s /tmp/ui-audit-agent.md ] && ! grep -qi "CLEAN" /tmp/ui-audit-agent.md; then
             AGENT_CLEAN=false
           fi
-          echo "flagged=$FLAGGED agent_clean=$AGENT_CLEAN"
-          if [ "$FLAGGED" = "0" ] && [ "$AGENT_CLEAN" = "true" ]; then
+          echo "flagged=$FLAGGED harness_errors=$HARNESS_ERRORS agent_clean=$AGENT_CLEAN"
+          # A harness error is not a finding, but it IS a reason to file: it
+          # means the audit could not look. Staying silent about it is how six
+          # weeks of blindness passed for six clean weeks.
+          if [ "$FLAGGED" = "0" ] && [ "$HARNESS_ERRORS" = "0" ] && [ "$AGENT_CLEAN" = "true" ]; then
             echo "Nothing flagged — no issue filed."
             exit 0
           fi
@@ -234,7 +250,15 @@ jobs:
             else
               echo "Weekly UI/UX audit results ($(date -u +%F)). Run: $RUN_URL"
               echo
-              echo "Captured **$CAPTURED of $TOTAL** route×viewport passes; **$FLAGGED** flagged."
+              echo "Captured **$CAPTURED of $TOTAL** route×viewport passes;"
+              echo "**$FLAGGED** UI finding(s); **$HARNESS_ERRORS** pass(es) with a harness error."
+              if [ -n "$BLACKED_OUT" ]; then
+                echo
+                echo "> [!CAUTION]"
+                echo "> **$BLACKED_OUT failed on EVERY route.** Those measurements are"
+                echo "> ABSENT, not clean, and any \"0 violations\" below is the absence"
+                echo "> speaking. Fix the harness before triaging the findings."
+              fi
             fi
             echo
             echo "## Deterministic sweep"

@@ -76,7 +76,12 @@ layout: default
   {% endif %}
 {% endif %}
 
-<article id="main" class="post h-entry" role="main" itemscope itemtype="https://schema.org/BlogPosting">
+{% comment %} No main role and no generic main id on this element: root.html already
+     provides the page's single <main id="main-content"> landmark, and a main role here
+     both duplicated it and suppressed this element's native `article` landmark (issue
+     #484, the same class of defect as #299). The generic id had no referents either —
+     the skip link targets #main-content. Asserted by test/visual/core/landmarks.spec.js. {% endcomment %}
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
   
   {% comment %} ================================ {% endcomment %}
   {% comment %} BREAKING NEWS ALERT BANNER      {% endcomment %}
@@ -234,6 +239,10 @@ layout: default
     post_type defaults (issue #303).
     Nested ifs keep the "only when page.preview exists" guard intact (Liquid has
     no parentheses, so a flat `a or b and c` would misgroup).
+    The hero is the above-the-fold LCP element, so it loads eagerly at high
+    priority (the include defaults to lazy); its box is reserved in CSS by
+    `.featured-hero img` (components/_ui-enhancements.scss), not by width/height
+    attributes, because preview assets vary in shape (issue #485).
   {% endcomment %}
   {% assign show_hero = false %}
   {% if page.preview %}
@@ -247,7 +256,10 @@ layout: default
        src=page.preview 
        alt=page.title 
        class="w-100 rounded-3 shadow" 
-       style="max-height: 500px; object-fit: cover;" 
+       style="max-height: 500px; object-fit: cover;"
+       loading="eager"
+       fetchpriority="high"
+       decoding="async"
     %}
     {% if page.preview_caption %}
     <figcaption class="text-muted small mt-2 text-center">{{ page.preview_caption }}</figcaption>
