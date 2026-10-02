@@ -12,9 +12,14 @@
 //      file (_config.yml by default) regenerates on input. Copy/Download are
 //      enabled throughout; the file tabs switch the preview.
 //   2. Back/Next never move vertically between steps (every pane shares one CSS
-//      grid cell; the nav row is pinned with mt-auto).
+//      grid cell; the nav row is pinned with mt-auto). Measured with Connect
+//      first AND last, and alongside the panes container's own document-y top,
+//      because #265 was a one-way shift ABOVE the panes that a single pass read
+//      as "one step is 7px off".
 //   3. The draft survives a reload (localStorage `zer0-setup-draft`, debounced
-//      300ms, flushed on pagehide) and is cleared by "Start over".
+//      300ms, flushed on pagehide) and is cleared by "Start over"; the
+//      "Draft saved" chip holds its box from first paint, so its arrival never
+//      moves the header (#265).
 //   4. Email/URL validate on blur, a bad value locks later steps, and the Build
 //      step lists unfilled recommended fields.
 //   5. Without the dev proxy the Claude panel is offline and every proxy-backed
@@ -139,17 +144,97 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     expect(paneStacking.rows).toBe(1);
     expect(paneStacking.cells, 'every pane must share one grid cell').toBe(1);
 
+    // Connect is walked FIRST and again LAST. #265 was a one-way layout
+    // transition ABOVE the panes — the draft chip entering layout once the
+    // first 300ms save debounce fired — and a one-pass walk cannot see that:
+    // every step after the first agreed with every other, so `2029, 2036 x7`
+    // read as "the Connect step is 7px off" when it only meant "Connect is the
+    // step measured before the page moved". The same step at both ends
+    // separates this-step's-CSS from the-page-moved-under-us.
+    const walk = [...STEPS.slice(0, -1), STEPS[0]]; // Build has no Next
+
     const offsets = [];
+    const paneTops = [];
     const heights = [];
-    for (const id of STEPS.slice(0, -1)) { // Build has no Next
+    for (const id of walk) {
       await goToStep(page, `tab-${id}`);
       const next = page.locator(`#step-${id} .btn-next`);
       offsets.push(await next.evaluate((el) => Math.round(el.getBoundingClientRect().top + window.scrollY)));
-      heights.push(await page.locator(PANES).evaluate((el) => Math.round(el.getBoundingClientRect().height)));
+      const pane = await page.locator(PANES).evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return { top: Math.round(r.top + window.scrollY), height: Math.round(r.height) };
+      });
+      paneTops.push(pane.top);
+      heights.push(pane.height);
     }
+    const report = (values) => walk.map((id, i) => `${id}=${values[i]}`).join(', ');
+
+    // The contract (T-040 / #408), unchanged.
     const spread = Math.max(...offsets) - Math.min(...offsets);
-    expect(spread, `Next button document-y offsets across steps: ${offsets.join(', ')}`).toBeLessThanOrEqual(1);
-    expect(Math.max(...heights) - Math.min(...heights), `pane container heights across steps: ${heights.join(', ')}`).toBeLessThanOrEqual(1);
+    expect(spread, `Next button document-y offsets across steps: ${report(offsets)}`).toBeLessThanOrEqual(1);
+
+    // Diagnosis, and the assertion `heights` could never make: if the panes
+    // container's TOP moves, everything below it moves and no nav row is at
+    // fault. Failing here instead of only above is what points at the header.
+    expect(
+      Math.max(...paneTops) - Math.min(...paneTops),
+      `#wizardTabContent document-y tops across steps: ${report(paneTops)}`
+    ).toBeLessThanOrEqual(1);
+
+    // `heights` is step-invariant BY CONSTRUCTION: the assertions above prove
+    // every pane shares one grid cell, so the row is max(pane heights) and this
+    // measures one element nine times. Keep it — a broken grid shows up here —
+    // but never read it as evidence about anything ABOVE the container. #265's
+    // first diagnosis did exactly that, concluded "the 7px is inside the
+    // wizard", and sent two passes looking at the wrong element.
+    expect(Math.max(...heights) - Math.min(...heights), `pane container heights across steps: ${report(heights)}`).toBeLessThanOrEqual(1);
+
+    // Spelled out, because `spread` alone reports the symptom and this reports
+    // the shape of the cause.
+    expect(
+      Math.abs(offsets[offsets.length - 1] - offsets[0]),
+      `Connect measured first (${offsets[0]}) and last (${offsets[offsets.length - 1]}): ` +
+        'unequal means something order- or time-dependent moved the page, not that Connect has its own CSS'
+    ).toBeLessThanOrEqual(1);
+  });
+
+  test('the "Draft saved" chip never moves the page when it appears', async ({ page }) => {
+    // Regression: #265. showDraftChip() cleared the chip's `hidden` attribute
+    // and the 2s timer only removed `is-visible` — an opacity class — so the
+    // first debounced save moved the chip from `display: none` into layout FOR
+    // GOOD. Its box is 26px against the 19px "Start over" .btn-sm beside it, so
+    // .wizard-header grew and stayed grown, taking #wizardTabContent and every
+    // Back/Next row below it down with it — 7px on the CI runner (142 -> 149),
+    // more where the extra 7px tips the header into wrapping. Deterministic,
+    // not flaky: a one-way state transition. Asserted as "did not move at all"
+    // rather than against a number, so it holds at any width.
+    const chrome = () => page.evaluate(() => ({
+      header: Math.round(document.querySelector('.wizard-header').getBoundingClientRect().height),
+      panesTop: Math.round(
+        document.querySelector('#wizardTabContent').getBoundingClientRect().top + window.scrollY
+      ),
+    }));
+
+    await goToStep(page, 'tab-identity');
+    const chip = page.locator('#wizard-draft-chip');
+
+    // The box is reserved from first paint — the contract _setup-wizard.scss
+    // has always stated in prose and that `hidden` quietly broke.
+    await expect(chip).toHaveCount(1);
+    await expect(chip).toBeHidden(); // nothing to announce yet
+    expect(
+      await chip.evaluate((el) => getComputedStyle(el).display),
+      'the chip must hold its box while invisible, or its arrival shifts the header'
+    ).not.toBe('none');
+
+    const before = await chrome();
+
+    // Trigger it the way a user does, through saveDraft()'s 300ms debounce —
+    // not by adding the class, which would test the CSS and not the bug.
+    await page.locator('#cfg-title').fill('Draft chip regression');
+    await expect(chip).toBeVisible();
+
+    expect(await chrome(), 'the draft chip moved the page when it appeared').toEqual(before);
   });
 
   test('validates email and URL on blur, and clears the error on retype', async ({ page }) => {
