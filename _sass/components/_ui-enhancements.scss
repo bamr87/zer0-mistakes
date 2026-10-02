@@ -53,6 +53,17 @@ img {
   }
 }
 
+// Article hero (_layouts/article.html, figure.featured-hero) — the LCP image.
+// Reserve its box before it loads so the text below never shifts (issue #485).
+// A fixed ratio in CSS rather than width/height attributes: preview assets are
+// 3:2 (1024x683) generated, but some are portrait or external, and a declared
+// intrinsic size that disagrees with the file would itself cause the shift.
+// object-fit: cover (inline on the <img>) crops, never distorts; the inline
+// max-height: 500px still caps the box on wide viewports.
+.featured-hero img {
+  aspect-ratio: 3 / 2;
+}
+
 // Hero content animations
 .bg-primary .container-xl {
   animation: fadeInUp 0.8s ease-out;
