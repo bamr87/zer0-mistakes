@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "agent-issue-459",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "a4704149fd87ba21072154ee1f1f5df7ac529d86",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-02T08:11:11+00:00"
+}

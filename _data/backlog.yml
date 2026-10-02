@@ -1373,13 +1373,13 @@ tasks:
 
   - id: T-048
     title: "Site-level theme_color re-pins --zer0-color-primary over the active skin"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: low
     effort: S
     source: issue
-    summary: "Discovered while making Mermaid diagrams follow the skin (ZER0-013 rework): the skin mixin (_sass/theme/_skins.scss) writes both --bs-primary and --zer0-color-primary under [data-theme-skin], but _includes/core/tokens-inline.html emits `:root { --zer0-color-primary: <theme_color.main> }` AFTER main.css, and :root ties [data-theme-skin] on specificity, so the later inline rule wins. Result on this site: buttons/links follow the skin (#6fa8dc on air, #8338ec on neon) while every custom component that reads --zer0-color-primary (callouts, code-block accent border, focus rings) stays on the config #007bff regardless of skin. Mermaid works around it by reading --bs-primary first; the token layer should agree with itself instead."
+    summary: "Done 2026-10-02 (#459): the skin wins. tokens-inline.html emits theme_color main/blue/purple only when no palette skin is active, the precedence is documented in docs/ui/design-tokens.md, and appearance.spec.js asserts it. Discovered while making Mermaid diagrams follow the skin (ZER0-013 rework): the skin mixin (_sass/theme/_skins.scss) writes both --bs-primary and --zer0-color-primary under [data-theme-skin], but _includes/core/tokens-inline.html emits `:root { --zer0-color-primary: <theme_color.main> }` AFTER main.css, and :root ties [data-theme-skin] on specificity, so the later inline rule wins. Result on this site: buttons/links follow the skin (#6fa8dc on air, #8338ec on neon) while every custom component that reads --zer0-color-primary (callouts, code-block accent border, focus rings) stays on the config #007bff regardless of skin. Mermaid works around it by reading --bs-primary first; the token layer should agree with itself instead."
     acceptance:
       - "With theme_color.main set, switching skin changes --zer0-color-primary as well as --bs-primary (probe getComputedStyle on <html>)."
       - "Decide and document the precedence: skin over site theme_color (recommended) or the reverse — one rule, applied to every --zer0-color-* the mixin sets."
@@ -1387,7 +1387,7 @@ tasks:
       - "before/after evidence committed"
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-09-05
-    updated: 2026-09-05
+    updated: 2026-10-02
 
   - id: T-049
     title: "test_core.sh: Liquid nested-tag check and gem-content check can never fail"

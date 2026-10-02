@@ -322,10 +322,11 @@
 
     var ink = tokenColor("--bs-body-color", dark ? "#dee2e6" : "#212529", bgRgb);
     var inkMuted = tokenColor("--bs-secondary-color", dark ? "#adb5bd" : "#6c757d", bgRgb);
-    // The skin mixin writes both --bs-primary and --zer0-color-primary, but a
-    // site-level `theme_color.main` re-pins the latter at :root after main.css,
-    // so only --bs-primary reliably follows the active skin — it is what the
-    // buttons and links the reader sees are painted with.
+    // Under a palette skin --bs-primary and --zer0-color-primary now agree
+    // (T-048: the skin beats `theme_color`). They still differ under the
+    // dark/contrast skins, where `theme_color.main` sets only the theme token.
+    // --bs-primary stays first because the buttons and links the reader sees
+    // are painted with it.
     var primary = tokenColor("--bs-primary", "var(--zer0-color-primary, #007bff)", bgRgb);
     var accent = tokenColor("--zer0-color-accent", "#ffe484", bgRgb);
     // Keep the brand usable as a border/line colour on this background.
