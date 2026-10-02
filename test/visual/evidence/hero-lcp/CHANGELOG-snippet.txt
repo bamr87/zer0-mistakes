@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/hero-lcp/ -->
+  (evidence: [`test/visual/evidence/hero-lcp/`](test/visual/evidence/hero-lcp/README.md) — hero loading lazy → eager + fetchpriority=high; content shift when the hero lands 476px → 0px across 2 widths × landscape/portrait)
