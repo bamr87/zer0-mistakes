@@ -56,32 +56,16 @@ The new comprehensive script that handles the entire gem publication process:
 
 ## 🎛️ VS Code Integration
 
-### Launch Configurations (F5 Debug Menu)
-
-New launch configurations in `.vscode/launch.json`:
-
-1. **🚀 Gem Publisher: Patch Release** - Full patch version workflow
-2. **🚀 Gem Publisher: Minor Release** - Full minor version workflow
-3. **🚀 Gem Publisher: Major Release** - Full major version workflow
-4. **🔍 Gem Publisher: Dry Run (Patch)** - Preview changes without modifications
-5. **⚡ Gem Publisher: Quick Build & Test** - Development workflow, skip publishing
-6. **📝 Gem Publisher: Changelog Preview** - Preview changelog generation only
-
 ### Task Runner (Ctrl+Shift+P → "Tasks: Run Task")
 
-New tasks in `.vscode/tasks.json`:
+The release workflow lives in `.vscode/tasks.json` under the fleet convention (see `.vscode/README.md`); `launch.json` holds debuggers only.
 
-#### Gem Management Tasks
-
-- **🚀 Gem: Patch Release** - Full patch release workflow
-- **🚀 Gem: Minor Release** - Full minor release workflow
-- **🚀 Gem: Major Release** - Full major release workflow
-- **🔍 Gem: Dry Run Preview** - Preview changes without modifications
-- **⚡ Gem: Quick Build & Test** - Development workflow (default build task)
-- **📝 Gem: Generate Changelog** - Preview changelog generation
-- **🧪 Gem: Run Tests Only** - Run test suite only (default test task)
-- **🔨 Gem: Build Only** - Build gem without publishing
-- **📊 Gem: Version Info** - Display current version and git status
+- **Release** — pick patch / minor / major; the full publish workflow (HOST: needs RubyGems + git credentials)
+- **Release: dry run** — preview a patch release without changes (in the container)
+- **Release: quick build (no publish)** — changelog + bump + tests + build, skipping RubyGems (HOST: still pushes git)
+- **Build** — the Jekyll build validation (default build task); `make build` builds the gem
+- **Verify** — preflight + every test tier (default test task); **Test** runs one tier
+- `make version` / `make version-dry-run` — version info and the automated bump preview
 
 ## 📋 Automatic Changelog Generation
 
