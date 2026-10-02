@@ -192,6 +192,25 @@ def test_parse_results() -> None:
           f.get("diff") == "test/visual-results/output/a/homepage-sunrise-diff.png")
 
 
+def test_parse_results_playwright_158_attachment_names() -> None:
+    print("parse_playwright_results — Playwright 1.58+ names attachments with their extension")
+    results = {"suites": [{"title": "appearance-snapshot.spec.js", "suites": [{"title": "Theme skins", "suites": [
+        {"title": "skin: air", "specs": [{"title": "homepage visual snapshot", "tests": [{"results": [
+            {"status": "failed", "error": {"message": "2009 pixels (ratio 0.01 of all image pixels) are different."},
+             "attachments": [
+                 {"name": "homepage-air-expected.png", "path": "/work/test/visual-results/output/a/homepage-air-expected.png"},
+                 {"name": "homepage-air-actual.png", "path": "/work/test/visual-results/output/a/homepage-air-actual.png"},
+                 {"name": "homepage-air-diff.png", "path": "/work/test/visual-results/output/a/homepage-air-diff.png"}]}]}]}]},
+    ]}]}]}
+    parsed = vea.parse_playwright_results(results)
+    f = parsed["failures"][0] if parsed["failures"] else {}
+    check("skin taken from the describe title", f.get("skin") == "air")
+    check("pixel count parsed", f.get("diff_px") == 2009)
+    check("expected resolved despite the .png suffix", f.get("expected") is not None)
+    check("actual resolved despite the .png suffix", f.get("actual") is not None)
+    check("diff resolved despite the .png suffix", f.get("diff") is not None)
+
+
 def test_decide() -> None:
     print("decide — only `intentional` on a failing verify may bless")
     fail = {"snapshots": {"verified": "fail"}}
@@ -328,7 +347,8 @@ def test_workflow_wiring() -> None:
 def main() -> int:
     for t in (test_detect_slug, test_plan_pr_454_shape, test_plan_loop_guard_and_budget, test_plan_generic_fallback,
               test_plan_respects_author_evidence, test_plan_out_of_scope, test_styling_matches_ci_filter,
-              test_ui_prefixes_match_gate, test_parse_results, test_decide, test_stage_and_messages,
+              test_ui_prefixes_match_gate, test_parse_results, test_parse_results_playwright_158_attachment_names,
+              test_decide, test_stage_and_messages,
               test_stage_command_output, test_lane_tooling_contract, test_workflow_wiring):
         t()
     print(f"\n{PASSED} passed, {len(FAILURES)} failed")
