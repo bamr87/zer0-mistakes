@@ -1,9 +1,9 @@
 {
   "schema": "visual-autogen-manifest/v1",
   "slug": "agent-issue-265",
-  "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "33a12c8379915f188992e7f76a21768eb6fe7fc0",
+  "generator": "test/visual/setup-wizard-draft-chip-evidence.mjs",
+  "rendered_from": "9bf3ebe431f9cabac3ad14c8b0c131abd56d1cba",
   "base_ref": "origin/main",
-  "before_site": true,
-  "generated_at": "2026-09-14T09:33:14+00:00"
+  "before_site": null,
+  "generated_at": "2026-10-02T04:56:54+00:00"
 }

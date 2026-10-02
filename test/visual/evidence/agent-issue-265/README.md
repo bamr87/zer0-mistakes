@@ -35,3 +35,18 @@ BASE_URL=http://localhost:4000 BEFORE_URL=http://localhost:4001 \
 ```
 
 `pr-evidence.mjs` alone cannot show this one: the defect is not a resting-state difference two screenshots catch, it is a transition that only happens after the wizard's 300ms save debounce. `setup-wizard-draft-chip-evidence.mjs` drives that interaction on **both** sites and measures either side of it.
+
+<!-- visual-autogen:begin -->
+## Generated evidence
+
+Reviewed by the visual-evidence reviewer for PR #489. The homepage pixel-baseline verify passed 9/9 (`0 pixel failure(s)`), so no baselines were re-blessed; this section records what the three montages actually show.
+
+- **`01-draft-chip-before-after.png`** — four captioned panels at 1280px. The base
+pair reproduces the defect: cold header 107px with the chip at `display:none` (height 0), then after one keystroke the chip becomes `display:block` (height 26px), "Start over" wraps onto its own line, and the header grows to 149px — `#wizardTabContent` and the Next row drop **+42px** and stay down. The PR pair starts settled at 149px (chip `visibility:hidden`, box held from first paint) and does not move after the save: **0px**. Measurements in the panels agree with `metrics.json` (base shift 42/42/42; after-branch shift 0/0/0).
+- **`02-unchanged-home-before-after.png`** — control. The homepage is visually
+  identical base-vs-head at 390px and 1280px, page overflow 0px either side.
+- **`03-unchanged-home-viewport-matrix.png`** — control. The header band renders
+  cleanly at 320/390/768/992/1280/1440px with overflow 0px at every width.
+
+Together the controls confirm the change is confined to `/setup/`, consistent with the untouched homepage baselines passing unchanged. Note: the two home-control montages are labelled as rendered from `33a12c8` while the head of this branch is `9bf3ebe` — one commit stale; the draft-chip montage and metrics reflect the head.
+<!-- visual-autogen:end -->
