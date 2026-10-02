@@ -49,6 +49,12 @@ gem "jekyll-mermaid"
 # Faraday retry middleware for Faraday v2.0+
 gem "faraday-retry"
 
+# The zer0 stack's preview-banner engine (bamr87/zer0-image-generator). Registers
+# `jekyll preview-images`; generation is never part of `jekyll build`. Reads the
+# preview_images: block in _config.yml. Unconstrained like everything else here
+# (zero-pin strategy) — Gemfile.lock holds the tested version.
+gem "zer0-image-generator", group: :jekyll_plugins
+
 # ------------------------------------------------------------------------------
 # Development & Test - Only installed in dev/test environments
 # ------------------------------------------------------------------------------

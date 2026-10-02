@@ -19,6 +19,12 @@
 #   UPDATE_SNAPSHOTS    1 to pass --update-snapshots
 #   SKIP_NPM_INSTALL    1 to skip `npm ci` (CI sets this — caller already ran it)
 #   SKIP_PLAYWRIGHT_INSTALL  1 to skip `playwright install chromium`
+#   PLAYWRIGHT_WORKERS  Override the config's worker count for this tier only.
+#                       Unset (default) = use playwright.config.js (`workers: 1`).
+#                       `fullyParallel` stays false, so this parallelises across
+#                       spec FILES, never within one. Do not set it for the
+#                       `snapshots` tier: those specs walk the 9 theme skins
+#                       through one shared server and must stay serial.
 #
 # Prerequisites: Ruby/Bundler (unless BASE_URL set), Node.js, npm
 
@@ -118,6 +124,10 @@ PLAYWRIGHT_ARGS=(
   --config=test/playwright.config.js
   --project="${PLAYWRIGHT_PROJECT}"
 )
+if [[ -n "${PLAYWRIGHT_WORKERS:-}" ]]; then
+  PLAYWRIGHT_ARGS+=(--workers="${PLAYWRIGHT_WORKERS}")
+  log "Worker override: ${PLAYWRIGHT_WORKERS} (config default is 1)"
+fi
 if [[ "$UPDATE_SNAPSHOTS" == "1" ]]; then
   PLAYWRIGHT_ARGS+=(--update-snapshots)
   log "Running Playwright (project=${PLAYWRIGHT_PROJECT}) with --update-snapshots..."

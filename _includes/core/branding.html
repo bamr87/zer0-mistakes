@@ -5,14 +5,16 @@
   
   File: branding.html
   Path: _includes/core/branding.html
-  Purpose: Display site title and optional subtitle in navbar
-  
+  Purpose: Display the site logo and title in the navbar
+
+  The navbar carries logo + title ONLY. `site.subtitle` used to render here as
+  a second `.navbar-brand` at lg+, which spent bar width the menubar needed for
+  its labels; it now belongs to the home hero (_layouts/home.html) — see #405.
+
   Dependencies:
   - site.title: Main site title from _config.yml
-  - site.subtitle: Optional subtitle from _config.yml
   - site.default_icon: Icon framework class (e.g., 'bi')
   - site.title_icon: Icon for title display
-  - site.subtitle_icon: Icon for subtitle display
   ===================================================================
 {% endcomment %}
 {% comment %} Color Schema Override 
@@ -43,14 +45,5 @@
     </a>
 </div>
 
-{% comment %} If a subtitle exists {% endcomment %}
-{%- assign _subtitle = site.subtitle | strip -%}
-{%- if _subtitle != "" -%}
-<div class="navbar-brand site-subtitle d-none d-lg-inline">
-    <a class="nav-link" href="{{ '/' | relative_url }}" aria-label="{{ _subtitle }} — {{ site.title }} home">
-        <span class="site-subtitle-text">
-            {{ _subtitle }}
-        </span>
-    </a>
-</div>
-{% endif %}
+{% comment %} The subtitle is deliberately NOT rendered here — see the header
+   comment above and the home hero in _layouts/home.html (#405). {% endcomment %}

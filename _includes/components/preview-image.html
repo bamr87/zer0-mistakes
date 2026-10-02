@@ -7,9 +7,14 @@
        src=post.preview 
        alt=post.title 
        class="card-img-top" 
-       style="height: 180px; object-fit: cover;" 
+       style="height: 180px; object-fit: cover;"
     -%}
-  
+
+  Optional: loading (default "lazy"), fetchpriority, decoding. The last two
+  are emitted only when passed, so existing call sites render unchanged.
+  An above-the-fold hero (the LCP element) should pass loading="eager"
+  fetchpriority="high" -- see the article.html hero.
+
   WHICH INCLUDE: this one renders an <img> in the content flow. For cover art
   painted as a CSS background on an otherwise empty box, use the sibling
   components/background-image.html -- a background image is invisible to
@@ -53,4 +58,4 @@
      class="{{ class }}" 
      alt="{{ alt | escape }}"
      {% if style %}style="{{ style }}"{% endif %}
-     loading="{{ loading }}">
+     loading="{{ loading }}"{% if include.fetchpriority %} fetchpriority="{{ include.fetchpriority }}"{% endif %}{% if include.decoding %} decoding="{{ include.decoding }}"{% endif %}>

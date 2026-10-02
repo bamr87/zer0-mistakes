@@ -8,7 +8,8 @@
  *
  *   - landing.html       : data-driven hero + features + get-started sections
  *   - default.html       : intro gating, FAB stack, breadcrumbs
- *   - article.html       : single H1, sidebar resolution per post_type
+ *   - article.html       : single H1, sidebar resolution per post_type,
+ *                          hero opt-in + LCP loading / reserved box (#303, #485)
  *   - section archive     : sidebar + posts grid containment (e.g. /news/*)
  *   - welcome.html       : onboarding accordions
  *
@@ -21,6 +22,7 @@
  * minimal fork installations while still exercising what's there.
  * ============================================================================
  */
+const path = require('path');
 const { test, expect } = require('@playwright/test');
 const {
   VIEWPORTS,
@@ -175,6 +177,93 @@ test.describe('Article hero — show_hero opt-in (issue #303)', () => {
   test('featured posts keep their automatic hero', async ({ page }) => {
     await waitForJekyll(page, FEATURED);
     await expect(page.locator('figure.featured-hero')).toHaveCount(1);
+  });
+});
+
+// =============================================================================
+// Article hero — LCP image loading (issue #485)
+// =============================================================================
+// The hero is the above-the-fold LCP element, so it must not inherit
+// components/preview-image.html's lazy default, and its box must be reserved
+// BEFORE the image arrives or the article text jumps when it does. The box is
+// pinned in CSS (.featured-hero img { aspect-ratio }) rather than by width/
+// height attributes because preview assets vary in shape — the portrait case
+// below serves the real 720x960 asset under the hero's URL. Evidence:
+// test/visual/evidence/hero-lcp/.
+test.describe('Article hero — LCP image loading (issue #485)', () => {
+  const HERO_POST = '/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/';
+  const PREVIEWS = '**/images/previews/**';
+  const PORTRAIT = path.join(__dirname, '../../../assets/images/previews/site-personalization-configuration.png');
+
+  /** Hero geometry + where the content after the figure starts (document coords). */
+  const measure = (page) => page.locator('figure.featured-hero img').evaluate((img) => {
+    const r = img.getBoundingClientRect();
+    const next = img.closest('figure').nextElementSibling;
+    return {
+      w: r.width,
+      h: r.height,
+      nextTop: next ? next.getBoundingClientRect().top + window.scrollY : null,
+      loaded: img.complete && img.naturalWidth > 0,
+      natural: [img.naturalWidth, img.naturalHeight],
+      objectFit: getComputedStyle(img).objectFit,
+    };
+  });
+
+  /** Hold every preview-image response until release() — the "slow network" state. */
+  async function holdPreviews(page, fulfill) {
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    await page.route(PREVIEWS, async (route) => {
+      await gate;
+      if (fulfill && route.request().url() === fulfill.url) await route.fulfill({ path: fulfill.path });
+      else await route.continue();
+    });
+    return () => release();
+  }
+
+  test('hero loads eagerly at high priority; related-post cards stay lazy', async ({ page }) => {
+    await waitForJekyll(page, HERO_POST);
+    const hero = page.locator('figure.featured-hero img');
+    await expect(hero).toHaveCount(1);
+    await expect(hero).toHaveAttribute('loading', 'eager');
+    await expect(hero).toHaveAttribute('fetchpriority', 'high');
+
+    const related = page.locator('.related-posts img');
+    expect(await related.count(), 'fixture post must render related-post cards').toBeGreaterThan(0);
+    for (const img of await related.all()) {
+      await expect(img).toHaveAttribute('loading', 'lazy');
+      expect(await img.getAttribute('fetchpriority'), 'below-the-fold cards get no priority hint').toBeNull();
+    }
+  });
+
+  test('hero box is reserved before the image arrives — no layout shift', async ({ page }) => {
+    const release = await holdPreviews(page);
+    await page.goto(HERO_POST, { waitUntil: 'domcontentloaded' });
+    const pending = await measure(page);
+    expect(pending.loaded, 'image must still be in flight for this measurement').toBe(false);
+    expect(pending.h, 'the box must be reserved, not collapsed to 0').toBeCloseTo(Math.min(pending.w * 2 / 3, 500), 0);
+
+    release();
+    await expect.poll(async () => (await measure(page)).loaded).toBe(true);
+    const loaded = await measure(page);
+    expect(loaded.h, 'hero height must not change when the image lands').toBeCloseTo(pending.h, 0);
+    expect(loaded.nextTop, 'content below the hero must not move').toBeCloseTo(pending.nextTop, 0);
+  });
+
+  test('a portrait preview fills the same box, cropped not distorted', async ({ page }) => {
+    // Serve the real 720x960 portrait asset under the hero's own URL.
+    await page.goto(HERO_POST, { waitUntil: 'domcontentloaded' });
+    const heroUrl = await page.locator('figure.featured-hero img').evaluate((img) => img.currentSrc || img.src);
+    const release = await holdPreviews(page, { url: heroUrl, path: PORTRAIT });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const pending = await measure(page);
+    release();
+    await expect.poll(async () => (await measure(page)).loaded).toBe(true);
+    const loaded = await measure(page);
+    expect(loaded.natural, 'the portrait asset must be what loaded').toEqual([720, 960]);
+    expect(loaded.objectFit, 'cover crops to the box instead of stretching').toBe('cover');
+    expect(loaded.h).toBeCloseTo(pending.h, 0);
+    expect(loaded.nextTop).toBeCloseTo(pending.nextTop, 0);
   });
 });
 
