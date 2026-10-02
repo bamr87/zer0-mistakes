@@ -309,6 +309,15 @@ jobs:
         with:
           project: critical
           install-deps: 'false'
+          # 227 critical tests over 25 spec files took 6.7m of this job's 12m
+          # on one worker (run 34175318950) — a 4-vCPU runner spending 6.7
+          # minutes on one core. `fullyParallel` stays false, so 3 workers
+          # parallelise across FILES only; ordering within a spec is unchanged.
+          # Safe here specifically because the `critical` project grepInverts
+          # the snapshot block: no test in this tier drives the shared
+          # 9-skin theme state. The `snapshots` job below and the nightly
+          # `smoke` tier pass no override and stay at the config's 1 worker.
+          workers: '3'
 
       # NOTE: the PR gate runs only the @critical-tagged tier (user-facing
       # essentials: navigation, search, mobile survival, theming baseline,

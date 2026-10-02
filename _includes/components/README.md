@@ -79,7 +79,7 @@ If a component needs a token that doesn't exist yet, propose it in `_sass/tokens
 | `callout.html`           | Highlighted info/note/warning/tip block, à la Bootstrap docs. |
 | `cta-button.html`        | Themed call-to-action button with icon support.      |
 | `feature-card.html`      | Renders a single entry from `_data/features.yml`.    |
-| `preview-image.html`     | Lazy-loaded responsive image with assets-prefix handling. |
+| `preview-image.html`     | Responsive image with assets-prefix handling; lazy by default, optional `loading`/`fetchpriority`/`decoding` (pass `loading="eager" fetchpriority="high"` for an above-the-fold hero). |
 | `post-type-badge.html`   | Visual badge for post types (featured, opinion, …).  |
 
 ### Site chrome (rendered by layouts, not authors)

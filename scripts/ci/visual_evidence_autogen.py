@@ -400,13 +400,18 @@ def parse_playwright_results(results: dict) -> dict:
                 m = re.search(r"(\d+) pixels", message)
                 exp = act = dif = None
                 for name, p in attachments.items():
-                    if name.endswith("-expected"):
+                    # Playwright 1.58 names screenshot attachments with their
+                    # file extension (e.g. "homepage-air-expected.png"); older
+                    # versions did not. Strip it before matching the suffix so
+                    # both forms resolve to the same three roles.
+                    stem = re.sub(r"\.(png|jpe?g)$", "", name)
+                    if stem.endswith("-expected"):
                         exp = rel_path(p)
-                    elif name.endswith("-actual"):
+                    elif stem.endswith("-actual"):
                         act = rel_path(p)
-                    elif name.endswith("-diff"):
+                    elif stem.endswith("-diff"):
                         dif = rel_path(p)
-                        skin = skin or name[: -len("-diff")].replace("homepage-", "")
+                        skin = skin or stem[: -len("-diff")].replace("homepage-", "")
                 failures.append({
                     "skin": skin or spec.get("title", "?"),
                     "status": status,

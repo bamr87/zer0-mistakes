@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/bamr87/zer0-CMS/main/schemas/zer0.schema.json",
+  "platform": { "id": "jekyll", "overlay": "zer0-mistakes" },
+  "contentFolders": [
+    { "title": "Posts", "path": "[[workspace]]/pages/_posts", "contentTypes": ["post"], "filePrefix": "{{date|yyyy-MM-dd}}" },
+    { "title": "Docs", "path": "[[workspace]]/pages/_docs", "contentTypes": ["doc"] },
+    { "title": "About", "path": "[[workspace]]/pages/_about", "contentTypes": ["about"] }
+  ],
+  "contentTypes": [
+    {
+      "name": "post",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true, "default": "{{now}}", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "article", "choices": ["article", "section", "news"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "author", "type": "string", "single": true, "required": true },
+        { "name": "preview", "type": "image", "isPreviewImage": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "doc",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "default", "choices": ["default", "collection"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "about",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "description", "type": "string" },
+        { "name": "draft", "type": "draft" }
+      ]
+    }
+  ],
+  "draftField": { "name": "draft", "type": "boolean" },
+  "content": { "defaultFileType": "md", "publicFolder": "assets" },
+  "date": { "format": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", "timezone": "UTC" }
+}

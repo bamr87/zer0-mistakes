@@ -47,9 +47,9 @@ logs/*
 # Playwright's default output dir (only .last-run.json etc. land here)
 test-results/
 
-# Local authoring-tool state (zer0 CLI drafts + workspace config)
+# Local authoring-tool state (zer0 CLI drafts). zer0.json is NOT ignored: it is
+# the committed zer0-CMS project file (the zer0 stack consumer contract).
 .zer0/
-zer0.json
 
 # Front Matter CMS
 .frontmatter/
