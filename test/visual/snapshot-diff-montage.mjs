@@ -44,7 +44,12 @@ export function collectFailures(results) {
       for (const t of spec.tests || []) {
         const final = (t.results || []).at(-1) || {};
         if (final.status === 'passed' || final.status === 'skipped') continue;
-        const att = Object.fromEntries((final.attachments || []).map((a) => [a.name || '', a.path]));
+        // Playwright 1.58 names screenshot attachments with their file
+        // extension (e.g. "homepage-air-expected.png"); older versions did
+        // not. Strip it before matching the suffix so both forms resolve.
+        const att = Object.fromEntries(
+          (final.attachments || []).map((a) => [(a.name || '').replace(/\.(png|jpe?g)$/, ''), a.path]),
+        );
         const pick = (suffix) => Object.entries(att).find(([k]) => k.endsWith(suffix))?.[1] || null;
         const diff = pick('-diff');
         if (!diff) continue; // a failure without a diff image is not a pixel diff
