@@ -12,6 +12,22 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-02)
+
+
+### Features
+
+* **navigation:** two clean navbar label tiers, merged chevron, centred grid ([#495](https://github.com/bamr87/zer0-mistakes/issues/495)) ([9ebb29a](https://github.com/bamr87/zer0-mistakes/commit/9ebb29a4662fbc4c62d3fdd8df9c282bdd181204))
+* **theme:** four consumer extension points for notes/knowledge-base builds ([#492](https://github.com/bamr87/zer0-mistakes/issues/492)) ([1e2b228](https://github.com/bamr87/zer0-mistakes/commit/1e2b2283303012b28b9e81209fb66d0344aa0597))
+
+
+### Bug Fixes
+
+* **article:** eager-load the hero LCP image and reserve its box ([#498](https://github.com/bamr87/zer0-mistakes/issues/498)) ([529b84b](https://github.com/bamr87/zer0-mistakes/commit/529b84bd0f5ea8e79b7711187b52b2bb80c5b134)), closes [#485](https://github.com/bamr87/zer0-mistakes/issues/485)
+* **ci:** Playwright 1.58 attachment names, docs front matter, test race ([#497](https://github.com/bamr87/zer0-mistakes/issues/497)) ([f1bdc7e](https://github.com/bamr87/zer0-mistakes/commit/f1bdc7ef22091f0506617b11a95e357c439cfa94))
+* **layouts:** one main landmark per page on post, notebook and note ([#487](https://github.com/bamr87/zer0-mistakes/issues/487)) ([78b0910](https://github.com/bamr87/zer0-mistakes/commit/78b0910fb2258591eab9ba13efb5ac037eee80c5))
+* **navigation:** stop Liquid whitespace-trim gluing navbar attributes ([#477](https://github.com/bamr87/zer0-mistakes/issues/477)) ([4349ea1](https://github.com/bamr87/zer0-mistakes/commit/4349ea17d690e5e6b8585f1d3a33b3ea4d3bf4fe))
+
 ## [Unreleased]
 
 ### Added
