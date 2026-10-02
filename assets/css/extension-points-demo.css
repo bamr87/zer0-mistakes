@@ -1,0 +1,27 @@
+/* ==========================================================================
+   extension-points-demo.css — a live consumer of the per-page `styles:` hook
+   ==========================================================================
+
+   Loaded ONLY by /docs/customization/extension-points/, through that page's
+   `styles:` frontmatter. Its job is to prove the hook works and to mark the
+   demo action button so the page's own prose can point at it.
+
+   Note what it does NOT have to do: fight a specificity war. Before #412,
+   `_sass/core/code-copy.scss` shipped a bare `button:not(.copy)` rule at
+   specificity (0,1,1), which outranked any single class a consumer could
+   write — so downstream code had to scope to `.code-block-header .my-btn`
+   just to set its own padding. That rule is scoped to the component now, and
+   a plain class is enough again.
+   ========================================================================== */
+
+.zer0-demo-action {
+  background: transparent;
+  color: var(--zer0-color-text-muted);
+  font-family: var(--zer0-font-mono);
+  line-height: 1.8;
+}
+
+.zer0-demo-action:hover,
+.zer0-demo-action:focus-visible {
+  color: inherit;
+}

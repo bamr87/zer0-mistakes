@@ -1,0 +1,163 @@
+{
+  "$schema": "https://raw.githubusercontent.com/bamr87/zer0-CMS/main/schemas/zer0.schema.json",
+  "platform": { "id": "jekyll", "overlay": "zer0-mistakes" },
+  "contentFolders": [
+    { "title": "Posts", "path": "[[workspace]]/pages/_posts", "contentTypes": ["post"], "filePrefix": "{{date|yyyy-MM-dd}}" },
+    { "title": "Docs", "path": "[[workspace]]/pages/_docs", "contentTypes": ["doc"], "filePrefix": null },
+    { "title": "Notes", "path": "[[workspace]]/pages/_notes", "contentTypes": ["note"], "excludePaths": ["**/_templates/**"], "filePrefix": null },
+    { "title": "Notebooks", "path": "[[workspace]]/pages/_notebooks", "contentTypes": ["notebook"], "filePrefix": null },
+    { "title": "Quick Start", "path": "[[workspace]]/pages/_quickstart", "contentTypes": ["quickstart"], "filePrefix": null },
+    { "title": "About", "path": "[[workspace]]/pages/_about", "contentTypes": ["about"], "filePrefix": null },
+    { "title": "Books", "path": "[[workspace]]/pages/_books", "contentTypes": ["book"], "filePrefix": null },
+    { "title": "Cookbook", "path": "[[workspace]]/pages/_recipes", "contentTypes": ["recipe"], "filePrefix": null },
+    { "title": "Pages", "path": "[[workspace]]/pages", "contentTypes": ["page"], "excludeSubdir": true, "filePrefix": null }
+  ],
+  "contentTypes": [
+    {
+      "name": "post",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true, "default": "{{now}}", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "article", "choices": ["article", "section", "news"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "author", "type": "string", "single": true, "required": true },
+        { "name": "excerpt", "type": "string" },
+        { "name": "preview", "type": "image", "isPreviewImage": true },
+        { "name": "keywords", "type": "list" },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "estimated_reading_time", "type": "string", "single": true },
+        { "name": "featured", "type": "boolean" },
+        { "name": "comments", "type": "boolean" },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "doc",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "default", "choices": ["default", "collection"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true },
+        { "name": "author", "type": "string", "single": true },
+        { "name": "difficulty", "type": "string", "single": true },
+        { "name": "estimated_reading_time", "type": "string", "single": true },
+        { "name": "keywords", "type": "list" },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "note",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true, "default": "{{now}}", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "note", "choices": ["note"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "author", "type": "string", "single": true, "required": true },
+        { "name": "difficulty", "type": "string", "single": true, "required": true },
+        { "name": "permalink", "type": "string", "single": true, "required": true },
+        { "name": "comments", "type": "boolean" },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "notebook",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true, "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "notebook", "choices": ["notebook"] },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "author", "type": "string", "single": true },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "comments", "type": "boolean" },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "quickstart",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "default", "choices": ["default"] },
+        { "name": "author", "type": "string", "single": true, "required": true },
+        { "name": "categories", "type": "categories", "required": true },
+        { "name": "tags", "type": "tags", "required": true },
+        { "name": "keywords", "type": "list", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true },
+        { "name": "preview", "type": "image", "isPreviewImage": true },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "about",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "layout", "type": "choice", "choices": ["default", "root", "stats", "admin", "author", "authors"] },
+        { "name": "description", "type": "string" },
+        { "name": "date", "type": "datetime", "isPublishDate": true },
+        { "name": "categories", "type": "categories" },
+        { "name": "tags", "type": "tags" },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    },
+    {
+      "name": "book",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "description", "type": "string" },
+        { "name": "layout", "type": "choice", "choices": ["book", "book-abc", "book-story"] },
+        { "name": "preview", "type": "image", "isPreviewImage": true },
+        { "name": "permalink", "type": "string", "single": true }
+      ]
+    },
+    {
+      "name": "recipe",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "description", "type": "string" },
+        { "name": "layout", "type": "choice", "default": "recipe", "choices": ["recipe", "cookbook"] },
+        { "name": "tags", "type": "tags" },
+        { "name": "permalink", "type": "string", "single": true }
+      ]
+    },
+    {
+      "name": "page",
+      "fields": [
+        { "name": "title", "type": "string", "single": true, "required": true },
+        { "name": "layout", "type": "choice", "required": true, "default": "default", "choices": ["default", "home", "search", "landing", "collection", "sitemap-collection", "tag"] },
+        { "name": "description", "type": "string", "required": true },
+        { "name": "lastmod", "type": "datetime", "isModifiedDate": true, "required": true },
+        { "name": "date", "type": "datetime", "isPublishDate": true },
+        { "name": "categories", "type": "categories" },
+        { "name": "tags", "type": "tags" },
+        { "name": "permalink", "type": "string", "single": true },
+        { "name": "draft", "type": "draft" }
+      ]
+    }
+  ],
+  "draftField": { "name": "draft", "type": "boolean" },
+  "content": { "defaultFileType": "md", "publicFolder": "assets", "autoUpdateModifiedDate": true },
+  "date": { "format": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", "timezone": "UTC" },
+  "governance": { "enabled": true, "target": "jekyll", "publishAllow": false },
+  "cms": { "contentDirs": ["pages/"], "aiConfigPath": "_data/ai.yml", "verifyCommand": "scripts/lint-pages" },
+  "fleet": { "enabled": true, "manifestPath": "fleet.manifest.yml", "hub": "bamr87/bamr87" },
+  "validation": { "enabled": true }
+}

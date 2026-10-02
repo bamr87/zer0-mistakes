@@ -31,7 +31,7 @@ Bumping meant editing five repositories from memory, up to four files in one of 
 | `scripts/propagate.rb` | this repo | Reads the registry; reports pin drift or dispatches `theme-release`. |
 | `.github/workflows/propagate-theme.yml` | this repo | Dispatches on release; weekly drift report. |
 | `.github/workflows/manifest-sync.yml` | this repo | Regenerates the manifest inside the release PR. |
-| `templates/consumer/` | copied downstream | The consumer's half: pin-rewrite script, bump workflow, override declaration. |
+| `templates/consumer/` | copied downstream | The consumer's half: pin-rewrite script, bump workflow, override declaration — plus the zer0 stack files: the report-only `zer0-doctor.yml` caller and the `zer0.json` template (see its README, § The zer0 stack). |
 
 ## The flow
 
