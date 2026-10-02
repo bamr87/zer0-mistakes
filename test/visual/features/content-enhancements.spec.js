@@ -17,13 +17,15 @@
  *   - ZER0-036 MathJax: equations typeset on math-enabled docs pages.
  */
 const { test, expect } = require('@playwright/test');
-const { UI_ROUTES, VIEWPORTS, waitForJekyll, gotoOrSkip } = require('../fixtures');
+const { UI_ROUTES, VIEWPORTS, waitForJekyll, gotoOrSkip, dismissCookieConsent } = require('../fixtures');
 
 // A docs page that exercises TOC, fenced code blocks, and the reading chrome.
 const DOC = '/docs/features/code-copy/';
 
 test.describe('Back to Top', { tag: '@critical' }, () => {
   test('ZER0-029 Back to Top button is present and scrolls to top', async ({ page }) => {
+    // The consent banner covers the FABs 1s after load; seed it like a returning visitor.
+    await dismissCookieConsent(page);
     await waitForJekyll(page, DOC);
     const btn = page.locator('#backToTopBtn');
     await expect(btn).toBeAttached();

@@ -1,0 +1,181 @@
+{
+  "slug": "hero-lcp",
+  "issue": 485,
+  "route": "/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/",
+  "widths": [
+    390,
+    1280
+  ],
+  "afterBase": "http://127.0.0.1:4612",
+  "beforeBase": "http://127.0.0.1:4613",
+  "runs": [
+    {
+      "state": "before",
+      "asset": "landscape",
+      "width": 390,
+      "loading": "lazy",
+      "fetchpriority": null,
+      "natural": [
+        1200,
+        800
+      ],
+      "pending": {
+        "heroHeight": 0,
+        "contentBelowTop": 530,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 228,
+        "contentBelowTop": 734
+      },
+      "layoutShiftPx": 204
+    },
+    {
+      "state": "after",
+      "asset": "landscape",
+      "width": 390,
+      "loading": "eager",
+      "fetchpriority": "high",
+      "natural": [
+        1200,
+        800
+      ],
+      "pending": {
+        "heroHeight": 228,
+        "contentBelowTop": 734,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 228,
+        "contentBelowTop": 734
+      },
+      "layoutShiftPx": 0
+    },
+    {
+      "state": "before",
+      "asset": "landscape",
+      "width": 1280,
+      "loading": "lazy",
+      "fetchpriority": null,
+      "natural": [
+        1200,
+        800
+      ],
+      "pending": {
+        "heroHeight": 0,
+        "contentBelowTop": 437,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 500,
+        "contentBelowTop": 913
+      },
+      "layoutShiftPx": 476
+    },
+    {
+      "state": "after",
+      "asset": "landscape",
+      "width": 1280,
+      "loading": "eager",
+      "fetchpriority": "high",
+      "natural": [
+        1200,
+        800
+      ],
+      "pending": {
+        "heroHeight": 500,
+        "contentBelowTop": 913,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 500,
+        "contentBelowTop": 913
+      },
+      "layoutShiftPx": 0
+    },
+    {
+      "state": "before",
+      "asset": "portrait",
+      "width": 390,
+      "loading": "lazy",
+      "fetchpriority": null,
+      "natural": [
+        720,
+        960
+      ],
+      "pending": {
+        "heroHeight": 0,
+        "contentBelowTop": 530,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 456,
+        "contentBelowTop": 962
+      },
+      "layoutShiftPx": 432
+    },
+    {
+      "state": "after",
+      "asset": "portrait",
+      "width": 390,
+      "loading": "eager",
+      "fetchpriority": "high",
+      "natural": [
+        720,
+        960
+      ],
+      "pending": {
+        "heroHeight": 228,
+        "contentBelowTop": 734,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 228,
+        "contentBelowTop": 734
+      },
+      "layoutShiftPx": 0
+    },
+    {
+      "state": "before",
+      "asset": "portrait",
+      "width": 1280,
+      "loading": "lazy",
+      "fetchpriority": null,
+      "natural": [
+        720,
+        960
+      ],
+      "pending": {
+        "heroHeight": 0,
+        "contentBelowTop": 437,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 500,
+        "contentBelowTop": 913
+      },
+      "layoutShiftPx": 476
+    },
+    {
+      "state": "after",
+      "asset": "portrait",
+      "width": 1280,
+      "loading": "eager",
+      "fetchpriority": "high",
+      "natural": [
+        720,
+        960
+      ],
+      "pending": {
+        "heroHeight": 500,
+        "contentBelowTop": 913,
+        "loaded": false
+      },
+      "loaded": {
+        "heroHeight": 500,
+        "contentBelowTop": 913
+      },
+      "layoutShiftPx": 0
+    }
+  ]
+}

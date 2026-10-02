@@ -21,10 +21,41 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   - `styles:` / `scripts:` frontmatter — per-page CSS and JS resolved through `relative_url`, with `scripts:` deferred after the theme bundle. A page that declares neither emits nothing at all.
   - `lastmod` and `description` on every `/assets/data/wiki-index.json` entry — ISO-8601 and the authored subtitle, always defined (`null` when the document has neither), no new traversal.
 
+### Changed
+
+- **Navbar label tiers reduced from three to two** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  Top-level nav items now render as icon + full label above 51rem of centre
+  track and icon-only below it; `text-overflow: ellipsis` is gone, so a label
+  is never cut to "Quicksta…". Icons now survive in **both** tiers — the old
+  41–50.99rem tier dropped them to buy width for bare labels. **Behaviour
+  change:** centre-track widths between 41rem and 51rem (roughly 992–1200px
+  viewports) previously showed bare labels and now show icons, with the
+  existing `.nav-tooltip` carrying the name on hover.
+- **Dropdown chevrons merged into their parent row** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  The split toggle is now absolutely positioned inside padding the parent link
+  reserves, and hover applies to the whole row, so there is no dead zone
+  between the label and its chevron. It remains a real `<button>` with
+  `aria-expanded`, `aria-haspopup` and its visually-hidden label unchanged.
+  (evidence: [`test/visual/evidence/navbar-tiers-405/`](test/visual/evidence/navbar-tiers-405/README.md) — chevron dead zone up to 4px → overlapping; 0 truncated labels across 6 widths)
+- **The navbar carries logo + title only** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  `site.subtitle` moved out of `_includes/core/branding.html` and onto the home
+  hero (`_layouts/home.html`), returning its width to the menubar. It renders
+  under the page heading on pages that use the `home` layout, and is hidden
+  with it by `hide_title` or `hide_intro`. A homepage on another layout, such
+  as `landing`, no longer shows the subtitle at all; add `site.subtitle` to
+  that layout's hero to keep it.
+- **The below-`lg` menu toggle is labelled "Menu"** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)),
+  so it is distinguishable from the sidebar hamburger beside it. Override the
+  string with `ui.nav_menu_toggle_label`.
+- The desktop navbar grid gives its two side tracks a shared minimum
+  (`--zer0-navbar-side-min`, default `9rem`) so the menubar is optically
+  centred in the bar rather than only within its own track.
+
 ### Fixed
 
 - **The xAI preview-image renderer defaults to `grok-imagine-image-2.0`** ([#474](https://github.com/bamr87/zer0-mistakes/issues/474)). `XAIProvider.default_model()` in `scripts/lib/preview_generator.py` still returned the retired `grok-2-image`, so a site with `preview_images.provider: xai` and no explicit `model:` sent a retired model upstream. An explicitly configured `grok-2-image` is still accepted as an xAI-family model.
 - **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
+- **The article hero no longer lazy-loads its LCP image or shoves the article down when it arrives** ([#485](https://github.com/bamr87/zer0-mistakes/issues/485)). `figure.featured-hero` inherited `components/preview-image.html`'s `loading="lazy"` default and had no reserved box. It now passes `loading="eager" fetchpriority="high" decoding="async"`, and its box is pinned by `.featured-hero img { aspect-ratio: 3 / 2 }`. The box is set in CSS rather than with `width`/`height` attributes, because preview assets vary in shape and `object-fit: cover` crops a portrait instead of stretching it. `preview-image.html` gained optional `fetchpriority`/`decoding` parameters that are emitted only when passed, so every other consumer renders byte-identically (evidence: [`test/visual/evidence/hero-lcp/`](test/visual/evidence/hero-lcp/README.md) — hero loading lazy → eager + fetchpriority=high; content shift when the hero lands 476px → 0px across 2 widths × landscape/portrait).
 ### Fixed
 
 - **Exactly one `main` landmark again on post, notebook and note pages.**
