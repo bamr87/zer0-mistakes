@@ -60,6 +60,17 @@ theme_color:
   red: '#ef4444'
 ```
 
+### Precedence: skin vs `theme_color`
+
+Strongest first:
+
+1. **Appearance panel.** `localStorage["zer0-appearance"]` is written as an inline style on `<html>`, and an inline style beats any selector.
+2. **The active skin.** The palette skins (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) set `--zer0-color-primary` (and `-rgb`), `--zer0-color-link` (and `-hover`) and `--zer0-color-accent`, together with `--bs-primary` and `--bs-link-color`. So switching skin moves the theme layer and Bootstrap as one.
+3. **`_config.yml` `theme_color`.** It sets every token in the table above. For `primary`, `link` and `accent` this only takes effect when no palette skin is active, as with the `dark` and `contrast` skins. `secondary`, `danger`, `warning`, `success` and `info` are not set by any skin, so they always come from `theme_color`.
+4. **The defaults** in `_sass/tokens/_color.scss`.
+
+`tokens-inline.html` enforces step 3. It emits `primary`/`link`/`accent` under `:root:not([data-theme-skin="air"]):not(…)` and keeps its `palette_skins` list in sync with `_skins.scss`. The "Skin palette vs site theme_color" block in `test/visual/features/appearance.spec.js` checks both the precedence and that list.
+
 ---
 
 ## Spacing tokens
