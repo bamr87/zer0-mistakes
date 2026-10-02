@@ -866,7 +866,7 @@ tasks:
 
   - id: T-033
     title: "Retire legacy test_installation.sh after equivalence audit against the installer harness"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -880,6 +880,10 @@ tasks:
       uncovered into test_install_*.sh, then delete the legacy suite and remove the
       `installation` routing from test_runner.sh, ci.yml, and nightly-extended.yml.
       Until then it runs nightly and on install-path PRs only (2026-07 CI tiering).
+      Done 2026-10-02: the suite is deleted, its scenarios live in
+      test_install_legacy_flags.sh (marked "Ported from retired
+      test_installation.sh"), test_runner.sh routes no `installation` suite, and
+      the CI/nightly suite lists no longer name it.
     acceptance:
       - "Every test_installation.sh scenario is mapped to a harness equivalent or ported."
       - "test_installation.sh deleted; test_runner.sh no longer routes an `installation` suite."
@@ -887,7 +891,7 @@ tasks:
       - "Nightly extended run green after removal."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-07-06
-    updated: 2026-07-06
+    updated: 2026-10-02
   - id: T-034
     title: "Remove the dead preview_image_generator.rb Jekyll plugin and its test surface"
     status: done
