@@ -57,6 +57,33 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 - **The article hero no longer lazy-loads its LCP image or shoves the article down when it arrives** ([#485](https://github.com/bamr87/zer0-mistakes/issues/485)). `figure.featured-hero` inherited `components/preview-image.html`'s `loading="lazy"` default and had no reserved box. It now passes `loading="eager" fetchpriority="high" decoding="async"`, and its box is pinned by `.featured-hero img { aspect-ratio: 3 / 2 }`. The box is set in CSS rather than with `width`/`height` attributes, because preview assets vary in shape and `object-fit: cover` crops a portrait instead of stretching it. `preview-image.html` gained optional `fetchpriority`/`decoding` parameters that are emitted only when passed, so every other consumer renders byte-identically (evidence: [`test/visual/evidence/hero-lcp/`](test/visual/evidence/hero-lcp/README.md) — hero loading lazy → eager + fetchpriority=high; content shift when the hero lands 476px → 0px across 2 widths × landscape/portrait).
 ### Fixed
 
+- **The Site Builder no longer jumps the first time it saves a draft.**
+  `showDraftChip()` cleared the "Draft saved" chip's `hidden` attribute, and the
+  2s timer that follows only removes `is-visible` — an opacity class — so the
+  first debounced save moved the chip from `display: none` into layout *for
+  good*. Its box is 26px against the 19px "Start over" button beside it, so
+  `.wizard-header` grew and took `#wizardTabContent` and every Back/Next row
+  below it down with it: 7px where the header's right-hand block had already
+  wrapped, a whole wrapped line where those 7px were what tipped it over. The
+  chip now holds its box from first paint and is hidden with `visibility`,
+  which is what `_setup-wizard.scss` said it did all along ("Kept in the layout
+  (no display toggling) so its appearance never shifts the header") and still
+  keeps it out of the accessibility tree when it has nothing to say. This is
+  what failed the `@critical` stable-height spec on every push to `main`
+  (`2029, 2036, 2036, …`), and with it the retry that spec's failure forced
+  ([bamr87/bamr87#265](https://github.com/bamr87/bamr87/issues/265)) (evidence:
+  [`test/visual/evidence/agent-issue-265/`](test/visual/evidence/agent-issue-265/README.md)
+  — first draft save moved the wizard 42px on the base branch, 0px here).
+
+### Changed
+
+- The stable-height spec now walks Connect **first and last** and records
+  `#wizardTabContent`'s document-y **top** beside each Back/Next offset. The
+  contract itself (`spread ≤ 1`) is unchanged; what is new is that a shift
+  *above* the panes now fails as a shift above the panes instead of looking
+  like one step with bad CSS. The companion `heights` assertion keeps a comment
+  saying it is step-invariant by construction, so it is never again read as
+  evidence about anything above the container.
 - **Exactly one `main` landmark again on post, notebook and note pages.**
   `_layouts/{article,notebook,note}.html` each rendered
   `<article id="main" role="main">` *inside* root.html's
