@@ -20,20 +20,8 @@
 
 // MOVED → _sass/layouts/_navbar-extras.scss (token-aware FAB stacking)
 // MOVED → _sass/components/_cookie-banner.scss (token-aware, dark-mode-safe)
-// Retained shim: keep stacked-button responsive sizing inside the banner
-// because it is a banner-internal concern, not a banner-shell concern.
-.cookie-consent-banner {
-    @media (max-width: 768px) {
-        .btn {
-            width: 100%;
-            margin-bottom: 0.5rem;
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
-}
+// The banner's internal layout (formerly a full-width stacked-button shim
+// here) lives with the shell in _sass/components/_cookie-banner.scss.
 
 // Active TOC link highlighting
 .bd-toc nav a.active {

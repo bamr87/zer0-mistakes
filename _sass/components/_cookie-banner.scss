@@ -38,3 +38,51 @@
     transform: translateY(0);
   }
 }
+
+// ----------------------------------------------------------------------------
+// Compact bar layout
+// ----------------------------------------------------------------------------
+// The banner must never eat the first screen. Phones get a two-line summary
+// over ONE row of three equal buttons (the old full-width stack was 324px at
+// 400px wide); md+ is a single row, copy left and actions right. Button
+// height is left to .btn-sm and the touch-device 44px minimum in
+// components/_ui-enhancements.scss.
+.cookie-consent-banner__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.cookie-consent-banner__text {
+  line-height: 1.35;
+
+  @media (min-width: 768px) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.cookie-consent-banner__actions {
+  display: flex;
+  gap: 0.5rem;
+
+  .btn {
+    flex: 1 1 0;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    flex: 0 0 auto;
+
+    .btn {
+      flex: 0 0 auto;
+    }
+  }
+}
