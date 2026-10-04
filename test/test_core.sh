@@ -1414,6 +1414,86 @@ test_background_image_include_contract() {
     fi
 }
 
+test_preview_path_join() {
+    log_info "Testing preview paths without a leading slash resolve under assets_prefix..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the preview path-join check"
+        return 0
+    fi
+
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "liquid gem not loadable; skipping the preview path-join check"
+        return 0
+    fi
+
+    # `preview: images/previews/x.webp` (no leading slash) is used by 165
+    # it-journey content files. The includes appended it straight onto
+    # assets_prefix, producing /assetsimages/previews/x.webp -- a 404 for the
+    # hero background and og:image. Every include that joins paths must
+    # normalise first.
+    if "${ruby_run[@]}" -e '
+      require "liquid"
+      module StubFilters
+        def relative_url(input); s = input.to_s; s.start_with?("/") || s.include?("://") ? s : "/" + s; end
+        def absolute_url(input); s = input.to_s; s.include?("://") ? s : "https://example.test" + (s.start_with?("/") ? s : "/" + s); end
+      end
+      Liquid::Template.register_filter(StubFilters)
+      site = {"preview_images" => {"assets_prefix" => "/assets", "auto_prefix" => true}}
+      fail = []
+
+      cases = {
+        "images/previews/x.webp"         => "/assets/images/previews/x.webp",
+        "/images/previews/x.webp"        => "/assets/images/previews/x.webp",
+        "assets/images/previews/x.webp"  => "/assets/images/previews/x.webp",
+        "/assets/images/previews/x.webp" => "/assets/images/previews/x.webp",
+        "https://cdn.test/x.webp"        => "https://cdn.test/x.webp",
+      }
+
+      pi = Liquid::Template.parse(File.read("_includes/components/preview-image.html"))
+      bg = Liquid::Template.parse(File.read("_includes/components/background-image.html"))
+      seo = Liquid::Template.parse(File.read("_includes/content/seo.html"))
+      cases.each do |src, want|
+        out = pi.render!("site" => site, "include" => {"src" => src, "alt" => "a"})
+        fail << "preview-image #{src.inspect}: #{out[/src="[^"]*"/]}" unless out.include?(%Q{src="#{want}"})
+        out = bg.render!("site" => site, "include" => {"src" => src, "alt" => "a"})
+        fail << "background-image #{src.inspect}: #{out[/url\([^)]*\)/]}" unless out.include?("url(\u0027#{want}\u0027)")
+        want_abs = want.include?("://") ? want : "https://example.test" + want
+        out = seo.render!("site" => site, "page" => {"preview" => src})
+        fail << "seo og:image #{src.inspect}: #{out[/og:image" content="[^"]*"/]}" unless out.include?(%Q{og:image" content="#{want_abs}"})
+      end
+
+      # width/height are emitted only when passed.
+      plain = pi.render!("site" => site, "include" => {"src" => "/images/x.png"})
+      sized = pi.render!("site" => site, "include" => {"src" => "/images/x.png", "width" => "1536", "height" => "1024"})
+      fail << "width/height emitted without being passed" if plain =~ /\s(width|height)=/
+      fail << "width/height missing when passed: #{sized}" unless sized.include?(%q{width="1536"}) && sized.include?(%q{height="1024"})
+
+      if fail.empty?
+        puts "OK: preview-image, background-image and seo join preview paths safely"
+        exit 0
+      else
+        puts "::error::preview path joining is broken"
+        fail.each { |f| puts "  #{f}" }
+        exit 1
+      end
+    '
+    then
+        log_success "preview paths resolve under assets_prefix with or without a leading slash"
+        return 0
+    else
+        log_error "preview path-join check failed (see above)"
+        return 1
+    fi
+}
+
 test_attribute_whitespace_in_markup() {
     log_info "Testing every include/layout renders separated attributes (issue #465)..."
 
@@ -1798,6 +1878,7 @@ run_core_tests() {
     run_test "Core Check Meta-Specs" "test_core_check_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
+    run_test "Preview Path Join" "test_preview_path_join" "unit"
     run_test "Navbar Attribute Whitespace" "test_navbar_attribute_whitespace" "unit"
     run_test "Attribute Whitespace In Markup" "test_attribute_whitespace_in_markup" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
