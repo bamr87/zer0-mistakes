@@ -78,11 +78,15 @@
   }
 
   // Links (Bootstrap + theme)
-  a:not(.btn):not(.nav-link):not(.dropdown-item) {
+  // `.badge` is excluded so tag/category chips rendered as <a class="badge
+  // bg-*"> keep Bootstrap's badge text colour (--bs-badge-color, #fff) instead
+  // of the skin link colour. On neon that was #5e22cc on bg-primary #8338ec
+  // (1.45:1) and on bg-secondary (1.74:1).
+  a:not(.btn):not(.nav-link):not(.dropdown-item):not(.badge) {
     color: var(--bs-link-color);
   }
 
-  a:not(.btn):hover {
+  a:not(.btn):not(.badge):hover {
     color: var(--bs-link-hover-color);
   }
 
