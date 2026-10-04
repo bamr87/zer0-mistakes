@@ -46,7 +46,16 @@ name: Visual evidence autogen
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+    # No `labeled`. Adding a label can only ever SUPPRESS this lane (the two
+    # opt-out labels below); it can never create work for it — so a `labeled`
+    # event has nothing to run. It did, however, start a runner per label and
+    # let the concurrency group cancel whatever was already rendering: PR #478
+    # was opened at 09:05:09Z and given five labels at 09:05:10Z, which fired
+    # six runs of which five died `cancelled`. `unlabeled` stays, because
+    # REMOVING `skip-evidence` / `no-visual-change` is the one label change
+    # that legitimately re-enables a run (the job `if:` below narrows it to
+    # exactly those two).
+    types: [opened, synchronize, reopened, ready_for_review, unlabeled]
 
 permissions:
   contents: read
@@ -65,7 +74,10 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.VISUAL_EVIDENCE_AUTOGEN_ENABLED != 'false' &&
       !contains(github.event.pull_request.labels.*.name, 'skip-evidence') &&
-      !contains(github.event.pull_request.labels.*.name, 'no-visual-change')
+      !contains(github.event.pull_request.labels.*.name, 'no-visual-change') &&
+      (github.event.action != 'unlabeled' ||
+       contains(fromJSON('["skip-evidence", "no-visual-change"]'),
+                github.event.label.name))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
