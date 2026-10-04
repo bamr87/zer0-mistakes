@@ -24,12 +24,12 @@
  *   first one comes within LAZY_MARGIN of the viewport (IntersectionObserver).
  *   A `mermaid: true` page with no fences never downloads it, and a diagram
  *   far below the fold no longer costs the first paint. Once loaded, every
- *   figure renders. The bundle URL comes from #mermaidConfig.src (set from
- *   site.mermaid.src). If a consumer still loads mermaid.min.js itself, the
- *   existing global is used and nothing is injected.
+ *   figure renders. The bundle URL comes from window.zer0MermaidSrc (set by
+ *   the include from site.mermaid.src). If a consumer still loads
+ *   mermaid.min.js itself, the existing global is used and nothing is injected.
  *
  * Reads one JSON block injected by the include:
- *   #mermaidConfig — src, securityLevel, toolbar/fullscreen/download flags, labels
+ *   #mermaidConfig — securityLevel, toolbar/fullscreen/download flags, labels
  *
  * Theming
  *   No colour is hard-coded. The palette is derived from the live design
@@ -111,12 +111,26 @@
   // normal pace finds it rendered.
   var LAZY_MARGIN = "400px 0px";
 
-  // Bundle URL: the include passes site.mermaid.src (default
-  // /assets/vendor/mermaid/mermaid.min.js) through relative_url. Fallback for
-  // an overridden include without `src`: the vendored path next to this file.
+  // Bundle URL: the include sets window.zer0MermaidSrc from site.mermaid.src
+  // (default /assets/vendor/mermaid/mermaid.min.js) through relative_url. It
+  // is a script global, not DOM text, because it ends up in script.src.
+  // Fallback for an overridden include that doesn't set it: the vendored path
+  // next to this file. Only http(s) URLs are ever injected.
   var SELF_SRC = (document.currentScript && document.currentScript.src) || "";
-  var MERMAID_SRC = CONFIG.src ||
-    (SELF_SRC ? SELF_SRC.replace(/js\/mermaid-diagrams\.js(\?.*)?$/, "vendor/mermaid/mermaid.min.js") : "");
+  var MERMAID_SRC = safeScriptUrl(
+    (typeof window.zer0MermaidSrc === "string" && window.zer0MermaidSrc) ||
+    (SELF_SRC ? SELF_SRC.replace(/js\/mermaid-diagrams\.js(\?.*)?$/, "vendor/mermaid/mermaid.min.js") : "")
+  );
+
+  function safeScriptUrl(raw) {
+    if (!raw) return "";
+    try {
+      var u = new URL(raw, document.baseURI);
+      return (u.protocol === "https:" || u.protocol === "http:") ? u.href : "";
+    } catch (e) {
+      return "";
+    }
+  }
 
   var ZOOM_MIN = 0.5;
   var ZOOM_MAX = 4;

@@ -195,7 +195,7 @@ mermaid:
 
 | Key | Default | Notes |
 |-----|---------|-------|
-| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. It is lazy-loaded: requested only when the page has a diagram and the first one comes within 400px of the viewport. Refresh it with `npm run vendor:mermaid` (inside the container: `docker-compose exec jekyll npm run vendor:mermaid`). To refresh every vendored asset at once (Bootstrap, icons, Mermaid), run `./scripts/vendor-install.sh`. |
+| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle (handed to the loader as `window.zer0MermaidSrc`). It is lazy-loaded: requested only when the page has a diagram and the first one comes within 400px of the viewport. Refresh it with `npm run vendor:mermaid` (inside the container: `docker-compose exec jekyll npm run vendor:mermaid`). To refresh every vendored asset at once (Bootstrap, icons, Mermaid), run `./scripts/vendor-install.sh`. |
 | `security_level` | `strict` | `strict` sanitises diagram text. Use `loose` only if you need `click` callbacks or HTML in labels — it disables that sanitisation, so keep it `strict` when diagrams can come from untrusted content. |
 | `toolbar` | `true` | Set `false` to render bare diagrams with no controls. |
 | `fullscreen` | `true` | Set `false` to remove the fullscreen control. |

@@ -52,7 +52,6 @@
 {% comment %} Diagram configuration consumed by assets/js/mermaid-diagrams.js {% endcomment %}
 <script id="mermaidConfig" type="application/json">
 {
-  "src": {{ mm_src | relative_url | jsonify }},
   "securityLevel": {{ mm.security_level | default: "strict" | jsonify }},
   "toolbar": {{ mm_toolbar | jsonify }},
   "fullscreen": {{ mm_fullscreen | jsonify }},
@@ -76,4 +75,8 @@
   }
 }
 </script>
+{% comment %} Bundle URL for the lazy loader. Passed as a script global rather than
+   through the JSON block above: a URL read back out of DOM text and assigned
+   to script.src is a script-injection sink (CodeQL js/xss-through-dom). {% endcomment %}
+<script>window.zer0MermaidSrc = {{ mm_src | relative_url | jsonify }};</script>
 <script defer src="{{ '/assets/js/mermaid-diagrams.js' | relative_url }}"></script>
