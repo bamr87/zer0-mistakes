@@ -132,6 +132,28 @@ test.describe('Search modal — happy path', { tag: '@critical' }, () => {
     await expect(modal).toHaveClass(/show/);
   });
 
+  test('Escape after "/" returns focus to the Search button, not <body>', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    const modal = page.locator(MODAL);
+    await page.keyboard.press('/');
+    await expect(modal.locator(INPUT)).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(modal).toBeHidden();
+    // WCAG 2.4.3: closing a dialog must not drop focus to the document.
+    await expect(page.locator('[data-search-toggle]:visible').first()).toBeFocused();
+  });
+
+  test('closing a modal opened from the Search button focuses that button', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    const modal = page.locator(MODAL);
+    const toggle = page.locator('[data-search-toggle]:visible').first();
+    await toggle.click();
+    await expect(modal.locator(INPUT)).toBeFocused();
+    await modal.locator('.btn-close[data-bs-dismiss="modal"]').click();
+    await expect(modal).toBeHidden();
+    await expect(toggle).toBeFocused();
+  });
+
   test('close button dismisses the modal', async ({ page }) => {
     const modal = page.locator(MODAL);
     await page.keyboard.press('/');
