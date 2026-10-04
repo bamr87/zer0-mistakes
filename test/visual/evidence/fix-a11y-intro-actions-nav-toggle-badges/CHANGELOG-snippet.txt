@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-a11y-intro-actions-nav-toggle-badges/ -->
+  (evidence: [`test/visual/evidence/fix-a11y-intro-actions-nav-toggle-badges/`](test/visual/evidence/fix-a11y-intro-actions-nav-toggle-badges/README.md))
