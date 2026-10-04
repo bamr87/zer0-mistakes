@@ -1370,6 +1370,29 @@
         vertical-align: middle;
     }
 
+    // Phones: at the 20px .navbar-brand size a typical title loses its tail
+    // once the sidebar toggle, logo, search and labelled Menu toggle share the
+    // bar ("Lifehacker.dev" -> "Lifehacker…" on post pages at 400px, 121px
+    // available for 133px of text). Step the title down so it fits; the
+    // ellipsis above still covers titles that are longer still. The logo's
+    // Bootstrap margin-end (1rem) also stacks on the brand group's 0.5rem gap
+    // there; the gap alone is enough spacing and hands the title 16px back.
+    @media (max-width: 575.98px) {
+        #navbar .site-title-text {
+            font-size: 1rem;
+        }
+
+        #navbar .navbar-brand-group > .navbar-brand {
+            margin-right: 0;
+        }
+    }
+
+    @media (max-width: 374.98px) {
+        #navbar .site-title-text {
+            font-size: 0.9375rem;
+        }
+    }
+
     #navbar .navbar-toggler {
         width: 2.5rem;
         height: 2.5rem;

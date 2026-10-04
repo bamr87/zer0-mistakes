@@ -88,4 +88,32 @@ test.describe('Intro actions, nav toggles and badge links (a11y)', () => {
       expect(contrast(b.fg, b.bg)).toBeGreaterThanOrEqual(4.5);
     }
   });
+
+  // Polish from the same walkthrough: on phones the brand shares the bar with
+  // the sidebar toggle (docs/post pages), logo, search and the labelled Menu
+  // toggle, and lifehacker.dev's "Lifehacker.dev" was cut to "Lifehacker…"
+  // at 400px (121px available for 133px of 20px text). The title steps down
+  // to 1rem below 576px and the logo drops its doubled margin-end. Measured
+  // with that 14-character title swapped in, on a page with the sidebar
+  // toggle.
+  for (const width of [375, 400]) {
+    test(`a 14-character brand title fits beside the sidebar toggle at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await waitForJekyll(page, '/docs/');
+      const m = await page.evaluate(() => {
+        const t = document.querySelector('#navbar .site-title-text');
+        const toggle = document.querySelector('#navbar .navbar-main-start .bd-navbar-toggle');
+        t.textContent = 'Lifehacker.dev';
+        return {
+          sidebarToggle: !!toggle && toggle.getBoundingClientRect().width > 0,
+          client: t.clientWidth,
+          scroll: t.scrollWidth,
+          fontSize: parseFloat(getComputedStyle(t).fontSize),
+        };
+      });
+      expect(m.sidebarToggle, 'page renders the sidebar toggle').toBe(true);
+      expect(m.fontSize).toBeGreaterThanOrEqual(15);
+      expect(m.scroll, 'brand title is not truncated').toBeLessThanOrEqual(m.client);
+    });
+  }
 });
