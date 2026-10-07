@@ -23,7 +23,7 @@ The AI Preview Image Generator automatically creates eye-catching banner images 
 ### Key Features
 
 - 🧠 **Claude as art director & editor** - analyzes each article into a vivid, subject-specific image brief, then vision-reviews the render against the article (Claude Code OAuth token, Anthropic API key, or a logged-in `claude` CLI)
-- 🎨 **Renderer framework** - `openai` (gpt-image-2 / DALL-E, default), `xai` (grok-2-image), `stability`, `gemini`, and a no-network `local` template engine
+- 🎨 **Renderer framework** - `openai` (gpt-image-2 / DALL-E, default), `xai` (grok-imagine-image-2.0), `stability`, `gemini`, and a no-network `local` template engine
 - 🔧 **Highly Configurable** - Customize renderer, style, size, quality via `_config.yml`
 - 🎮 **Retro Pixel Art Defaults** - Beautiful 8-bit aesthetic out of the box
 - 👤 **Per-author art styles** - `_data/authors.yml` `preview:` blocks override style/model per persona
@@ -103,7 +103,7 @@ preview_images:
   provider: openai
 
   # Renderer model — empty uses the provider default (gpt-image-2,
-  # grok-2-image, gemini-2.5-flash-image, ...). A model from another vendor
+  # grok-imagine-image-2.0, gemini-2.5-flash-image, ...). A model from another vendor
   # family is ignored with a warning rather than sent to the wrong API.
   model: gpt-image-2
   quality: auto                      # auto for GPT Image; standard/hd for DALL-E 3
@@ -312,7 +312,7 @@ preview_images:
 
 ### xAI (Grok)
 
-- `grok-2-image` via the OpenAI-compatible xAI API
+- `grok-imagine-image-2.0` via the OpenAI-compatible xAI API
 - Requires `XAI_API_KEY`
 
 ```yaml

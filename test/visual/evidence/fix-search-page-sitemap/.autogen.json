@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "fix-search-page-sitemap",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "5ed04b8b864d8731eb1fdf581d2f1e877bb4907d",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-04T15:51:02+00:00"
+}

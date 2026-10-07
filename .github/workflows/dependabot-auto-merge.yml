@@ -9,6 +9,10 @@
 # Scope: patch/minor bumps only. Major version bumps are more likely to carry
 # breaking changes, so they're left unlabelled for human review — remove the
 # `if:` condition below if that extra caution isn't wanted.
+#
+# GitHub Actions bumps are never labelled: they edit .github/workflows/, which
+# auto-merge.yml's guard always rejects, so labelling them only turned that
+# job red on every Dependabot rebase.
 
 name: Dependabot auto-merge
 
@@ -38,7 +42,9 @@ jobs:
       # Same class of gotcha as the `gh pr diff`/`gh pr merge` notes in
       # auto-merge.yml.
       - name: Label patch/minor bumps for auto-merge
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: >-
+          steps.metadata.outputs.update-type != 'version-update:semver-major' &&
+          steps.metadata.outputs.package-ecosystem != 'github_actions'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}

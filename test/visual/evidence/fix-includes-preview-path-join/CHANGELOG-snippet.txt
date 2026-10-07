@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-includes-preview-path-join/ -->
+  (evidence: [`test/visual/evidence/fix-includes-preview-path-join/`](test/visual/evidence/fix-includes-preview-path-join/README.md))

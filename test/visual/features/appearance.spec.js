@@ -21,8 +21,13 @@
  *     complementary to the Skins block above (that one drives skin changes
  *     via the zer0Bg.setSkin() JS API directly; this one exercises the
  *     rendered UI).
+ *   - Skin palette vs site theme_color (T-048, #459): a palette skin beats
+ *     theme_color for primary/link/accent, theme_color keeps every other
+ *     token, and the Appearance-panel override beats both.
  *   - Theme preview page: gallery and controls render.
  */
+const fs = require('fs');
+const path = require('path');
 const { test, expect } = require('@playwright/test');
 const {
   SKINS,
@@ -373,6 +378,115 @@ test.describe('Theme customizer UI', () => {
     await expect(card).toHaveClass(/border-primary/);
     await expect(page.locator('#theme-yaml-output')).toContainText(`theme_skin: "${targetSkin}"`);
   });
+});
+
+// ---------------------------------------------------------------------------
+// Skin palette vs site theme_color (T-048, #459)
+// The active skin beats `_config.yml` theme_color for the tokens a palette
+// skin sets (primary, link, accent). theme_color still applies to every other
+// token, and to all of them under the skins that have no palette (dark,
+// contrast). The Appearance panel's inline style beats both.
+// ---------------------------------------------------------------------------
+const REPO_ROOT = path.resolve(__dirname, '../../..');
+const SKIN_OWNED = ['--zer0-color-primary', '--zer0-color-link', '--zer0-color-accent'];
+
+/** { skin: { brand, accent } } parsed from the zer0-skin-palette includes. */
+function skinPalettes() {
+  const scss = fs.readFileSync(path.join(REPO_ROOT, '_sass/theme/_skins.scss'), 'utf8');
+  const re = /\[data-theme-skin="([a-z-]+)"\]\s*\{\s*@include zer0-skin-palette\(\s*(#[0-9a-fA-F]{3,8}),\s*"[^"]*",\s*(#[0-9a-fA-F]{3,8})/g;
+  const out = {};
+  for (const m of scss.matchAll(re)) out[m[1]] = { brand: m[2].toLowerCase(), accent: m[3].toLowerCase() };
+  return out;
+}
+
+const readTokens = (page, names) =>
+  page.evaluate((ns) => {
+    const s = getComputedStyle(document.documentElement);
+    return Object.fromEntries(ns.map((n) => [n, s.getPropertyValue(n).trim().toLowerCase()]));
+  }, names);
+
+/** The --zer0-color-* values _config.yml theme_color emits into #zer0-tokens-inline. */
+const readConfigTokens = (page) =>
+  page.evaluate(() => {
+    const el = document.getElementById('zer0-tokens-inline');
+    const out = {};
+    if (!el) return out;
+    for (const m of el.textContent.matchAll(/(--zer0-color-[a-z-]+):\s*([^;]+);/g)) out[m[1]] = m[2].trim().toLowerCase();
+    return out;
+  });
+
+const hexToRgb = (hex) => {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6);
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)).join(',');
+};
+
+test.describe('Skin palette vs site theme_color', { tag: '@critical' }, () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, '/');
+    await clearSkinStorage(page);
+    await page.evaluate(() => localStorage.removeItem('zer0-appearance'));
+  });
+
+  // Two skins, so the assertion cannot pass on a coincidental colour match.
+  for (const skin of ['neon', 'air']) {
+    test(`setSkin('${skin}') moves the theme layer with Bootstrap`, async ({ page }) => {
+      const palette = skinPalettes()[skin];
+      expect(palette, `${skin} palette parsed from _skins.scss`).toBeTruthy();
+
+      await setSkin(page, skin);
+      const t = await readTokens(page, [
+        '--bs-primary', '--bs-link-color', '--bs-link-hover-color',
+        '--zer0-color-primary', '--zer0-color-primary-rgb', '--zer0-color-accent',
+        '--zer0-color-link', '--zer0-color-link-hover',
+      ]);
+
+      expect(t['--zer0-color-primary']).toBe(t['--bs-primary']);
+      expect(t['--zer0-color-primary']).toBe(palette.brand);
+      expect(t['--zer0-color-accent']).toBe(palette.accent);
+      expect(t['--zer0-color-link']).toBe(t['--bs-link-color']);
+      expect(t['--zer0-color-link-hover']).toBe(t['--bs-link-hover-color']);
+      // primary and primary-rgb must describe the same colour.
+      expect(t['--zer0-color-primary-rgb'].replace(/\s+/g, '')).toBe(hexToRgb(t['--zer0-color-primary']));
+    });
+  }
+
+  test('theme_color still owns the tokens no skin sets', async ({ page }) => {
+    const cfg = await readConfigTokens(page);
+    const unowned = Object.keys(cfg).filter((k) => !SKIN_OWNED.includes(k));
+    if (unowned.length === 0) test.skip(true, 'site sets no theme_color keys outside primary/link/accent');
+
+    await setSkin(page, 'neon');
+    const t = await readTokens(page, unowned);
+    for (const k of unowned) expect(t[k], k).toBe(cfg[k]);
+  });
+
+  test('theme_color applies to primary/link/accent under a skin with no palette', async ({ page }) => {
+    const cfg = await readConfigTokens(page);
+    const owned = SKIN_OWNED.filter((k) => k in cfg);
+    if (owned.length === 0) test.skip(true, 'site sets no theme_color main/blue/purple');
+
+    await setSkin(page, 'dark');
+    const t = await readTokens(page, owned);
+    for (const k of owned) expect(t[k], k).toBe(cfg[k]);
+  });
+
+  test('the Appearance-panel override beats both the skin and theme_color', async ({ page }) => {
+    await page.evaluate(() => localStorage.setItem('zer0-appearance', JSON.stringify({ primary: '#ff5722' })));
+    await page.reload({ waitUntil: 'load' });
+    await setSkin(page, 'neon');
+    const t = await readTokens(page, ['--zer0-color-primary']);
+    expect(t['--zer0-color-primary']).toBe('#ff5722');
+    await page.evaluate(() => localStorage.removeItem('zer0-appearance'));
+  });
+});
+
+test('tokens-inline palette_skins matches every palette skin in _skins.scss', () => {
+  const include = fs.readFileSync(path.join(REPO_ROOT, '_includes/core/tokens-inline.html'), 'utf8');
+  const m = include.match(/assign palette_skins = "([^"]*)"/);
+  expect(m, 'palette_skins assign in tokens-inline.html').toBeTruthy();
+  expect(m[1].split(',').sort()).toEqual(Object.keys(skinPalettes()).sort());
 });
 
 test.describe('Theme preview page', () => {
