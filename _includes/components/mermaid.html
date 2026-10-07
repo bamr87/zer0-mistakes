@@ -4,7 +4,7 @@
   Path:        _includes/components/mermaid.html
   Purpose:     Load Mermaid and the theme's diagram-figure behaviour on pages
                that opt in with `mermaid: true` (gated in core/head.html).
-               Emits a config block and two deferred scripts; renders no
+               Emits a config block and one deferred script; renders no
                markup itself — every ```mermaid fence (and legacy
                <div class="mermaid">) becomes an accessible <figure> with a
                toolbar (zoom, fullscreen, copy source, download SVG), a
@@ -22,11 +22,15 @@
   Depends on:  assets/vendor/mermaid/mermaid.min.js (vendored, no CDN —
                GitHub Pages-safe), assets/js/mermaid-diagrams.js,
                _sass/components/_mermaid.scss
-  Notes:       Both scripts are `defer`: Mermaid is a 3.3 MB bundle and must
-               never block parsing (it used to load synchronously in <head>).
-               Order matters — the vendor bundle first, then the behaviour,
-               which converts fences at execution time, before code-copy.js's
-               DOMContentLoaded pass decorates <pre> blocks. Diagram colours
+  Notes:       The Mermaid bundle (~1 MB) is NOT emitted as a <script> any
+               more. mermaid-diagrams.js (deferred) converts fences into
+               figures at execution time, before code-copy.js's
+               DOMContentLoaded pass decorates <pre> blocks, and injects the
+               bundle from `src` below only when the page has a diagram and
+               the first one nears the viewport (IntersectionObserver). A
+               `mermaid: true` page without fences never downloads it. It used
+               to be a parse-time `defer` script on every opted-in page, and
+               before that a synchronous one in <head>. Diagram colours
                are not configured here: the script derives them from the live
                --zer0-*/--bs-* tokens so light/dark/wizard modes and skins
                work without per-mode overrides.
@@ -71,5 +75,8 @@
   }
 }
 </script>
-<script defer src="{{ mm_src | relative_url }}"></script>
+{% comment %} Bundle URL for the lazy loader. Passed as a script global rather than
+   through the JSON block above: a URL read back out of DOM text and assigned
+   to script.src is a script-injection sink (CodeQL js/xss-through-dom). {% endcomment %}
+<script>window.zer0MermaidSrc = {{ mm_src | relative_url | jsonify }};</script>
 <script defer src="{{ '/assets/js/mermaid-diagrams.js' | relative_url }}"></script>

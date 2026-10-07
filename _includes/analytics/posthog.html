@@ -100,8 +100,24 @@ Privacy: Respects Do Not Track and provides opt-out mechanisms
       (window.posthogConfig.respectGpc && window.navigator.globalPrivacyControl === true)) {
     console.log('PostHog: respecting browser privacy signal (DNT/GPC)');
   } else {
+    {% comment %} Deferred loading: the stub below is installed immediately, so
+       posthog.capture()/opt_in_capturing() calls (e.g. from the cookie
+       banner) queue as before, but the ~130 KB library (array.js, then
+       config.js/surveys.js) is only fetched after the window `load` event
+       and the next idle period. It used to be inserted while the page was
+       still parsing and competed with first paint on mobile. The snippet is
+       PostHog's official one; the only change is that its insertBefore()
+       runs through __phInject. {% endcomment %}
+    window.__phInject = function (insert) {
+      var run = function () {
+        if (window.requestIdleCallback) window.requestIdleCallback(insert, { timeout: 3000 });
+        else setTimeout(insert, 1);
+      };
+      if (document.readyState === 'complete') run();
+      else window.addEventListener('load', run, { once: true });
+    };
     {% comment %} PostHog Loading Script {% endcomment %}
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Rr Mr fi Or Ar ci Tr Cr capture Mi calculateEventProperties Lr register register_once register_for_session unregister unregister_for_session Hr getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Ur jr createPersonProfile zr kr Br opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Dr debug M Nr getPageViewId captureTraceFeedback captureTraceMetric $r".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",window.__phInject(function(){(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r)});var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Rr Mr fi Or Ar ci Tr Cr capture Mi calculateEventProperties Lr register register_once register_for_session unregister unregister_for_session Hr getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Ur jr createPersonProfile zr kr Br opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Dr debug M Nr getPageViewId captureTraceFeedback captureTraceMetric $r".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
     {% comment %} Initialize PostHog with configuration {% endcomment %}
     posthog.init(window.posthogConfig.apiKey, {
@@ -129,14 +145,17 @@ Privacy: Respects Do Not Track and provides opt-out mechanisms
           posthog.register({ '$geoip_disable': true });
         }
 
-        {% comment %} Track Jekyll-specific page properties {% endcomment %}
+        {% comment %} Track Jekyll-specific page properties. Free-text values go
+           through `jsonify`: they used to be pasted between single quotes, so
+           an apostrophe in a title or description ("you're") was a
+           SyntaxError that stopped PostHog loading at all. {% endcomment %}
         posthog.register({
-          'site_title': '{{ site.title }}',
-          'site_description': '{{ site.description | strip_newlines | strip }}',
+          'site_title': {{ site.title | jsonify }},
+          'site_description': {{ site.description | strip_newlines | strip | jsonify }},
           'jekyll_version': '{{ jekyll.version }}',
-          'theme': '{{ site.remote_theme | default: site.theme }}',
-          'page_layout': '{{ page.layout }}',
-          'page_collection': '{{ page.collection }}',
+          'theme': {{ site.remote_theme | default: site.theme | jsonify }},
+          'page_layout': {{ page.layout | jsonify }},
+          'page_collection': {{ page.collection | jsonify }},
           {% if page.categories %}
           'page_categories': {{ page.categories | jsonify }},
           {% endif %}
@@ -144,8 +163,8 @@ Privacy: Respects Do Not Track and provides opt-out mechanisms
           'page_tags': {{ page.tags | jsonify }},
           {% endif %}
           'page_url': window.location.pathname,
-          'page_title': '{{ page.title | strip_newlines | strip }}',
-          'page_author': '{{ page.author | default: site.author.name }}',
+          'page_title': {{ page.title | strip_newlines | strip | jsonify }},
+          'page_author': {{ page.author | default: site.author.name | jsonify }},
           {% if page.date %}
           'page_date': '{{ page.date | date: "%Y-%m-%d" }}',
           {% endif %}

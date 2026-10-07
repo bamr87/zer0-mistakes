@@ -12,10 +12,21 @@
  *          that keeps the diagram source on the page instead of losing it.
  *
  * Loaded by _includes/components/mermaid.html — only on pages that opt in
- * with `mermaid: true` — after the vendored mermaid.min.js. Both scripts
- * are `defer`, so this runs once the DOM is parsed but BEFORE
- * DOMContentLoaded: fences are converted before code-copy.js decorates
- * <pre> blocks, so a diagram never gets a copy button and a line gutter.
+ * with `mermaid: true`. The script is `defer`, so it runs once the DOM is
+ * parsed but BEFORE DOMContentLoaded: fences are converted before
+ * code-copy.js decorates <pre> blocks, so a diagram never gets a copy button
+ * and a line gutter.
+ *
+ * Lazy loading
+ *   The Mermaid bundle (~1 MB minified) is NOT loaded by the include. This
+ *   file converts the fences into figures (skeleton + toolbar) straight away,
+ *   then injects the bundle only when the page really has a diagram AND the
+ *   first one comes within LAZY_MARGIN of the viewport (IntersectionObserver).
+ *   A `mermaid: true` page with no fences never downloads it, and a diagram
+ *   far below the fold no longer costs the first paint. Once loaded, every
+ *   figure renders. The bundle URL comes from window.zer0MermaidSrc (set by
+ *   the include from site.mermaid.src). If a consumer still loads
+ *   mermaid.min.js itself, the existing global is used and nothing is injected.
  *
  * Reads one JSON block injected by the include:
  *   #mermaidConfig — securityLevel, toolbar/fullscreen/download flags, labels
@@ -36,6 +47,7 @@
  *   mermaid.render(), so a theme switch re-renders from the original text.
  *
  * Public API (also what the Playwright spec drives):
+ *   window.zer0Mermaid.load()            -> Promise<mermaid>   load the bundle now (no-op once loaded)
  *   window.zer0Mermaid.renderAll(root?)  -> Promise<figure[]>  convert + render fences under root
  *   window.zer0Mermaid.render(el, src?)  -> Promise<figure>    render one element (or replace it with src)
  *   window.zer0Mermaid.refresh()         -> Promise<figure[]>  re-derive the palette, re-render every figure
@@ -93,6 +105,32 @@
   var SECURITY_LEVEL = CONFIG.securityLevel || "strict";
   var SUPPORTS_DIALOG = typeof HTMLDialogElement !== "undefined" &&
     typeof HTMLDialogElement.prototype.showModal === "function";
+
+  // How far below (or above) the viewport a diagram may be before the
+  // Mermaid bundle is fetched — enough lead time that a reader scrolling at a
+  // normal pace finds it rendered.
+  var LAZY_MARGIN = "400px 0px";
+
+  // Bundle URL: the include sets window.zer0MermaidSrc from site.mermaid.src
+  // (default /assets/vendor/mermaid/mermaid.min.js) through relative_url. It
+  // is a script global, not DOM text, because it ends up in script.src.
+  // Fallback for an overridden include that doesn't set it: the vendored path
+  // next to this file. Only http(s) URLs are ever injected.
+  var SELF_SRC = (document.currentScript && document.currentScript.src) || "";
+  var MERMAID_SRC = safeScriptUrl(
+    (typeof window.zer0MermaidSrc === "string" && window.zer0MermaidSrc) ||
+    (SELF_SRC ? SELF_SRC.replace(/js\/mermaid-diagrams\.js(\?.*)?$/, "vendor/mermaid/mermaid.min.js") : "")
+  );
+
+  function safeScriptUrl(raw) {
+    if (!raw) return "";
+    try {
+      var u = new URL(raw, document.baseURI);
+      return (u.protocol === "https:" || u.protocol === "http:") ? u.href : "";
+    } catch (e) {
+      return "";
+    }
+  }
 
   var ZOOM_MIN = 0.5;
   var ZOOM_MAX = 4;
@@ -1186,7 +1224,11 @@
     refreshTimer = setTimeout(function () { refresh(false); }, 80);
   }
 
+  var themeWatched = false;
+
   function watchTheme() {
+    if (themeWatched) return;
+    themeWatched = true;
     if (typeof MutationObserver === "function") {
       var observer = new MutationObserver(scheduleRefresh);
       // `style` catches the Appearance panel writing token overrides onto
@@ -1205,18 +1247,76 @@
   }
 
   // ---------------------------------------------------------------------
+  // Lazy bundle loading
+  // ---------------------------------------------------------------------
+  var mermaidPromise = null;
+
+  function mermaidReady() {
+    return !!(window.mermaid && typeof window.mermaid.render === "function");
+  }
+
+  function markUnavailable() {
+    // Vendor bundle missing: leave the fences as readable code blocks.
+    document.documentElement.classList.add("zer0-diagram-unavailable");
+    if (window.console && console.warn) console.warn("[zer0-mermaid] mermaid.min.js did not load; diagrams left as source.");
+  }
+
+  // Inject the Mermaid bundle once; every caller shares the same promise.
+  function loadMermaid() {
+    if (mermaidReady()) return Promise.resolve(window.mermaid);
+    if (mermaidPromise) return mermaidPromise;
+    mermaidPromise = new Promise(function (resolve, reject) {
+      if (!MERMAID_SRC) { reject(new Error("no Mermaid bundle URL")); return; }
+      var script = document.createElement("script");
+      script.src = MERMAID_SRC;
+      script.async = true;
+      script.setAttribute("data-zer0-mermaid", "");
+      script.onload = function () {
+        if (mermaidReady()) resolve(window.mermaid);
+        else reject(new Error("mermaid global missing after load"));
+      };
+      script.onerror = function () { reject(new Error("failed to load " + MERMAID_SRC)); };
+      document.head.appendChild(script);
+    });
+    mermaidPromise.catch(function () { mermaidPromise = null; });
+    return mermaidPromise;
+  }
+
+  // Resolve when the first of `figures` is within LAZY_MARGIN of the viewport.
+  function whenNearViewport(figures) {
+    return new Promise(function (resolve) {
+      if (typeof window.IntersectionObserver !== "function") { resolve(); return; }
+      var io = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) {
+          io.disconnect();
+          resolve();
+        }
+      }, { rootMargin: LAZY_MARGIN });
+      figures.forEach(function (f) { io.observe(f); });
+    });
+  }
+
+  // ---------------------------------------------------------------------
   // Public API + boot
   // ---------------------------------------------------------------------
   function renderAll(root) {
-    if (!window.mermaid) return Promise.resolve([]);
-    initMermaid(false);
-    var figures = collect(root || document);
-    return renderMany(figures);
+    return loadMermaid().then(function () {
+      initMermaid(false);
+      watchTheme();
+      var figures = collect(root || document);
+      return renderMany(figures);
+    }, function () { return []; });
   }
 
   function render(target, source) {
-    if (!window.mermaid) return Promise.resolve(null);
+    return loadMermaid().then(function () {
+      return renderOne(target, source);
+    }, function () { return null; });
+  }
+
+  function renderOne(target, source) {
     initMermaid(false);
+    watchTheme();
     var figure;
     if (target && registry.has(target)) {
       figure = target;
@@ -1238,9 +1338,10 @@
   }
 
   window.zer0Mermaid = {
-    version: "3.0.0",
+    version: "3.1.0",
     config: CONFIG,
     labels: LABELS,
+    load: loadMermaid,
     renderAll: renderAll,
     render: render,
     refresh: function () { return refresh(true); },
@@ -1253,14 +1354,18 @@
   };
 
   function boot() {
-    if (!window.mermaid || typeof window.mermaid.render !== "function") {
-      // Vendor bundle missing: leave the fences as readable code blocks.
-      document.documentElement.classList.add("zer0-diagram-unavailable");
-      if (window.console && console.warn) console.warn("[zer0-mermaid] mermaid.min.js did not load; diagrams left as source.");
-      return;
-    }
-    renderAll(document);
-    watchTheme();
+    // Fences become figures (skeleton + toolbar) now; Mermaid is not needed
+    // for that. No diagram on the page → the bundle is never requested.
+    var figures = collect(document);
+    if (!figures.length) return;
+    var start = mermaidReady() ? Promise.resolve() : whenNearViewport(figures);
+    start
+      .then(loadMermaid)
+      .then(function () {
+        initMermaid(false);
+        watchTheme();
+        return renderMany(allFigures.filter(function (f) { return f.isConnected; }));
+      }, markUnavailable);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

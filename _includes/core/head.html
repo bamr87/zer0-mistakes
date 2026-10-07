@@ -19,7 +19,7 @@
   - seo.html: SEO meta tags and Open Graph data
   - google-analytics.html: Google Analytics tracking
   - google-tag-manager-head.html: GTM head section
-  - posthog.html: PostHog product analytics (opt-in via site.posthog.enabled)
+  - (posthog.html is included from _layouts/root.html at the end of <body>, not here)
   
   Performance Notes:
   - Scripts loaded in head for immediate availability
@@ -160,9 +160,10 @@ window.MathJax = {
 {% comment %} Only load in production AND when an ID is configured; the include also guards against dev hostnames {% endcomment %}
 {% if jekyll.environment == "production" and site.google_analytics %}{% include analytics/google-analytics.html %}{% endif %}
 
-{% comment %} PostHog analytics - Configured via the `posthog:` block in _config.yml {% endcomment %}
-{% comment %} Only load in production AND when explicitly enabled; the include itself also respects Do Not Track {% endcomment %}
-{% if jekyll.environment == "production" and site.posthog.enabled %}{% include analytics/posthog.html %}{% endif %}
+{% comment %} PostHog analytics is NOT included here. _layouts/root.html already
+   includes analytics/posthog.html at the end of <body> (since the include was
+   added), so this second copy, added in #317, emitted the snippet twice and
+   called posthog.init() twice on every production page. {% endcomment %}
 
 
 {% comment %} ================================ {% endcomment %}
