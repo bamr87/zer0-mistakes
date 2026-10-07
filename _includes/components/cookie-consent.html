@@ -50,36 +50,36 @@ Usage: Include in root.html layout
 Configuration: Uses site.posthog settings from _config.yml
 {% endcomment %}
 
-<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 py-3 px-3 shadow-lg" hidden>
-  <div class="container-xl px-3 px-md-4">
-    <div class="row align-items-center g-2">
-      <div class="col-12 col-lg-8">
-        <p class="h6 fw-semibold mb-2 mb-lg-0">
-          <i class="bi bi-shield-check me-2" aria-hidden="true"></i>
-          We value your privacy
-        </p>
-        <p class="mb-2 mb-lg-0 small text-body-secondary">
-          This website uses cookies and similar technologies to enhance your browsing experience, analyze traffic, and provide personalized content.
-          {% assign cookie_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
-          {% if site.privacy_policy_url or cookie_page_urls contains "|/privacy-policy/|" or cookie_page_urls contains "|/privacy-policy|" %}
-            <a href="{{ site.privacy_policy_url | default: '/privacy-policy/' | relative_url }}" class="link-body-emphasis text-decoration-underline">Learn more in our Privacy Policy</a>.
-          {% endif %}
-        </p>
-      </div>
-      <div class="col-12 col-lg-4">
-        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
-            <i class="bi bi-gear me-1"></i>
-            Manage Cookies
-          </button>
-          <button type="button" class="btn btn-sm btn-secondary" id="rejectAllCookies">
-            Reject All
-          </button>
-          <button type="button" class="btn btn-sm btn-primary" id="acceptAllCookies">
-            Accept All
-          </button>
-        </div>
-      </div>
+{% comment %}
+  Compact bottom bar. One row from md up (copy left, actions right); on phones
+  a two-line summary over a single row of three equal buttons. The banner used
+  to stack full-width buttons under a heading and a long sentence: 324px tall
+  at 400px wide (most of the first screen) and 94px on desktop, covering hero
+  copy. The per-category detail lives in the Manage modal.
+{% endcomment %}
+<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 shadow-lg" role="region" aria-label="Cookie consent" hidden>
+  <div class="container-xl cookie-consent-banner__inner">
+    <p class="cookie-consent-banner__text small mb-0">
+      <i class="bi bi-shield-check me-1" aria-hidden="true"></i>
+      <strong class="fw-semibold">We value your privacy.</strong>
+      <span class="text-body-secondary">
+        We use cookies to analyze traffic and improve the site.
+        {% assign cookie_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
+        {% if site.privacy_policy_url or cookie_page_urls contains "|/privacy-policy/|" or cookie_page_urls contains "|/privacy-policy|" %}
+          <a href="{{ site.privacy_policy_url | default: '/privacy-policy/' | relative_url }}" class="link-body-emphasis text-decoration-underline">Privacy Policy</a>
+        {% endif %}
+      </span>
+    </p>
+    <div class="cookie-consent-banner__actions">
+      <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+        <i class="bi bi-gear me-1" aria-hidden="true"></i>Manage<span class="d-none d-sm-inline"> Cookies</span>
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary" id="rejectAllCookies">
+        Reject All
+      </button>
+      <button type="button" class="btn btn-sm btn-primary" id="acceptAllCookies">
+        Accept All
+      </button>
     </div>
   </div>
 </div>
