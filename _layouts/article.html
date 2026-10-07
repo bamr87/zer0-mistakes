@@ -481,7 +481,7 @@ layout: default
                   {% endif %}
                   <a href="{{ rpost.url | relative_url }}" class="text-decoration-none">
                     {% assign rpost_img = rpost.preview | default: site.teaser %}
-                    {% include components/preview-image.html src=rpost_img alt=rpost.title class="card-img-top" %}
+                    {% include components/preview-image.html src=rpost_img alt=rpost.title class="card-img-top" width="1536" height="1024" %}
                   </a>
                 </div>
                 <div class="card-body">
