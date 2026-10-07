@@ -1,0 +1,58 @@
+{
+  "slug": "agent-issue-265",
+  "generator": "test/visual/setup-wizard-draft-chip-evidence.mjs",
+  "route": "/setup/",
+  "width": 1280,
+  "base": "http://localhost:4000",
+  "before": "http://localhost:4001",
+  "before_branch": {
+    "cold": {
+      "headerHeight": 107,
+      "panesTop": 270,
+      "panesHeight": 1610,
+      "nextTop": 1844,
+      "chipDisplay": "none",
+      "chipVisibility": "visible",
+      "chipHeight": 0
+    },
+    "saved": {
+      "headerHeight": 149,
+      "panesTop": 312,
+      "panesHeight": 1610,
+      "nextTop": 1886,
+      "chipDisplay": "block",
+      "chipVisibility": "visible",
+      "chipHeight": 26
+    },
+    "shift": {
+      "header": 42,
+      "panesTop": 42,
+      "next": 42
+    }
+  },
+  "after_branch": {
+    "cold": {
+      "headerHeight": 149,
+      "panesTop": 312,
+      "panesHeight": 1610,
+      "nextTop": 1886,
+      "chipDisplay": "block",
+      "chipVisibility": "hidden",
+      "chipHeight": 26
+    },
+    "saved": {
+      "headerHeight": 149,
+      "panesTop": 312,
+      "panesHeight": 1610,
+      "nextTop": 1886,
+      "chipDisplay": "block",
+      "chipVisibility": "hidden",
+      "chipHeight": 26
+    },
+    "shift": {
+      "header": 0,
+      "panesTop": 0,
+      "next": 0
+    }
+  }
+}

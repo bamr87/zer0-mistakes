@@ -146,7 +146,7 @@
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
+                            <small class="text-muted" aria-live="polite">
                                 Showing <span id="visibleCount" class="fw-bold">0</span> of 
                                 <span id="totalCount" class="fw-bold">0</span> pages
                             </small>
@@ -225,7 +225,7 @@
                                         data-url="{{ page.url | relative_url }}">
                                         
                                         <td>
-                                            <span class="badge bg-primary rounded-pill">Pages</span>
+                                            <span class="badge text-bg-primary rounded-pill">Pages</span>
                                         </td>
                                         <td>
                                             <a href="{{ page.url | relative_url }}" 
@@ -252,7 +252,7 @@
                                                     <span class="badge bg-secondary me-1">{{ category }}</span>
                                                 {% endfor %}
                                                 {% if page.categories.size > 2 %}
-                                                    <span class="badge">+{{ page.categories.size | minus: 2 }}</span>
+                                                    <span class="badge text-body-secondary border">+{{ page.categories.size | minus: 2 }}</span>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
@@ -262,7 +262,7 @@
                                                     <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
                                                 {% endfor %}
                                                 {% if page.tags.size > 3 %}
-                                                    <span class="badge">+{{ page.tags.size | minus: 3 }}</span>
+                                                    <span class="badge text-body-secondary border">+{{ page.tags.size | minus: 3 }}</span>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
@@ -298,7 +298,7 @@
                                             data-url="{{ item.url | relative_url }}">
                                             
                                             <td>
-                                                <span class="badge bg-info rounded-pill">{{ collection.label | capitalize }}</span>
+                                                <span class="badge text-bg-info rounded-pill">{{ collection.label | capitalize }}</span>
                                             </td>
                                             <td>
                                                 <a href="{{ item.url | relative_url }}" 
@@ -325,7 +325,7 @@
                                                         <span class="badge bg-secondary me-1">{{ category }}</span>
                                                     {% endfor %}
                                                     {% if item.categories.size > 2 %}
-                                                        <span class="badge">+{{ item.categories.size | minus: 2 }}</span>
+                                                        <span class="badge text-body-secondary border">+{{ item.categories.size | minus: 2 }}</span>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
@@ -335,7 +335,7 @@
                                                         <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
                                                     {% endfor %}
                                                     {% if item.tags.size > 3 %}
-                                                        <span class="badge">+{{ item.tags.size | minus: 3 }}</span>
+                                                        <span class="badge text-body-secondary border">+{{ item.tags.size | minus: 3 }}</span>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
@@ -376,6 +376,11 @@
     </div>
 </div>
 
+{% comment %} Next page of results (both views); shown by the script only when more matches remain {% endcomment %}
+<div class="text-center mt-3 d-none" id="sitemapShowMore">
+    <button type="button" class="btn btn-outline-primary" id="sitemapShowMoreBtn">Show more</button>
+</div>
+
 {% comment %} ================================ {% endcomment %}
 {% comment %} ENHANCED SITEMAP FUNCTIONALITY {% endcomment %}
 {% comment %} ================================ {% endcomment %}
@@ -404,9 +409,11 @@ th:hover .sort-icon {
     transition: background-color 0.15s ease;
 }
 
+/* Outline tag chip: emphasis text (light #052c65 / dark #6ea8fe) instead of
+   #0d6efd, which is 3.97:1 on the light table stripe */
 .badge.bg-outline-primary {
-    color: #0d6efd;
-    border: 1px solid #0d6efd;
+    color: var(--bs-primary-text-emphasis);
+    border: 1px solid var(--bs-primary-border-subtle);
     background-color: transparent;
 }
 
@@ -466,8 +473,18 @@ th:hover .sort-icon {
 /**
  * Enhanced Sitemap Functionality
  * Features: Advanced search, sorting, filtering, statistics, and card/table views
+ *
+ * Paginated: every row is still rendered server-side (so the index works
+ * without JS and with ?q= from the search modal's "View all results"), but
+ * only PAGE_SIZE matching rows stay in the document; the rest are kept in
+ * memory and a "Show more" button appends the next page. Cards are built on
+ * the first switch to card view, one page at a time. On it-journey.dev the
+ * index (431 rows plus 431 eagerly built cards) put ~19,900 elements on
+ * /search/ before the visitor typed anything.
  */
 class SitemapManager {
+    static PAGE_SIZE = 50;
+
     constructor() {
         this.searchInput = document.getElementById('searchBar');
         this.collectionFilter = document.getElementById('collectionFilter');
@@ -483,27 +500,30 @@ class SitemapManager {
         this.cardsContainer = document.getElementById('sitemapCardsContainer');
         this.tableViewBtn = document.getElementById('tableView');
         this.cardViewBtn = document.getElementById('cardView');
-        
+        this.showMoreWrap = document.getElementById('sitemapShowMore');
+        this.showMoreBtn = document.getElementById('sitemapShowMoreBtn');
+
         this.rows = Array.from(this.tbody.querySelectorAll('tr'));
         this.visibleCount = document.getElementById('visibleCount');
         this.totalCount = document.getElementById('totalCount');
-        
+
         this.searchTimeout = null;
         this.collections = new Set();
         this.currentView = 'table';
-        
+        this.matches = this.rows;
+        this.limit = SitemapManager.PAGE_SIZE;
+        this.cards = new WeakMap(); // row -> card element, built on demand
+
         this.init();
     }
-    
+
     init() {
         this.setupCollectionFilter();
-        this.updateCounts();
         this.updateStatistics();
-        this.generateCards();
         this.bindEvents();
-        this.handleUrlParams();
+        if (!this.handleUrlParams()) this.refresh();
     }
-    
+
     setupCollectionFilter() {
         // Collect unique collections
         this.rows.forEach(row => {
@@ -512,7 +532,7 @@ class SitemapManager {
                 this.collections.add(collection);
             }
         });
-        
+
         // Populate collection filter
         Array.from(this.collections).sort().forEach(collection => {
             const option = document.createElement('option');
@@ -521,324 +541,265 @@ class SitemapManager {
             this.collectionFilter.appendChild(option);
         });
     }
-    
-    generateCards() {
-        this.cardsContainer.innerHTML = '';
-        
-        this.rows.forEach(row => {
-            const collection = row.dataset.collection;
-            const title = row.dataset.title;
-            const description = row.dataset.description || 'No description available';
-            const categories = row.dataset.categories;
-            const tags = row.dataset.tags;
-            const date = row.dataset.date;
-            const url = row.dataset.url;
-            
-            const formattedDate = date ? new Date(date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            }) : 'Unknown';
-            
-            const badgeClass = collection === 'pages' ? 'bg-primary' : 'bg-info';
-            
-            const cardHtml = `
-                <div class="col sitemap-card" 
-                     data-collection="${collection}" 
-                     data-title="${title}"
-                     data-description="${description}"
-                     data-categories="${categories}"
-                     data-tags="${tags}"
-                     data-date="${date}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge ${badgeClass} rounded-pill">${collection.charAt(0).toUpperCase() + collection.slice(1)}</span>
-                            <small class="text-muted">${formattedDate}</small>
+
+    // Build (once) the card for a row. Text goes in through textContent /
+    // setAttribute, so a title or description containing quotes or markup
+    // can no longer break the card's HTML.
+    cardFor(row) {
+        let card = this.cards.get(row);
+        if (card) return card;
+
+        const d = row.dataset;
+        const collection = d.collection || '';
+        const description = d.description || 'No description available';
+        const formattedDate = d.date ? new Date(d.date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }) : 'Unknown';
+        const badgeClass = collection === 'pages' ? 'text-bg-primary' : 'text-bg-info';
+
+        card = document.createElement('div');
+        card.className = 'col sitemap-card';
+        card.innerHTML = `
+            <div class="card h-100 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="badge ${badgeClass} rounded-pill"></span>
+                    <small class="text-muted"></small>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title h6"><a class="text-decoration-none"></a></h3>
+                    <p class="card-text text-muted small"></p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-outline-primary btn-sm" title="View page" aria-label="View page">
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-secondary btn-sm copy-url" title="Copy URL" aria-label="Copy URL">
+                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                            </button>
                         </div>
-                        <div class="card-body">
-                            <h6 class="card-title">
-                                <a href="${url}" class="text-decoration-none">${title}</a>
-                            </h6>
-                            <p class="card-text text-muted small">${description.length > 100 ? description.substring(0, 100) + '...' : description}</p>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="${url}" class="btn btn-outline-primary btn-sm" title="View page">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <button class="btn btn-outline-secondary btn-sm copy-url" 
-                                            data-url="${location.origin}${url}" title="Copy URL">
-                                        <i class="bi bi-clipboard"></i>
-                                    </button>
-                                </div>
-                                ${categories ? `<small class="text-muted">${categories.split(',').slice(0,2).join(', ')}</small>` : ''}
-                            </div>
-                        </div>
+                        <small class="text-muted sitemap-card-categories"></small>
                     </div>
                 </div>
-            `;
-            
-            this.cardsContainer.insertAdjacentHTML('beforeend', cardHtml);
-        });
-        
-        // Re-attach copy URL event listeners for cards
-        this.cardsContainer.querySelectorAll('.copy-url').forEach(btn => {
-            btn.addEventListener('click', (e) => this.copyUrl(e));
-        });
+            </div>`;
+        card.querySelector('.badge').textContent = collection.charAt(0).toUpperCase() + collection.slice(1);
+        card.querySelector('.card-header small').textContent = formattedDate;
+        const link = card.querySelector('.card-title a');
+        link.textContent = d.title || '';
+        link.href = d.url;
+        card.querySelector('.card-text').textContent = description.length > 100 ? description.substring(0, 100) + '...' : description;
+        card.querySelector('.card-footer a').href = d.url;
+        const copy = card.querySelector('.copy-url');
+        copy.dataset.url = location.origin + d.url;
+        copy.addEventListener('click', (e) => this.copyUrl(e));
+        card.querySelector('.sitemap-card-categories').textContent =
+            d.categories ? d.categories.split(',').slice(0, 2).join(', ') : '';
+
+        this.cards.set(row, card);
+        return card;
     }
-    
+
     bindEvents() {
         // Search with debouncing
         this.searchInput.addEventListener('input', () => {
             clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => this.performSearch(), 300);
         });
-        
+
         this.clearSearchBtn.addEventListener('click', () => {
             this.searchInput.value = '';
             this.performSearch();
             this.searchInput.focus();
         });
-        
+
         // Filters
         this.collectionFilter.addEventListener('change', () => this.applyFilters());
         this.dateFilter.addEventListener('change', () => this.applyFilters());
-        
+
         // Reset filters
         this.resetFiltersBtn.addEventListener('click', () => this.resetFilters());
-        
+
         // Toggle statistics
         this.toggleStatsBtn.addEventListener('click', () => this.toggleStatistics());
-        
+
         // View mode toggle
         this.tableViewBtn.addEventListener('change', () => {
             if (this.tableViewBtn.checked) {
                 this.switchToTableView();
             }
         });
-        
+
         this.cardViewBtn.addEventListener('change', () => {
             if (this.cardViewBtn.checked) {
                 this.switchToCardView();
             }
         });
-        
+
+        // Next page of results
+        if (this.showMoreBtn) {
+            this.showMoreBtn.addEventListener('click', () => {
+                this.limit += SitemapManager.PAGE_SIZE;
+                this.render();
+            });
+        }
+
         // Column sorting (table view only)
         this.table.querySelectorAll('th[data-type]').forEach(header => {
             header.addEventListener('click', () => this.sortTable(header));
         });
-        
-        // Copy URL functionality
-        document.querySelectorAll('.copy-url').forEach(btn => {
-            btn.addEventListener('click', (e) => this.copyUrl(e));
+
+        // Copy URL functionality (table rows; cards bind their own)
+        this.rows.forEach(row => {
+            row.querySelectorAll('.copy-url').forEach(btn => {
+                btn.addEventListener('click', (e) => this.copyUrl(e));
+            });
         });
-        
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
     }
-    
+
     switchToTableView() {
         this.currentView = 'table';
         this.tableViewContainer.classList.remove('d-none');
         this.cardViewContainer.classList.add('d-none');
+        this.render();
     }
-    
+
     switchToCardView() {
         this.currentView = 'card';
         this.tableViewContainer.classList.add('d-none');
         this.cardViewContainer.classList.remove('d-none');
+        this.render();
     }
-    
+
     performSearch() {
-        const searchTerm = this.searchInput.value.toLowerCase().trim();
-        
-        if (this.currentView === 'table') {
-            this.rows.forEach(row => {
-                if (!searchTerm) {
-                    row.style.display = '';
-                    return;
-                }
-                
-                const searchableText = [
-                    row.dataset.title,
-                    row.dataset.description,
-                    row.dataset.categories,
-                    row.dataset.tags,
-                    row.dataset.collection
-                ].join(' ').toLowerCase();
-                
-                row.style.display = searchableText.includes(searchTerm) ? '' : 'none';
-            });
-        } else {
-            // Card view search
-            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
-            cards.forEach(card => {
-                if (!searchTerm) {
-                    card.style.display = '';
-                    return;
-                }
-                
-                const searchableText = [
-                    card.dataset.title,
-                    card.dataset.description,
-                    card.dataset.categories,
-                    card.dataset.tags,
-                    card.dataset.collection
-                ].join(' ').toLowerCase();
-                
-                card.style.display = searchableText.includes(searchTerm) ? '' : 'none';
-            });
-        }
-        
         this.applyFilters();
     }
-    
+
+    rowMatches(row, searchTerm, collectionFilter, dateFilter) {
+        if (searchTerm) {
+            const searchableText = [
+                row.dataset.title,
+                row.dataset.description,
+                row.dataset.categories,
+                row.dataset.tags,
+                row.dataset.collection
+            ].join(' ').toLowerCase();
+            if (!searchableText.includes(searchTerm)) return false;
+        }
+
+        if (collectionFilter && row.dataset.collection !== collectionFilter) return false;
+
+        if (dateFilter) {
+            const rowDate = new Date(row.dataset.date);
+            switch (dateFilter) {
+                case 'today':
+                    return this.isSameDay(rowDate, new Date());
+                case 'week':
+                    return this.isWithinDays(rowDate, 7);
+                case 'month':
+                    return this.isWithinDays(rowDate, 30);
+                case 'year':
+                    return this.isWithinDays(rowDate, 365);
+            }
+        }
+        return true;
+    }
+
+    // Recompute the matching rows from search + filters, back to page one.
     applyFilters() {
+        const searchTerm = this.searchInput.value.toLowerCase().trim();
         const collectionFilter = this.collectionFilter.value;
         const dateFilter = this.dateFilter.value;
-        
-        if (this.currentView === 'table') {
-            this.rows.forEach(row => {
-                let show = true;
-                
-                // Skip if already hidden by search
-                if (row.style.display === 'none') return;
-                
-                // Collection filter
-                if (collectionFilter && row.dataset.collection !== collectionFilter) {
-                    show = false;
-                }
-                
-                // Date filter
-                if (dateFilter && show) {
-                    const rowDate = new Date(row.dataset.date);
-                    const now = new Date();
-                    
-                    switch (dateFilter) {
-                        case 'today':
-                            show = this.isSameDay(rowDate, now);
-                            break;
-                        case 'week':
-                            show = this.isWithinDays(rowDate, 7);
-                            break;
-                        case 'month':
-                            show = this.isWithinDays(rowDate, 30);
-                            break;
-                        case 'year':
-                            show = this.isWithinDays(rowDate, 365);
-                            break;
-                    }
-                }
-                
-                row.style.display = show ? '' : 'none';
-            });
-        } else {
-            // Card view filtering
-            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
-            cards.forEach(card => {
-                let show = true;
-                
-                // Skip if already hidden by search
-                if (card.style.display === 'none') return;
-                
-                // Collection filter
-                if (collectionFilter && card.dataset.collection !== collectionFilter) {
-                    show = false;
-                }
-                
-                // Date filter
-                if (dateFilter && show) {
-                    const cardDate = new Date(card.dataset.date);
-                    const now = new Date();
-                    
-                    switch (dateFilter) {
-                        case 'today':
-                            show = this.isSameDay(cardDate, now);
-                            break;
-                        case 'week':
-                            show = this.isWithinDays(cardDate, 7);
-                            break;
-                        case 'month':
-                            show = this.isWithinDays(cardDate, 30);
-                            break;
-                        case 'year':
-                            show = this.isWithinDays(cardDate, 365);
-                            break;
-                    }
-                }
-                
-                card.style.display = show ? '' : 'none';
-            });
-        }
-        
-        this.updateCounts();
+        this.matches = this.rows.filter(row => this.rowMatches(row, searchTerm, collectionFilter, dateFilter));
+        this.limit = SitemapManager.PAGE_SIZE;
+        this.render();
     }
-    
+
+    refresh() {
+        this.applyFilters();
+    }
+
+    // Put the first `limit` matches (in the current sort order) into the
+    // active view; everything else stays out of the document.
+    render() {
+        const shown = this.matches.slice(0, this.limit);
+        if (this.currentView === 'table') {
+            this.tbody.replaceChildren(...shown);
+        } else {
+            this.cardsContainer.replaceChildren(...shown.map(row => this.cardFor(row)));
+        }
+        if (this.showMoreWrap) {
+            const remaining = this.matches.length - shown.length;
+            this.showMoreWrap.classList.toggle('d-none', remaining <= 0);
+            if (this.showMoreBtn && remaining > 0) {
+                this.showMoreBtn.textContent = `Show ${Math.min(remaining, SitemapManager.PAGE_SIZE)} more (${remaining} remaining)`;
+            }
+        }
+        this.updateCounts(shown.length);
+    }
+
     sortTable(header) {
         const headerIndex = Array.from(header.parentNode.children).indexOf(header);
         const type = header.getAttribute('data-type');
         const currentOrder = header.getAttribute('data-order');
         const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-        
+
         // Clear all sort icons
         this.table.querySelectorAll('.sort-icon').forEach(icon => {
             icon.className = 'sort-icon bi bi-arrow-down-up ms-1';
             icon.classList.remove('active');
         });
-        
+
         // Update current header
         header.setAttribute('data-order', newOrder);
         const icon = header.querySelector('.sort-icon');
         icon.className = `sort-icon bi bi-arrow-${newOrder === 'asc' ? 'up' : 'down'} ms-1 active`;
-        
-        // Sort rows
-        const sortedRows = this.rows.sort((a, b) => {
+
+        // Sort every row (not just the rendered page), then re-render
+        this.rows.sort((a, b) => {
             let aValue = a.children[headerIndex].textContent.trim();
             let bValue = b.children[headerIndex].textContent.trim();
-            
+
             if (type === 'date') {
                 aValue = aValue === "Unknown" ? new Date(0) : new Date(aValue);
                 bValue = bValue === "Unknown" ? new Date(0) : new Date(bValue);
                 return newOrder === 'asc' ? aValue - bValue : bValue - aValue;
             }
-            
-            return newOrder === 'asc' ? 
-                aValue.localeCompare(bValue) : 
+
+            return newOrder === 'asc' ?
+                aValue.localeCompare(bValue) :
                 bValue.localeCompare(aValue);
         });
-        
-        // Reorder DOM
-        sortedRows.forEach(row => this.tbody.appendChild(row));
+
+        const keep = this.limit;
+        this.applyFilters();
+        this.limit = keep;
+        this.render();
     }
-    
-    updateCounts() {
-        let visibleCount = 0;
-        
-        if (this.currentView === 'table') {
-            visibleCount = this.rows.filter(row => row.style.display !== 'none').length;
-        } else {
-            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
-            visibleCount = Array.from(cards).filter(card => card.style.display !== 'none').length;
-        }
-        
-        this.visibleCount.textContent = visibleCount;
-        this.totalCount.textContent = this.rows.length;
-        
+
+    updateCounts(shownCount) {
+        this.visibleCount.textContent = shownCount;
+        this.totalCount.textContent = this.matches.length;
+
         // Update page statistics
         document.getElementById('totalPages').textContent = this.rows.length;
         document.getElementById('totalCollections').textContent = this.collections.size;
     }
-    
+
     updateStatistics() {
         const statsContainer = document.getElementById('collectionStats');
         const collectionCounts = {};
-        
+
         this.rows.forEach(row => {
             const collection = row.dataset.collection;
             collectionCounts[collection] = (collectionCounts[collection] || 0) + 1;
         });
-        
+
         const statsHtml = Object.entries(collectionCounts)
             .sort(([,a], [,b]) => b - a)
             .map(([collection, count]) => `
@@ -852,10 +813,10 @@ class SitemapManager {
                     </div>
                 </div>
             `).join('');
-        
+
         statsContainer.innerHTML = statsHtml;
     }
-    
+
     toggleStatistics() {
         this.statsSection.classList.toggle('d-none');
         const isVisible = !this.statsSection.classList.contains('d-none');
@@ -864,36 +825,29 @@ class SitemapManager {
             ${isVisible ? 'Hide' : 'Stats'}
         `;
     }
-    
+
     resetFilters() {
         this.searchInput.value = '';
         this.collectionFilter.value = '';
         this.dateFilter.value = '';
-        
-        // Reset table rows
-        this.rows.forEach(row => row.style.display = '');
-        
-        // Reset cards
-        const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
-        cards.forEach(card => card.style.display = '');
-        
-        this.updateCounts();
-        
+
+        this.applyFilters();
+
         // Clear URL parameters
         const url = new URL(window.location);
         url.searchParams.delete('q');
         window.history.replaceState({}, document.title, url);
     }
-    
+
     copyUrl(event) {
-        const url = event.currentTarget.dataset.url;
+        const btn = event.currentTarget;
+        const url = btn.dataset.url;
         navigator.clipboard.writeText(url).then(() => {
-            const btn = event.currentTarget;
             const originalIcon = btn.innerHTML;
             btn.innerHTML = '<i class="bi bi-check"></i>';
             btn.classList.add('btn-success');
             btn.classList.remove('btn-outline-secondary');
-            
+
             setTimeout(() => {
                 btn.innerHTML = originalIcon;
                 btn.classList.remove('btn-success');
@@ -901,36 +855,39 @@ class SitemapManager {
             }, 1500);
         });
     }
-    
+
+    // Returns true when a ?q= query was applied (which renders the view).
     handleUrlParams() {
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('q');
-        
+
         if (searchQuery) {
             this.searchInput.value = searchQuery;
             this.performSearch();
+            return true;
         }
+        return false;
     }
-    
+
     handleKeyboardShortcuts(event) {
         // Ctrl/Cmd + K to focus search
         if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
             event.preventDefault();
             this.searchInput.focus();
         }
-        
+
         // Escape to clear search
         if (event.key === 'Escape' && document.activeElement === this.searchInput) {
             this.searchInput.value = '';
             this.performSearch();
         }
     }
-    
+
     // Utility functions
     isSameDay(date1, date2) {
         return date1.toDateString() === date2.toDateString();
     }
-    
+
     isWithinDays(date, days) {
         const now = new Date();
         const diffTime = Math.abs(now - date);

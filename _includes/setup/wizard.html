@@ -62,7 +62,11 @@
       </p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <span id="wizard-draft-chip" class="wizard-draft-chip" hidden aria-live="polite">
+      {% comment %} No `hidden` here: the chip must hold its box from first paint, or the
+         first debounced save grows this header — permanently — and every offset below it
+         moves with it (issue #265). _setup-wizard.scss hides it with `visibility`
+         instead, which keeps the box and still keeps it out of the a11y tree. {% endcomment %}
+      <span id="wizard-draft-chip" class="wizard-draft-chip" aria-live="polite">
         <i class="bi bi-cloud-check" aria-hidden="true"></i> Draft saved
       </span>
       <button class="btn btn-outline-secondary btn-sm" type="button" id="btn-reset"

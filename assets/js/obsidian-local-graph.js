@@ -8,7 +8,11 @@
  *
  * Loaded by _includes/navigation/local-graph.html inside a dedicated
  * collapsible side panel. Cytoscape.js is loaded lazily (and only once) from
- * the vendored copy under assets/vendor/cytoscape/ (no CDN).
+ * the vendored copy under assets/vendor/cytoscape/ (no CDN), and only when
+ * the panel is first opened: the panel is a closed offcanvas on page load, so
+ * fetching ~118 KB of cytoscape for a graph nobody has asked to see was pure
+ * main-thread cost on every indexed page. Until then the accessible
+ * text list of linked pages is kept up to date.
  *
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to
@@ -592,6 +596,7 @@
         syncControls(prefs);
 
         var graphAvailable = null; // unknown until loadCytoscape resolves
+        var graphRequested = false;
 
         function rebuild() {
           var elements = buildSubgraph(entries, lookup, current, prefs.depth, {
@@ -603,6 +608,11 @@
           // Accessible text fallback (also the graceful degradation if
           // cytoscape can't load): a list of linked neighbours below the canvas.
           var fallback = renderTextFallback(container, elements, current);
+          if (graphAvailable === null) {
+            // Panel not opened yet: cytoscape is not loaded, keep the list.
+            setStatus(container, nodeCount + ' pages · ' + edgeCount + ' links', false);
+            return;
+          }
           if (graphAvailable === false) {
             container.hidden = true;
             setStatus(container, 'Showing linked pages (interactive graph unavailable).', false);
@@ -619,10 +629,22 @@
           if (container.__obsidianLocalGraph) rebuild();
         });
 
-        loadCytoscape(function (ok) {
-          graphAvailable = ok !== false;
-          rebuild();
-        });
+        function requestGraph() {
+          if (graphRequested) return;
+          graphRequested = true;
+          setStatus(container, 'Loading graph…', false);
+          loadCytoscape(function (ok) {
+            graphAvailable = ok !== false;
+            rebuild();
+          });
+        }
+
+        rebuild(); // text list + counts, no cytoscape yet
+        if (!panel || panel.classList.contains('show')) {
+          requestGraph();
+        } else {
+          panel.addEventListener('show.bs.offcanvas', requestGraph);
+        }
       })
       .catch(function (err) {
         // Sidebar panel failing is non-fatal — keep it hidden and stay quiet.

@@ -232,6 +232,15 @@ test_yaml_syntax() {
     return 0
 }
 
+# Meta-tests for the checks in this file: a check that can never fail is worse
+# than no check, because it reads green (T-049 / #460). test_core_checks.sh
+# drives test_liquid_templates and check_gem_contents against fixtures that are
+# known-good and known-bad, and fails if either verdict is wrong.
+test_core_check_specs() {
+    bash "$SCRIPT_DIR/test_core_checks.sh" > "$TEST_RESULTS_DIR/core_checks.log" 2>&1 \
+        || { tail -20 "$TEST_RESULTS_DIR/core_checks.log"; return 1; }
+}
+
 # Test plugin unit specs (T-011: content statistics, theme version, config sanitizer)
 test_plugin_unit_specs() {
     if command -v ruby &>/dev/null; then
@@ -533,6 +542,49 @@ test_jekyll_build() {
     return 0
 }
 
+# Asserts a built .gem actually carries the theme payload.
+#
+# A .gem is an UNCOMPRESSED tar wrapping three gzipped members -- metadata.gz,
+# data.tar.gz and checksums.yaml.gz. The previous implementation ran
+# `tar -tzf` directly on the .gem, which printed "stdin: not in gzip format"
+# four times and then fell through to a `log_warning` on BOTH branches, so a
+# gem missing _layouts/ or assets/ entirely still passed (T-049 / #460).
+# The payload has to be extracted to stdout and listed as its own archive.
+#
+# Exposed as a separate function so test/test_core_checks.sh can drive it
+# against fixture gems without building the real one.
+check_gem_contents() {
+    local gem_file="$1"
+    local contents
+
+    if ! contents=$(tar -xOf "$gem_file" data.tar.gz 2>/dev/null | tar -tzf - 2>/dev/null); then
+        log_error "Could not list data.tar.gz inside $gem_file (not a .gem?)"
+        return 1
+    fi
+
+    if [[ -z "$contents" ]]; then
+        log_error "$gem_file contains an empty data.tar.gz"
+        return 1
+    fi
+
+    local missing=()
+    local required
+    for required in _layouts assets; do
+        if ! grep -qE "^(\./)?${required}/" <<< "$contents"; then
+            missing+=("${required}/")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Gem is missing required directories: ${missing[*]}"
+        log_error "Check the file patterns in jekyll-theme-zer0.gemspec"
+        return 1
+    fi
+
+    log_success "Gem contains _layouts/ and assets/ ($(grep -c . <<< "$contents") files)"
+    return 0
+}
+
 test_gem_build() {
     log_info "Testing gem build process..."
     
@@ -550,19 +602,11 @@ test_gem_build() {
             gem_file=$(ls jekyll-theme-zer0-*.gem 2>/dev/null | head -1)
             
             if [[ -f "$gem_file" ]]; then
-                # Check that essential files are included using tar (gems are tar.gz files)
-                if tar -tzf "$gem_file" | grep -q "_layouts" || tar -tzf "$gem_file" | grep -q "layouts"; then
-                    log_success "Gem contains layout files"
-                else
-                    log_warning "Gem may not contain layout files (check gemspec file patterns)"
+                if ! check_gem_contents "$gem_file"; then
+                    rm -f jekyll-theme-zer0-*.gem
+                    return 1
                 fi
-                
-                if tar -tzf "$gem_file" | grep -q "assets" || tar -tzf "$gem_file" | grep -q "lib"; then
-                    log_success "Gem contains expected files"
-                else
-                    log_warning "Gem may not contain expected files (check gemspec file patterns)"
-                fi
-                
+
                 # Clean up
                 rm -f jekyll-theme-zer0-*.gem
             else
@@ -589,38 +633,69 @@ test_liquid_templates() {
     
     cd "$PROJECT_ROOT"
     
+    # Both loops used to be `find ... | while read`, which runs the body in a
+    # SUBSHELL: the `return 1` on a match exited that subshell and the function
+    # still returned 0, so neither check could ever fail the suite (T-049 /
+    # #460). Reading from a process substitution keeps the body in this shell,
+    # so `failed` survives the loop.
+    local failed=0
+
     # Check layout files for basic Liquid syntax
     if [[ -d "_layouts" ]]; then
-        find "_layouts" -name "*.html" | while read -r layout; do
+        while IFS= read -r layout; do
             # Check for balanced Liquid tags
             local open_tags
             local close_tags
-            
-            open_tags=$(grep -c "{%" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
-            close_tags=$(grep -c "%}" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
-            
+
+            # Count against the layout with Liquid comment bodies blanked out
+            # (newlines kept, so the line structure is unchanged). Liquid never
+            # evaluates a comment, so prose there that quotes a delimiter --
+            # root.html's "hence the `-%}` on both" -- is not a tag and must
+            # not unbalance the count.
+            # A stripper failure must fail loudly: empty output would count
+            # 0 == 0 and make this check inert again.
+            local stripped
+            if ! stripped=$(perl -0pe 's/(\{%-?\s*comment\s*-?%\}.*?\{%-?\s*endcomment\s*-?%\})/"\n" x ($1 =~ tr{\n}{})/gse' "$layout"); then
+                log_error "Could not strip Liquid comments from $layout"
+                failed=1
+                continue
+            fi
+
+            open_tags=$(grep -c "{%" <<< "$stripped" | tr -d '[:space:]' || echo "0")
+            close_tags=$(grep -c "%}" <<< "$stripped" | tr -d '[:space:]' || echo "0")
+
             # Ensure we have valid numbers
             [[ -z "$open_tags" ]] && open_tags=0
             [[ -z "$close_tags" ]] && close_tags=0
-            
+
             if [[ "$open_tags" -ne "$close_tags" ]]; then
                 log_error "Unbalanced Liquid tags in $layout"
-                return 1
+                failed=1
             fi
-        done
+        done < <(find "_layouts" -name "*.html")
     fi
-    
+
     # Check include files
     if [[ -d "_includes" ]]; then
-        find "_includes" -name "*.html" | while read -r include; do
-            # Basic syntax check for common issues
-            if grep -q "{{.*{{" "$include"; then
+        while IFS= read -r include; do
+            # A NESTED output tag is `{{ a {{ b }} }}` -- an opening `{{` that
+            # meets another `{{` before its own closing `}}`. The old pattern
+            # `{{.*{{` matched any two SIBLING tags on one line, so it flagged
+            # valid Liquid such as navigation/sidebar-pagetree.html's
+            # `{{ _base }}{{ _section }}` inside a capture, and printed
+            # [ERROR] on every clean run (64 of the includes matched it).
+            # `[^}]*` cannot cross the first `}`, so siblings no longer match.
+            if grep -qE '\{\{[^}]*\{\{' "$include"; then
                 log_error "Nested Liquid output tags found in $include"
-                return 1
+                failed=1
             fi
-        done
+        done < <(find "_includes" -name "*.html")
     fi
-    
+
+    if [[ "$failed" -ne 0 ]]; then
+        return 1
+    fi
+
     log_success "Liquid template validation passed"
     return 0
 }
@@ -1339,6 +1414,86 @@ test_background_image_include_contract() {
     fi
 }
 
+test_preview_path_join() {
+    log_info "Testing preview paths without a leading slash resolve under assets_prefix..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the preview path-join check"
+        return 0
+    fi
+
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "liquid gem not loadable; skipping the preview path-join check"
+        return 0
+    fi
+
+    # `preview: images/previews/x.webp` (no leading slash) is used by 165
+    # it-journey content files. The includes appended it straight onto
+    # assets_prefix, producing /assetsimages/previews/x.webp -- a 404 for the
+    # hero background and og:image. Every include that joins paths must
+    # normalise first.
+    if "${ruby_run[@]}" -e '
+      require "liquid"
+      module StubFilters
+        def relative_url(input); s = input.to_s; s.start_with?("/") || s.include?("://") ? s : "/" + s; end
+        def absolute_url(input); s = input.to_s; s.include?("://") ? s : "https://example.test" + (s.start_with?("/") ? s : "/" + s); end
+      end
+      Liquid::Template.register_filter(StubFilters)
+      site = {"preview_images" => {"assets_prefix" => "/assets", "auto_prefix" => true}}
+      fail = []
+
+      cases = {
+        "images/previews/x.webp"         => "/assets/images/previews/x.webp",
+        "/images/previews/x.webp"        => "/assets/images/previews/x.webp",
+        "assets/images/previews/x.webp"  => "/assets/images/previews/x.webp",
+        "/assets/images/previews/x.webp" => "/assets/images/previews/x.webp",
+        "https://cdn.test/x.webp"        => "https://cdn.test/x.webp",
+      }
+
+      pi = Liquid::Template.parse(File.read("_includes/components/preview-image.html"))
+      bg = Liquid::Template.parse(File.read("_includes/components/background-image.html"))
+      seo = Liquid::Template.parse(File.read("_includes/content/seo.html"))
+      cases.each do |src, want|
+        out = pi.render!("site" => site, "include" => {"src" => src, "alt" => "a"})
+        fail << "preview-image #{src.inspect}: #{out[/src="[^"]*"/]}" unless out.include?(%Q{src="#{want}"})
+        out = bg.render!("site" => site, "include" => {"src" => src, "alt" => "a"})
+        fail << "background-image #{src.inspect}: #{out[/url\([^)]*\)/]}" unless out.include?("url(\u0027#{want}\u0027)")
+        want_abs = want.include?("://") ? want : "https://example.test" + want
+        out = seo.render!("site" => site, "page" => {"preview" => src})
+        fail << "seo og:image #{src.inspect}: #{out[/og:image" content="[^"]*"/]}" unless out.include?(%Q{og:image" content="#{want_abs}"})
+      end
+
+      # width/height are emitted only when passed.
+      plain = pi.render!("site" => site, "include" => {"src" => "/images/x.png"})
+      sized = pi.render!("site" => site, "include" => {"src" => "/images/x.png", "width" => "1536", "height" => "1024"})
+      fail << "width/height emitted without being passed" if plain =~ /\s(width|height)=/
+      fail << "width/height missing when passed: #{sized}" unless sized.include?(%q{width="1536"}) && sized.include?(%q{height="1024"})
+
+      if fail.empty?
+        puts "OK: preview-image, background-image and seo join preview paths safely"
+        exit 0
+      else
+        puts "::error::preview path joining is broken"
+        fail.each { |f| puts "  #{f}" }
+        exit 1
+      end
+    '
+    then
+        log_success "preview paths resolve under assets_prefix with or without a leading slash"
+        return 0
+    else
+        log_error "preview path-join check failed (see above)"
+        return 1
+    fi
+}
+
 test_attribute_whitespace_in_markup() {
     log_info "Testing every include/layout renders separated attributes (issue #465)..."
 
@@ -1720,8 +1875,10 @@ run_core_tests() {
     run_test "Package.json Validity" "test_package_json_validity" "unit"
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
+    run_test "Core Check Meta-Specs" "test_core_check_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
+    run_test "Preview Path Join" "test_preview_path_join" "unit"
     run_test "Navbar Attribute Whitespace" "test_navbar_attribute_whitespace" "unit"
     run_test "Attribute Whitespace In Markup" "test_attribute_whitespace_in_markup" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
@@ -1854,5 +2011,10 @@ main() {
     fi
 }
 
-# Execute main function
-main "$@"
+# Execute main function.
+#
+# Skipped when this file is SOURCED, so test/test_core_checks.sh can drive
+# individual checks against fixtures without running the whole suite.
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
