@@ -34,7 +34,7 @@ Automatically generate preview images for your posts and pages using AI image ge
 The preview image generator provides:
 
 - **Claude as art director & editor**: Claude analyzes each article and writes a subject-specific image brief, then reviews the rendered image with vision — regenerating once with a corrected prompt when the image misrepresents the article (via your Claude Code OAuth token, Anthropic API key, or logged-in `claude` CLI; degrades gracefully to a template prompt without one)
-- **Renderers**: OpenAI (GPT Image or DALL-E 3, default), xAI (grok-2-image), Stability AI, and Google Gemini
+- **Renderers**: OpenAI (GPT Image or DALL-E 3, default), xAI (grok-imagine-image-2.0), Stability AI, and Google Gemini
 - **Local template engine**: deterministic, free, network-less banners for development and CI
 - **Configurable Style**: Default retro pixel art aesthetic, with per-author overrides
 - **Batch Generation**: Process multiple posts at once (parallel workers)
@@ -72,7 +72,7 @@ preview_images:
 preview_images:
   enabled: true
   provider: openai            # renderer: openai, xai, stability, gemini, local
-  model: gpt-image-2          # empty = renderer default (gpt-image-2, grok-2-image, ...)
+  model: gpt-image-2          # empty = renderer default (gpt-image-2, grok-imagine-image-2.0, ...)
   size: 1536x1024             # raster vendors adapt per model (DALL-E 3: 1792x1024)
   quality: auto               # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors"
@@ -177,7 +177,7 @@ preview_images:
 
 ### xAI (Grok)
 
-Uses `grok-2-image` through xAI's OpenAI-compatible API. Set `provider: xai` and supply `XAI_API_KEY`:
+Uses `grok-imagine-image-2.0` through xAI's OpenAI-compatible API. Set `provider: xai` and supply `XAI_API_KEY`:
 
 ```yaml
 preview_images:

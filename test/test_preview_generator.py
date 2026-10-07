@@ -311,6 +311,7 @@ class TestModelFamily(unittest.TestCase):
         self.assertEqual(pg.model_family("gpt-image-2"), "openai")
         self.assertEqual(pg.model_family("dall-e-3"), "openai")
         self.assertEqual(pg.model_family("grok-2-image"), "xai")
+        self.assertEqual(pg.model_family("grok-imagine-image-2.0"), "xai")
         self.assertEqual(pg.model_family("gemini-2.5-flash-image"), "gemini")
         self.assertIsNone(pg.model_family("mystery-model"))
 
@@ -325,7 +326,13 @@ class TestModelFamily(unittest.TestCase):
     def test_empty_model_uses_provider_default(self):
         settings = make_settings(model="")
         self.assertEqual(
-            pg.effective_model(settings, pg.PROVIDERS["xai"]), "grok-2-image"
+            pg.effective_model(settings, pg.PROVIDERS["xai"]), "grok-imagine-image-2.0"
+        )
+
+    def test_explicit_grok_imagine_model_kept(self):
+        settings = make_settings(model="grok-imagine-image-2.0")
+        self.assertEqual(
+            pg.effective_model(settings, pg.PROVIDERS["xai"]), "grok-imagine-image-2.0"
         )
 
     def test_claude_model_under_renderer_falls_back(self):
