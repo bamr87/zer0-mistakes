@@ -47,9 +47,13 @@ jobs:
       # Note: we never check out the PR head (untrusted code under
       # pull_request_target). The file list comes from the REST API via `gh api`
       # (gh pr diff --name-only internally invokes git and fails without a repo).
+      # GH_REPO: with no checkout, `gh pr edit` below has no git remote to infer
+      # the repo from and dies with "fatal: not a git repository" — leaving the
+      # label in place, so the guard re-fails on every later PR event.
       - name: Verify the PR is genuinely low-risk
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           changed=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')

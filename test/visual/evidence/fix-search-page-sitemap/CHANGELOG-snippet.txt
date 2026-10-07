@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-search-page-sitemap/ -->
+  (evidence: [`test/visual/evidence/fix-search-page-sitemap/`](test/visual/evidence/fix-search-page-sitemap/README.md))

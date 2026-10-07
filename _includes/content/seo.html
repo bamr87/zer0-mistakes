@@ -43,6 +43,14 @@
     nil seo_image — og:image was silently dropped on every page without a
     page.header image, defeating the site.og_image fallback entirely.
   {%- endcomment -%}
+  {%- comment -%} Leading-slash normalisation, as in components/preview-image.html:
+    `preview: images/x.png` used to become og:image …/assetsimages/x.png. {%- endcomment -%}
+  {%- if page_teaser_image and page_teaser_image != "" -%}
+    {%- unless page_teaser_image contains '://' or page_teaser_image contains 'data:' -%}
+      {%- assign teaser_first = page_teaser_image | slice: 0 -%}
+      {%- if teaser_first != '/' -%}{%- assign page_teaser_image = '/' | append: page_teaser_image -%}{%- endif -%}
+    {%- endunless -%}
+  {%- endif -%}
   {%- if page_teaser_image contains '://' -%}
     {%- comment -%} External URL - use as-is {%- endcomment -%}
   {%- elsif auto_prefix and page_teaser_image and page_teaser_image != blank -%}

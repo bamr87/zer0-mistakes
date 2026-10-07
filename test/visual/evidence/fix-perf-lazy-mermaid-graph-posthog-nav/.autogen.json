@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "fix-perf-lazy-mermaid-graph-posthog-nav",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "c906a36ee7491dd551ad35baa7f8def9c17aec02",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-07T04:39:31+00:00"
+}

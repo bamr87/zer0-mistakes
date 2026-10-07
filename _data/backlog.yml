@@ -866,7 +866,7 @@ tasks:
 
   - id: T-033
     title: "Retire legacy test_installation.sh after equivalence audit against the installer harness"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -880,6 +880,10 @@ tasks:
       uncovered into test_install_*.sh, then delete the legacy suite and remove the
       `installation` routing from test_runner.sh, ci.yml, and nightly-extended.yml.
       Until then it runs nightly and on install-path PRs only (2026-07 CI tiering).
+      Done 2026-10-02: the suite is deleted, its scenarios live in
+      test_install_legacy_flags.sh (marked "Ported from retired
+      test_installation.sh"), test_runner.sh routes no `installation` suite, and
+      the CI/nightly suite lists no longer name it.
     acceptance:
       - "Every test_installation.sh scenario is mapped to a harness equivalent or ported."
       - "test_installation.sh deleted; test_runner.sh no longer routes an `installation` suite."
@@ -887,7 +891,7 @@ tasks:
       - "Nightly extended run green after removal."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-07-06
-    updated: 2026-07-06
+    updated: 2026-10-02
   - id: T-034
     title: "Remove the dead preview_image_generator.rb Jekyll plugin and its test surface"
     status: done
@@ -1373,13 +1377,13 @@ tasks:
 
   - id: T-048
     title: "Site-level theme_color re-pins --zer0-color-primary over the active skin"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: low
     effort: S
     source: issue
-    summary: "Discovered while making Mermaid diagrams follow the skin (ZER0-013 rework): the skin mixin (_sass/theme/_skins.scss) writes both --bs-primary and --zer0-color-primary under [data-theme-skin], but _includes/core/tokens-inline.html emits `:root { --zer0-color-primary: <theme_color.main> }` AFTER main.css, and :root ties [data-theme-skin] on specificity, so the later inline rule wins. Result on this site: buttons/links follow the skin (#6fa8dc on air, #8338ec on neon) while every custom component that reads --zer0-color-primary (callouts, code-block accent border, focus rings) stays on the config #007bff regardless of skin. Mermaid works around it by reading --bs-primary first; the token layer should agree with itself instead."
+    summary: "Done 2026-10-02 (#459): the skin wins. tokens-inline.html emits theme_color main/blue/purple only when no palette skin is active, the precedence is documented in docs/ui/design-tokens.md, and appearance.spec.js asserts it. Discovered while making Mermaid diagrams follow the skin (ZER0-013 rework): the skin mixin (_sass/theme/_skins.scss) writes both --bs-primary and --zer0-color-primary under [data-theme-skin], but _includes/core/tokens-inline.html emits `:root { --zer0-color-primary: <theme_color.main> }` AFTER main.css, and :root ties [data-theme-skin] on specificity, so the later inline rule wins. Result on this site: buttons/links follow the skin (#6fa8dc on air, #8338ec on neon) while every custom component that reads --zer0-color-primary (callouts, code-block accent border, focus rings) stays on the config #007bff regardless of skin. Mermaid works around it by reading --bs-primary first; the token layer should agree with itself instead."
     acceptance:
       - "With theme_color.main set, switching skin changes --zer0-color-primary as well as --bs-primary (probe getComputedStyle on <html>)."
       - "Decide and document the precedence: skin over site theme_color (recommended) or the reverse — one rule, applied to every --zer0-color-* the mixin sets."
@@ -1387,7 +1391,7 @@ tasks:
       - "before/after evidence committed"
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-09-05
-    updated: 2026-09-05
+    updated: 2026-10-02
 
   - id: T-049
     title: "test_core.sh: Liquid nested-tag check and gem-content check can never fail"

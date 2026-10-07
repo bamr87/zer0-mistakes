@@ -278,6 +278,47 @@ def test_stage_command_output() -> None:
         check("one path per line when there is something to add", buf.getvalue() == "test/visual/evidence/x\n")
 
 
+def test_generic_generator_survives_livereload() -> None:
+    """Run 36932006025 (#495): pr-evidence.mjs died at its third width with
+    "page.$: Execution context was destroyed" and wrote no metrics or PNGs.
+
+    The jammy run's `npm ci` created node_modules/ AFTER `jekyll serve --watch`
+    started; jekyll-watch ignores only the `exclude:` paths that exist when it
+    starts, so Jekyll regenerated and LiveReload reloaded the open page mid-shot.
+    Pinned from both ends: the watcher must ignore node_modules/, and the
+    generator must neither listen to LiveReload nor let one shot end the sweep.
+    """
+    print("generic generator — a mid-sweep LiveReload never aborts the sweep")
+    src = (REPO_ROOT / vea.GENERIC_GENERATOR).read_text(encoding="utf-8")
+    check("pr-evidence.mjs aborts the injected livereload.js",
+          re.search(r"const LIVERELOAD_URL_RE = /.*livereload", src) is not None
+          and "page.route(LIVERELOAD_URL_RE, (r) => r.abort())" in src)
+    unguarded = [ln.strip() for ln in src.splitlines()
+                 if re.search(r"await page\.(\$|\$\$|evaluate)\(", ln) and ".catch(" not in ln]
+    check(f"every page-context call in pr-evidence.mjs is guarded ({unguarded or 'none unguarded'})",
+          not unguarded)
+
+    import contextlib
+    import io
+    import os
+    import tempfile
+    calls: list[tuple[str, bool]] = []
+    real_run, real_http_ok, cwd = vea.run, vea.http_ok, os.getcwd()
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            os.chdir(tmp)
+            vea.http_ok = lambda url, timeout=3.0: any(c[0].startswith("docker compose up") for c in calls)
+            vea.run = lambda cmd, **kw: calls.append((" ".join(cmd), Path("node_modules").is_dir()))
+            with contextlib.redirect_stdout(io.StringIO()):
+                vea.ensure_jekyll(timeout=5)
+        finally:
+            vea.run, vea.http_ok = real_run, real_http_ok
+            os.chdir(cwd)
+    up = [had for cmd, had in calls if cmd.startswith("docker compose up")]
+    check("ensure_jekyll creates node_modules/ BEFORE `docker compose up` (so the watcher ignores it)",
+          up == [True])
+
+
 def test_lane_tooling_contract() -> None:
     """The regression that killed the lane's first real run on a real PR.
 
@@ -349,7 +390,8 @@ def main() -> int:
               test_plan_respects_author_evidence, test_plan_out_of_scope, test_styling_matches_ci_filter,
               test_ui_prefixes_match_gate, test_parse_results, test_parse_results_playwright_158_attachment_names,
               test_decide, test_stage_and_messages,
-              test_stage_command_output, test_lane_tooling_contract, test_workflow_wiring):
+              test_stage_command_output, test_generic_generator_survives_livereload,
+              test_lane_tooling_contract, test_workflow_wiring):
         t()
     print(f"\n{PASSED} passed, {len(FAILURES)} failed")
     for f in FAILURES:
