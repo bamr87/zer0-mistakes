@@ -16,21 +16,36 @@
 
   Only emits a key if the config value is present, so the default cascade
   remains intact when consumers omit `theme_color` from _config.yml.
+
+  Precedence (T-048 / #459): the active skin beats `theme_color`.
+  The skin palettes in _sass/theme/_skins.scss set --zer0-color-primary,
+  --zer0-color-link and --zer0-color-accent together with --bs-primary.
+  So the config values for those three tokens are only emitted when no
+  palette skin is active. Otherwise this block would win on source order,
+  because `:root` and `[data-theme-skin]` have the same specificity, and the
+  theme layer would disagree with Bootstrap. `palette_skins` must list every
+  skin that _skins.scss gives a palette; test/visual/features/appearance.spec.js
+  checks that.
   ===================================================================
 {%- endcomment -%}
 {%- assign tc = site.theme_color -%}
+{%- assign palette_skins = "air,aqua,dirt,neon,mint,plum,sunrise" | split: "," -%}
 {%- if tc -%}
 <style id="zer0-tokens-inline">
 :root {
-  {%- if tc.main %} --zer0-color-primary: {{ tc.main }};{%- endif %}
   {%- if tc.secondary %} --zer0-color-secondary: {{ tc.secondary }};{%- endif %}
   {%- if tc.red %} --zer0-color-danger: {{ tc.red }};{%- endif %}
   {%- if tc.yellow %} --zer0-color-warning: {{ tc.yellow }};{%- endif %}
   {%- if tc.green %} --zer0-color-success: {{ tc.green }};{%- endif %}
   {%- if tc.teal %} --zer0-color-info: {{ tc.teal }};{%- endif %}
+}
+{%- if tc.main or tc.blue or tc.purple %}
+:root{% for s in palette_skins %}:not([data-theme-skin="{{ s }}"]){% endfor %} {
+  {%- if tc.main %} --zer0-color-primary: {{ tc.main }};{%- endif %}
   {%- if tc.blue %} --zer0-color-link: {{ tc.blue }};{%- endif %}
   {%- if tc.purple %} --zer0-color-accent: {{ tc.purple }};{%- endif %}
 }
+{%- endif %}
 </style>
 {%- endif -%}
 

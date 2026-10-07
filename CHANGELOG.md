@@ -53,10 +53,41 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **The active skin now moves the whole `--zer0-color-*` layer, not just Bootstrap's** ([#459](https://github.com/bamr87/zer0-mistakes/issues/459)). `_includes/core/tokens-inline.html` re-set `--zer0-color-primary`, `-link` and `-accent` from `theme_color` on `:root` after `main.css`. `:root` and `[data-theme-skin]` have the same specificity, so the config value won on source order. On any site that sets `theme_color`, components reading the theme layer therefore kept the config color in every skin, and `--zer0-color-primary` disagreed with its own `-rgb` companion. The skin now wins: those three keys are emitted only when no palette skin is active, as with `dark` and `contrast`. `theme_color` still sets `secondary`, `danger`, `warning`, `success` and `info`, and the Appearance-panel override still beats both. The rule is documented in [`docs/ui/design-tokens.md`](docs/ui/design-tokens.md#precedence-skin-vs-theme_color) and checked by `test/visual/features/appearance.spec.js` (evidence: [`test/visual/evidence/agent-issue-459/`](test/visual/evidence/agent-issue-459/README.md) — page overflow 0px at six widths; the nine skin baselines are unchanged).
+- **A preview path without a leading slash no longer 404s.** `preview: images/previews/x.webp` was appended straight onto `assets_prefix`, so `components/preview-image.html`, `components/background-image.html`, `content/intro.html` and `content/seo.html` emitted `/assetsimages/previews/x.webp` for the card image, the hero background and `og:image` (165 it-journey content files use that form). All four now prepend `/` to a site-relative path before joining; URLs and `data:` URIs are left alone, and already-slashed or `/assets/`-prefixed paths render byte-identically. `preview-image.html` also gained optional `width`/`height` parameters (emitted only when passed); the article layout's related-post cards pass 1536×1024 so their box is reserved before the lazy image arrives (0px → 217px at 1366px). Pinned by the `Preview Path Join` unit test in `test/test_core.sh` and `test/visual/features/preview-path-join.spec.js`.
+- **The sitemap index no longer puts every page in the DOM twice.** `content/sitemap.html` (the `/sitemap/` page, the search modal's "View all results" target, and it-journey.dev's `/search/`) kept all rows attached. Its script also eagerly built a second copy of every row as a card for the hidden card view: about 19,900 elements on it-journey's `/search/` (431 entries), with Lighthouse mobile TBT at 9.7 s. Rows are still rendered server-side, so the page works without JS and with `?q=`. The script now keeps only one page of 50 matches in the document and appends the next page with **Show more**. Search, filters and sorting work across every row, and cards are built on the first switch to card view, one page at a time. Card text is set through `textContent` rather than interpolated HTML. On the theme's own `/sitemap/` (386 entries), elements after load drop from 23,063 to 8,086, and local Lighthouse mobile TBT drops from 1,662 ms to 181 ms. Badge contrast is fixed too: the collection pill is `text-bg-info` (was white on `#0dcaf0`, 1.96:1), tag chips use `--bs-primary-text-emphasis`, and `+N` overflow chips (white on transparent) get body text and a border. Pinned by `test/visual/features/sitemap-pagination.spec.js`.
+- **The xAI preview-image renderer defaults to `grok-imagine-image-2.0`** ([#474](https://github.com/bamr87/zer0-mistakes/issues/474)). `XAIProvider.default_model()` in `scripts/lib/preview_generator.py` still returned the retired `grok-2-image`, so a site with `preview_images.provider: xai` and no explicit `model:` sent a retired model upstream. An explicitly configured `grok-2-image` is still accepted as an xAI-family model.
 - **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
 - **The article hero no longer lazy-loads its LCP image or shoves the article down when it arrives** ([#485](https://github.com/bamr87/zer0-mistakes/issues/485)). `figure.featured-hero` inherited `components/preview-image.html`'s `loading="lazy"` default and had no reserved box. It now passes `loading="eager" fetchpriority="high" decoding="async"`, and its box is pinned by `.featured-hero img { aspect-ratio: 3 / 2 }`. The box is set in CSS rather than with `width`/`height` attributes, because preview assets vary in shape and `object-fit: cover` crops a portrait instead of stretching it. `preview-image.html` gained optional `fetchpriority`/`decoding` parameters that are emitted only when passed, so every other consumer renders byte-identically (evidence: [`test/visual/evidence/hero-lcp/`](test/visual/evidence/hero-lcp/README.md) — hero loading lazy → eager + fetchpriority=high; content shift when the hero lands 476px → 0px across 2 widths × landscape/portrait).
 ### Fixed
 
+- **The Site Builder no longer jumps the first time it saves a draft.**
+  `showDraftChip()` cleared the "Draft saved" chip's `hidden` attribute, and the
+  2s timer that follows only removes `is-visible` — an opacity class — so the
+  first debounced save moved the chip from `display: none` into layout *for
+  good*. Its box is 26px against the 19px "Start over" button beside it, so
+  `.wizard-header` grew and took `#wizardTabContent` and every Back/Next row
+  below it down with it: 7px where the header's right-hand block had already
+  wrapped, a whole wrapped line where those 7px were what tipped it over. The
+  chip now holds its box from first paint and is hidden with `visibility`,
+  which is what `_setup-wizard.scss` said it did all along ("Kept in the layout
+  (no display toggling) so its appearance never shifts the header") and still
+  keeps it out of the accessibility tree when it has nothing to say. This is
+  what failed the `@critical` stable-height spec on every push to `main`
+  (`2029, 2036, 2036, …`), and with it the retry that spec's failure forced
+  ([bamr87/bamr87#265](https://github.com/bamr87/bamr87/issues/265)) (evidence:
+  [`test/visual/evidence/agent-issue-265/`](test/visual/evidence/agent-issue-265/README.md)
+  — first draft save moved the wizard 42px on the base branch, 0px here).
+
+### Changed
+
+- The stable-height spec now walks Connect **first and last** and records
+  `#wizardTabContent`'s document-y **top** beside each Back/Next offset. The
+  contract itself (`spread ≤ 1`) is unchanged; what is new is that a shift
+  *above* the panes now fails as a shift above the panes instead of looking
+  like one step with bad CSS. The companion `heights` assertion keeps a comment
+  saying it is step-invariant by construction, so it is never again read as
+  evidence about anything above the container.
 - **Exactly one `main` landmark again on post, notebook and note pages.**
   `_layouts/{article,notebook,note}.html` each rendered
   `<article id="main" role="main">` *inside* root.html's
@@ -138,6 +169,28 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Two `test_core.sh` checks could never fail, and one shouted on every clean
+  run (#460).** The Liquid nested-tag check grepped for
+  {% raw %}`{{.*{{`{% endraw %}, which matches
+  any two *sibling* output tags on one line — it flagged 64 of the theme's
+  includes, starting with `navigation/sidebar-pagetree.html`'s valid
+  {% raw %}`{{ _base }}{{ _section }}`{% endraw %} — and its `return 1` sat inside a `find | while`
+  pipeline, i.e. a subshell, so the function printed `[ERROR]` and then reported
+  the check as passed. The gem-content check ran `tar -tzf` on the built `.gem`,
+  but a gem is an *uncompressed* tar wrapping `metadata.gz`, `data.tar.gz` and
+  `checksums.yaml.gz`, so gzip printed `stdin: not in gzip format` four times
+  and both branches fell through to "Gem may not contain…" without ever
+  inspecting the payload — a gem shipped with no `_layouts/` would have passed.
+  The nested-tag pattern is now {% raw %}`{{[^}]*{{`{% endraw %} (cannot cross the first `}`, so
+  siblings do not match), both loops read from a process substitution so a
+  failure propagates, and the gem check extracts `data.tar.gz` and asserts
+  `_layouts/` and `assets/` are really in it. The layout balance check, now
+  live, blanks Liquid comment bodies before counting, so prose in a comment that
+  quotes a closing delimiter (as `_layouts/root.html`'s per-page-scripts note
+  does) is no longer read as an unbalanced tag. New `test/test_core_checks.sh`
+  drives both checks against known-good and known-bad fixtures, so a check that
+  stops being able to fail is itself a test failure. `./test/test_core.sh` now
+  runs clean: 26/26, no `[ERROR]` line, no gzip/tar noise.
 - **Every navbar link emitted invalid HTML — attributes glued together with no
   separating whitespace (#465)** — the Liquid whitespace-trim markers around the
   conditional `aria-current` in `_includes/navigation/navbar.html` ate the

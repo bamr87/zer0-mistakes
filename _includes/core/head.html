@@ -200,7 +200,8 @@ window.MathJax = {
 {% comment %} DESIGN TOKEN OVERRIDES     {% endcomment %}
 {% comment %} ========================== {% endcomment %}
 {% comment %} Inline <style> block emitted AFTER main.css so site-config `theme_color` keys
-     and any per-user Appearance overrides win over compiled defaults. {% endcomment %}
+     and any per-user Appearance overrides win over compiled defaults. The tokens a
+     palette skin sets are scoped so that the skin still wins (see tokens-inline.html). {% endcomment %}
 {% include core/tokens-inline.html %}
 
 {% comment %} Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml.
