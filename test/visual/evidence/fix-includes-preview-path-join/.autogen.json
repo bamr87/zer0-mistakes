@@ -2,8 +2,8 @@
   "schema": "visual-autogen-manifest/v1",
   "slug": "fix-includes-preview-path-join",
   "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "2c499b23b225f8a0521dceffeb670c4ef0dcd70d",
+  "rendered_from": "7f11d34286fccb96ea76b42c08628554cc14ab31",
   "base_ref": "origin/main",
   "before_site": true,
-  "generated_at": "2026-10-04T16:19:56+00:00"
+  "generated_at": "2026-10-07T04:12:11+00:00"
 }
