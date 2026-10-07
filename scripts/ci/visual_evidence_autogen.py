@@ -452,6 +452,11 @@ def ensure_jekyll(timeout: int) -> bool:
     if http_ok(HEAD_URL + "/"):
         log(f"Jekyll already serving {HEAD_URL} — reusing it.")
         return False
+    # jekyll-watch ignores only the `exclude:` paths that EXIST when its watcher
+    # starts. On a fresh checkout node_modules/ does not, so the jammy run's
+    # `npm ci` would set off a regeneration whose LiveReload reloads every open
+    # page mid-shot (the pr-evidence.mjs crash on #495). Create it first.
+    Path("node_modules").mkdir(exist_ok=True)
     log("Starting Jekyll via docker compose…")
     run(["docker", "compose", "up", "-d"], capture=False)
     log(f"Waiting up to {timeout}s for {HEAD_URL} (cold bundle install + first build)…")

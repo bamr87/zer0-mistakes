@@ -103,7 +103,7 @@ theme_color:
   purple: "#6f42c1"     # --zer0-color-accent
 ```
 
-When a skin is active, `_sass/theme/_skins.scss` may override primary/link tokens for that skin. `theme_color.main` still applies when no skin-specific rule wins, and always applies to keys the skin does not remap.
+The active skin wins over `theme_color` for the tokens it sets. A palette skin (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) sets primary, link and accent, so `main`, `blue` and `purple` only apply under the `dark` and `contrast` skins. The other keys always apply. The full rule is in [design-tokens.md → Precedence](design-tokens.md#precedence-skin-vs-theme_color).
 
 ---
 
