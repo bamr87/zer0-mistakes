@@ -1,0 +1,76 @@
+{
+  "failures": [
+    {
+      "skin": "air",
+      "status": "failed",
+      "diffPx": 15978,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-air-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-42a4b-ir-homepage-visual-snapshot-snapshots-retry1/homepage-air-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-42a4b-ir-homepage-visual-snapshot-snapshots-retry1/homepage-air-diff.png"
+    },
+    {
+      "skin": "aqua",
+      "status": "failed",
+      "diffPx": 16112,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-aqua-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-711c5-ua-homepage-visual-snapshot-snapshots-retry1/homepage-aqua-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-711c5-ua-homepage-visual-snapshot-snapshots-retry1/homepage-aqua-diff.png"
+    },
+    {
+      "skin": "contrast",
+      "status": "failed",
+      "diffPx": 16602,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-contrast-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-89bc2-st-homepage-visual-snapshot-snapshots-retry1/homepage-contrast-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-89bc2-st-homepage-visual-snapshot-snapshots-retry1/homepage-contrast-diff.png"
+    },
+    {
+      "skin": "dark",
+      "status": "failed",
+      "diffPx": 16602,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-dark-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-92d0a-rk-homepage-visual-snapshot-snapshots-retry1/homepage-dark-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-92d0a-rk-homepage-visual-snapshot-snapshots-retry1/homepage-dark-diff.png"
+    },
+    {
+      "skin": "dirt",
+      "status": "failed",
+      "diffPx": 16231,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-dirt-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-7ace6-rt-homepage-visual-snapshot-snapshots-retry1/homepage-dirt-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-7ace6-rt-homepage-visual-snapshot-snapshots-retry1/homepage-dirt-diff.png"
+    },
+    {
+      "skin": "neon",
+      "status": "failed",
+      "diffPx": 16134,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-neon-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-0c0f3-on-homepage-visual-snapshot-snapshots-retry1/homepage-neon-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-0c0f3-on-homepage-visual-snapshot-snapshots-retry1/homepage-neon-diff.png"
+    },
+    {
+      "skin": "mint",
+      "status": "failed",
+      "diffPx": 16056,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-mint-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-c657a-nt-homepage-visual-snapshot-snapshots-retry1/homepage-mint-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-c657a-nt-homepage-visual-snapshot-snapshots-retry1/homepage-mint-diff.png"
+    },
+    {
+      "skin": "plum",
+      "status": "failed",
+      "diffPx": 16229,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-plum-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-08125-um-homepage-visual-snapshot-snapshots-retry1/homepage-plum-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-08125-um-homepage-visual-snapshot-snapshots-retry1/homepage-plum-diff.png"
+    },
+    {
+      "skin": "sunrise",
+      "status": "failed",
+      "diffPx": 16306,
+      "expected": "test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-sunrise-snapshots-linux.png",
+      "actual": "test/visual-results/output/features-appearance-snapsh-28286-se-homepage-visual-snapshot-snapshots-retry1/homepage-sunrise-actual.png",
+      "diff": "test/visual-results/output/features-appearance-snapsh-28286-se-homepage-visual-snapshot-snapshots-retry1/homepage-sunrise-diff.png"
+    }
+  ]
+}
