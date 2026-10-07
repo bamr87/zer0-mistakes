@@ -34,8 +34,15 @@ const QUICKSTART = '/quickstart/';
 
 const FIGURE = 'figure.zer0-diagram';
 
-/** Wait until every figure on the page has finished its render attempt. */
+/**
+ * Wait until every figure on the page has finished its render attempt.
+ * The Mermaid bundle is lazy-loaded when the first diagram nears the
+ * viewport, so bring that diagram into view first (a short viewport would
+ * otherwise never trigger the load).
+ */
 async function waitForDiagrams(page, minimum = 1) {
+  await page.waitForFunction((min) => document.querySelectorAll('figure.zer0-diagram').length >= min, minimum, { timeout: 30000 });
+  await page.locator('figure.zer0-diagram').first().scrollIntoViewIfNeeded();
   await page.waitForFunction((min) => {
     const figs = Array.from(document.querySelectorAll('figure.zer0-diagram'));
     return figs.length >= min && figs.every((f) => !f.classList.contains('is-loading'));
@@ -330,6 +337,26 @@ test.describe('Mermaid diagram figures', () => {
       expect(widest).toBeLessThanOrEqual(1);
     });
   }
+
+  test('the Mermaid bundle is lazy-loaded when the first diagram nears the viewport', async ({ page }) => {
+    // Phone-sized viewport: the docs page's first diagram starts well below
+    // the fold, so nothing should fetch the ~1 MB bundle until we scroll.
+    await page.setViewportSize({ width: 390, height: 700 });
+    const requested = [];
+    page.on('request', (req) => { if (/mermaid(\.min)?\.js/.test(req.url())) requested.push(req.url()); });
+    await gotoOrSkip(page, DOCS);
+    await page.waitForLoadState('networkidle');
+
+    const firstTop = await page.locator(FIGURE).first().evaluate((f) => f.getBoundingClientRect().top);
+    test.skip(firstTop < 700 + 400, 'first diagram is inside the lazy-load margin at this width');
+    expect(requested).toHaveLength(0);
+    // Fences are already figures (skeleton + toolbar) before Mermaid loads.
+    expect(await page.locator(`${FIGURE}.is-loading`).count()).toBeGreaterThanOrEqual(9);
+
+    await waitForDiagrams(page, 9);
+    expect(requested).toHaveLength(1);
+    expect(await page.locator(`${FIGURE}.is-rendered`).count()).toBeGreaterThanOrEqual(8);
+  });
 
   test.describe('touch devices', () => {
     // Touch emulation only (not a full device descriptor, which would pin the

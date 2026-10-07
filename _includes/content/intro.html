@@ -29,6 +29,13 @@
 {% assign assets_prefix = site.preview_images.assets_prefix | default: '/assets' %}
 {% assign auto_prefix = site.preview_images.auto_prefix | default: true %}
 
+{% comment %} Leading-slash normalisation, as in components/preview-image.html:
+   `preview: images/x.png` used to resolve to /assetsimages/x.png. {% endcomment %}
+{% unless preview_image == nil or preview_image == "" or preview_image contains '://' or preview_image contains 'data:' %}
+  {% assign preview_first = preview_image | slice: 0 %}
+  {% if preview_first != '/' %}{% assign preview_image = '/' | append: preview_image %}{% endif %}
+{% endunless %}
+
 {% if preview_image contains '://' %}
   {% assign preview_path = preview_image %}
 {% elsif auto_prefix and preview_image != blank %}

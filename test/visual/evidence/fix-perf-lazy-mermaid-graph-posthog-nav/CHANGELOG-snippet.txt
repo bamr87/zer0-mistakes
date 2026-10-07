@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-perf-lazy-mermaid-graph-posthog-nav/ -->
+  (evidence: [`test/visual/evidence/fix-perf-lazy-mermaid-graph-posthog-nav/`](test/visual/evidence/fix-perf-lazy-mermaid-graph-posthog-nav/README.md))

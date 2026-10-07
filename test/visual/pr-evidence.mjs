@@ -63,6 +63,15 @@ const afterLabel = env.AFTER_LABEL || 'AFTER — this PR';
 // test/visual/features/appearance-snapshot.spec.js).
 const BADGE_URL_RE = /(img\.shields\.io|badge\.fury\.io|github\.com\/.+\/badge\.svg)/;
 
+// `jekyll serve --livereload` injects livereload.js into every AFTER page, so
+// any regeneration reloads the open page mid-shot ("Execution context was
+// destroyed" — #495, where the jammy run's `npm ci` created node_modules/ after
+// Jekyll's watcher had started, so the watcher did not ignore it). A regeneration
+// is not ours to wait out: it is set off by unrelated writes, and the served
+// HTML is unchanged. Abort the script; the static BEFORE site never had it.
+const LIVERELOAD_URL_RE = /\/livereload\.js(\?|$)/;
+const NO_OVERFLOW = { overflowPx: null, scrollWidth: null, sel: null };
+
 // Seed consent the way a returning visitor arrives, so the fixed-bottom cookie
 // banner is not baked into every shot (same key as test/visual/fixtures.js).
 const SEED_CONSENT = () => {
@@ -78,6 +87,7 @@ async function shoot(browser, url, width) {
   const page = await browser.newPage();
   await page.addInitScript(SEED_CONSENT);
   await page.route(BADGE_URL_RE, (r) => r.abort());
+  await page.route(LIVERELOAD_URL_RE, (r) => r.abort());
   await page.setViewportSize({ width, height: 720 });
   let status = 0;
   try {
@@ -91,11 +101,13 @@ async function shoot(browser, url, width) {
     await page.evaluate(() => (document.fonts ? document.fonts.ready : null)).catch(() => {});
     await page.waitForTimeout(300);
   }
+  // Anything else that navigates after `load` costs this shot its overflow
+  // figure or header band, never the sweep: no page-context call may throw.
   const overflow = ok
-    ? await page.evaluate(MEASURE_OVERFLOW, scope)
-    : { overflowPx: null, scrollWidth: null, sel: null };
+    ? await page.evaluate(MEASURE_OVERFLOW, scope).catch(() => NO_OVERFLOW)
+    : NO_OVERFLOW;
   const img = await page.screenshot();
-  const header = ok ? await page.$('header#navbar') : null;
+  const header = ok ? await page.$('header#navbar').catch(() => null) : null;
   const band = header ? await header.screenshot().catch(() => null) : null;
   await page.close();
   return { status, ok, overflow, img, band };
