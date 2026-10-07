@@ -2,12 +2,12 @@
 title: Guide de démarrage rapide Zer0-Mistakes
 author: Zer0-Mistakes Development Team
 layout: default
-description: Guide de configuration complet du thème Jekyll Zer0-Mistakes proposant
-  un développement axé sur Docker, une installation assistée par IA et une compatibilité
-  multiplateforme
+description: Guide de configuration complet pour le thème Jekyll Zer0-Mistakes, avec
+  développement axé sur Docker, installation assistée par IA et compatibilité multiplateforme.
 sidebar:
   nav: quickstart
-lastmod: 2026-06-15 00:00:00.000000000 Z
+date: 2025-07-01 00:00:00.000000000 Z
+lastmod: 2026-09-05 00:00:00.000000000 Z
 preview: "/images/previews/zer0-mistakes-quick-start-guide.png"
 tags:
 - jekyll
@@ -19,20 +19,18 @@ categories:
 - Documentation
 - Quick Start
 keywords:
-  primary:
-  - jekyll theme setup
-  - docker development
-  secondary:
-  - ai installation
-  - cross-platform
-  - bootstrap 5
+- jekyll theme setup
+- docker development
+- ai installation
+- cross-platform
+- bootstrap 5
 mermaid: true
 lang: fr
 permalink: "/fr/quickstart/"
 translation_of: pages/_quickstart/index.md
 translation_source_url: "/quickstart/"
 machine_translated: true
-translated_from_sha: 2555308eac40
+translated_from_sha: 66da1a1e9bc5
 ---
 
 # Guide de démarrage rapide
@@ -47,7 +45,7 @@ flowchart TD
     B --> E[Add theme to existing repo]
     B --> F[Zero-install / cloud]
 
-    C --> C1["Option A: Install wizard\ncurl … | bash + docker-compose up"]
+    C --> C1["Option A: Install wizard\ncurl … | bash + docker compose up"]
     C --> C2["Option B: GitHub Template\ngh repo create --template"]
     D --> D1["Option D: Fork/Clone\ngh repo fork + fork-cleanup.sh"]
     E --> E1["Option E: Remote theme\nremote_theme: bamr87/zer0-mistakes"]
@@ -55,17 +53,19 @@ flowchart TD
     F --> F1["Option C: Codespaces\nOne click, browser-based"]
 ```
 
-## ⚡ Démarrage le plus rapide (1 commande) {#fastest-start-1-command}
+## Démarrage le plus rapide (1 commande) {#fastest-start-1-command}
 
 ```bash
 mkdir my-site && cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-docker-compose up
+docker compose up
 ```
 
 Votre site sera en ligne à l'adresse `http://localhost:4000`.
 
 ![Assistant d'installation en cours d'exécution dans le terminal](/assets/images/quickstart/install-oneliner.png)
+
+Vous préférez un navigateur à un terminal ? Le **[Générateur de site](/quickstart/site-builder/)** vous guide vers le même résultat étape par étape, avec Claude qui vérifie votre machine, rédige votre configuration et votre contenu, et démarre Docker à votre place.
 
 ## Ce que vous obtenez
 
@@ -73,7 +73,7 @@ Votre site sera en ligne à l'adresse `http://localhost:4000`.
 - **Bootstrap 5.3.3** — intégré, responsive, compatible mode sombre
 - **Rechargement en direct** — le navigateur se met à jour à chaque enregistrement de fichier
 - **Compatible GitHub Pages** — poussez vers `main`, le site se déploie automatiquement
-- **Analytique respectueuse de la vie privée** — PostHog avec barrière de consentement, désactivée en dev
+- **Analytique respectueuse de la vie privée** — PostHog avec gestion du consentement, désactivé en développement
 
 ## Options d'installation {#installation-options}
 
@@ -81,30 +81,30 @@ Votre site sera en ligne à l'adresse `http://localhost:4000`.
 |------|--------|----------|
 | **A** | Assistant d'installation (une ligne) | Nouveau site local |
 | **B** | Modèle GitHub | Copie propre via l'interface ou le CLI GitHub |
-| **C** | GitHub Codespaces | Dev sans installation, dans le navigateur |
-| **D** | Fork/Clone | Site personnel `username.github.io` |
+| **C** | GitHub Codespaces | Développement dans le navigateur, sans installation |
+| **D** | Fork/Clone | Site `username.github.io` personnel |
 | **E** | Thème distant | Ajouter le thème à un dépôt existant |
-| **F** | Gem Ruby | Flux de travail Bundler traditionnel |
+| **F** | Gem Ruby | Flux de travail Bundler classique |
 
 ### Option A — Assistant d'installation
 
 ```bash
 mkdir my-site && cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-docker-compose up
+docker compose up
 ```
 
 ### Option B — Modèle GitHub
 
 1. Rendez-vous sur [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
 2. Cliquez sur **Use this template** → **Create a new repository**
-3. Clonez votre nouveau dépôt et exécutez `docker-compose up`
+3. Clonez votre nouveau dépôt et exécutez `docker compose up`
 
 Ou via le CLI :
 
 ```bash
 gh repo create my-site --template bamr87/zer0-mistakes --clone
-cd my-site && docker-compose up
+cd my-site && docker compose up
 ```
 
 ### Option C — GitHub Codespaces
@@ -121,12 +121,12 @@ Forkez dans `<your-username>.github.io` pour obtenir votre propre site GitHub Pa
 gh repo fork bamr87/zer0-mistakes --clone
 cd zer0-mistakes
 ./scripts/fork-cleanup.sh   # interactive config wizard
-docker-compose up
+docker compose up
 ```
 
 Activez Pages : **Settings → Pages → Branch: main → Save**.
 
-Consultez [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) pour le guide complet fork → configuration → personnalisation.
+Consultez [docs/installation/forking.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) pour le guide complet fork → configuration → personnalisation.
 
 ### Option E — Thème distant
 
@@ -159,36 +159,37 @@ bundle install && bundle exec jekyll serve
 
 | Guide | Objectif | Durée | Difficulté |
 |-------|---------|------|------------|
+| **[Générateur de site](/quickstart/site-builder/)** | Assistant guidé avec Claude : prérequis → configuration → site fonctionnel | 15 min | Débutant |
 | **[Configuration de la machine](/quickstart/machine-setup/)** | Installer Docker, Git, GitHub CLI | 10 min | Débutant |
-| **[Configuration de Jekyll](/quickstart/jekyll-setup/)** | Lancer le serveur de dev, créer du contenu | 5 min | Débutant |
+| **[Configuration de Jekyll](/quickstart/jekyll-setup/)** | Lancer le serveur de développement, créer du contenu | 5 min | Débutant |
 | **[Configuration de GitHub](/quickstart/github-setup/)** | Forker, déployer sur GitHub Pages | 10 min | Intermédiaire |
 | **[Personnalisation](/quickstart/personalization/)** | Configurer `_config.yml` pour votre site | 5 min | Débutant |
 
 ## Dépannage rapide
 
-**Port 4000 déjà utilisé**
+**Port 4000 utilisé**
 
 ```bash
 lsof -i :4000          # see what's running
-docker-compose down    # stop any existing containers
-docker-compose up      # restart
+docker compose down    # stop any existing containers
+docker compose up      # restart
 ```
 
 **Avertissements de plateforme Docker (Apple Silicon)**
 
-C'est normal — `docker-compose.yml` définit déjà `platform: linux/amd64`. Le site fonctionne normalement.
+Aucun verrouillage `platform:` n'est défini — Docker construit votre architecture native par défaut, ce qui est le comportement souhaité. Forcer `linux/amd64` exécute l'image sous l'émulation QEMU et coûte 3 à 10× plus cher lors des installations et des compilations de gems natives. Si un outil tiers affiche cet avertissement, vous pouvez l'ignorer sans risque. Exportez `DOCKER_DEFAULT_PLATFORM=linux/amd64` uniquement lorsque vous avez besoin d'une parité x86 explicite avec la production.
 
 **Erreurs de compilation Jekyll**
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll doctor
-docker-compose exec jekyll bundle exec jekyll build --trace
+docker compose exec jekyll bundle exec jekyll doctor
+docker compose exec jekyll bundle exec jekyll build --trace
 ```
 
 **Validez votre configuration :**
 
 ```bash
-docker-compose exec -T jekyll bundle exec jekyll build \
+docker compose exec -T jekyll bundle exec jekyll build \
   --config '_config.yml,_config_dev.yml'
 ```
 
@@ -197,9 +198,9 @@ docker-compose exec -T jekyll bundle exec jekyll build \
 | Ressource | Objectif |
 |----------|---------|
 | [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues) | Rapports de bogues et support technique |
-| [Discussions](https://github.com/bamr87/zer0-mistakes/discussions) | Questions-réponses de la communauté et demandes de fonctionnalités |
+| [Discussions](https://github.com/bamr87/zer0-mistakes/discussions) | Questions-réponses communautaires et demandes de fonctionnalités |
 | [Guide d'installation](/docs/installation/) | Documentation de configuration approfondie |
 
 ---
 
-Commencez par **[Configuration de la machine →](/quickstart/machine-setup/)** s'il s'agit de votre première fois, ou passez directement aux [Options d'installation](#installation-options) pour choisir votre parcours.
+Commencez par la **[Configuration de la machine →](/quickstart/machine-setup/)** s'il s'agit de votre première fois, ou passez directement aux [Options d'installation](#installation-options) pour choisir votre parcours.
