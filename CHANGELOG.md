@@ -12,6 +12,37 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
+
+
+### Features
+
+* **navigation:** two clean navbar label tiers, merged chevron, centred grid ([#495](https://github.com/bamr87/zer0-mistakes/issues/495)) ([9ebb29a](https://github.com/bamr87/zer0-mistakes/commit/9ebb29a4662fbc4c62d3fdd8df9c282bdd181204))
+* **theme:** four consumer extension points for notes/knowledge-base builds ([#492](https://github.com/bamr87/zer0-mistakes/issues/492)) ([1e2b228](https://github.com/bamr87/zer0-mistakes/commit/1e2b2283303012b28b9e81209fb66d0344aa0597))
+
+
+### Bug Fixes
+
+* **article:** eager-load the hero LCP image and reserve its box ([#498](https://github.com/bamr87/zer0-mistakes/issues/498)) ([529b84b](https://github.com/bamr87/zer0-mistakes/commit/529b84bd0f5ea8e79b7711187b52b2bb80c5b134)), closes [#485](https://github.com/bamr87/zer0-mistakes/issues/485)
+* **ci:** keep a LiveReload push from crashing the generic evidence generator ([#500](https://github.com/bamr87/zer0-mistakes/issues/500)) ([eb1b5ae](https://github.com/bamr87/zer0-mistakes/commit/eb1b5ae201ed0829e0c3fac05e629e55a6ea1040))
+* **ci:** Playwright 1.58 attachment names, docs front matter, test race ([#497](https://github.com/bamr87/zer0-mistakes/issues/497)) ([f1bdc7e](https://github.com/bamr87/zer0-mistakes/commit/f1bdc7ef22091f0506617b11a95e357c439cfa94))
+* **ci:** stop auto-merge guard failing on Dependabot Actions bumps ([#503](https://github.com/bamr87/zer0-mistakes/issues/503)) ([a998b2d](https://github.com/bamr87/zer0-mistakes/commit/a998b2dd9cf96bb1fd09ac3a95644908713afc37))
+* **features:** escape `<en-url>` in the translation card so the Features page renders ([#505](https://github.com/bamr87/zer0-mistakes/issues/505)) ([8e4345f](https://github.com/bamr87/zer0-mistakes/commit/8e4345f28dfc675b5efe95ba66ec72af613cbcf5))
+* **includes:** join preview paths without a leading slash under assets_prefix ([#509](https://github.com/bamr87/zer0-mistakes/issues/509)) ([406250c](https://github.com/bamr87/zer0-mistakes/commit/406250c2b5b94469cae9a0b6f93e8782cb8509f9))
+* **includes:** stop the draft chip shifting the Site Builder on first save ([#489](https://github.com/bamr87/zer0-mistakes/issues/489)) ([d472aa2](https://github.com/bamr87/zer0-mistakes/commit/d472aa267e164212cf8b844e701cfcdad08e4d8d))
+* **layouts:** one main landmark per page on post, notebook and note ([#487](https://github.com/bamr87/zer0-mistakes/issues/487)) ([78b0910](https://github.com/bamr87/zer0-mistakes/commit/78b0910fb2258591eab9ba13efb5ac037eee80c5))
+* **navigation:** stop Liquid whitespace-trim gluing navbar attributes ([#477](https://github.com/bamr87/zer0-mistakes/issues/477)) ([4349ea1](https://github.com/bamr87/zer0-mistakes/commit/4349ea17d690e5e6b8585f1d3a33b3ea4d3bf4fe))
+* **scripts:** default xAI preview renderer to grok-imagine-image-2.0 ([#499](https://github.com/bamr87/zer0-mistakes/issues/499)) ([95cebdb](https://github.com/bamr87/zer0-mistakes/commit/95cebdb535799544f05ed5929e528a074448ef63)), closes [#474](https://github.com/bamr87/zer0-mistakes/issues/474)
+* **tests:** make the Liquid nested-tag and gem-content checks able to fail ([#478](https://github.com/bamr87/zer0-mistakes/issues/478)) ([8510d08](https://github.com/bamr87/zer0-mistakes/commit/8510d0824f79823f66f765f12db9be9b67fff3ae))
+* **tokens:** let the active skin win over site theme_color for skin-owned tokens ([#502](https://github.com/bamr87/zer0-mistakes/issues/502)) ([af468e0](https://github.com/bamr87/zer0-mistakes/commit/af468e072543a448e7be80230f3d3a246b5e758e))
+* **ui:** make the cookie consent banner a compact bottom bar ([#510](https://github.com/bamr87/zer0-mistakes/issues/510)) ([2d7d0db](https://github.com/bamr87/zer0-mistakes/commit/2d7d0db7f9f6b1433b63d8be76103cce2fd7fb05))
+
+
+### Performance Improvements
+
+* **js:** lazy-load Mermaid and cytoscape, defer PostHog, stop nav reflows ([#508](https://github.com/bamr87/zer0-mistakes/issues/508)) ([702789c](https://github.com/bamr87/zer0-mistakes/commit/702789cecf93d8e9b9f7013168ca47f0294064eb))
+* **sitemap:** keep one page of the index in the DOM and build cards lazily ([#511](https://github.com/bamr87/zer0-mistakes/issues/511)) ([9e42fcb](https://github.com/bamr87/zer0-mistakes/commit/9e42fcbd9421a994fd22a347bbef95573ce340a9))
+
 ## [Unreleased]
 
 ### Added
