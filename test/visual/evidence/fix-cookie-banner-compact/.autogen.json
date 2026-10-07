@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "fix-cookie-banner-compact",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "24299c7d184c9bc84f25f7d2262de6cbda385d4b",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-07T19:22:01+00:00"
+}

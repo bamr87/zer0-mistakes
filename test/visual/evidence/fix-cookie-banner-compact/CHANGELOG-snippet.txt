@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-cookie-banner-compact/ -->
+  (evidence: [`test/visual/evidence/fix-cookie-banner-compact/`](test/visual/evidence/fix-cookie-banner-compact/README.md))
