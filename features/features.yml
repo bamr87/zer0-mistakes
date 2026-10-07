@@ -2196,7 +2196,7 @@ features:
       docs: "docs/systems/multilingual-translation.md"
     features:
       - "One large full-translation job (workflow_dispatch) plus bounded incremental runs when English content changes"
-      - "Manifest-driven SHA change detection, pruning of deleted sources, and generated /fr<en-url> permalinks (GitHub Pages safe-mode friendly)"
+      - "Manifest-driven SHA change detection, pruning of deleted sources, and generated /fr/... permalinks mirroring the English URLs (GitHub Pages safe-mode friendly)"
       - "Markdown-safe segment translation: code, Liquid, wiki-links and URLs masked as placeholders and validated"
       - "Navbar language toggle with availability states, hreflang alternates, per-page html lang, machine-translation notice"
 

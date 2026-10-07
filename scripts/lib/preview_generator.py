@@ -24,7 +24,7 @@ Architecture — Claude ORCHESTRATES, an image model RENDERS:
     --------   --------------------------------------   ----------------------------------
     openai     gpt-image-2 / dall-e-3 (+ --enhance      OPENAI_API_KEY
     (default)  via /v1/images/edits)
-    xai        grok-2-image                             XAI_API_KEY
+    xai        grok-imagine-image-2.0                   XAI_API_KEY
     stability  Stable Diffusion XL (v1 API)             STABILITY_API_KEY
     gemini     gemini-2.5-flash-image                   GEMINI_API_KEY
     local      deterministic template SVG → PNG         none (CI-safe; skips
@@ -1688,7 +1688,7 @@ class XAIProvider(Provider):
         return "XAI_API_KEY environment variable is required for the xAI provider"
 
     def default_model(self) -> str:
-        return "grok-2-image"
+        return "grok-imagine-image-2.0"
 
     def generate(self, prompt, settings, out_base, ctx) -> ImageResult:
         model = effective_model(settings, self)
