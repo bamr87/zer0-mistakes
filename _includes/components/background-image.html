@@ -80,7 +80,13 @@
   {%- endif -%}
 {%- endif -%}
 
-{%- comment -%} Path resolution -- see preview-image.html {%- endcomment -%}
+{%- comment -%} Path resolution -- see preview-image.html (including the
+    leading-slash normalisation: "images/x.png" must not become
+    "/assetsimages/x.png"). {%- endcomment -%}
+{%- unless bgi_src == nil or bgi_src == "" or bgi_src contains '://' or bgi_src contains 'data:' -%}
+  {%- assign bgi_first = bgi_src | slice: 0 -%}
+  {%- if bgi_first != '/' -%}{%- assign bgi_src = '/' | append: bgi_src -%}{%- endif -%}
+{%- endunless -%}
 {%- assign bgi_assets_prefix = site.preview_images.assets_prefix | default: '/assets' -%}
 {%- assign bgi_auto_prefix = site.preview_images.auto_prefix | default: true -%}
 {%- if bgi_src == nil or bgi_src == "" -%}
