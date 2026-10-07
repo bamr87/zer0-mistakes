@@ -262,7 +262,7 @@ update_config() {
 preview_images:
   enabled: true
   provider: ${DEFAULT_PROVIDER}          # renderer: openai, xai, stability, gemini, local
-  model: ""                              # empty = renderer default (gpt-image-2, grok-2-image, ...)
+  model: ""                              # empty = renderer default (gpt-image-2, grok-imagine-image-2.0, ...)
   size: "1536x1024"                      # Landscape banner size
   quality: auto                          # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
