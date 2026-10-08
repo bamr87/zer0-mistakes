@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "fix-a11y-intro-actions-nav-toggle-badges",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "a0e4a5d343a0d8397678e5156b5b19ed7d896668",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-04T15:34:10+00:00"
+}

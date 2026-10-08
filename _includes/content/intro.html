@@ -52,7 +52,16 @@
   Build the file path, branch, and repo owner for action buttons.
 {% endcomment %}
 {% assign repo_branch = site.branch | default: "main" %}
-{% assign file_path = page_dir | append: "/" | append: page.path %}
+{% comment %}
+  Only join with "/" when there is a collection directory. Pages outside a
+  collection have an empty page_dir, and the unconditional join produced
+  ".../blob/main//pages/tags.md" (double slash) in the edit/source links.
+{% endcomment %}
+{% if page_dir and page_dir != "" %}
+  {% assign file_path = page_dir | append: "/" | append: page.path %}
+{% else %}
+  {% assign file_path = page.path %}
+{% endif %}
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
 {% assign page_absolute_url = page.url | absolute_url %}
@@ -239,7 +248,8 @@
         <div class="bd-intro-actions">
     {% comment %} Share Button {% endcomment %}
     <div class="dropdown">
-      <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
+      {%- comment -%} aria-label keeps an accessible name below 576px, where the visible text is d-none. {%- endcomment -%}
+      <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ ui.share_label | default: 'Share' }}">
         <i class="bi bi-share" aria-hidden="true"></i>
         <span class="d-none d-sm-inline ms-1">{{ ui.share_label | default: "Share" }}</span>
       </button>
@@ -300,7 +310,8 @@
     <a href="https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}"
        class="btn btn-sm btn-dark bd-intro-action-link"
        target="_blank"
-       rel="noopener noreferrer">
+       rel="noopener noreferrer"
+       aria-label="{{ ui.edit_on_github | default: 'Edit on GitHub' }}">
       <i class="bi bi-github" aria-hidden="true"></i>
       <span class="d-none d-sm-inline ms-1">{{ ui.edit_on_github | default: "Edit on GitHub" }}</span>
     </a>

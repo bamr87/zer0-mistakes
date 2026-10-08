@@ -73,8 +73,32 @@
             bootstrap.Modal.getOrCreateInstance(modalEl).show();
         };
 
-        const openModal = () => {
+        // Where focus goes when the modal closes. Bootstrap only restores
+        // focus for data-bs-toggle triggers, and this modal is opened from
+        // code ("/", Ctrl/Cmd+K, the toggle's click handler), so on Escape
+        // focus used to fall back to <body> (WCAG 2.4.3 Focus Order).
+        let returnFocusTo = null;
+
+        const isVisible = (el) => !!el && el.isConnected && el.getClientRects().length > 0;
+
+        const rememberOpener = (preferred) => {
+            const active = document.activeElement;
+            if (preferred && isVisible(preferred)) {
+                returnFocusTo = preferred;
+            } else if (active && active !== document.body && !modalEl.contains(active) && isVisible(active)) {
+                returnFocusTo = active;
+            } else {
+                // Opened from the keyboard with nothing focused: return to
+                // the visible Search button, the control that owns the dialog.
+                returnFocusTo = Array.from(document.querySelectorAll('[data-search-toggle]')).find(isVisible) || null;
+            }
+        };
+
+        const openModal = (preferredOpener) => {
             if (typeof bootstrap === 'undefined') return;
+            if (!modalEl.classList.contains('show')) {
+                rememberOpener(preferredOpener instanceof Element ? preferredOpener : null);
+            }
             const cookieEl = document.getElementById('cookieSettingsModal');
             const infoEl = document.getElementById('info-section');
             const drawerEl = document.getElementById('zer0UnifiedDrawer');
@@ -102,13 +126,13 @@
         }
 
         // Open modal when keyboard shortcut requests search
-        document.addEventListener('navigation:searchRequest', openModal);
+        document.addEventListener('navigation:searchRequest', () => openModal());
 
         // Open modal when clicking a search toggle button
         document.querySelectorAll('[data-search-toggle]').forEach((button) => {
             button.addEventListener('click', (event) => {
                 event.preventDefault();
-                openModal();
+                openModal(button);
             });
         });
 
@@ -152,6 +176,14 @@
                 searchInput.value = '';
             }
             clearResults();
+            // Only restore focus if nothing else claimed it (e.g. a result
+            // link navigating away, or the info-section offcanvas opening).
+            const target = returnFocusTo;
+            returnFocusTo = null;
+            const active = document.activeElement;
+            if (target && isVisible(target) && (!active || active === document.body || modalEl.contains(active))) {
+                try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+            }
         });
 
         // Prevent empty submissions, and keep submissions in-modal when the
