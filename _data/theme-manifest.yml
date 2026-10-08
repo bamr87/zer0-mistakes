@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.31.0"
-generated_at: "2026-10-07T21:57:46Z"
+version: "1.31.1"
+generated_at: "2026-10-08T02:01:11Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
@@ -165,7 +165,7 @@ file_checksums:
   _includes/components/zer0-env-var.html: "d11f3a578319f48f763b0e8639230e71b9a6e9301453c73c9907814f086fc03e"
   _includes/content/backlinks.html: "6b18741876a3923606b60f60b3f366c3f60d49924d03a2b86c80df41f2e8130a"
   _includes/content/giscus.html: "8c49d8a22caef89a3132ba9da5434ddecf33b615f051eee1af7441df0bfef686"
-  _includes/content/intro.html: "6777503c9c5f547012673379c0492db219e40898c24268312c2d0478208e34c0"
+  _includes/content/intro.html: "3afe3f3154fae6a3e4c8f96f818226ab9a41448fadee76d172e1019fdd1cf63c"
   _includes/content/jsonld-faq.html: "9e4001c9ccebb91ac1b2e51a8a7833e611bd70ae59fee7c599a88597b079a55c"
   _includes/content/jsonld-software.html: "41624ca1a61687a91878e4147cb6e1fc172ace09bf2d9688e5f1da16cdaecf06"
   _includes/content/seo.html: "05a6c4bb5aa9357facd041b85eb3ffc3b1ab0c4fabe7cbfa87f9905618718d5f"
@@ -241,7 +241,7 @@ file_checksums:
   _sass/core/_docs-code-examples.scss: "422d704a7009a07115beede2fb4f925131859075b40d5aa10d0d73ca0ebca371"
   _sass/core/_docs-layout.scss: "adb29a60417ec2d13dd93501e6072d93ec021281de9711ed44fa76f4587def6f"
   _sass/core/_nav-tree.scss: "b696b2c5fd91dd5180010c59b38e5242c3b7a7258e889fc3c1ca16c2a53310c2"
-  _sass/core/_navbar.scss: "52f447c560da18954932675290b2d39360a9c5be6f9fae8c0d3b62ef2ac11b28"
+  _sass/core/_navbar.scss: "9aabb6b41b205dc6448518bee681b7189f29670e18a306d8c5c6518706438df3"
   _sass/core/_obsidian.scss: "557582682f3b37f6cbb3bac36ef2a90390d71604ef172262b5742d0c1aeba55b"
   _sass/core/_offcanvas-panels.scss: "f4c9e1046923ce036108424c7a9eeae92a54a4e95b31274283b6abf170fc846c"
   _sass/core/_sidebar-categories.scss: "7d75034b075f78dc3c604ccd190e25f98989a8162339ad9e837df82d57870eec"
@@ -261,7 +261,7 @@ file_checksums:
   _sass/theme/_backgrounds.scss: "a0963147a79b91db3939700c21a0aa5a8b2eff418068fcd499295de17ff13eed"
   _sass/theme/_color-modes.scss: "69a86515638192492c10acdf23b3489cb796662eb22b76ff49c1dd1ab1139b0c"
   _sass/theme/_css-variables.scss: "1a77c72dbef2824d6aa09601cd2a1de7e6112ef7c37f9a7df5d6030a99b8b329"
-  _sass/theme/_skins.scss: "4b206347ceee672e0fa60137be6fbc7f33f04c3afd6ed283e4440281ea3accfe"
+  _sass/theme/_skins.scss: "4661fd169a4495bf122f44a61816a4f62c226a1fd7d5b24c2aed6b750452a083"
   _sass/theme/_wizard-mode.scss: "f5feb0385422e8c9f7aea55d26aa5760e87ce8a8d3df210916b7a30e04d32e6b"
   _sass/tokens/_breakpoints.scss: "7b4641eff577ab964ef8f6d754eadcf6022b55509b27b33eab79caff79f45944"
   _sass/tokens/_color.scss: "fcbb810626661c00dd21566440b46f5901b519c2ab478272ac111d6eafdb1d17"
@@ -322,7 +322,7 @@ file_checksums:
   assets/js/particles.js: "48234a606a6dbbe9420112aebaf78a78f935bb85e5d258f2904f64c57a54d0ae"
   assets/js/posts-pagination.js: "ed4b98bd1c958766ce604175bbef0681f7bc70d6b9bb306907f2ac676baf36f8"
   assets/js/recipe-scaler.js: "b05aa0cd0fafeadbf4454c4cacf1463f994e263a1f4a79a1d177f35a560a1e6e"
-  assets/js/search-modal.js: "f94efe1fde116d2cfd163d7eb5882b43405f83bfd3f605af28c7cb786460d08a"
+  assets/js/search-modal.js: "2d495ab1d0b2f5aa50af6aa7a9962b80656e78e7d97b8652610fcb0b64ea3632"
   assets/js/setup-wizard.js: "0ef2dcce4d93e753326999c7360dedda7b7d5b05cec2a52350b0110d0e583d0a"
   assets/js/share-actions.js: "810a326d8aa33633854364d91caddfff1c769eaa7d437a746f96a752c2e2fdae"
   assets/js/side-bar-folders.js: "133606c23a03b9370308811e0a39187f4dd43b487628f8d875ac631afa28598a"
