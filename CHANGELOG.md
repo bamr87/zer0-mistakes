@@ -12,6 +12,13 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.1](https://github.com/bamr87/zer0-mistakes/compare/v1.31.0...v1.31.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **a11y:** name mobile intro actions, 24px nav chevrons, badge links ([#507](https://github.com/bamr87/zer0-mistakes/issues/507)) ([59963a9](https://github.com/bamr87/zer0-mistakes/commit/59963a958fb08cff9d49c00eac9e4c430d70a5c5))
+
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 
 
