@@ -1,7 +1,7 @@
 /**
  * <head> byte-budget and discoverability contract.
  *
- * Regression: #372 and #371.
+ * Regression: #372, #371, #281 and #513.
  *
  * #372 — the HTML spec only looks for the character encoding declaration in
  * the first 1024 bytes of a document. `<meta charset>` used to sit in
@@ -127,6 +127,57 @@ test.describe('head contract — charset byte budget and feed discovery', { tag:
     const res = await request.get(new URL(href, page.url()).toString());
     expect(res.status(), `${href} should resolve`).toBe(200);
     expect(await res.text()).toContain('<feed');
+  });
+});
+
+/** Discover a real published post URL from the live search index. */
+async function firstPostUrl(page) {
+  const index = await page.evaluate(async () => {
+    const res = await fetch('/search.json');
+    return res.ok ? res.json() : [];
+  });
+  const post = (Array.isArray(index) ? index : []).find((e) => (e.url || '').startsWith('/posts/'));
+  return post ? post.url : null;
+}
+
+// #513 — `<head>` used to carry `<meta itemprop="headline|description|
+// datePublished|dateModified">`, but neither <html> nor <head> declares an
+// itemscope, so under the microdata model those properties belonged to no item
+// and every parser discarded them. The same facts are published by
+// jekyll-seo-tag's JSON-LD, and on article layouts by the body BlogPosting
+// item. These tests pin both halves: nothing orphaned in <head>, nothing lost.
+test.describe('head contract — no orphaned microdata', { tag: '@critical' }, () => {
+  test('<head> carries no itemprop on the home page or a post', async ({ page, request }) => {
+    await waitForJekyll(page, UI_ROUTES.home);
+    const post = await firstPostUrl(page);
+    test.skip(!post, 'no /posts/ entry in the search index to check a post <head>');
+
+    for (const route of [UI_ROUTES.home, post]) {
+      const head = stripComments(headRegion((await rawHtml(page, request, route)).toString('utf8')));
+      expect(
+        head.indexOf('itemprop='),
+        `${route}: <head> has no itemscope, so an itemprop there belongs to no item ` +
+        `and is ignored by every parser (issue #513)`
+      ).toBe(-1);
+    }
+  });
+
+  test('a post still publishes headline and datePublished as structured data', async ({ page, request }) => {
+    await waitForJekyll(page, UI_ROUTES.home);
+    const post = await firstPostUrl(page);
+    test.skip(!post, 'no /posts/ entry in the search index to check');
+
+    // JSON-LD from {% seo %} in <head> — the canonical copy.
+    const head = headRegion((await rawHtml(page, request, post)).toString('utf8'));
+    const ld = head.indexOf('application/ld+json');
+    expect(ld, `${post}: jekyll-seo-tag JSON-LD must remain in <head>`).toBeGreaterThanOrEqual(0);
+    expect(head.indexOf('"headline"', ld), 'JSON-LD should carry headline').toBeGreaterThan(ld);
+    expect(head.indexOf('"datePublished"', ld), 'JSON-LD should carry datePublished').toBeGreaterThan(ld);
+
+    // Body microdata inside a real item — untouched by the fix.
+    const item = page.locator('[itemscope][itemtype="https://schema.org/BlogPosting"]').first();
+    await expect(item.locator('[itemprop="headline"]').first()).toBeAttached();
+    await expect(item.locator('[itemprop="datePublished"]').first()).toBeAttached();
   });
 });
 

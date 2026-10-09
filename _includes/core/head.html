@@ -129,23 +129,10 @@ window.MathJax = {
 {% comment %} ========================== {% endcomment %}
 {% comment %} STRUCTURED DATA MARKUP    {% endcomment %}
 {% comment %} ========================== {% endcomment %}
-{% comment %} Enhanced meta data for rich snippets and social media {% endcomment %}
-{% if page.title %}
-    <meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">
-{% endif %}
-{% if page.description %}
-    <meta itemprop="description" content="{{ page.description | markdownify | strip_html | strip_newlines | escape_once }}">
-{% elsif page.excerpt %}
-    <meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once}} ">
-{% endif %}
-{% if page.date %}
-    <meta itemprop="datePublished" content="{{ page.date | date_to_xmlschema }}">
-{% endif %}
-{% if page.last_modified_at %}
-    <meta itemprop="dateModified" content="{{ page.last_modified_at | date_to_xmlschema }}">
-{% elsif page.lastmod %}
-    <meta itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
-{% endif %}
+{% comment %} No microdata properties here: <head> has no item scope, so a property
+     in it belongs to no item and parsers discard it (#513). headline/description/dates
+     come from jekyll-seo-tag's JSON-LD in root.html, and from the body item on
+     article-type layouts. {% endcomment %}
 
 {% comment %} JSON-LD SoftwareApplication schema (homepage only) {% endcomment %}
 {% include content/jsonld-software.html %}

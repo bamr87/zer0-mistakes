@@ -12,6 +12,16 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Fixed
+
+- **No orphaned microdata in `<head>`** ([#513](https://github.com/bamr87/zer0-mistakes/issues/513)).
+  `_includes/core/head.html` emitted `<meta itemprop="headline|description|datePublished|dateModified">`
+  with no `itemscope` ancestor, so every parser discarded them. The block is
+  removed; jekyll-seo-tag's JSON-LD and the article layouts' `BlogPosting` item
+  already publish the same facts. Pinned by `test/visual/core/head-contract.spec.js`.
+
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 
 
