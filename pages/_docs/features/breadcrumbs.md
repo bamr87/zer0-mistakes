@@ -77,12 +77,7 @@ breadcrumbs: true
 </nav>
 ```
 
-A crumb with no index page to link to (for example "Posts" on a site without
-a `/posts/` page) still shows in the trail, but as plain text **outside** the
-structured list: `<li class="breadcrumb-item">Posts</li>`. The remaining
-`ListItem`s are renumbered `1..n`. This is deliberate. Google requires an
-`item` URL on every non-final `ListItem`, and giving one to a page that
-doesn't exist would put a 404 link into search results.
+A crumb with no index page to link to (for example "Posts" on a site without a `/posts/` page) still shows in the trail, but as plain text **outside** the structured list: `<li class="breadcrumb-item">Posts</li>`. The remaining `ListItem`s are renumbered `1..n`. This is deliberate. Google requires an `item` URL on every non-final `ListItem`, and giving one to a page that doesn't exist would put a 404 link into search results.
 
 ### Liquid Template
 
