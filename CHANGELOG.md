@@ -21,7 +21,9 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   middle segment) rendered as a `ListItem` with no `item`. That invalidated the
   whole list, and Google dropped the breadcrumb rich result. Such crumbs now stay
   visible as plain text outside the structured list, and `position` is renumbered
-  `1..n`. Every remaining `item` resolves. Pinned by `test/visual/features/breadcrumbs.spec.js`.
+  `1..n`. Every remaining `item` resolves. Pinned by `test/visual/features/breadcrumbs.spec.js`
+  (evidence: [`test/visual/evidence/breadcrumbs/`](test/visual/evidence/breadcrumbs/README.md):
+  the visible trail is unchanged, with 0px overflow before and after).
 
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 

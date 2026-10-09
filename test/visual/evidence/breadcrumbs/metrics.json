@@ -1,0 +1,128 @@
+{
+  "slug": "breadcrumbs",
+  "generator": "test/visual/pr-evidence.mjs",
+  "base": "http://localhost:4000",
+  "before": "http://localhost:4001",
+  "beforeLabel": "BEFORE — base branch",
+  "afterLabel": "AFTER — #512 fix",
+  "routes": [
+    {
+      "route": "/about/settings/theme/",
+      "beforeRendered": true
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "beforeRendered": true
+    }
+  ],
+  "sweep": [
+    {
+      "route": "/about/settings/theme/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/about/settings/theme/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/about/settings/theme/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/about/settings/theme/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/about/settings/theme/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/about/settings/theme/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    }
+  ]
+}
