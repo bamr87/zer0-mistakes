@@ -22,7 +22,11 @@
 // generic branch rendered "Settings" (no /about/settings/ index) as a
 // ListItem without `item`.
 //
-// Run: npx playwright test --config=test/playwright.config.js --project=smoke test/visual/features/breadcrumbs.spec.js
+// Tagged @critical so the PR gate (ci.yml → `critical` project) runs it:
+// navigation is a critical-tier essential, and an untagged spec only runs in
+// the nightly smoke tier — after a regression has already merged.
+//
+// Run: npx playwright test --config=test/playwright.config.js --project=critical test/visual/features/breadcrumbs.spec.js
 
 const { test, expect } = require('@playwright/test');
 const { waitForJekyll } = require('../fixtures');
@@ -107,7 +111,7 @@ async function assertValidLists(page, request, route) {
   return lists;
 }
 
-test.describe('Breadcrumb structured data (issue #512)', () => {
+test.describe('Breadcrumb structured data (issue #512)', { tag: '@critical' }, () => {
   test('a deep page with an unlinked middle crumb has a valid BreadcrumbList', async ({ page, request }) => {
     const res = await page.request.get(DEEP_UNLINKED);
     test.skip(!res.ok(), `${DEEP_UNLINKED} not built`);
