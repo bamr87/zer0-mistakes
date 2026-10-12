@@ -16,6 +16,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **No orphaned microdata in `<head>`** ([#513](https://github.com/bamr87/zer0-mistakes/issues/513)).
+  `_includes/core/head.html` emitted `<meta itemprop="headline|description|datePublished|dateModified">`
+  with no `itemscope` ancestor, so every parser discarded them. The block is
+  removed; jekyll-seo-tag's JSON-LD and the article layouts' `BlogPosting` item
+  already publish the same facts. Pinned by `test/visual/core/head-contract.spec.js`.
 - **Valid breadcrumb `BreadcrumbList` when a section has no index page** ([#512](https://github.com/bamr87/zer0-mistakes/issues/512)).
   Since #204, an unlinked crumb ("Posts" on a site without `/posts/`, or a deep
   middle segment) rendered as a `ListItem` with no `item`. That invalidated the

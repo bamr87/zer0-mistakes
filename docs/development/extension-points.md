@@ -64,7 +64,7 @@ A list (or a single string) of hrefs. Site-relative paths go through `relative_u
 
 Per entry: `title`, `basename`, `url`, `collection`, `lastmod`, `description`, `tags`, `categories`, `aliases`, `outgoing`, `excerpt`.
 
-`lastmod` is ISO-8601 via `date_to_xmlschema`, resolved `last_modified_at` → `lastmod` → `date`, matching the order the rest of the theme uses (`_includes/core/head.html`, `_layouts/article.html`). `description` is the authored frontmatter value, distinct from the body-derived `excerpt`.
+`lastmod` is ISO-8601 via `date_to_xmlschema`, resolved `last_modified_at` → `lastmod` → `date`, matching the order the rest of the theme uses (`_layouts/article.html`). `description` is the authored frontmatter value, distinct from the body-derived `excerpt`.
 
 **Both keys are always present**, `null` when the document has neither. A key that is conditionally omitted is a worse contract than one that is sometimes null: the consumer has to branch on `in` rather than on truthiness, and the shape of the object changes per entry.
 
