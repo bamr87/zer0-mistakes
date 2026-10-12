@@ -11,6 +11,11 @@
   validity). The trail uses BreadcrumbList microdata, so it's eligible for
   Google rich results, and the first crumb label is sourced from
   site.data.ui-text for i18n.
+
+  Crumbs that aren't links are visible but omitted from the
+  BreadcrumbList, because a ListItem without a resolvable `item`
+  invalidates the list (#512). `bc_pos` counts only structured items,
+  so `position` stays contiguous (1..n).
   ===================================================================
 {%- endcomment -%}
 {% if page.url != "/" and site.breadcrumbs %}
@@ -19,6 +24,7 @@
   {%- assign label_aria = ui.breadcrumbs_aria | default: "Breadcrumb" -%}
   {%- assign crumbs = page.url | remove:'/index.html' | split: '/' -%}
   {%- assign section = crumbs[1] | default: '' -%}
+  {%- assign bc_pos = 1 -%}
 
 <nav class="breadcrumbs" aria-label="{{ label_aria }}">
   <ol class="breadcrumb mb-0" itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -50,41 +56,41 @@
           {%- if _section_page -%}{%- break -%}{%- endif -%}
         {%- endfor -%}
       {%- endunless -%}
-      <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        {%- if _section_page -%}
+      {%- if _section_page -%}
+        {%- assign bc_pos = bc_pos | plus: 1 -%}
+        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
           <a href="{{ _section_url | relative_url }}" itemprop="item">
             <span itemprop="name">{{ section_label }}</span>
           </a>
-        {%- else -%}
-          <span itemprop="name">{{ section_label }}</span>
-        {%- endif -%}
-        <meta itemprop="position" content="2" />
-      </li>
+          <meta itemprop="position" content="{{ bc_pos }}" />
+        </li>
+      {%- else -%}
+        <li class="breadcrumb-item">{{ section_label }}</li>
+      {%- endif -%}
+      {%- assign bc_pos = bc_pos | plus: 1 -%}
       <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
         <span itemprop="name">{{ page.title }}</span>
-        <meta itemprop="position" content="3" />
+        <meta itemprop="position" content="{{ bc_pos }}" />
       </li>
     {%- else -%}
       {%- for crumb in crumbs offset: 1 -%}
-        {%- assign position = forloop.index | plus: 1 -%}
         {%- assign crumb_label = crumb | replace:'-',' ' | remove:'.html' | capitalize -%}
         {%- if forloop.last -%}
+          {%- assign bc_pos = bc_pos | plus: 1 -%}
           <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <span itemprop="name">{{ page.title }}</span>
-            <meta itemprop="position" content="{{ position }}" />
+            <meta itemprop="position" content="{{ bc_pos }}" />
           </li>
         {%- elsif forloop.first -%}
+          {%- assign bc_pos = bc_pos | plus: 1 -%}
           <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ '/' | append: crumb | append: '/' | relative_url }}" itemprop="item">
               <span itemprop="name">{{ crumb_label }}</span>
             </a>
-            <meta itemprop="position" content="{{ position }}" />
+            <meta itemprop="position" content="{{ bc_pos }}" />
           </li>
         {%- else -%}
-          <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span itemprop="name">{{ crumb_label }}</span>
-            <meta itemprop="position" content="{{ position }}" />
-          </li>
+          <li class="breadcrumb-item">{{ crumb_label }}</li>
         {%- endif -%}
       {%- endfor -%}
     {%- endif -%}
