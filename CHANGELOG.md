@@ -21,6 +21,14 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   with no `itemscope` ancestor, so every parser discarded them. The block is
   removed; jekyll-seo-tag's JSON-LD and the article layouts' `BlogPosting` item
   already publish the same facts. Pinned by `test/visual/core/head-contract.spec.js`.
+- **Valid breadcrumb `BreadcrumbList` when a section has no index page** ([#512](https://github.com/bamr87/zer0-mistakes/issues/512)).
+  Since #204, an unlinked crumb ("Posts" on a site without `/posts/`, or a deep
+  middle segment) rendered as a `ListItem` with no `item`. That invalidated the
+  whole list, and Google dropped the breadcrumb rich result. Such crumbs now stay
+  visible as plain text outside the structured list, and `position` is renumbered
+  `1..n`. Every remaining `item` resolves. Pinned by `test/visual/features/breadcrumbs.spec.js`
+  (evidence: [`test/visual/evidence/breadcrumbs/`](test/visual/evidence/breadcrumbs/README.md):
+  the visible trail is unchanged, with 0px overflow before and after).
 
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 

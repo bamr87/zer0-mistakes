@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
-title: Breadcrumbs Navigation
-description: Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation.
+lastmod: 2026-10-11T00:00:00.000Z
+title: Breadcrumbs Navigation — Schema.org & Accessibility
+description: Add accessible breadcrumb navigation with Schema.org BreadcrumbList markup to your Jekyll site — orientation for visitors, rich results for search engines.
 preview: /images/previews/breadcrumbs-navigation.png
 layout: default
 categories:
@@ -77,7 +77,11 @@ breadcrumbs: true
 </nav>
 ```
 
+A crumb with no index page to link to (for example "Posts" on a site without a `/posts/` page) still shows in the trail, but as plain text **outside** the structured list: `<li class="breadcrumb-item">Posts</li>`. The remaining `ListItem`s are renumbered `1..n`. This is deliberate. Google requires an `item` URL on every non-final `ListItem`, and giving one to a page that doesn't exist would put a 404 link into search results.
+
 ### Liquid Template
+
+> **Note:** The snippet below is a simplified illustration. The full implementation in `_includes/navigation/breadcrumbs.html` adds known-section handling, i18n, and the unlinked-crumb exclusion described above.
 
 ```liquid
 {% raw %}{% if page.url != "/" and site.breadcrumbs %}
