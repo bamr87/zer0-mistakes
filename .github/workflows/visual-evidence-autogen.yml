@@ -60,16 +60,21 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: visual-evidence-autogen-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 env:
   PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
 
 jobs:
-  autogen:
-    name: Generate visual evidence
+  # The loop guard, BEFORE the concurrency group. This lane's own artifact
+  # commit is pushed with a PAT, so it fires `synchronize`; with the group at
+  # workflow level that new run cancelled the run that pushed — mid comment /
+  # upload / teardown, 7-16 billed minutes recorded as `cancelled` every time
+  # (#510: 37212674860 pushed at 15:27:27Z, cancelled by its own commit). The
+  # planner's subject check caught the loop, but only after the cancel. Here
+  # the self-triggered run reads the head subject and skips `autogen`; a
+  # skipped job never joins its concurrency group, so the pushing run finishes.
+  # A human push still cancels a stale render, as before.
+  guard:
+    name: Loop guard
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.VISUAL_EVIDENCE_AUTOGEN_ENABLED != 'false' &&
@@ -78,6 +83,33 @@ jobs:
       (github.event.action != 'unlabeled' ||
        contains(fromJSON('["skip-evidence", "no-visual-change"]'),
                 github.event.label.name))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      self: ${{ steps.head.outputs.self }}
+    steps:
+      - name: Is the head commit this lane's own?
+        id: head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Same marker as MARKER in scripts/ci/visual_evidence_autogen.py.
+          subject=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}" --jq '.commit.message | split("\n")[0]')
+          if [[ "$subject" == *"[visual-autogen]"* ]]; then
+            echo "self=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::head ${SHA:0:7} is an autogen commit — nothing to render."
+          else
+            echo "self=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  autogen:
+    name: Generate visual evidence
+    needs: guard
+    if: needs.guard.outputs.self == 'false'
+    concurrency:
+      group: visual-evidence-autogen-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
