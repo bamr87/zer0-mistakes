@@ -16,6 +16,14 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).
+  `_includes/components/halfmoon.html` server-rendered Light/Dark/Auto all
+  `aria-pressed="false"`, and on load `assets/js/halfmoon.js` marked the
+  *resolved* OS scheme pressed, so a first visit on an `auto` site announced
+  "Dark, pressed" (WCAG 4.1.2). The configured mode is now server-rendered
+  `.active` + `aria-pressed="true"`, and the script marks the selected *mode*
+  (stored preference, else the site default) while still applying the
+  resolved scheme to `data-bs-theme`. Pinned by `test/visual/features/settings-panel.spec.js`.
 - **No orphaned microdata in `<head>`** ([#513](https://github.com/bamr87/zer0-mistakes/issues/513)).
   `_includes/core/head.html` emitted `<meta itemprop="headline|description|datePublished|dateModified">`
   with no `itemscope` ancestor, so every parser discarded them. The block is
