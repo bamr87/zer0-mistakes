@@ -16,6 +16,12 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Footer newsletter hint reaches screen readers on phones** ([#522](https://github.com/bamr87/zer0-mistakes/issues/522)).
+  The disabled `#footer-email` input's `aria-describedby` pointed at a
+  `d-none d-md-block` paragraph, so below `md` its only explanation was
+  `display:none`. The describedby target is now an always-present
+  `visually-hidden` span, and the visible paragraph is an `aria-hidden` duplicate.
+  The sighted layout is unchanged at every width. Pinned by `test/visual/core/accessibility.spec.js`.
 - **No orphaned microdata in `<head>`** ([#513](https://github.com/bamr87/zer0-mistakes/issues/513)).
   `_includes/core/head.html` emitted `<meta itemprop="headline|description|datePublished|dateModified">`
   with no `itemscope` ancestor, so every parser discarded them. The block is
