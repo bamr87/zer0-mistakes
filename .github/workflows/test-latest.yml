@@ -238,11 +238,14 @@ jobs:
         id: jekyll_build
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
+          # Build into a named volume so the HTML Proofer step checks THIS
+          # build instead of running a second, identical `jekyll build`.
           docker run --rm \
+            -v zer0-site:/site-out \
             -e PAGES_REPO_NWO=${{ env.PAGES_REPO_NWO }} \
             -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             zer0-mistakes-jekyll-test:latest sh -c '
-            bundle exec jekyll build &&
+            bundle exec jekyll build -d /site-out &&
             echo "✅ Jekyll build succeeded!"
           '
 
@@ -262,13 +265,11 @@ jobs:
           # Known issues baseline (pages that may not exist or have known link issues)
           KNOWN_IGNORE_URLS="/localhost/,/127\.0\.0\.1/,/\.md$/,/\/services/,/\/hobbies\//,/\/notebooks\//,/\/notes\//,/\/quests\//,/\/archives\/#/"
           
-          # Run HTML Proofer and capture output
+          # Run HTML Proofer against the site the Jekyll Build Test step built
           docker run --rm \
-            -e PAGES_REPO_NWO=${{ env.PAGES_REPO_NWO }} \
-            -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -v zer0-site:/site-out \
             zer0-mistakes-jekyll-test:latest sh -c "
-              bundle exec jekyll build &&
-              bundle exec htmlproofer _site \
+              bundle exec htmlproofer /site-out \
                 --disable-external \
                 --allow-hash-href \
                 --ignore-urls \"${KNOWN_IGNORE_URLS}\" \
