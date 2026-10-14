@@ -32,7 +32,7 @@ name: 🧭 Issue Autopilot
 
 on:
   schedule:
-    - cron: '13 15 * * 1'  # staggered AI cron (bamr87/bamr87#348); was 0 8 * * 1
+    - cron: '40 20 * * 1'  # staggered AI cron (bamr87/bamr87#348); was 0 8 * * 1
   workflow_dispatch:
     inputs:
       resolve:
