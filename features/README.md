@@ -4,15 +4,11 @@ This directory contains the comprehensive feature registry for the zer0-mistakes
 
 ## Files
 
-- **features.yml** - Master feature registry with all documented features
+- The registry itself lives at [`_data/features.yml`](../_data/features.yml) (single source of truth, read by Jekyll as `site.data.features`).
 
 ## Usage
 
-The features.yml file is synced to `_data/features.yml` for Jekyll to use. Any updates to `features/features.yml` should be copied to the `_data/` directory:
-
-```bash
-cp features/features.yml _data/features.yml
-```
+Edit `_data/features.yml` directly; there is no second copy to sync (the former `features/features.yml` duplicate was removed, UPS-WORK-06).
 
 ## Features Page
 
@@ -62,23 +58,21 @@ Features are organized into these categories:
 
 When adding a new feature:
 
-1. Add the feature to `features/features.yml`
+1. Add the feature to `_data/features.yml`
 2. Use the next sequential ID (ZER0-XXX) — never reuse retired IDs
 3. Include all required fields (id, title, description, implemented, version, tags, date, link, docs)
 4. Add file references under `references:`
 5. Link to documentation if available
-6. Copy to `_data/features.yml` (the two files must stay byte-identical)
-7. Update the features page if needed
+6. Update the features page if needed
 
-See [.github/instructions/features.instructions.md](../.github/instructions/features.instructions.md) for the full schema and sync contract.
+See [.github/instructions/features.instructions.md](../.github/instructions/features.instructions.md) for the full schema and validation steps.
 
 ## Validation
 
 Validate YAML syntax:
 
 ```bash
-python3 -c "import yaml; yaml.safe_load(open('features/features.yml'))"
-diff -q features/features.yml _data/features.yml   # must report no difference
+python3 -c "import yaml; yaml.safe_load(open('_data/features.yml'))"
 ```
 
 ## Feature Count
