@@ -872,6 +872,12 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Mobile offcanvas TOC scroll spy is now under test** ([#457](https://github.com/bamr87/zer0-mistakes/issues/457)).
+  `test/visual/features/scroll-spy.spec.js` gains a 375px block that opens the
+  `#tocContents` offcanvas and asserts the active entry tracks the page and stays
+  visible inside `.offcanvas-body`. The no-op `gotoBeforeScrollSpy` fixture is
+  removed (the `data-bs-spy` it stripped is no longer rendered); its admin call
+  site uses `waitForJekyll`.
 - **No orphaned microdata in `<head>`** ([#513](https://github.com/bamr87/zer0-mistakes/issues/513)).
   `_includes/core/head.html` emitted `<meta itemprop="headline|description|datePublished|dateModified">`
   with no `itemscope` ancestor, so every parser discarded them. The block is

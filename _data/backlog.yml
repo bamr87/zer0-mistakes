@@ -1315,7 +1315,7 @@ tasks:
 
   - id: T-046
     title: "Retire the now-dead gotoBeforeScrollSpy fixture and cover the mobile offcanvas TOC spy"
-    status: open
+    status: done
     priority: P3
     area: tests
     risk: low
