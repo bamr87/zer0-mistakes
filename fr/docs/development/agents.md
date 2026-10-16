@@ -78,7 +78,7 @@ AGENTS.md          ← Cross-tool entry point (always read first)
             testing.instructions.md       → test/**
             documentation.instructions.md → docs/**, pages/_docs/**
             version-control.instructions.md → CHANGELOG.md, version.*, …
-            features.instructions.md      → features/features.yml, _data/features.yml
+            features.instructions.md      → _data/features.yml
             install.instructions.md       → install.sh, scripts/lib/install/**, …
 ```
 

@@ -509,5 +509,5 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 <div class="alert alert-info mt-5" role="alert">
   <i class="bi bi-info-circle me-2"></i>
   <strong>Note:</strong> This feature list is automatically generated from <code>_data/features.yml</code>. 
-  For the most up-to-date information, see the <a href="https://github.com/bamr87/zer0-mistakes/blob/main/features/features.yml" class="alert-link">features registry on GitHub</a>.
+  For the most up-to-date information, see the <a href="https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml" class="alert-link">features registry on GitHub</a>.
 </div>

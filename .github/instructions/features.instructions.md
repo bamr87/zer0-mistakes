@@ -1,5 +1,5 @@
 ---
-applyTo: "_data/features.yml,features/features.yml,features/README.md,pages/features.md,_includes/components/feature-card.html,scripts/validate-features.rb,scripts/tag-features,test/test_features.sh"
+applyTo: "_data/features.yml,features/README.md,pages/features.md,_includes/components/feature-card.html,scripts/validate-features.rb,scripts/tag-features,test/test_features.sh"
 description: "Feature registry maintenance — schema, sync contract, and update-on-change rules for zer0-mistakes."
 date: 2026-05-18T12:00:00.000Z
 lastmod: 2026-05-18T12:00:00.000Z
@@ -13,13 +13,12 @@ The feature registry is the single source of truth for what the theme does. It p
 
 | File | Role |
 | --- | --- |
-| `features/features.yml` | Editable master registry |
-| `_data/features.yml` | Jekyll-consumed copy (must be byte-identical to master) |
+| `_data/features.yml` | The registry: single source of truth, consumed by Jekyll |
 | `features/README.md` | Human index — keep feature count + category list current |
 | `pages/features.md` | Showcase page — uses `site.data.features.features` |
 | `_includes/components/feature-card.html` | Renderer — defines which fields are surfaced |
 
-> Both YAML files exist for historical reasons. Until consolidated, `features/features.yml` → `_data/features.yml` is a hard sync. Do not edit only one.
+> The former `features/features.yml` master was a byte-identical duplicate and has been removed (UPS-WORK-06). Edit `_data/features.yml` only.
 
 ## 🧬 Feature Schema
 
@@ -76,22 +75,20 @@ ruby scripts/tag-features --check        # source-file tags (…--write to apply
 # or, both plus the README-count check:  ./test/test_runner.sh --suites features
 ```
 
-## 🔄 Sync Contract (REQUIRED)
+## 🔄 Validate (REQUIRED)
 
 After every edit:
 
 ```bash
 # From repo root
-cp features/features.yml _data/features.yml
-diff -q features/features.yml _data/features.yml   # must report no difference
 python3 -c "import yaml; yaml.safe_load(open('_data/features.yml'))"
 ```
 
-The two files must be byte-identical. CI / reviewers may reject PRs where they drift.
+`ruby scripts/validate-features.rb` runs the full check.
 
 ## 📝 Header Metadata (REQUIRED)
 
-The top of `_data/features.yml` (and its master) carries:
+The top of `_data/features.yml` carries:
 
 ```yaml
 # Version: <current gem version from lib/jekyll-theme-zer0/version.rb>
@@ -118,7 +115,6 @@ Documentation-only changes (typos, formatting in `pages/features.md` or `feature
 
 ## ✅ Validation Checklist (run before commit)
 
-- [ ] `features/features.yml` and `_data/features.yml` are identical (`diff -q`)
 - [ ] YAML parses (`python3 -c "import yaml; yaml.safe_load(open('_data/features.yml'))"`)
 - [ ] Header `# Version:` matches `lib/jekyll-theme-zer0/version.rb`
 - [ ] Header `# Last Updated:` is today
