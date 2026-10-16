@@ -1395,7 +1395,7 @@ tasks:
 
   - id: T-049
     title: "test_core.sh: Liquid nested-tag check and gem-content check can never fail"
-    status: open
+    status: done
     priority: P3
     area: tests
     risk: low
