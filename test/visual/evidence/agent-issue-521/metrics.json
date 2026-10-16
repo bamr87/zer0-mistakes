@@ -4,7 +4,7 @@
   "base": "http://localhost:4000",
   "before": "http://localhost:4001",
   "beforeLabel": "BEFORE — origin/main",
-  "afterLabel": "AFTER — PR #526 @ 8cde6bf",
+  "afterLabel": "AFTER — PR #526 @ 0c4b50c",
   "routes": [
     {
       "route": "/",

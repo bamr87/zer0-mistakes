@@ -2,8 +2,8 @@
   "schema": "visual-autogen-manifest/v1",
   "slug": "agent-issue-521",
   "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "8cde6bf9cf3860609dbdceb207e609a1964a8689",
+  "rendered_from": "0c4b50c7f77b66a96faa5f23c4731f6d8109304c",
   "base_ref": "origin/main",
   "before_site": true,
-  "generated_at": "2026-10-13T08:33:29+00:00"
+  "generated_at": "2026-10-16T05:22:17+00:00"
 }
