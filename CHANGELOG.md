@@ -872,6 +872,14 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Visual Snapshots no longer reload mid-test** ([#461](https://github.com/bamr87/zer0-mistakes/issues/461)).
+  `test/update-snapshots.sh` ran `npm ci` into the bind mount Jekyll was already
+  watching, and LiveReload reloaded the page under test ("Execution context was
+  destroyed"), hidden by `retries: 1`. The snapshot stack now starts with
+  `JEKYLL_LIVERELOAD=0` (no `--livereload`, plus `_config_snapshots.yml`, since
+  `_config_dev.yml` turns LiveReload on), and `test/lib/assert_no_livereload.sh`
+  fails the run if anything can still reload the page. Plain `docker compose up`
+  keeps LiveReload.
 - **Mobile offcanvas TOC scroll spy is now under test** ([#457](https://github.com/bamr87/zer0-mistakes/issues/457)).
   `test/visual/features/scroll-spy.spec.js` gains a 375px block that opens the
   `#tocContents` offcanvas and asserts the active entry tracks the page and stays
