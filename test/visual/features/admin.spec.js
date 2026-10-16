@@ -30,7 +30,6 @@ const {
   ADMIN_PAGES,
   VIEWPORTS,
   waitForJekyll,
-  gotoBeforeScrollSpy,
   collectConsoleErrors,
   assertNoConsoleErrors,
 } = require('../fixtures');
@@ -97,9 +96,11 @@ test.describe('Admin layout — desktop sidebar', () => {
     });
 
     test(`${adminPage.title}: sidebar highlights active section`, async ({ page }) => {
-      // Use domcontentloaded to capture server-rendered active class
-      // before Bootstrap ScrollSpy strips it at networkidle.
-      await gotoBeforeScrollSpy(page, adminPage.url);
+      // The server-rendered .active class is asserted after a normal load.
+      // Nothing strips it any more: _layouts/root.html and default.html no
+      // longer carry data-bs-spy, so Bootstrap's native ScrollSpy never runs
+      // (the fixture that used to strip it first was a no-op — #457).
+      await waitForJekyll(page, adminPage.url);
       const activeLink = page.locator('nav.admin-sidebar .nav-link.active');
       await expect(activeLink).toBeVisible();
       // Active link href should match current page URL
