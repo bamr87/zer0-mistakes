@@ -31,11 +31,15 @@
 //   - exactly one TOC link carries `.active` at any moment;
 //   - the active entry never moves backwards while scrolling down;
 //   - clicking a TOC entry activates that entry;
-//   - nothing else claims `#TableOfContents` as a scroll-spy target.
+//   - nothing else claims `#TableOfContents` as a scroll-spy target;
+//   - below the lg breakpoint, with the offcanvas TOC open, the active entry
+//     still tracks the page AND is kept visible inside `.offcanvas-body` —
+//     the mobile branch of scroll-spy.js `_getTocScrollContainer` /
+//     `_scrollTocToActiveLink` (#457), which the desktop tests never reach.
 // =============================================================================
 
 const { test, expect } = require('@playwright/test');
-const { gotoOrSkip, dismissCookieConsent } = require('../fixtures');
+const { gotoOrSkip, dismissCookieConsent, VIEWPORTS } = require('../fixtures');
 
 /** Docs page with a long, multi-level TOC (28 entries at time of writing). */
 const ROUTE = '/docs/features/toc/';
@@ -190,5 +194,75 @@ test.describe('TOC scroll spy', () => {
       ),
     );
     expect(claims.filter((c) => c.includes('#TableOfContents'))).toEqual([]);
+  });
+});
+
+test.describe('TOC scroll spy — mobile offcanvas', () => {
+  // Below lg (992px) the TOC is not the `.bd-toc` column but the
+  // `#tocContents` offcanvas, opened from the FAB, and its scroll container is
+  // `.offcanvas-body`. scroll-spy.js resolves that container at call time by
+  // walking up from the active link; nothing else exercises that walk.
+  test.use({ viewport: VIEWPORTS.mobile });
+
+  test.beforeEach(async ({ page }) => {
+    await dismissCookieConsent(page);
+    await gotoOrSkip(page, ROUTE);
+    const toc = page.locator('#TableOfContents a[href^="#"]');
+    if ((await toc.count()) < 5) test.skip(true, `${ROUTE} has no multi-entry TOC`);
+    await page.locator('#tocFab .bd-toc-toggle').click();
+    await expect(page.locator('#tocContents')).toHaveClass(/\bshow\b/);
+  });
+
+  test('active entry tracks scrolling and stays visible inside .offcanvas-body', async ({
+    page,
+  }) => {
+    const body = page.locator('#tocContents .offcanvas-body');
+    await expect(body).toBeVisible();
+    // The branch under test only runs when the offcanvas body itself scrolls;
+    // a TOC that fits would pass without exercising it, so require overflow.
+    const overflow = await body.evaluate((el) => el.scrollHeight - el.clientHeight);
+    expect(overflow, '.offcanvas-body must overflow for this test to mean anything').toBeGreaterThan(
+      20,
+    );
+
+    const max = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight,
+    );
+    const problems = [];
+    let maxScrollTop = 0;
+    for (let i = 0; i <= STOPS; i++) {
+      await scrollTo(page, Math.round((max * i) / STOPS));
+      const spy = await page.evaluate(READ_SPY);
+      if (spy.active.length !== 1 || spy.active[0] !== spy.expected) {
+        problems.push(
+          `y=${spy.y} expected #${spy.expected} got [${spy.active.join(', ') || 'none'}]`,
+        );
+        continue;
+      }
+      const fit = await page.evaluate(() => {
+        const container = document.querySelector('#tocContents .offcanvas-body');
+        const link = document.querySelector('#TableOfContents a.active');
+        const c = container.getBoundingClientRect();
+        const l = link.getBoundingClientRect();
+        return {
+          inside: l.top >= c.top - 1 && l.bottom <= c.bottom + 1,
+          scrollTop: container.scrollTop,
+          link: Math.round(l.top) + '..' + Math.round(l.bottom),
+          box: Math.round(c.top) + '..' + Math.round(c.bottom),
+        };
+      });
+      maxScrollTop = Math.max(maxScrollTop, fit.scrollTop);
+      if (!fit.inside) {
+        problems.push(`y=${spy.y} #${spy.active[0]} at ${fit.link} outside .offcanvas-body ${fit.box}`);
+      }
+    }
+
+    expect(problems, `offcanvas TOC spy wrong at ${problems.length}/${STOPS + 1} stops`).toEqual([]);
+    // The container really scrolled — the active entry was brought into view
+    // by moving .offcanvas-body, not by happening to fit.
+    expect(maxScrollTop, '.offcanvas-body was never scrolled to follow the spy').toBeGreaterThan(0);
+    // And the offcanvas is still open: the spy must not scroll the page or
+    // otherwise dismiss the panel the reader is using.
+    await expect(page.locator('#tocContents')).toHaveClass(/\bshow\b/);
   });
 });
