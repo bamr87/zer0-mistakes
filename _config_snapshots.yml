@@ -1,0 +1,11 @@
+# =============================================================================
+# _config_snapshots.yml — test-stack overlay: no LiveReload (#461)
+# =============================================================================
+# Layered last by docker-compose.yml when JEKYLL_LIVERELOAD=0, which
+# test/update-snapshots.sh sets. _config_dev.yml turns LiveReload on, and
+# dropping the --livereload flag alone does not undo that, so the snapshot
+# stack needs this override. With LiveReload on, the `npm ci` that lands in
+# the bind mount after the watcher starts reloaded pages mid-snapshot.
+# test/lib/assert_no_livereload.sh verifies it before Playwright runs.
+# =============================================================================
+livereload: false

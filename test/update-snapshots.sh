@@ -25,6 +25,18 @@
 #
 # Requirements: Docker, docker-compose
 #
+# LiveReload is OFF for this stack, and must stay off (#461). `docker compose
+# up` serves `jekyll serve --watch` over a bind mount of the repo, and the
+# Playwright container below runs `npm ci` into that same mount AFTER the
+# watcher has started. On a fresh checkout node_modules/ does not exist when
+# the watcher registers its ignores, so the install triggers "Regenerating"
+# and, with --livereload, reloads the page mid-test ("Execution context was
+# destroyed ... because of a navigation", masked by `retries: 1`). The stack is
+# started with JEKYLL_LIVERELOAD=0 and test/lib/assert_no_livereload.sh fails
+# the run before Playwright if anything can still reload the page. Reordering
+# `npm ci` ahead of `docker compose up` is not a substitute: any other write
+# into the mount (.jekyll-cache, a hook script) would still reload.
+#
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -60,8 +72,8 @@ if curl -sf http://localhost:4000/ >/dev/null 2>&1; then
   log "Jekyll already serving on http://localhost:4000 — reusing it."
   JEKYLL_RUNNING=1
 else
-  log "Starting Jekyll via docker compose..."
-  docker compose up -d
+  log "Starting Jekyll via docker compose (LiveReload off, see header)..."
+  JEKYLL_LIVERELOAD=0 docker compose up -d
   JEKYLL_RUNNING=2
   log "Waiting up to ${JEKYLL_READY_TIMEOUT}s for Jekyll on :4000 (cold bundle install + first build)..."
   for _ in $(seq 1 "$JEKYLL_READY_TIMEOUT"); do
@@ -75,6 +87,19 @@ else
     docker compose logs --tail 50 jekyll || true
     exit 1
   fi
+fi
+
+# Nothing may reload the page under test (#461). Fatal when this script
+# started the stack or in CI; a dev's own already-running `docker compose up`
+# (LiveReload on by default) only gets a warning, since restarting it is theirs.
+if ! "$SCRIPT_DIR/lib/assert_no_livereload.sh" http://localhost:4000; then
+  if [[ "$JEKYLL_RUNNING" == "2" || "${CI:-}" == "true" ]]; then
+    log "ERROR: LiveReload is live on the snapshot stack; pages would reload mid-test."
+    [[ "$JEKYLL_RUNNING" == "2" ]] && docker compose down
+    exit 1
+  fi
+  log "WARNING: the reused Jekyll on :4000 has LiveReload on; restart it with"
+  log "  JEKYLL_LIVERELOAD=0 docker compose up -d   for flake-free snapshots."
 fi
 
 cleanup() {

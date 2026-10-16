@@ -39,7 +39,12 @@ services:
     # Statistics are NOT regenerated on every start — _data/content_statistics.yml
     # is committed and read directly; refresh on demand with `rake stats:generate`
     # (or _data/generate_statistics.sh) when content changes.
-    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && (bundle check || bundle install --jobs 4 --retry 3) && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
+    # JEKYLL_LIVERELOAD=0 serves without LiveReload: no --livereload flag, and
+    # _config_snapshots.yml layered last, since _config_dev.yml turns it on.
+    # test/update-snapshots.sh sets it: its `npm ci` writes into this same bind
+    # mount after the watcher starts, and LiveReload then reloaded pages
+    # mid-snapshot (#461).
+    command: ["sh", "-c", "lr=--livereload; cfg=_config.yml,_config_dev.yml; [ \"$${JEKYLL_LIVERELOAD:-1}\" = 0 ] && lr= && cfg=$$cfg,_config_snapshots.yml; git config --global --add safe.directory /site 2>/dev/null || true && (bundle check || bundle install --jobs 4 --retry 3) && bundle exec jekyll serve --watch $$lr --config $$cfg --host 0.0.0.0 --port 4000"]
     
     volumes:
       - .:/site
@@ -56,6 +61,7 @@ services:
     
     environment:
       - JEKYLL_ENV=${JEKYLL_ENV:-development}
+      - JEKYLL_LIVERELOAD=${JEKYLL_LIVERELOAD:-1}
       - BUNDLE_PATH=/usr/local/bundle
       # Repository info for jekyll-github-metadata gem
       - PAGES_REPO_NWO=${PAGES_REPO_NWO:-bamr87/zer0-mistakes}
