@@ -424,7 +424,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   needs them. Search, filters, `?q=`, stats and card view behave as before.
   Without JavaScript, visitors get the first 50 rows and a pointer to
   `/sitemap.xml` (when `jekyll-sitemap` is enabled). it-journey.dev's
-  `/search/` (431 rows) drops from about 2.2 MB of HTML to about 0.4 MB.
+  `/search/` (431 rows) drops from 2.25 MB of HTML to 0.69 MB.
 - **Dropdown chevrons merged into their parent row** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
   The split toggle is now absolutely positioned inside padding the parent link
   reserves, and hover applies to the whole row, so there is no dead zone
