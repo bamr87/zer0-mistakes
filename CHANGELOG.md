@@ -12,6 +12,18 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.1](https://github.com/bamr87/zer0-mistakes/compare/v1.31.0...v1.31.1) (2026-10-17)
+
+
+### Bug Fixes
+
+* **a11y:** name mobile intro actions, 24px nav chevrons, badge links ([#507](https://github.com/bamr87/zer0-mistakes/issues/507)) ([59963a9](https://github.com/bamr87/zer0-mistakes/commit/59963a958fb08cff9d49c00eac9e4c430d70a5c5))
+* **color-mode:** mark the selected mode pressed on first paint ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)) ([#526](https://github.com/bamr87/zer0-mistakes/issues/526)) ([2a60e73](https://github.com/bamr87/zer0-mistakes/commit/2a60e7328709f9902721fb83f7d2923d0c3f204a))
+* **footer:** keep newsletter hint in the a11y tree below md ([#522](https://github.com/bamr87/zer0-mistakes/issues/522)) ([#525](https://github.com/bamr87/zer0-mistakes/issues/525)) ([90489d3](https://github.com/bamr87/zer0-mistakes/commit/90489d36a73bdb7f7182219efed6a399a145b388))
+* **includes:** drop orphaned itemprop metas from &lt;head&gt; ([#517](https://github.com/bamr87/zer0-mistakes/issues/517)) ([47f4ff8](https://github.com/bamr87/zer0-mistakes/commit/47f4ff8f8f44933d65a7d38e6b0552d2288f8180)), closes [#513](https://github.com/bamr87/zer0-mistakes/issues/513)
+* **navigation:** keep unlinked crumbs out of the BreadcrumbList ([#518](https://github.com/bamr87/zer0-mistakes/issues/518)) ([4fda7ab](https://github.com/bamr87/zer0-mistakes/commit/4fda7ab63a31c3614df30a13d38453568a7d5ff5))
+* **tests:** serve the Visual Snapshots stack without LiveReload ([#530](https://github.com/bamr87/zer0-mistakes/issues/530)) ([6f61421](https://github.com/bamr87/zer0-mistakes/commit/6f6142182654b09a15c6460bf1643d2b6719a5b2))
+
 ## [Unreleased]
 
 ### Added
