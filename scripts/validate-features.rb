@@ -9,7 +9,7 @@
 # .github/instructions/features.instructions.md.
 #
 # HARD failures (exit 1):
-#   - features/features.yml and _data/features.yml are not byte-identical
+#   - _data/features.yml (the single registry) is missing
 #   - the header is missing a `# Last Updated:` line
 #   - schema violations (missing required field, bad id/version, duplicate id)
 #   - implemented:false without `removed_in:`
@@ -28,7 +28,6 @@
 require 'date'
 require 'yaml'
 
-MASTER = 'features/features.yml'
 MIRROR = '_data/features.yml'
 REQUIRED = %w[id title description implemented version link docs tags date].freeze
 STRICT = ENV['FEATURES_STRICT'] == '1'
@@ -52,12 +51,10 @@ def ref_paths(refs)
   refs.values.flat_map { |v| v.is_a?(Array) ? v : [v] }.select { |v| v.is_a?(String) }
 end
 
-[MASTER, MIRROR].each { |f| die "#{f} is missing" unless File.file?(f) }
+die "#{MIRROR} is missing" unless File.file?(MIRROR)
 
-# 1. Sync contract — the two registries must be byte-identical.
-if File.binread(MASTER) != File.binread(MIRROR)
-  die "#{MASTER} and #{MIRROR} differ — run `cp #{MASTER} #{MIRROR}` (must be byte-identical)"
-end
+# 1. Single registry — _data/features.yml is the only copy (the former
+#    features/features.yml master was removed as a duplicate, UPS-WORK-06).
 
 data = load_yaml(MIRROR)
 feats = data && data['features']
@@ -146,4 +143,4 @@ unless warnings.empty?
 end
 
 active = feats.count { |f| f['implemented'] != false }
-puts "Feature registry valid: #{feats.length} entries (#{active} active), refs resolved, master/_data in sync"
+puts "Feature registry valid: #{feats.length} entries (#{active} active), refs resolved, _data registry (single copy)"
