@@ -150,23 +150,6 @@ async function waitForJekyll(page, url = '/') {
 }
 
 /**
- * Navigate to a page with Bootstrap ScrollSpy disabled.
- * Uses addInitScript to remove data-bs-spy from <body> before Bootstrap
- * auto-initializes, preventing it from stripping server-rendered .active
- * classes on admin sidebar nav links.
- */
-async function gotoBeforeScrollSpy(page, url) {
-  await page.addInitScript(() => {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.removeAttribute('data-bs-spy');
-      document.body.removeAttribute('data-bs-target');
-    });
-  });
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('load');
-}
-
-/**
  * Switch the active skin via the zer0Bg API and wait for the event.
  * @param {import('@playwright/test').Page} page
  * @param {string} skinName - One of SKINS
@@ -295,7 +278,6 @@ module.exports = {
   measureNavbarLayout,
   UI_ROUTES,
   waitForJekyll,
-  gotoBeforeScrollSpy,
   gotoOrSkip,
   dismissCookieConsent,
   setSkin,
