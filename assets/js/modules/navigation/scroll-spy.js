@@ -28,6 +28,8 @@
  * - Deterministic, position-based active section (no ratio guessing)
  * - rAF-throttled passive scroll listener; heading offsets are cached and
  *   re-measured on resize / content reflow
+ * - First measurement deferred to idle time so start-up doesn't force a
+ *   synchronous layout of the whole page
  * - Holds the clicked link active while a smooth scroll animates, so
  *   intermediate headings don't flash
  * - Keeps the active link visible inside the TOC without ever scrolling
@@ -83,6 +85,24 @@ function scrollTop() {
     return window.scrollY !== undefined ? window.scrollY : window.pageYOffset;
 }
 
+/** Latest moment (ms) the first measurement may be put off while the page is busy. */
+const IDLE_TIMEOUT_MS = 1500;
+
+/**
+ * Run `fn` when the main thread is idle (requestIdleCallback with a
+ * timeout), or after a short delay where that API is missing (Safari).
+ * @param {Function} fn
+ * @returns {{cancel: Function}}
+ */
+function scheduleIdle(fn) {
+    if (typeof window.requestIdleCallback === 'function') {
+        const id = window.requestIdleCallback(fn, { timeout: IDLE_TIMEOUT_MS });
+        return { cancel: () => window.cancelIdleCallback(id) };
+    }
+    const id = window.setTimeout(fn, 200);
+    return { cancel: () => window.clearTimeout(id) };
+}
+
 export class ScrollSpy {
     constructor() {
         this.tocLinks = getElements(config.selectors.tocLinks);
@@ -100,6 +120,7 @@ export class ScrollSpy {
         this._pendingExpires = 0;
 
         this._resizeObserver = null;
+        this._idleHandle = null;
 
         if (this.headings.length === 0 || this.tocLinks.length === 0) {
             console.log('ScrollSpy: No TOC or headings found, skipping initialization');
@@ -160,6 +181,27 @@ export class ScrollSpy {
         window.addEventListener('wheel', this._onUserScroll, { passive: true });
         window.addEventListener('touchstart', this._onUserScroll, { passive: true });
 
+        // The first measurement reads every heading's position, which forces
+        // a full synchronous layout if it runs while the page is still
+        // loading. On a long quest page that was one of the biggest long
+        // tasks at start-up. The TOC highlight isn't needed for first paint,
+        // so measure once the browser is idle (or after IDLE_TIMEOUT_MS at
+        // the latest), when layout is already done and the reads are cheap.
+        // A scroll before then still updates through the rAF path above.
+        this._idleHandle = scheduleIdle(() => {
+            this._idleHandle = null;
+            this._startMeasuring();
+        });
+
+        console.log(`ScrollSpy: Tracking ${this.headings.length} headings`);
+    }
+
+    /**
+     * Observe content reflow and paint the initial active link.
+     * Runs from idle time (see _init).
+     * @private
+     */
+    _startMeasuring() {
         // Images, embeds, mermaid diagrams and collapsibles change heading
         // offsets after load - re-measure when the content box resizes.
         if (typeof ResizeObserver !== 'undefined') {
@@ -169,8 +211,6 @@ export class ScrollSpy {
         }
 
         this._update();
-
-        console.log(`ScrollSpy: Tracking ${this.headings.length} headings`);
     }
 
     /**
@@ -433,6 +473,10 @@ export class ScrollSpy {
         if (this._onUserScroll) {
             window.removeEventListener('wheel', this._onUserScroll);
             window.removeEventListener('touchstart', this._onUserScroll);
+        }
+        if (this._idleHandle) {
+            this._idleHandle.cancel();
+            this._idleHandle = null;
         }
         if (this._resizeObserver) {
             this._resizeObserver.disconnect();
