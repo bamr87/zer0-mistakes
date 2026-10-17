@@ -365,6 +365,11 @@ export class ScrollSpy {
         // heals itself rather than silently disappearing.
         if (this.currentActive === link && link.classList.contains(ACTIVE_CLASS)) return;
 
+        // Read layout for the TOC scroll adjustment BEFORE touching classes:
+        // reading after the class change below would force a synchronous
+        // style + layout pass on every highlight change.
+        const tocScroll = this._measureTocScroll(link);
+
         // Remove previous active state
         this.tocLinks.forEach(l => {
             if (l === link) return;
@@ -378,7 +383,7 @@ export class ScrollSpy {
         this.currentActive = link;
 
         // Scroll TOC to show active link (if needed)
-        this._scrollTocToActiveLink(link);
+        if (tocScroll) tocScroll.container.scrollTop += tocScroll.delta;
 
         // Dispatch custom event for other modules
         document.dispatchEvent(new CustomEvent('navigation:sectionChange', {
@@ -421,18 +426,32 @@ export class ScrollSpy {
      * @param {Element} link
      */
     _scrollTocToActiveLink(link) {
+        const tocScroll = this._measureTocScroll(link);
+        if (tocScroll) tocScroll.container.scrollTop += tocScroll.delta;
+    }
+
+    /**
+     * How far the TOC's scroll container must move to show `link`.
+     * Read-only, so callers can measure before they write.
+     * @private
+     * @param {Element} link
+     * @returns {{container: Element, delta: number}|null}
+     */
+    _measureTocScroll(link) {
         const container = this._getTocScrollContainer(link);
-        if (!container) return;
+        if (!container) return null;
 
         const linkRect = link.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
         const margin = 8;
 
         if (linkRect.top < containerRect.top + margin) {
-            container.scrollTop -= (containerRect.top + margin) - linkRect.top;
-        } else if (linkRect.bottom > containerRect.bottom - margin) {
-            container.scrollTop += linkRect.bottom - (containerRect.bottom - margin);
+            return { container, delta: -((containerRect.top + margin) - linkRect.top) };
         }
+        if (linkRect.bottom > containerRect.bottom - margin) {
+            return { container, delta: linkRect.bottom - (containerRect.bottom - margin) };
+        }
+        return null;
     }
 
     /**
