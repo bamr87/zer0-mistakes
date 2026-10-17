@@ -872,6 +872,14 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).
+  `_includes/components/halfmoon.html` server-rendered Light/Dark/Auto all
+  `aria-pressed="false"`, and on load `assets/js/halfmoon.js` marked the
+  *resolved* OS scheme pressed, so a first visit on an `auto` site announced
+  "Dark, pressed" (WCAG 4.1.2). The configured mode is now server-rendered
+  `.active` + `aria-pressed="true"`, and the script marks the selected *mode*
+  (stored preference, else the site default) while still applying the
+  resolved scheme to `data-bs-theme`. Pinned by `test/visual/features/settings-panel.spec.js`.
 - **Visual Snapshots no longer reload mid-test** ([#461](https://github.com/bamr87/zer0-mistakes/issues/461)).
   `test/update-snapshots.sh` ran `npm ci` into the bind mount Jekyll was already
   watching, and LiveReload reloaded the page under test ("Execution context was

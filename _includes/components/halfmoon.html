@@ -14,16 +14,18 @@
                (halfmoon.js + core/color-mode-init.html enforce the same).
  {% endcomment %}
 {% unless site.color_mode_lock %}
+{% comment %} Server-render the configured mode as selected (#521) so no-JS and pre-hydration state is right; halfmoon.js then applies any stored preference. {% endcomment %}
+{%- assign _cm = site.color_mode_default | default: 'auto' -%}
 <div class="btn-group bd-theme-switch {{ include.class | default: '' }}" role="group" aria-label="Color mode">
-  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="light" aria-pressed="false">
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1{% if _cm == 'light' %} active{% endif %}" data-bs-theme-value="light" aria-pressed="{% if _cm == 'light' %}true{% else %}false{% endif %}">
     <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#sun-fill"></use></svg>
     <span>Light</span>
   </button>
-  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="dark" aria-pressed="false">
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1{% if _cm == 'dark' %} active{% endif %}" data-bs-theme-value="dark" aria-pressed="{% if _cm == 'dark' %}true{% else %}false{% endif %}">
     <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#moon-stars-fill"></use></svg>
     <span>Dark</span>
   </button>
-  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="auto" aria-pressed="false">
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1{% if _cm == 'auto' %} active{% endif %}" data-bs-theme-value="auto" aria-pressed="{% if _cm == 'auto' %}true{% else %}false{% endif %}">
     <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#circle-half"></use></svg>
     <span>Auto</span>
   </button>

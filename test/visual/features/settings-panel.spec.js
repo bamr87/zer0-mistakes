@@ -212,6 +212,65 @@ test.describe('Settings offcanvas (rebuilt)', () => {
 });
 
 // =============================================================================
+// Color-mode initial selected state (issue #521, WCAG 4.1.2)
+// =============================================================================
+// The test above only asserts aria-pressed AFTER a click, which is why two
+// defects shipped: halfmoon.html server-rendered every button
+// aria-pressed="false", and halfmoon.js then marked the RESOLVED scheme
+// (Light/Dark) pressed on an `auto` site, never Auto. These pin the first-paint
+// state with no stored preference, without JS, and for a returning visitor.
+// The demo site runs the default `color_mode_default: auto`.
+test.describe('Color-mode toggle initial state (issue #521)', () => {
+  /** Assert exactly `mode` is pressed + .active in every rendered group. */
+  async function expectPressed(page, mode) {
+    const groups = page.locator('.bd-theme-switch');
+    const count = await groups.count();
+    expect(count, 'at least one color-mode group renders').toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      const group = groups.nth(i);
+      await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+      for (const value of ['light', 'dark', 'auto']) {
+        const btn = group.locator(`[data-bs-theme-value="${value}"]`);
+        await expect(btn).toHaveAttribute('aria-pressed', value === mode ? 'true' : 'false');
+        if (value === mode) {
+          await expect(btn).toHaveClass(/(^|\s)active(\s|$)/);
+        } else {
+          await expect(btn).not.toHaveClass(/(^|\s)active(\s|$)/);
+        }
+      }
+    }
+  }
+
+  test.describe('with JS', () => {
+    // Fresh context per test, so localStorage starts empty; OS prefers dark.
+    test.use({ colorScheme: 'dark' });
+
+    test('first visit on an auto site marks Auto pressed, not the OS scheme', { tag: '@critical' }, async ({ page }) => {
+      await waitForJekyll(page, '/');
+      await expect(page.locator('html')).toHaveAttribute('data-color-mode-default', 'auto');
+      await expect(page.locator('html')).toHaveAttribute('data-bs-theme', 'dark');
+      await expectPressed(page, 'auto');
+    });
+
+    test('a stored preference still wins for returning visitors', async ({ page }) => {
+      await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+      await waitForJekyll(page, '/');
+      await expect(page.locator('html')).toHaveAttribute('data-bs-theme', 'light');
+      await expectPressed(page, 'light');
+    });
+  });
+
+  test.describe('without JS', () => {
+    test.use({ colorScheme: 'dark', javaScriptEnabled: false });
+
+    test('server render marks the configured mode pressed', async ({ page }) => {
+      await waitForJekyll(page, '/');
+      await expectPressed(page, 'auto');
+    });
+  });
+});
+
+// =============================================================================
 // Quick Links Dev row — environment gating (issue #298)
 // =============================================================================
 // env-switcher.html builds dev_url from a hardcoded http://localhost:<port>

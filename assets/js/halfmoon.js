@@ -39,6 +39,16 @@
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
 
+  // The MODE the visitor has selected (light/dark/auto) — what the toggle
+  // buttons represent. Unlike getPreferredTheme() it never resolves `auto`
+  // to the OS scheme, so a first visit on an auto site marks Auto (#521).
+  const getPreferredMode = () => {
+    if (isLocked) {
+      return configDefault
+    }
+    return getStoredTheme() || configDefault
+  }
+
   const setTheme = theme => {
     if (theme === 'auto') {
       document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
@@ -95,7 +105,7 @@
   })
 
   window.addEventListener('DOMContentLoaded', () => {
-    showActiveTheme(getPreferredTheme())
+    showActiveTheme(getPreferredMode())
 
     document.querySelectorAll('[data-bs-theme-value]')
       .forEach(toggle => {
