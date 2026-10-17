@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-analytics-consent-gate/ -->
+  (evidence: [`test/visual/evidence/fix-analytics-consent-gate/`](test/visual/evidence/fix-analytics-consent-gate/README.md))
