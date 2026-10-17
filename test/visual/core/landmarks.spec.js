@@ -142,17 +142,24 @@ test.describe('Landmarks — one main landmark per page', () => {
     }
 
     // The point of landmark uniqueness: "skip to main content" must stay
-    // unambiguous on the layouts that used to carry a second one.
+    // unambiguous on the layouts that used to carry a second one. Post pages
+    // render through default.html, whose `skip_link_target: page-content`
+    // points the link at the page body inside the one <main> (past the docs
+    // sidebar and TOC), so assert the link lands inside #main-content.
     test('skip link still reaches the one main landmark on a post page', async ({ page }) => {
       await gotoOrSkip(page, LAYOUT_ROUTES[0].route);
 
       const main = page.locator('#main-content');
       await expect(main).toHaveAttribute('tabindex', '-1');
 
-      const skip = page.locator('a[href="#main-content"].visually-hidden-focusable');
+      const skip = page.locator('a.zer0-skip-to-content.visually-hidden-focusable');
+      const href = await skip.getAttribute('href');
+      const target = page.locator(href);
+      await expect(target).toHaveAttribute('tabindex', '-1');
+      expect(await target.evaluate((el) => !!el.closest('#main-content')), `${href} sits inside #main-content`).toBe(true);
       await skip.focus();
       await skip.press('Enter');
-      await expect(main).toBeFocused();
+      await expect(target).toBeFocused();
     });
   });
 });

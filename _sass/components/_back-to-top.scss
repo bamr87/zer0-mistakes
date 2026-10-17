@@ -35,4 +35,13 @@
     background-color: var(--zer0-color-link-hover, var(--bs-primary));
     transform: translateY(-2px);
   }
+
+  // `outline: 0` above removes the UA ring, and the hover-style change alone
+  // was the only focus cue (opacity, a darker fill, a 2px lift), which is not
+  // a visible indicator (WCAG 2.4.7). Same 2px primary ring as the site-wide
+  // :focus-visible rule in utilities/_focus.scss; mouse clicks stay ring-free.
+  &:focus-visible {
+    outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
+    outline-offset: 2px;
+  }
 }

@@ -249,6 +249,33 @@ Configuration: Uses site.posthog settings from _config.yml
       }));
     }
 
+    // Reserve the banner's height while it is up. Publishes it as
+    // --zer0-cookie-banner-inset on <html> plus the zer0-cookie-banner-open
+    // class; _sass/components/_cookie-banner.scss turns that into body
+    // padding, scroll-padding-bottom (keyboard focus scrolls clear of the
+    // banner) and a lift for the floating buttons, which used to sit under
+    // it. A ResizeObserver keeps it right when the banner reflows (94px on
+    // phones, 48px from md up). Set as soon as the banner is unhidden, before
+    // the 1s slide-in, so the page does not shift when it appears.
+    let insetObserver = null;
+    function setBannerInset(banner) {
+      const root = document.documentElement;
+      const apply = () => {
+        root.style.setProperty('--zer0-cookie-banner-inset', Math.ceil(banner.offsetHeight) + 'px');
+        root.classList.add('zer0-cookie-banner-open');
+      };
+      apply();
+      if (!insetObserver && 'ResizeObserver' in window) {
+        insetObserver = new ResizeObserver(apply);
+        insetObserver.observe(banner);
+      }
+    }
+    function clearBannerInset() {
+      if (insetObserver) { insetObserver.disconnect(); insetObserver = null; }
+      document.documentElement.classList.remove('zer0-cookie-banner-open');
+      document.documentElement.style.removeProperty('--zer0-cookie-banner-inset');
+    }
+
     // Show consent banner
     function showConsentBanner() {
       const banner = document.getElementById('cookieConsent');
@@ -257,6 +284,7 @@ Configuration: Uses site.posthog settings from _config.yml
       // Reveal the element (CSS keeps it translated off-screen + opacity:0).
       banner.hidden = false;
       banner.classList.remove('cookie-banner-visible');
+      setBannerInset(banner);
 
       setTimeout(() => {
         // Force reflow so the next class change actually animates.
@@ -277,6 +305,7 @@ Configuration: Uses site.posthog settings from _config.yml
         if (done) return;
         done = true;
         banner.hidden = true;
+        clearBannerInset();
         banner.removeEventListener('transitionend', onEnd);
       };
       const onEnd = (e) => {
