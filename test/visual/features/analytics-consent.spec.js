@@ -63,8 +63,9 @@ async function openFresh(browser, baseURL) {
   const hits = [];
   await context.route('**/*', async (route) => {
     const url = route.request().url();
-    if (url.startsWith(ORIGIN)) {
-      const res = await fetch(baseURL.replace(/\/$/, '') + url.slice(ORIGIN.length));
+    const parsed = new URL(url);
+    if (parsed.origin === ORIGIN) {
+      const res = await fetch(baseURL.replace(/\/$/, '') + parsed.pathname + parsed.search);
       const headers = {};
       res.headers.forEach((v, k) => { if (!/^content-(encoding|length)$/.test(k)) headers[k] = v; });
       return route.fulfill({ status: res.status, headers, body: Buffer.from(await res.arrayBuffer()) });
