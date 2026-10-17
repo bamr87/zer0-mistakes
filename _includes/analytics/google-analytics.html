@@ -1,4 +1,18 @@
 {% comment %} Feature: ZER0-038 {% endcomment %}
+{%- comment -%}
+  Consent gate. When the site requires consent, gtag.js is not requested and
+  no _ga cookie is set until the visitor accepts the "analytics" category in
+  the cookie-consent banner (localStorage "zer0-cookie-consent"). Accepting
+  loads it on the spot (the banner dispatches `cookieConsentChanged`), so no
+  reload is needed. A site configures its consent posture once: this follows
+  `posthog.privacy.require_consent`, the same flag that gates PostHog and the
+  page-view counter. `google_analytics_require_consent: true|false` overrides
+  it for GA alone, for a site that runs GA without PostHog.
+  With neither flag set, GA loads exactly as before.
+{%- endcomment -%}
+{%- assign ga_require_consent = false -%}
+{%- if site.posthog.privacy.require_consent -%}{%- assign ga_require_consent = true -%}{%- endif -%}
+{%- if site.google_analytics_require_consent == true -%}{%- assign ga_require_consent = true -%}{%- elsif site.google_analytics_require_consent == false -%}{%- assign ga_require_consent = false -%}{%- endif -%}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script>
     (function () {
@@ -6,13 +20,36 @@
       var h = location.hostname;
       if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h === '[::1]' ||
           h === 'host.docker.internal' || h.endsWith('.local') || h.endsWith('.test')) return;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}';
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '{{ site.google_analytics }}');
+      var id = {{ site.google_analytics | jsonify }};
+      var requireConsent = {{ ga_require_consent | jsonify }};
+      var loaded = false;
+      function load() {
+        if (loaded) return;
+        loaded = true;
+        window['ga-disable-' + id] = false;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = window.gtag || gtag;
+        gtag('js', new Date());
+        gtag('config', id);
+      }
+      if (!requireConsent) { load(); return; }
+      // Same record and 365-day expiry as components/cookie-consent.html.
+      var granted = false;
+      try {
+        var c = JSON.parse(window.localStorage.getItem('zer0-cookie-consent') || 'null');
+        granted = !!(c && c.analytics === true && (Date.now() - c.timestamp) <= 365 * 864e5);
+      } catch (e) { /* localStorage unavailable: stay off */ }
+      if (granted) load();
+      document.addEventListener('cookieConsentChanged', function (e) {
+        var ok = !!(e.detail && e.detail.analytics === true);
+        if (ok) load();
+        // Withdrawn after loading: gtag's documented per-property kill switch.
+        else if (loaded) window['ga-disable-' + id] = true;
+      });
     })();
     </script>

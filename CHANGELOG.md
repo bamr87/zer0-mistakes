@@ -872,6 +872,8 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **`require_consent` now means no analytics until the visitor accepts.** With `posthog.privacy.require_consent: true`, PostHog used to load opted-out on a first visit: the browser still fetched `array.js`, `config.js` and `surveys.js` and stored `ph_<key>_posthog` before any banner choice, and Google Analytics ignored consent entirely. `_includes/analytics/posthog.html` now boots PostHog only once analytics consent exists, and `_includes/analytics/google-analytics.html` follows the same flag (override per site with `google_analytics_require_consent`). Both load as soon as the visitor clicks Accept All or saves preferences with Analytics on, through the banner's `cookieConsentChanged` event, so no reload is needed. Reject All keeps them off. Sites without the flag load exactly as before. Regression test: `test/visual/features/analytics-consent.spec.js`.
+
 - **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).
   `_includes/components/halfmoon.html` server-rendered Light/Dark/Auto all
   `aria-pressed="false"`, and on load `assets/js/halfmoon.js` marked the

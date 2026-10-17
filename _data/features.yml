@@ -227,6 +227,7 @@ features:
     tests:
       - "test/test_quality.sh"
       - "test/visual/core/security.spec.js"
+      - "test/visual/features/analytics-consent.spec.js"
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -1208,6 +1209,7 @@ features:
       issue: null
     tests:
       - "test/test_quality.sh"
+      - "test/visual/features/analytics-consent.spec.js"
     references:
       includes:
         - "_includes/analytics/google-analytics.html"
