@@ -568,6 +568,51 @@ test.describe('Accessibility — footer in-page toggles are buttons', { tag: '@c
   }
 });
 
+// Regression: #522. The footer newsletter input is `disabled`, and its only
+// exposed reason was `aria-describedby="footer-subscribe-hint"` pointing at a
+// <p class="d-none d-md-block"> — display:none below md, i.e. on phones.
+// accname lets SOME engines still read a directly-referenced hidden node, so
+// toHaveAccessibleDescription alone is engine-dependent; the computed
+// `display` of the target is the deterministic structural check.
+test.describe('Accessibility — footer newsletter hint is always exposed', () => {
+  const HINT = 'Newsletter is a placeholder until you connect a provider.';
+
+  for (const viewport of [{ width: 375, height: 812 }, { width: 1280, height: 800 }]) {
+    test(`aria-describedby target is in the a11y tree at ${viewport.width}px`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await waitForJekyll(page, UI_ROUTES.home);
+
+      const input = page.locator('#footer-email');
+      const describedBy = await input.getAttribute('aria-describedby');
+      expect(describedBy, '#footer-email must reference its hint').toBeTruthy();
+
+      await expect(page.locator(`[id="${describedBy}"]`)).toHaveCount(1);
+      const target = await page.locator(`[id="${describedBy}"]`).evaluate((el) => ({
+        display: getComputedStyle(el).display,
+        text: (el.textContent || '').trim(),
+      }));
+      expect(
+        target.display,
+        `#${describedBy} is display:none at ${viewport.width}px — screen readers lose the reason the input is disabled`
+      ).not.toBe('none');
+      expect(target.text).toBe(HINT);
+
+      await expect(input).toHaveAccessibleDescription(HINT);
+    });
+  }
+
+  test('sighted layout is unchanged: hint text visible only at >= md', async ({ page }) => {
+    const visibleHint = page.locator('footer .footer-subscribe-form p', { hasText: HINT });
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await waitForJekyll(page, UI_ROUTES.home);
+    await expect(visibleHint).toBeVisible();
+
+    await page.setViewportSize({ width: 375, height: 812 });
+    await expect(visibleHint).toBeHidden();
+  });
+});
+
 /**
  * Open a Bootstrap modal or offcanvas via its JS API and wait until shown.
  * Triggers vary per dialog (some live in the consent banner or a collapsed

@@ -872,6 +872,12 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Footer newsletter hint reaches screen readers on phones** ([#522](https://github.com/bamr87/zer0-mistakes/issues/522)).
+  The disabled `#footer-email` input's `aria-describedby` pointed at a
+  `d-none d-md-block` paragraph, so below `md` its only explanation was
+  `display:none`. The describedby target is now an always-present
+  `visually-hidden` span, and the visible paragraph is an `aria-hidden` duplicate.
+  The sighted layout is unchanged at every width. Pinned by `test/visual/core/accessibility.spec.js`.
 - **Visual Snapshots no longer reload mid-test** ([#461](https://github.com/bamr87/zer0-mistakes/issues/461)).
   `test/update-snapshots.sh` ran `npm ci` into the bind mount Jekyll was already
   watching, and LiveReload reloaded the page under test ("Execution context was
