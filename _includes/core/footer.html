@@ -236,7 +236,9 @@
                 <button type="button" class="btn btn-primary w-100" disabled title="Configure a newsletter endpoint in your site config">Subscribe</button>
               </div>
               <div class="col-12">
-                <p id="footer-subscribe-hint" class="small text-white-50 mb-0 d-none d-md-block">Newsletter is a placeholder until you connect a provider.</p>
+                {% comment %} The describedby target must stay in the a11y tree at every width (#522); the d-none paragraph is the sighted ≥md duplicate only. {% endcomment %}
+                <span id="footer-subscribe-hint" class="visually-hidden">Newsletter is a placeholder until you connect a provider.</span>
+                <p class="small text-white-50 mb-0 d-none d-md-block" aria-hidden="true">Newsletter is a placeholder until you connect a provider.</p>
               </div>
             </form>
           </div>
