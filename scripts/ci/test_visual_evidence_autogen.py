@@ -82,6 +82,12 @@ def test_detect_slug() -> None:
     check("reads OUT = 'test/visual/evidence/<slug>' from a hand-rolled one",
           vea.detect_slug("const OUT = 'test/visual/evidence/navbar-fit';") == "navbar-fit")
     check("returns None when nothing names a folder", vea.detect_slug("console.log('hi')") is None)
+    hand_rolled = ("const OUT = path.join(process.cwd(), 'test/visual/evidence/dangling-aria-controls');\n"
+                   "const CASES = [{ slug: 'navbar-toggle-fr-about' }];\n")
+    check("the folder a generator writes to beats a per-case `slug:` key",
+          vea.detect_slug(hand_rolled) == "dangling-aria-controls")
+    check("an explicit `// slug: '…'` comment wins",
+          vea.detect_slug("// slug: 'breadcrumbs'\nconst OUT = 'test/visual/evidence/other';") == "breadcrumbs")
 
 
 def test_plan_pr_454_shape() -> None:
@@ -139,6 +145,51 @@ def test_plan_respects_author_evidence() -> None:
     files[f"{folder}/{vea.MANIFEST}"] = f'{{"rendered_from": "{SHA}"}}'
     plan = plan_for(changed + [f"{folder}/{vea.MANIFEST}"], files)
     check("autogen evidence from THIS head is left alone", plan["jobs"] == [])
+
+
+def test_plan_edited_existing_generator() -> None:
+    print("plan — PR edits an existing generator whose folder already has proof")
+    folder = "test/visual/evidence/navbar-tiers-405"
+    files = {GEN_405: GEN_405_SRC, f"{folder}/01-before-after.png": "", f"{folder}/metrics.json": "{}"}
+    plan = plan_for(["_includes/core/header.html", GEN_405], files)
+    check("needed", plan["needed"] is True)
+    check("one bespoke re-render of that generator's folder",
+          len(plan["jobs"]) == 1 and plan["jobs"][0]["kind"] == "bespoke"
+          and plan["jobs"][0]["generator"] == GEN_405 and plan["jobs"][0]["slug"] == "navbar-tiers-405")
+    check("…explained as stale evidence", "predates" in (plan["jobs"][0]["why"] if plan["jobs"] else ""))
+    plan = plan_for([GEN_405], files)
+    check("a generator-only edit (no UI paths) still schedules it", len(plan["jobs"]) == 1)
+    plan = plan_for([GEN_405, f"{folder}/01-before-after.png", f"{folder}/metrics.json"], files)
+    check("…but not when the PR re-rendered that folder itself", plan["jobs"] == [])
+    plan = plan_for(["_layouts/home.html", "test/visual/nameless-evidence.mjs"],
+                    {"test/visual/nameless-evidence.mjs": "console.log('hi')"})
+    check("an edited generator with no detectable slug falls back to the generic job",
+          len(plan["jobs"]) == 1 and plan["jobs"][0]["kind"] == "generic")
+
+
+def test_ensure_jekyll_disables_livereload() -> None:
+    print("render — ensure_jekyll starts the stack with LiveReload off")
+    import contextlib
+    import io
+    import os
+    import tempfile
+    calls = []
+    real_run, real_http_ok, cwd = vea.run, vea.http_ok, os.getcwd()
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            os.chdir(tmp)
+            vea.http_ok = lambda url, timeout=3.0: bool(calls)
+            vea.run = lambda cmd, **kw: calls.append((list(cmd), kw.get("env")))
+            with contextlib.redirect_stdout(io.StringIO()):
+                started = vea.ensure_jekyll(5)
+        finally:
+            vea.run, vea.http_ok = real_run, real_http_ok
+            os.chdir(cwd)
+    up = [c for c in calls if c[0][:3] == ["docker", "compose", "up"]]
+    check("we started it", started is True and len(up) == 1)
+    check("with JEKYLL_LIVERELOAD=0 in its environment", bool(up) and (up[0][1] or {}).get("JEKYLL_LIVERELOAD") == "0")
+    wf = (REPO_ROOT / ".github/workflows/visual-evidence-autogen.yml").read_text(encoding="utf-8")
+    check("the workflow also exports JEKYLL_LIVERELOAD: \"0\"", 'JEKYLL_LIVERELOAD: "0"' in wf)
 
 
 def test_plan_out_of_scope() -> None:
@@ -387,7 +438,8 @@ def test_workflow_wiring() -> None:
 
 def main() -> int:
     for t in (test_detect_slug, test_plan_pr_454_shape, test_plan_loop_guard_and_budget, test_plan_generic_fallback,
-              test_plan_respects_author_evidence, test_plan_out_of_scope, test_styling_matches_ci_filter,
+              test_plan_respects_author_evidence, test_plan_edited_existing_generator,
+              test_ensure_jekyll_disables_livereload, test_plan_out_of_scope, test_styling_matches_ci_filter,
               test_ui_prefixes_match_gate, test_parse_results, test_parse_results_playwright_158_attachment_names,
               test_decide, test_stage_and_messages,
               test_stage_command_output, test_generic_generator_survives_livereload,
