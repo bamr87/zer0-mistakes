@@ -103,7 +103,7 @@ if [[ -z "${BASE_URL:-}" ]]; then
 
   BASE_URL="http://127.0.0.1:${PORT}"
   ready=false
-  for _ in $(seq 1 90); do
+  for _ in $(seq 1 240); do
     if curl -sf "${BASE_URL}/" >/dev/null 2>&1; then
       ready=true
       break
