@@ -182,7 +182,7 @@ collections:
 # -------------------------------------------------------------------------
 ai_review:
   enabled: true                  # gated on ANTHROPIC_API_KEY at runtime
-  model: "claude-sonnet-4-6"
+  model: "claude-sonnet-5-5"
   max_files_per_run: 20
   post_inline_comments: true
   focus:

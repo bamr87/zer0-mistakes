@@ -164,7 +164,7 @@ jobs:
           modify any files.
           EOF
           claude -p "$PROMPT" \
-            --model claude-sonnet-4-6 \
+            --model claude-sonnet-5-5 \
             --max-turns 40 \
             --allowedTools "Task,Read,Grep,Glob" \
             --output-format text \

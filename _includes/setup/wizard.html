@@ -178,7 +178,7 @@
                 <div class="col-md-6">
                   <label for="sb-model" class="form-label">Model</label>
                   <select class="form-select form-select-sm" id="sb-model" disabled>
-                    <option value="{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-4-8' }}">{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-4-8' }}</option>
+                    <option value="{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-5-5' }}">{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-5-5' }}</option>
                   </select>
                   <div class="form-text" id="sb-model-note">Sent with every request; the proxy can pin one with <code>CHAT_MODEL</code> / <code>XAI_CHAT_MODEL</code>.</div>
                 </div>
@@ -1021,7 +1021,7 @@
   "endpoint": {{ sb_cfg.endpoint | default: "/api/wizard" | jsonify }},
   "chatEndpoint": {{ sb_cfg.chat_endpoint | default: site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
   "provider": {{ sb_cfg.provider | default: "auto" | jsonify }},
-  "model": {{ sb_cfg.model | default: site.ai_chat.model | default: "claude-opus-4-8" | jsonify }},
+  "model": {{ sb_cfg.model | default: site.ai_chat.model | default: "claude-opus-5-5" | jsonify }},
   "mode": {{ sb_cfg.mode | default: "guided" | jsonify }},
   "imageProvider": {{ sb_cfg.image_provider | default: "" | jsonify }},
   "maxTokens": {{ sb_cfg.max_tokens | default: 8192 }},

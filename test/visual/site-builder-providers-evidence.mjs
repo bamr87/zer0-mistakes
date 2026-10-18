@@ -53,10 +53,10 @@ function statusFor(provider) {
   const has = (id) => id === provider;
   return {
     ok: true,
-    auth: has('xai') ? { provider: 'xai', label: 'Grok', vendor: 'xAI', kind: 'api_key', source: 'session', masked: '••••c3f9', model: 'grok-4.6', pinned: false } : { provider: 'anthropic', label: 'Claude', vendor: 'Anthropic', kind: 'oauth_static', source: 'env', masked: '••••ab12', model: 'claude-opus-4-8', pinned: false },
+    auth: has('xai') ? { provider: 'xai', label: 'Grok', vendor: 'xAI', kind: 'api_key', source: 'session', masked: '••••c3f9', model: 'grok-4.6', pinned: false } : { provider: 'anthropic', label: 'Claude', vendor: 'Anthropic', kind: 'oauth_static', source: 'env', masked: '••••ab12', model: 'claude-opus-5-5', pinned: false },
     providerPin: 'auto',
     providers: {
-      anthropic: { id: 'anthropic', label: 'Claude', vendor: 'Anthropic', configured: has('anthropic'), kind: has('anthropic') ? 'oauth_static' : null, source: has('anthropic') ? 'env' : null, masked: has('anthropic') ? '••••ab12' : '', models: ['claude-opus-4-8', 'claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5'], defaultModel: 'claude-opus-4-8', model: 'claude-opus-4-8', pinned: false },
+      anthropic: { id: 'anthropic', label: 'Claude', vendor: 'Anthropic', configured: has('anthropic'), kind: has('anthropic') ? 'oauth_static' : null, source: has('anthropic') ? 'env' : null, masked: has('anthropic') ? '••••ab12' : '', models: ['claude-opus-5-5', 'claude-sonnet-5-5', 'claude-haiku-5-5'], defaultModel: 'claude-opus-5-5', model: 'claude-opus-5-5', pinned: false },
       xai: { id: 'xai', label: 'Grok', vendor: 'xAI', configured: has('xai'), kind: has('xai') ? 'api_key' : null, source: has('xai') ? 'session' : null, masked: has('xai') ? '••••c3f9' : '', models: ['grok-4.6', 'grok-4.5', 'grok-4.3'], defaultModel: 'grok-4.6', model: 'grok-4.6', pinned: false },
     },
     image: { providers: { xai: { id: 'xai', label: 'Grok Imagine', vendor: 'xAI', configured: has('xai'), source: has('xai') ? 'session' : null, masked: has('xai') ? '••••c3f9' : '', models: ['grok-imagine-image-2.0'], model: 'grok-imagine-image-2.0', aspectRatios: ['1:1', '16:9'], sizes: [] }, openai: { id: 'openai', label: 'OpenAI Images', vendor: 'OpenAI', configured: false, source: null, masked: '', models: ['gpt-image-2'], model: 'gpt-image-2', aspectRatios: [], sizes: [] } }, default: has('xai') ? 'xai' : null },
@@ -68,7 +68,7 @@ function statusFor(provider) {
     projects: [{ name: 'postgres-in-production', abs: '/Users/you/sites/postgres-in-production', site: true, compose: true, mtime: 2 }, { name: 'garden', abs: '/Users/you/sites/garden', site: true, compose: false, mtime: 1 }],
     maxTokensCap: 8192,
     localEdit: true,
-    model: has('xai') ? 'grok-4.6' : 'claude-opus-4-8',
+    model: has('xai') ? 'grok-4.6' : 'claude-opus-5-5',
   };
 }
 
