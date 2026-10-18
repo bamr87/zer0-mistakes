@@ -43,10 +43,15 @@ preview: /assets/images/wizard-on-journey.png
 hero_image: /assets/images/wizard-on-journey.png
 excerpt: "AI-native Jekyll theme for GitHub Pages — multi-agent ready (Copilot, Codex, Cursor, Claude), AI-powered install & preview images, AIEO-optimized, with Docker-first development and 43 documented features"
 ---
-
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment) [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0) [![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml) [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-purple.svg)](https://getbootstrap.com/) [![AI-Native](https://img.shields.io/badge/AI--Native-Copilot%20%7C%20Codex%20%7C%20Cursor%20%7C%20Claude-8A2BE2)](AGENTS.md) [![AIEO](https://img.shields.io/badge/AIEO-Optimized-ff69b4)](#-aieo-optimized--built-for-ai-citation)
 
 # zer0-mistakes
+
+> AI-native, Docker-first Jekyll theme for GitHub Pages sites, built on Bootstrap 5 and published as a Ruby gem.
+
+[![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml) [![License](https://img.shields.io/github/license/bamr87/zer0-mistakes)](LICENSE) [![Live site](https://img.shields.io/badge/live-zer0--mistakes.com-2ea44f)](https://zer0-mistakes.com/)
+
+## Overview
 
 ### A modern website theme that just works — for blogs, docs, portfolios, and more
 
@@ -57,8 +62,6 @@ excerpt: "AI-native Jekyll theme for GitHub Pages — multi-agent ready (Copilot
 If you already know Jekyll, Ruby, Docker, or AI coding agents: the same theme grows with you into a fully programmable platform with self-healing install scripts, multi-agent guidance for Copilot / Cursor / Claude, AI-generated preview images, and automated semantic releases to RubyGems. Beginners can skip those parts entirely.
 
 [Get Started in 5 Minutes](#-get-started-in-5-minutes) • [What You Get](#-what-you-get) • [Who It's For](#-who-its-for) • [Advanced & AI Features](#-advanced-features-for-power-users) • [Live Demo](https://zer0-mistakes.com/)
-
----
 
 ## ✨ What You Get
 
@@ -963,4 +966,15 @@ And these AI partners that make zer0-mistakes truly AI-native:
 
 **v1.19.1** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
 
+## Changelog
 
+Notable changes are recorded in [CHANGELOG.md](CHANGELOG.md). Tagged versions are on the [releases page](https://github.com/bamr87/zer0-mistakes/releases).
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+---
+
+<!-- bamr87-portfolio-footer -->
+Part of the [bamr87 portfolio](https://github.com/bamr87) — browse every project on [Amr's GitHub profile](https://github.com/bamr87).
