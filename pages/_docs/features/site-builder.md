@@ -72,7 +72,7 @@ The Connect step shows one card per provider from `_data/site_builder.yml` and a
 | Provider cards | Claude (Anthropic) or Grok (xAI). When the proxy pins `CHAT_PROVIDER`, the other card is locked. |
 | Token field | Posts the token **once** to the localhost proxy, which keeps it in memory for the run, proves it with one cheap request, and reports it masked. The page never stores it and refuses to send it anywhere but `localhost`. **Forget it** drops it again. |
 | Save to `.env` | Optional: the proxy writes the line into `.env` (mode 600) so it survives a restart. |
-| Model | The provider's catalog (`claude-opus-4-8`, `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5`; `grok-4.6`, `grok-4.5`, `grok-4.3`). Read-only when the proxy pins `CHAT_MODEL` / `XAI_CHAT_MODEL`. |
+| Model | The provider's catalog (`claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`; `grok-4.6`, `grok-4.5`, `grok-4.3`). Read-only when the proxy pins `CHAT_MODEL` / `XAI_CHAT_MODEL`. |
 | Image generation | Off, Grok Imagine (needs the xAI key) or OpenAI Images (needs `OPENAI_API_KEY`). |
 | Session mode | Guided steps or an open session (below). |
 
@@ -156,7 +156,7 @@ site_builder:
   endpoint: '/api/wizard'      # dev proxy base; _config_dev.yml sets http://localhost:8787/api/wizard
   chat_endpoint: ''            # '' reuses ai_chat.endpoint
   provider: 'auto'             # auto | anthropic | xai — card preselected on Connect (the proxy decides what is configured)
-  model: 'claude-opus-4-8'     # fallback when the proxy reports none; CHAT_MODEL / XAI_CHAT_MODEL win
+  model: 'claude-opus-5-5'     # fallback when the proxy reports none; CHAT_MODEL / XAI_CHAT_MODEL win
   mode: 'guided'               # guided | open
   image_provider: ''           # '' | xai | openai — image renderer offered when its key exists
   max_tokens: 8192             # open sessions write whole files; the proxy's MAX_TOKENS_CAP still caps it
