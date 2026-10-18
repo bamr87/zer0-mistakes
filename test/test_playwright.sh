@@ -81,7 +81,7 @@ if [[ -z "${BASE_URL:-}" ]]; then
 
   BASE_URL="http://127.0.0.1:${STYLING_PORT}"
   local_ready=false
-  for _ in $(seq 1 90); do
+  for _ in $(seq 1 240); do
     if curl -sf "${BASE_URL}/" >/dev/null 2>&1; then
       local_ready=true
       break
@@ -94,7 +94,7 @@ if [[ -z "${BASE_URL:-}" ]]; then
     sleep 1
   done
   if [[ "${local_ready}" != "true" ]]; then
-    log "ERROR: Jekyll did not respond at ${BASE_URL} within 90s. Last 50 log lines:"
+    log "ERROR: Jekyll did not respond at ${BASE_URL} within 240s. Last 50 log lines:"
     tail -n 50 "$JEKYLL_LOG" || true
     exit 1
   fi

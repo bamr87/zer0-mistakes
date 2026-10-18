@@ -48,4 +48,4 @@ agents: [copilot, claude]
 # AI installer provider selection (wizard / suggest / diagnose).
 ai:
   provider: auto               # auto | claude-cli | anthropic | openai | none
-  # model: claude-sonnet-5     # override the provider's default model
+  # model: claude-sonnet-5-5     # override the provider's default model

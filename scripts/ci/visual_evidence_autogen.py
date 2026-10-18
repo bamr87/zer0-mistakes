@@ -247,10 +247,17 @@ class RealFS:
 
 def detect_slug(source: str) -> str | None:
     """The evidence slug a generator writes to, read from its source."""
-    m = re.search(r"\bslug:\s*['\"]([A-Za-z0-9._-]+)['\"]", source)
+    # Most specific first. A hand-rolled generator can carry per-CASE `slug:`
+    # keys (dangling-aria-controls-evidence.mjs: `slug: 'navbar-toggle-fr-about'`)
+    # that are file-name prefixes, not the folder; the folder it writes to wins
+    # over those, and an explicit `// slug: '…'` comment wins over both.
+    m = re.search(r"//\s*slug:\s*['\"]([A-Za-z0-9._-]+)['\"]", source)
     if m:
         return m.group(1)
     m = re.search(r"test/visual/evidence/([A-Za-z0-9._-]+)", source)
+    if m:
+        return m.group(1)
+    m = re.search(r"\bslug:\s*['\"]([A-Za-z0-9._-]+)['\"]", source)
     return m.group(1) if m else None
 
 
@@ -328,15 +335,23 @@ def make_plan(*, changed: list[str], head_sha: str, head_subject: str,
         gen = by_slug.get(slug)
         add(slug, "bespoke" if gen else "generic", gen, why)
 
+    changed_dirs = set(evidence_dirs(changed))
     for gen in changed_generators:
         slug = detect_slug(fs.read(gen))
         if not slug:
             continue
         folder = f"{EVIDENCE_ROOT}{slug}"
-        if not has_proof(fs, folder):
-            add(slug, "bespoke", gen, "changed generator whose evidence folder has no generated proof")
+        if folder in changed_dirs:
+            continue  # the PR touched this folder too; the loop above decided it
+        # The generator was edited but its folder was not: whatever proof sits
+        # there was rendered by the OLD generator and proves nothing about this
+        # PR. (Before, an existing folder with PNGs scheduled nothing at all.)
+        why = ("changed generator whose evidence folder has no generated proof"
+               if not has_proof(fs, folder)
+               else "changed generator; its committed evidence predates the edit")
+        add(slug, "bespoke", gen, why)
 
-    if ui and not jobs and not evidence_dirs(changed) and not changed_generators and default_slug:
+    if ui and not jobs and not changed_dirs and default_slug:
         add(default_slug, "generic", None, "UI paths changed and the PR ships no evidence at all")
 
     snapshots_in_scope = bool(styling)
@@ -457,8 +472,12 @@ def ensure_jekyll(timeout: int) -> bool:
     # `npm ci` would set off a regeneration whose LiveReload reloads every open
     # page mid-shot (the pr-evidence.mjs crash on #495). Create it first.
     Path("node_modules").mkdir(exist_ok=True)
-    log("Starting Jekyll via docker compose…")
-    run(["docker", "compose", "up", "-d"], capture=False)
+    # LiveReload OFF (#461): update-snapshots.sh refuses, in CI, to shoot
+    # against a stack that can reload the page ("[update-snapshots] ERROR:
+    # LiveReload is live on the snapshot stack"), and it reuses the stack we
+    # start here. docker-compose.yml drops --livereload when this is 0.
+    log("Starting Jekyll via docker compose (JEKYLL_LIVERELOAD=0)…")
+    run(["docker", "compose", "up", "-d"], capture=False, env={"JEKYLL_LIVERELOAD": "0"})
     log(f"Waiting up to {timeout}s for {HEAD_URL} (cold bundle install + first build)…")
     deadline = time.time() + timeout
     while time.time() < deadline:

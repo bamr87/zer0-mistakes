@@ -307,7 +307,7 @@ class TestOpenAIAdaptation(unittest.TestCase):
 
 class TestModelFamily(unittest.TestCase):
     def test_family_detection(self):
-        self.assertEqual(pg.model_family("claude-opus-4-8"), "claude")
+        self.assertEqual(pg.model_family("claude-opus-5-5"), "claude")
         self.assertEqual(pg.model_family("gpt-image-2"), "openai")
         self.assertEqual(pg.model_family("dall-e-3"), "openai")
         self.assertEqual(pg.model_family("grok-2-image"), "xai")
@@ -316,7 +316,7 @@ class TestModelFamily(unittest.TestCase):
         self.assertIsNone(pg.model_family("mystery-model"))
 
     def test_foreign_family_model_falls_back(self):
-        settings = make_settings(model="claude-opus-4-8")
+        settings = make_settings(model="claude-opus-5-5")
         self.assertEqual(pg.effective_model(settings, pg.PROVIDERS["openai"]), "gpt-image-2")
 
     def test_matching_family_kept(self):
@@ -338,7 +338,7 @@ class TestModelFamily(unittest.TestCase):
     def test_claude_model_under_renderer_falls_back(self):
         """A leftover `model: claude-*` (Claude is no longer a renderer) must
         fall back to the renderer's default, not be sent to the vendor API."""
-        settings = make_settings(model="claude-opus-4-8")
+        settings = make_settings(model="claude-opus-5-5")
         self.assertEqual(pg.effective_model(settings, pg.PROVIDERS["openai"]),
                          "gpt-image-2")
 
@@ -689,8 +689,8 @@ class TestClaudeOrchestration(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             cf = make_content_file(Path(tmp))
             pg.claude_article_brief(
-                client, cf, make_settings(claude_model="claude-sonnet-5"), "base")
-        self.assertEqual(client.complete_calls[0][2], "claude-sonnet-5")
+                client, cf, make_settings(claude_model="claude-sonnet-5-5"), "base")
+        self.assertEqual(client.complete_calls[0][2], "claude-sonnet-5-5")
 
     def test_review_approve(self):
         client = _FakeClaude(

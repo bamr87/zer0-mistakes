@@ -63,7 +63,7 @@ means adding a translation in `providers.js` (request in, SSE/JSON out), never a
 new options there with a `site.ai_chat.*` default and read them in `ai-chat.js`. Compute boolean render flags with Liquid `if`-tags, not `assign` (Liquid stores a truthy string for boolean expressions in `assign`).
 - The Worker and `dev-proxy.mjs` share logic — `dev-proxy.mjs` imports and runs
   the real `worker.js`, so worker changes must keep working under Node.
-- Model id defaults to `claude-opus-4-8` for Claude and `grok-4.6` for Grok;
+- Model id defaults to `claude-opus-5-5` for Claude and `grok-4.6` for Grok;
   do not send `temperature` (current Claude models reject sampling params).
 - Session state that is safe to keep in the browser (provider, model, mode,
 image renderer) lives in `localStorage` under `zer0-site-builder-prefs`; a token never does.

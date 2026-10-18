@@ -128,7 +128,7 @@ preview_images:
   #   claude_model — optional override for the orchestration model
   prompt_engine: claude
   review_engine: claude
-  # claude_model: claude-opus-4-8
+  # claude_model: claude-opus-5-5
 
   # Path normalization for front-matter preview values
   assets_prefix: /assets

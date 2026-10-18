@@ -97,11 +97,13 @@ jobs:
           pid=$!
           echo "JEKYLL_PID=$pid" >> "$GITHUB_ENV"
           ready=false
-          for _ in $(seq 1 90); do
+          # 240s, not 90s: the cold build took 73s on the last green run
+          # (2026-09-28) and has since crossed 90s, still mid-"Generating...".
+          for _ in $(seq 1 240); do
             if curl -sf http://127.0.0.1:4000/ >/dev/null 2>&1; then
               ready=true; break
             fi
-            # Fail fast if the server died rather than waiting out all 90s.
+            # Fail fast if the server died rather than waiting out all 240s.
             if ! kill -0 "$pid" 2>/dev/null; then break; fi
             sleep 1
           done
@@ -164,7 +166,7 @@ jobs:
           modify any files.
           EOF
           claude -p "$PROMPT" \
-            --model claude-sonnet-4-6 \
+            --model claude-sonnet-5-5 \
             --max-turns 40 \
             --allowedTools "Task,Read,Grep,Glob" \
             --output-format text \

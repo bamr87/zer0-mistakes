@@ -91,7 +91,7 @@ L'étape Connexion affiche une carte par fournisseur depuis `_data/site_builder.
 | Cartes de fournisseur | Claude (Anthropic) ou Grok (xAI). Lorsque le proxy fixe `CHAT_PROVIDER`, l'autre carte est verrouillée. |
 | Champ de jeton | Envoie le jeton **une seule fois** au proxy localhost, qui le conserve en mémoire pour la durée de l'exécution, le valide avec une requête peu coûteuse et le renvoie masqué. La page ne le stocke jamais et refuse de l'envoyer ailleurs que vers `localhost`. **L'oublier** le supprime à nouveau. |
 | Enregistrer dans `.env` | Facultatif : le proxy écrit la ligne dans `.env` (mode 600) afin qu'elle survive à un redémarrage. |
-| Modèle | Le catalogue du fournisseur (`claude-opus-4-8`, `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5` ; `grok-4.6`, `grok-4.5`, `grok-4.3`). En lecture seule lorsque le proxy fixe `CHAT_MODEL` / `XAI_CHAT_MODEL`. |
+| Modèle | Le catalogue du fournisseur (`claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5` ; `grok-4.6`, `grok-4.5`, `grok-4.3`). En lecture seule lorsque le proxy fixe `CHAT_MODEL` / `XAI_CHAT_MODEL`. |
 | Génération d'images | Désactivée, Grok Imagine (nécessite la clé xAI) ou OpenAI Images (nécessite `OPENAI_API_KEY`). |
 | Mode de session | Étapes guidées ou une session ouverte (ci-dessous). |
 
@@ -175,7 +175,7 @@ site_builder:
   endpoint: '/api/wizard'      # dev proxy base; _config_dev.yml sets http://localhost:8787/api/wizard
   chat_endpoint: ''            # '' reuses ai_chat.endpoint
   provider: 'auto'             # auto | anthropic | xai — card preselected on Connect (the proxy decides what is configured)
-  model: 'claude-opus-4-8'     # fallback when the proxy reports none; CHAT_MODEL / XAI_CHAT_MODEL win
+  model: 'claude-opus-5-5'     # fallback when the proxy reports none; CHAT_MODEL / XAI_CHAT_MODEL win
   mode: 'guided'               # guided | open
   image_provider: ''           # '' | xai | openai — image renderer offered when its key exists
   max_tokens: 8192             # open sessions write whole files; the proxy's MAX_TOKENS_CAP still caps it
