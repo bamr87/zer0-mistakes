@@ -127,6 +127,11 @@ jobs:
               - '_data/theme_backgrounds.yml'
               - 'test/visual/**'
               - 'test/playwright.config.js'
+              # The root README is the site's homepage (README-as-homepage),
+              # so its tagline is in the homepage baselines. #535 edited only
+              # README.md, matched nothing above, skipped Visual Snapshots, and
+              # left the homepage baselines stale until #544 refreshed them.
+              - 'README.md'
             install:
               - 'install.sh'
               - 'scripts/lib/install/**'
