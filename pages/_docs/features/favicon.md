@@ -1,8 +1,8 @@
 ---
 title: Favicon and Browser Identity Setup
-description: Config-driven favicon, Apple touch icon, web manifest, and theme-color tags emitted on every page, with a zero-config /favicon.ico fallback.
+description: Config-driven favicon, Apple touch icon, web manifest, and theme-color tags emitted on every page, with a zero-config fallback to a root favicon file that exists.
 keywords: [favicon, browser identity, apple touch icon, web manifest, theme color, svg favicon, jekyll theme]
-lastmod: 2026-09-03T00:00:00.000Z
+lastmod: 2026-10-18T00:00:00.000Z
 layout: default
 categories:
     - docs
@@ -32,7 +32,7 @@ Before this include existed, sites relied on the browser's *implicit* `/favicon.
 
 ## Zero-config behavior
 
-With no configuration at all, every page links `/favicon.ico` explicitly (resolved through `relative_url`, so `baseurl` sites work) **and emits both `theme-color` tags**:
+With no configuration at all, every page links the first root icon file that **actually exists** in the build — `/favicon.ico`, else `/favicon.png`, else `/favicon.svg` (resolved through `relative_url`, so `baseurl` sites work). If none exists, no icon link is emitted, so a `remote_theme` consumer without the file no longer requests a missing `/favicon.ico` on every page (issue #536). A configured `favicon.ico` is always emitted as-is. Both `theme-color` tags are emitted either way:
 
 ```html
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
@@ -41,7 +41,7 @@ With no configuration at all, every page links `/favicon.ico` explicitly (resolv
 
 Those defaults are Bootstrap 5.3.3's own `--bs-body-bg` for each scheme, so the mobile address bar matches the page **surface** out of the box. This matters most for `remote_theme` consumers, which do not inherit the theme's `_config.yml` — before this change the tag was config-gated, so such a site got none at all.
 
-Keep a `favicon.ico` at your site root — a 32×32 icon is enough.
+Keep a `favicon.ico` (or `favicon.png` / `favicon.svg`) at your site root — a 32×32 icon is enough — or point `favicon.ico` at the file you ship.
 
 ## Full configuration
 
@@ -49,7 +49,7 @@ All keys are optional. Add a `favicon:` block to `_config.yml`:
 
 ```yaml
 favicon:
-  ico         : /favicon.ico                    # legacy .ico (default)
+  ico         : /favicon.ico                    # legacy .ico (always emitted when set)
   svg         : /assets/images/favicon.svg      # scalable icon, preferred by modern browsers
   png         : /assets/images/favicon-32.png   # PNG icon
   png_size    : 32x32                           # sizes attribute for the png entry

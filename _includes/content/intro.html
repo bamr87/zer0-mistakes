@@ -111,6 +111,20 @@
   {% endif %}
 {% endif %}
 
+{% comment %} Tags index existence gate (issue #537) — the same policy as
+   news.html / section.html: an explicit site.tags_page is trusted; otherwise
+   link only when a page at /tags/ is actually in the build. A remote-theme
+   consumer without the tags index gets plain badges instead of 404 links on
+   every tagged page. {% endcomment %}
+{% assign intro_tags_base = site.tags_page | default: "/tags/" %}
+{% assign intro_tags_linkable = false %}
+{% if site.tags_page %}
+  {% assign intro_tags_linkable = true %}
+{% else %}
+  {% assign intro_tags_index = site.html_pages | where: "url", intro_tags_base | first %}
+  {% if intro_tags_index %}{% assign intro_tags_linkable = true %}{% endif %}
+{% endif %}
+
 {% comment %} Category or collection badge (most specific category wins) {% endcomment %}
 {% assign intro_category = nil %}
 {% assign intro_category_url = nil %}
@@ -129,7 +143,9 @@
     {% capture intro_category_url %}{{ site.baseurl }}/docs/{{ intro_category_slug }}/{% endcapture %}
   {% else %}
     {% assign intro_category_slug = intro_category | append: '' | slugify %}
-    {% capture intro_category_url %}{{ '/tags/' | relative_url }}#{{ intro_category_slug }}{% endcapture %}
+    {% if intro_tags_linkable %}
+      {% capture intro_category_url %}{{ intro_tags_base | relative_url }}#{{ intro_category_slug }}{% endcapture %}
+    {% endif %}
   {% endif %}
 {% elsif page.collection and page.collection != "pages" %}
   {% assign intro_category = page.collection %}
@@ -217,7 +233,11 @@
           <span class="bd-intro-tag-list">
             {% for tag in page.tags limit: 5 %}
             {% assign intro_tag_label = tag | append: '' %}
-            <a class="bd-intro-badge bd-intro-badge--tag" href="{{ '/tags/' | relative_url }}#{{ intro_tag_label | slugify }}">{{ intro_tag_label }}</a>
+            {% if intro_tags_linkable %}
+            <a class="bd-intro-badge bd-intro-badge--tag" href="{{ intro_tags_base | relative_url }}#{{ intro_tag_label | slugify }}">{{ intro_tag_label }}</a>
+            {% else %}
+            <span class="bd-intro-badge bd-intro-badge--tag">{{ intro_tag_label }}</span>
+            {% endif %}
             {% endfor %}
             {% if page.tags.size > 5 %}
             <span class="bd-intro-badge bd-intro-badge--tag bd-intro-badge--more">+{{ page.tags.size | minus: 5 }}</span>

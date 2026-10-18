@@ -800,13 +800,15 @@ test_favicon_wiring() {
     local head="$PROJECT_ROOT/_includes/core/head.html"
     local failed=0
 
-    # 1. Favicon include exists and emits the explicit /favicon.ico default —
-    #    the implicit browser probe 404s on baseurl deployments.
+    # 1. Favicon include exists and emits an explicit rel=icon for the root
+    #    /favicon.ico — the implicit browser probe 404s on baseurl deployments.
+    #    The link is existence-gated on site.static_files (issue #536); the
+    #    rendered variants are covered by test_consumer_404_gates.
     if [[ -f "$include" ]]; then
-        if grep -qF 'rel="icon"' "$include" && grep -qF "default: '/favicon.ico'" "$include"; then
-            log_success "favicon include emits rel=icon with /favicon.ico default"
+        if grep -qF 'rel="icon"' "$include" && grep -qF '"path", "/favicon.ico"' "$include"; then
+            log_success "favicon include emits rel=icon for an existing /favicon.ico"
         else
-            log_error "favicon include is missing the rel=icon /favicon.ico default"
+            log_error "favicon include is missing the existence-gated rel=icon /favicon.ico"
             failed=1
         fi
     else
@@ -1243,6 +1245,37 @@ test_theme_color_fallback_without_config() {
         return 0
     else
         log_error "theme-color fallback check failed (see above)"
+        return 1
+    fi
+}
+
+test_consumer_404_gates() {
+    log_info "Testing favicon + tag-badge links are existence-gated for consumers (issues #536, #537)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the consumer 404-gate check"
+        return 0
+    fi
+
+    # Builds throwaway consumer sites with the real Jekyll, so it needs the
+    # bundle (same load-path caveat as test_theme_color_fallback_without_config).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the consumer 404-gate check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_consumer_404_gates.rb; then
+        log_success "favicon and tag-badge links only point at files/pages that exist"
+        return 0
+    else
+        log_error "consumer 404-gate check failed (see above)"
         return 1
     fi
 }
@@ -1883,6 +1916,7 @@ run_core_tests() {
     run_test "Attribute Whitespace In Markup" "test_attribute_whitespace_in_markup" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
+    run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     
