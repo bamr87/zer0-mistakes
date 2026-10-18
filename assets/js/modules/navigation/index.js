@@ -36,6 +36,50 @@ import { TocVisibility } from './toc-visibility.js';
 import { SidebarVisibility } from './sidebar-visibility.js';
 import { Navbar } from './navbar.js';
 
+/** Marker in an init step list: give the main thread back before continuing. */
+const YIELD = Symbol('yield');
+
+/**
+ * Yield to the main thread so pending input and rendering can run.
+ * Uses scheduler.yield() where available (keeps our priority), otherwise a
+ * macrotask via MessageChannel (no 4ms setTimeout clamp).
+ * @returns {Promise<void>}
+ */
+function yieldToMain() {
+    if (typeof window !== 'undefined' && window.scheduler && typeof window.scheduler.yield === 'function') {
+        return window.scheduler.yield();
+    }
+    return new Promise(resolve => {
+        if (typeof MessageChannel === 'function') {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = () => resolve();
+            channel.port2.postMessage(null);
+        } else {
+            setTimeout(resolve, 0);
+        }
+    });
+}
+
+/**
+ * Run init steps in order, yielding at each YIELD marker. A step that throws
+ * is logged and does not stop the steps after it.
+ * @param {Array<Function|symbol>} steps
+ * @returns {Promise<void>}
+ */
+async function runSteps(steps) {
+    for (const step of steps) {
+        if (step === YIELD) {
+            await yieldToMain();
+            continue;
+        }
+        try {
+            step();
+        } catch (error) {
+            console.error('Navigation: Initialization error', error);
+        }
+    }
+}
+
 /**
  * Navigation Controller - Orchestrates all navigation modules
  */
@@ -54,59 +98,69 @@ export class Navigation {
             console.warn('Navigation: Already initialized');
             return this;
         }
+        this._initialized = true;
 
-        try {
+        // Start-up is split across tasks so it never becomes one long task.
+        // Phase 1 (this task) wires the controls a user can reach right away:
+        // sidebar state, keyboard shortcuts, focus management and the navbar.
+        // None of them read layout. Each later step reads styles or layout
+        // (breakpoints, TOC/sidebar visibility, scroll spy), so each one runs
+        // in its own task after yielding to the main thread, letting the
+        // browser paint and handle input in between. `navigation:ready` is
+        // still dispatched once every module exists.
+        const steps = [
+            () => { this.modules.state = new SidebarState(); },
+            () => { this.modules.keyboard = new KeyboardShortcuts(); },
+            () => { this.modules.focus = new FocusManager(); },
+            () => {
+                // Initialize navbar (hover dropdowns, mobile menu, tooltips,
+                // focus trap) — formerly the standalone assets/js/navigation.js IIFE.
+                this.modules.navbar = new Navbar(config);
+                this.modules.navbar.init();
+            },
+            YIELD,
             // Sync breakpoints from --zer0-bp-* CSS custom properties so a fork
             // overriding tokens in SCSS automatically propagates to JS checks.
-            syncBreakpointsFromCss();
-
-            // Initialize sidebar state first (other modules may depend on it)
-            this.modules.state = new SidebarState();
-
-            const leftSidebar = document.querySelector(config.selectors.leftSidebar);
-            const docsLayout = document.querySelector(config.selectors.docsLayout);
-            if (leftSidebar && docsLayout && !docsLayout.classList.contains('bd-layout--no-sidebar')) {
-                this.modules.sidebarVisibility = new SidebarVisibility();
-            }
-            
-            // Initialize TOC-related modules only if TOC exists
-            const toc = document.querySelector(config.selectors.toc);
-            if (toc) {
+            // getComputedStyle forces a full style recalc, so it runs after the
+            // first yield, before the modules that use breakpoints.
+            () => { syncBreakpointsFromCss(); },
+            () => { this.modules.gestures = new SwipeGestures(); },
+            YIELD,
+            () => {
+                const leftSidebar = document.querySelector(config.selectors.leftSidebar);
+                const docsLayout = document.querySelector(config.selectors.docsLayout);
+                if (leftSidebar && docsLayout && !docsLayout.classList.contains('bd-layout--no-sidebar')) {
+                    this.modules.sidebarVisibility = new SidebarVisibility();
+                }
+            },
+            YIELD,
+            () => {
+                // Initialize TOC-related modules only if TOC exists
+                if (!document.querySelector(config.selectors.toc)) {
+                    console.log('Navigation: No TOC found, skipping scroll spy and smooth scroll');
+                    return;
+                }
                 this.modules.tocVisibility = new TocVisibility();
-                this.modules.scrollSpy = new ScrollSpy();
                 this.modules.smoothScroll = new SmoothScroll();
-            } else {
-                console.log('Navigation: No TOC found, skipping scroll spy and smooth scroll');
+            },
+            YIELD,
+            () => {
+                if (!this.modules.tocVisibility) return;
+                // ScrollSpy defers its own first measurement to idle time.
+                this.modules.scrollSpy = new ScrollSpy();
             }
-            
-            // Initialize keyboard shortcuts
-            this.modules.keyboard = new KeyboardShortcuts();
-            
-            // Initialize gesture support
-            this.modules.gestures = new SwipeGestures();
-            
-            // Initialize focus management
-            this.modules.focus = new FocusManager();
+        ];
 
-            // Initialize navbar (hover dropdowns, mobile menu, tooltips,
-            // focus trap) — formerly the standalone assets/js/navigation.js IIFE.
-            this.modules.navbar = new Navbar(config);
-            this.modules.navbar.init();
-
-            this._initialized = true;
-            
+        runSteps(steps).then(() => {
             // Dispatch ready event
             document.dispatchEvent(new CustomEvent('navigation:ready', {
-                detail: { 
+                detail: {
                     modules: Object.keys(this.modules)
                 }
             }));
 
             console.log('Navigation: Successfully initialized modules:', Object.keys(this.modules));
-            
-        } catch (error) {
-            console.error('Navigation: Initialization error', error);
-        }
+        });
 
         return this;
     }

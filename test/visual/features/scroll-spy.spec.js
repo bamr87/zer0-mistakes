@@ -266,3 +266,40 @@ test.describe('TOC scroll spy — mobile offcanvas', () => {
     await expect(page.locator('#tocContents')).toHaveClass(/\bshow\b/);
   });
 });
+
+// -----------------------------------------------------------------------------
+// Start-up cost. The navigation modules used to start in one task, and
+// ScrollSpy measured every heading inside it, forcing a full synchronous
+// layout while the page was still loading. On a long it-journey.dev quest page
+// Lighthouse reported that task (attributed to navigation/config.js, the first
+// module in the graph) at about 1 s. Init now yields between layout-reading
+// steps and the spy takes its first measurement in idle time.
+// -----------------------------------------------------------------------------
+test.describe('Navigation start-up stays off the critical path', () => {
+  test('scroll spy measures after navigation:ready, not inside init', async ({ page }) => {
+    await dismissCookieConsent(page);
+    await page.addInitScript(() => {
+      window.__spy = { firstMeasure: null, ready: null, modules: null };
+      const orig = Element.prototype.getBoundingClientRect;
+      Element.prototype.getBoundingClientRect = function () {
+        if (window.__spy.firstMeasure === null && /scroll-spy\.js/.test(new Error().stack || '')) {
+          window.__spy.firstMeasure = performance.now();
+        }
+        return orig.apply(this, arguments);
+      };
+      document.addEventListener('navigation:ready', (e) => {
+        window.__spy.ready = performance.now();
+        window.__spy.modules = e.detail.modules;
+      });
+    });
+    await gotoOrSkip(page, ROUTE);
+    if ((await page.locator('#TableOfContents a[href^="#"]').count()) < 5) {
+      test.skip(true, `${ROUTE} has no multi-entry TOC`);
+    }
+    await page.waitForFunction(() => window.__spy.ready !== null && window.__spy.firstMeasure !== null, null, { timeout: 10000 });
+    const spy = await page.evaluate(() => window.__spy);
+    expect(spy.modules).toEqual(expect.arrayContaining(['navbar', 'keyboard', 'tocVisibility', 'scrollSpy']));
+    expect(spy.firstMeasure, 'first heading measurement happens after init has finished').toBeGreaterThan(spy.ready);
+    await expect(page.locator('#TableOfContents a.active')).toHaveCount(1);
+  });
+});

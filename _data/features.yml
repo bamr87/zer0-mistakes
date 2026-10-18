@@ -288,6 +288,7 @@ features:
       issue: null
     tests:
       - "test/visual/features/sidebar-navigation.spec.js"
+      - "test/visual/features/scroll-spy.spec.js"
     references:
       javascript:
         - "assets/js/modules/navigation/sidebar-state.js"

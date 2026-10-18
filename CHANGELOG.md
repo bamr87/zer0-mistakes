@@ -428,6 +428,17 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Changed
 
+- **Navigation start-up no longer runs as one long task.**
+  `assets/js/modules/navigation/index.js` now wires sidebar state, keyboard
+  shortcuts, focus management and the navbar first, then yields to the main
+  thread before each step that reads styles or layout (breakpoint sync,
+  gestures, sidebar and TOC visibility, scroll spy). `navigation:ready` still
+  fires once every module exists. One step that throws no longer stops the
+  rest. ScrollSpy defers its first heading measurement to idle time
+  (`requestIdleCallback`, 1.5 s timeout), so it no longer forces a full
+  synchronous layout while the page is loading. On it-journey.dev quest
+  pages Lighthouse reported that task, attributed to `navigation/config.js`,
+  at about 1 s.
 - **Navbar label tiers reduced from three to two** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
   Top-level nav items now render as icon + full label above 51rem of centre
   track and icon-only below it; `text-overflow: ellipsis` is gone, so a label

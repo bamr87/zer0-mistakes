@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/perf-quest-page-main-thread/ -->
+  (evidence: [`test/visual/evidence/perf-quest-page-main-thread/`](test/visual/evidence/perf-quest-page-main-thread/README.md))
