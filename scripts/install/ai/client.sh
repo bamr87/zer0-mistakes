@@ -97,7 +97,7 @@ ai_client_model() {
     if [[ -n "${ZER0_AI_MODEL:-}" ]];  then echo "$ZER0_AI_MODEL"; return 0; fi
     if [[ -n "${SPEC_AI_MODEL:-}" ]];  then echo "$SPEC_AI_MODEL"; return 0; fi
     case "$p" in
-        anthropic)  echo "${ANTHROPIC_MODEL:-claude-sonnet-5}" ;;
+        anthropic)  echo "${ANTHROPIC_MODEL:-claude-sonnet-5-5}" ;;
         claude-cli) echo "${ANTHROPIC_MODEL:-}" ;;   # empty → CLI's own default
         *)          echo "${OPENAI_MODEL:-gpt-4o-mini}" ;;
     esac

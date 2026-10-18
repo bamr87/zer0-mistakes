@@ -135,7 +135,7 @@ OAUTH_BETA = "oauth-2025-04-20"
 # Claude Code OAuth tokens require the FIRST system block to identify as Claude
 # Code, otherwise the API rejects the call with a misleading `rate_limit_error`.
 CLAUDE_CODE_SYSTEM_PROMPT = "You are Claude Code, Anthropic's official CLI for Claude."
-DEFAULT_CLAUDE_MODEL = "claude-opus-4-8"
+DEFAULT_CLAUDE_MODEL = "claude-opus-5-5"
 CLAUDE_MAX_TOKENS = 16000  # non-streaming ceiling; SVG banners fit comfortably
 
 # Model-name prefix → provider family. Used to ignore a configured/author model

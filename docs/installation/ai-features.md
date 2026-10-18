@@ -38,7 +38,7 @@ install wizard . --ai            # uses Claude Code OAuth when available
 install wizard . --ai --ai-provider openai --ai-model gpt-4o
 ```
 
-Model defaults per provider (`claude-sonnet-5` for anthropic, `gpt-4o-mini` for openai, the CLI's own default for claude-cli) and is overridable with `ZER0_AI_MODEL` / `--ai-model`. Keys are read from the **environment only** — never from a config file or a flag.
+Model defaults per provider (`claude-sonnet-5-5` for anthropic, `gpt-4o-mini` for openai, the CLI's own default for claude-cli) and is overridable with `ZER0_AI_MODEL` / `--ai-model`. Keys are read from the **environment only** — never from a config file or a flag.
 
 ## Features at a glance
 

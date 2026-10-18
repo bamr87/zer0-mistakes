@@ -151,7 +151,7 @@ jobs:
           $(cat /tmp/ci-failure.log 2>/dev/null)
           \`\`\`"
           claude -p "$PROMPT" \
-            --model claude-sonnet-4-6 \
+            --model claude-sonnet-5-5 \
             --max-turns 40 \
             --permission-mode acceptEdits \
             --allowedTools "Read,Edit,Write,Grep,Glob,Bash(bundle:*),Bash(ruby:*),Bash(rake:*),Bash(npm:*),Bash(npx:*),Bash(./scripts/bin/test:*),Bash(./scripts/bin/validate:*),Bash(./scripts/validate:*),Bash(./test/test_runner.sh:*),Bash(git diff:*),Bash(git status:*),Bash(sed:*),Bash(grep:*),Bash(cat:*),Bash(ls:*)" \

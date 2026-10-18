@@ -209,10 +209,10 @@ await t('selectProvider: pin wins, auto honours a configured request, else first
 });
 
 await t('resolveModel: pin > same-family client model > default', () => {
-  assert.equal(P.resolveModel({ CHAT_MODEL: 'claude-opus-4-8' }, 'anthropic', 'claude-haiku-4-5'), 'claude-opus-4-8');
-  assert.equal(P.resolveModel({}, 'anthropic', 'claude-sonnet-5'), 'claude-sonnet-5');
-  assert.equal(P.resolveModel({}, 'anthropic', 'grok-4.6'), 'claude-opus-4-8', 'a Grok model never reaches Anthropic');
-  assert.equal(P.resolveModel({}, 'xai', 'claude-opus-5'), 'grok-4.6');
+  assert.equal(P.resolveModel({ CHAT_MODEL: 'claude-opus-5-5' }, 'anthropic', 'claude-haiku-5-5'), 'claude-opus-5-5');
+  assert.equal(P.resolveModel({}, 'anthropic', 'claude-sonnet-5-5'), 'claude-sonnet-5-5');
+  assert.equal(P.resolveModel({}, 'anthropic', 'grok-4.6'), 'claude-opus-5-5', 'a Grok model never reaches Anthropic');
+  assert.equal(P.resolveModel({}, 'xai', 'claude-opus-5-5'), 'grok-4.6');
   assert.equal(P.resolveModel({}, 'xai', 'grok-4.5'), 'grok-4.5');
   assert.equal(P.resolveModel({ XAI_CHAT_MODEL: 'grok-4.3' }, 'xai', 'grok-4.6'), 'grok-4.3');
   assert.equal(P.resolveModel({}, 'xai', 'grok-4.6; DROP'), 'grok-4.6');
@@ -423,7 +423,7 @@ await t('probeProvider validates an xai key against /models and reports a reject
 await t('the Anthropic path is unchanged: api key → x-api-key and no identity block; OAuth → Claude Code identity first', async () => {
   const base = { ANTHROPIC_BASE_URL: `${MOCK}/anthropic`, ALLOWED_ORIGINS: 'http://localhost:4000' };
   seen.requests.length = 0;
-  const key = await post('/api/chat', { model: 'claude-sonnet-5', max_tokens: 10, system: 'brief', messages: [{ role: 'user', content: 'x' }] }, Object.assign({ ANTHROPIC_API_KEY: 'sk-ant-api03-test' }, base));
+  const key = await post('/api/chat', { model: 'claude-sonnet-5-5', max_tokens: 10, system: 'brief', messages: [{ role: 'user', content: 'x' }] }, Object.assign({ ANTHROPIC_API_KEY: 'sk-ant-api03-test' }, base));
   assert.equal(key.status, 200);
   assert.equal(key.headers.get('x-chat-provider'), 'anthropic');
   await key.text();
@@ -431,18 +431,18 @@ await t('the Anthropic path is unchanged: api key → x-api-key and no identity 
   assert.equal(up.url, '/anthropic/v1/messages');
   assert.equal(up.headers['x-api-key'], 'sk-ant-api03-test');
   assert.equal(up.body.system, 'brief');
-  assert.equal(up.body.model, 'claude-sonnet-5', 'without a pin the client may choose a Claude model');
+  assert.equal(up.body.model, 'claude-sonnet-5-5', 'without a pin the client may choose a Claude model');
   assert.equal(up.body.stream, true);
 
   seen.requests.length = 0;
-  const oauth = await post('/api/chat', { model: 'grok-4.6', system: 'brief', messages: [{ role: 'user', content: 'x' }] }, Object.assign({ CLAUDE_CODE_OAUTH_TOKEN: 'sk-ant-oat01-test', CHAT_MODEL: 'claude-opus-4-8' }, base));
+  const oauth = await post('/api/chat', { model: 'grok-4.6', system: 'brief', messages: [{ role: 'user', content: 'x' }] }, Object.assign({ CLAUDE_CODE_OAUTH_TOKEN: 'sk-ant-oat01-test', CHAT_MODEL: 'claude-opus-5-5' }, base));
   await oauth.text();
   up = seen.requests[0];
   assert.equal(up.headers.authorization, 'Bearer sk-ant-oat01-test');
   assert.equal(up.headers['anthropic-beta'], 'oauth-2025-04-20');
   assert.equal(up.body.system[0].text, "You are Claude Code, Anthropic's official CLI for Claude.");
   assert.equal(up.body.system[1].text, 'brief');
-  assert.equal(up.body.model, 'claude-opus-4-8', 'the server pin wins and a Grok model never leaks through');
+  assert.equal(up.body.model, 'claude-opus-5-5', 'the server pin wins and a Grok model never leaks through');
 
   const probe = await worker.probeProvider(Object.assign({ CLAUDE_CODE_OAUTH_TOKEN: 'sk-ant-oat01-test' }, base), 'anthropic');
   assert.equal(probe.ok, true);
