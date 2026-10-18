@@ -104,7 +104,7 @@ module Zer0Translate
     "source_lang" => "en",
     "languages" => [],
     "provider" => "claude",
-    "model" => "claude-opus-4-8",
+    "model" => "claude-opus-5-5",
     "max_tokens" => 8192,
     "max_chunk_chars" => 4000,
     "max_chunk_segments" => 60,

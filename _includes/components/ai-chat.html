@@ -185,7 +185,7 @@
   "authMode": {{ ai_auth_mode | jsonify }},
   "apiKey": {{ site.ai_chat.api_key | jsonify }},
   "anthropicVersion": {{ site.ai_chat.anthropic_version | default: "2023-06-01" | jsonify }},
-  "model": {{ site.ai_chat.model | default: "claude-opus-4-8" | jsonify }},
+  "model": {{ site.ai_chat.model | default: "claude-opus-5-5" | jsonify }},
   "maxTokens": {{ site.ai_chat.max_tokens | default: 1024 }},
   "strictContext": {{ site.ai_chat.strict_context | default: true | jsonify }},
   "outOfScopeMessage": {{ site.ai_chat.out_of_scope_message | default: "I can only answer from the content on this page." | jsonify }},

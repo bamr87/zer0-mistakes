@@ -27,7 +27,7 @@ PR_BRANCH_PREFIX = "chat/"
 # Provider, model + cost guardrails enforced server-side. To answer with Grok
 # instead, `wrangler secret put XAI_API_KEY` and set CHAT_PROVIDER = "xai".
 CHAT_PROVIDER = "anthropic"
-CHAT_MODEL = "claude-opus-4-8"
+CHAT_MODEL = "claude-opus-5-5"
 XAI_CHAT_MODEL = "grok-4.6"
 MAX_TOKENS_CAP = "4096"
 

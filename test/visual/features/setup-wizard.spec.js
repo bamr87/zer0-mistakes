@@ -464,7 +464,7 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
   async function mockProxyOnline(page, { provider = 'xai', projects = [] } = {}) {
     const captured = { credentials: [], targets: [] };
     const providers = {
-      anthropic: { id: 'anthropic', label: 'Claude', vendor: 'Anthropic', configured: provider === 'anthropic', kind: provider === 'anthropic' ? 'oauth_static' : null, source: provider === 'anthropic' ? 'env' : null, masked: provider === 'anthropic' ? '••••ab12' : '', models: ['claude-opus-4-8', 'claude-opus-5'], defaultModel: 'claude-opus-4-8', model: 'claude-opus-4-8', pinned: false, tokenHint: '', console: '' },
+      anthropic: { id: 'anthropic', label: 'Claude', vendor: 'Anthropic', configured: provider === 'anthropic', kind: provider === 'anthropic' ? 'oauth_static' : null, source: provider === 'anthropic' ? 'env' : null, masked: provider === 'anthropic' ? '••••ab12' : '', models: ['claude-opus-5-5', 'claude-sonnet-5-5'], defaultModel: 'claude-opus-5-5', model: 'claude-opus-5-5', pinned: false, tokenHint: '', console: '' },
       xai: { id: 'xai', label: 'Grok', vendor: 'xAI', configured: provider === 'xai', kind: provider === 'xai' ? 'api_key' : null, source: provider === 'xai' ? 'session' : null, masked: provider === 'xai' ? '••••c3f9' : '', models: ['grok-4.6', 'grok-4.5'], defaultModel: 'grok-4.6', model: 'grok-4.6', pinned: false, tokenHint: '', console: '' },
     };
     const status = {
@@ -539,7 +539,7 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     await expect(page.locator('#sb-input')).toBeEnabled();
     const models = await page.locator('#sb-model option').evaluateAll((els) => els.map((o) => o.value));
     expect(models).toContain('grok-4.6');
-    expect(models).not.toContain('claude-opus-4-8');
+    expect(models).not.toContain('claude-opus-5-5');
     await expect(page.locator('#step-identity .sb-ask .sb-provider-name')).toHaveText('Grok');
     await expect(page.locator('#sb-messages')).toContainText(/Connected to/);
     // The generated site follows the provider.

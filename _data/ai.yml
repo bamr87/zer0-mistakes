@@ -8,5 +8,5 @@
 # CLAUDE_CODE_OAUTH_TOKEN (preferred) or ANTHROPIC_API_KEY secret.
 # =============================================================================
 provider: anthropic
-model: claude-opus-4-8
+model: claude-opus-5-5
 max_tokens: 8000

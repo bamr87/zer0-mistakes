@@ -62,6 +62,11 @@ permissions:
 
 env:
   PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
+  # The snapshot stack must serve without LiveReload (#461): update-snapshots.sh
+  # aborts in CI with "LiveReload is live on the snapshot stack" otherwise. The
+  # orchestrator also sets it when it runs `docker compose up`; this covers the
+  # LANE_TOOLING restore, which runs main's copy of the script.
+  JEKYLL_LIVERELOAD: "0"
 
 jobs:
   # The loop guard, BEFORE the concurrency group. This lane's own artifact
