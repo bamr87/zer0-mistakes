@@ -1459,7 +1459,7 @@ tasks:
       - "With no `favicon.ico` configured, the default icon link is emitted only for a root /favicon.ico, /favicon.png or /favicon.svg that exists in site.static_files (in that order); none present -> no icon link."
       - "A configured `favicon.ico` is still emitted as-is, and baseurl sites resolve through relative_url."
       - "test/test_consumer_404_gates.rb (run by test_core.sh) builds consumer sites with and without each file and asserts the rendered links."
-    links: { issue: 536, pr: null, roadmap: null }
+    links: { issue: 536, pr: 549, roadmap: null }
     created: 2026-10-18
     updated: 2026-10-18
 
@@ -1477,6 +1477,6 @@ tasks:
       - "Tag and non-docs category badges link to the tags index only when `site.tags_page` is set or a page at /tags/ exists in site.html_pages; otherwise they render as plain `<span>` badges."
       - "This site (which has /tags/) still renders linked badges; the Jekyll build stays green."
       - "test/test_consumer_404_gates.rb asserts the linked, unlinked and `tags_page` variants."
-    links: { issue: 537, pr: null, roadmap: null }
+    links: { issue: 537, pr: 549, roadmap: null }
     created: 2026-10-18
     updated: 2026-10-18
