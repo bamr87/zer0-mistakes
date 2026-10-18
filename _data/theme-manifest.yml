@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.31.1"
-generated_at: "2026-10-17T18:15:21Z"
+version: "1.31.2"
+generated_at: "2026-10-18T02:25:52Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
