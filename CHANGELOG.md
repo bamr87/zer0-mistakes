@@ -436,6 +436,14 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   change:** centre-track widths between 41rem and 51rem (roughly 992–1200px
   viewports) previously showed bare labels and now show icons, with the
   existing `.nav-tooltip` carrying the name on hover.
+- **The sitemap index (`content/sitemap.html`) renders only its first page
+  of rows as HTML.** Every row is also in a compact `#sitemapData` JSON array
+  (title, description, collection, dates, categories, tags, URL), and the
+  script builds the other rows from it when "Show more", sorting or a search
+  needs them. Search, filters, `?q=`, stats and card view behave as before.
+  Without JavaScript, visitors get the first 50 rows and a pointer to
+  `/sitemap.xml` (when `jekyll-sitemap` is enabled). it-journey.dev's
+  `/search/` (431 rows) drops from 2.25 MB of HTML to 0.69 MB.
 - **Dropdown chevrons merged into their parent row** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
   The split toggle is now absolutely positioned inside padding the parent link
   reserves, and hover applies to the whole row, so there is no dead zone

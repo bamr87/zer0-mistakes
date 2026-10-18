@@ -211,11 +211,20 @@
                         <tbody id="sitemapTableBody">
                             {% assign total_pages = 0 %}
                             {% assign collections_data = '' %}
+                            {% comment %}
+                              Only the first page of rows is rendered as HTML, which is enough
+                              for no-JS visitors and first paint. Every row (these included) is
+                              also in the compact #sitemapData JSON below, and the script builds
+                              the other rows from it when they are needed. With 431 rows on
+                              it-journey.dev, rendering them all made /search/ 2.2 MB of HTML.
+                            {% endcomment %}
+                            {% assign sitemap_server_rows = 50 %}
                             
                             {% comment %}Loose Jekyll pages (site.pages in Liquid is the "pages" collection, not these files){% endcomment %}
                             {% for page in site.html_pages %}
                                 {% unless page.sitemap == false %}
                                     {% assign total_pages = total_pages | plus: 1 %}
+                                    {% if total_pages <= sitemap_server_rows %}
                                     <tr data-collection="pages" 
                                         data-title="{{ page.title | default: page.name | escape }}"
                                         data-description="{{ page.description | escape }}"
@@ -281,6 +290,7 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    {% endif %}
                                 {% endunless %}
                             {% endfor %}
                             
@@ -289,6 +299,7 @@
                                 {% for item in collection.docs %}
                                     {% unless item.sitemap == false %}
                                         {% assign total_pages = total_pages | plus: 1 %}
+                                        {% if total_pages <= sitemap_server_rows %}
                                         <tr data-collection="{{ collection.label }}" 
                                             data-title="{{ item.title | escape }}"
                                             data-description="{{ item.description | escape }}"
@@ -354,6 +365,7 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        {% endif %}
                                     {% endunless %}
                                 {% endfor %}
                             {% endfor %}
@@ -364,6 +376,43 @@
         </div>
     </div>
 </div>
+
+{% comment %}
+  Row data for the whole index, one compact entry per row in the same order
+  as the loops above. Keys: c collection, cl collection label, t title,
+  d description, x description cell text (description or excerpt),
+  cat/tag arrays, dt ISO date, dl display date, u url. "</" is escaped so
+  a title can't close the script element early.
+{% endcomment %}
+{%- capture sitemap_json -%}
+[
+{%- assign sm_first = true -%}
+{%- for page in site.html_pages -%}
+{%- unless page.sitemap == false -%}
+{%- unless sm_first %},{% endunless -%}{%- assign sm_first = false -%}
+{"c":"pages","cl":"Pages","t":{{ page.title | default: page.name | jsonify }},"d":{{ page.description | default: "" | jsonify }},"x":{{ page.description | default: "No description available" | jsonify }},"cat":{{ page.categories | default: empty | jsonify }},"tag":{{ page.tags | default: empty | jsonify }},"dt":{{ page.lastmod | default: page.date | date: '%Y-%m-%d' | jsonify }},"dl":{{ page.lastmod | default: page.date | date: "%b %d, %Y" | default: "Unknown" | jsonify }},"u":{{ page.url | relative_url | jsonify }}}
+{%- endunless -%}
+{%- endfor -%}
+{%- for collection in site.collections -%}
+{%- assign sm_label = collection.label | capitalize -%}
+{%- for item in collection.docs -%}
+{%- unless item.sitemap == false -%}
+{%- unless sm_first %},{% endunless -%}{%- assign sm_first = false -%}
+{"c":{{ collection.label | jsonify }},"cl":{{ sm_label | jsonify }},"t":{{ item.title | default: "" | jsonify }},"d":{{ item.description | default: "" | jsonify }},"x":{{ item.description | default: item.excerpt | strip_html | default: "No description available" | jsonify }},"cat":{{ item.categories | default: empty | jsonify }},"tag":{{ item.tags | default: empty | jsonify }},"dt":{{ item.lastmod | default: item.date | date: '%Y-%m-%d' | jsonify }},"dl":{{ item.lastmod | default: item.date | date: "%b %d, %Y" | default: "Unknown" | jsonify }},"u":{{ item.url | relative_url | jsonify }}}
+{%- endunless -%}
+{%- endfor -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+<script type="application/json" id="sitemapData" data-site-url="{{ site.url }}" data-server-rows="{{ sitemap_server_rows }}">{{ sitemap_json | replace: "</", "<\/" }}</script>
+{%- if total_pages > sitemap_server_rows %}
+<noscript>
+    <p class="text-center text-muted mt-3">
+        Showing the first {{ sitemap_server_rows }} of {{ total_pages }} pages. Turn on JavaScript to search and page through all of them
+        {%- if site.plugins contains 'jekyll-sitemap' or site.gems contains 'jekyll-sitemap' %}, or browse the full list in the <a href="{{ '/sitemap.xml' | relative_url }}">XML sitemap</a>{% endif %}.
+    </p>
+</noscript>
+{%- endif %}
 
 {% comment %} ================================ {% endcomment %}
 {% comment %} CARDS VIEW CONTAINER            {% endcomment %}
@@ -474,13 +523,17 @@ th:hover .sort-icon {
  * Enhanced Sitemap Functionality
  * Features: Advanced search, sorting, filtering, statistics, and card/table views
  *
- * Paginated: every row is still rendered server-side (so the index works
- * without JS and with ?q= from the search modal's "View all results"), but
- * only PAGE_SIZE matching rows stay in the document; the rest are kept in
- * memory and a "Show more" button appends the next page. Cards are built on
- * the first switch to card view, one page at a time. On it-journey.dev the
- * index (431 rows plus 431 eagerly built cards) put ~19,900 elements on
- * /search/ before the visitor typed anything.
+ * Paginated: only PAGE_SIZE matching rows are in the document at a time,
+ * and a "Show more" button appends the next page. Cards are built on the
+ * first switch to card view, one page at a time.
+ *
+ * Only the first page of rows is rendered server-side, which is enough for
+ * no-JS visitors and first paint. Every row is described by a compact entry
+ * in #sitemapData, and this script builds the other <tr> elements from it
+ * the first time they are shown or sorted. Search and filters run on the
+ * entries, so ?q= from the search modal's "View all results" still covers
+ * the whole index. On it-journey.dev the full server-rendered table (431
+ * rows) made /search/ about 2.2 MB of HTML.
  */
 class SitemapManager {
     static PAGE_SIZE = 50;
@@ -503,7 +556,22 @@ class SitemapManager {
         this.showMoreWrap = document.getElementById('sitemapShowMore');
         this.showMoreBtn = document.getElementById('sitemapShowMoreBtn');
 
-        this.rows = Array.from(this.tbody.querySelectorAll('tr'));
+        // One entry per index row. `dataset` mirrors the <tr data-*> attributes
+        // so search, filters, stats and cards read entries and rows alike.
+        // The first rows reuse the server-rendered <tr>; the rest are built
+        // on demand by rowFor().
+        const serverRows = Array.from(this.tbody.querySelectorAll('tr'));
+        const dataEl = document.getElementById('sitemapData');
+        let data = [];
+        try {
+            data = dataEl ? JSON.parse(dataEl.textContent) : [];
+        } catch (error) {
+            console.warn('Sitemap: could not read #sitemapData', error);
+        }
+        this.siteUrl = dataEl ? (dataEl.dataset.siteUrl || '') : '';
+        this.rows = data.length
+            ? data.map((e, i) => this.entryFrom(e, serverRows[i] || null))
+            : serverRows.map(tr => ({ dataset: tr.dataset, row: tr }));
         this.visibleCount = document.getElementById('visibleCount');
         this.totalCount = document.getElementById('totalCount');
 
@@ -515,6 +583,91 @@ class SitemapManager {
         this.cards = new WeakMap(); // row -> card element, built on demand
 
         this.init();
+    }
+
+    // Normalise one #sitemapData entry; `row` is its server-rendered <tr>, if any.
+    entryFrom(e, row) {
+        const list = v => Array.isArray(v) ? v.map(String) : (v ? [String(v)] : []);
+        const categories = list(e.cat);
+        const tags = list(e.tag);
+        return {
+            row,
+            raw: e,
+            categoriesList: categories,
+            tagsList: tags,
+            dataset: {
+                collection: e.c || '',
+                title: e.t || '',
+                description: e.d || '',
+                categories: categories.join(', '),
+                tags: tags.join(', '),
+                date: e.dt || '',
+                url: e.u || ''
+            }
+        };
+    }
+
+    // Liquid's `truncate`: at most n characters including the "..." suffix.
+    static truncate(text, n) {
+        const chars = Array.from(text || '');
+        return chars.length > n ? chars.slice(0, n - 3).join('') + '...' : chars.join('');
+    }
+
+    // The <tr> for an entry: the server-rendered one, or built once with
+    // the same markup the include renders (text set via textContent).
+    rowFor(entry) {
+        if (entry.row) return entry.row;
+        const e = entry.raw;
+        const d = entry.dataset;
+        const tr = document.createElement('tr');
+        Object.entries(d).forEach(([k, v]) => { tr.dataset[k] = v; });
+        const isPage = d.collection === 'pages';
+        tr.innerHTML = `
+            <td><span class="badge ${isPage ? 'text-bg-primary' : 'text-bg-info'} rounded-pill"></span></td>
+            <td><a class="text-decoration-none fw-medium"></a></td>
+            <td class="d-none d-md-table-cell"><small class="text-muted"></small></td>
+            <td><small class="text-muted"></small></td>
+            <td class="d-none d-lg-table-cell"></td>
+            <td class="d-none d-xl-table-cell"></td>
+            <td class="text-center">
+                <div class="btn-group btn-group-sm" role="group">
+                    <a class="btn btn-outline-primary btn-sm" title="View page"><i class="bi bi-eye"></i></a>
+                    <button class="btn btn-outline-secondary btn-sm copy-url" title="Copy URL"><i class="bi bi-clipboard"></i></button>
+                </div>
+            </td>`;
+        const cells = tr.children;
+        cells[0].firstElementChild.textContent = e.cl || d.collection;
+        const link = cells[1].firstElementChild;
+        link.href = d.url;
+        link.textContent = SitemapManager.truncate(d.title, 50);
+        if (d.description) {
+            const small = document.createElement('small');
+            small.className = 'text-muted d-md-none';
+            small.textContent = SitemapManager.truncate(d.description, 80);
+            cells[1].append(document.createElement('br'), small);
+        }
+        cells[2].firstElementChild.textContent = SitemapManager.truncate(e.x || 'No description available', 120);
+        cells[3].firstElementChild.textContent = e.dl || 'Unknown';
+        const chips = (cell, items, max, cls, prefix) => {
+            items.slice(0, max).forEach(item => {
+                const b = document.createElement('span');
+                b.className = `badge ${cls} me-1`;
+                b.textContent = prefix + item;
+                cell.append(b, ' ');
+            });
+            if (items.length > max) {
+                const more = document.createElement('span');
+                more.className = 'badge text-body-secondary border';
+                more.textContent = `+${items.length - max}`;
+                cell.append(more);
+            }
+        };
+        chips(cells[4], entry.categoriesList, 2, 'bg-secondary', '');
+        chips(cells[5], entry.tagsList, 3, 'bg-outline-primary', '#');
+        cells[6].querySelector('a').href = d.url;
+        cells[6].querySelector('.copy-url').dataset.url = this.siteUrl + d.url;
+        entry.row = tr;
+        return tr;
     }
 
     init() {
@@ -651,11 +804,11 @@ class SitemapManager {
             header.addEventListener('click', () => this.sortTable(header));
         });
 
-        // Copy URL functionality (table rows; cards bind their own)
-        this.rows.forEach(row => {
-            row.querySelectorAll('.copy-url').forEach(btn => {
-                btn.addEventListener('click', (e) => this.copyUrl(e));
-            });
+        // Copy URL functionality (table rows, delegated so rows built later
+        // work too; cards bind their own)
+        this.tbody.addEventListener('click', (e) => {
+            const btn = e.target.closest('.copy-url');
+            if (btn && this.tbody.contains(btn)) this.copyUrl({ currentTarget: btn });
         });
 
         // Keyboard shortcuts
@@ -729,7 +882,7 @@ class SitemapManager {
     render() {
         const shown = this.matches.slice(0, this.limit);
         if (this.currentView === 'table') {
-            this.tbody.replaceChildren(...shown);
+            this.tbody.replaceChildren(...shown.map(entry => this.rowFor(entry)));
         } else {
             this.cardsContainer.replaceChildren(...shown.map(row => this.cardFor(row)));
         }
@@ -760,10 +913,13 @@ class SitemapManager {
         const icon = header.querySelector('.sort-icon');
         icon.className = `sort-icon bi bi-arrow-${newOrder === 'asc' ? 'up' : 'down'} ms-1 active`;
 
-        // Sort every row (not just the rendered page), then re-render
+        // Sort every row (not just the rendered page), then re-render. Keys
+        // come from each row's cell text, so rows not built yet are built
+        // here (once, on the visitor's click).
+        const keys = new Map(this.rows.map(entry => [entry, this.rowFor(entry).children[headerIndex].textContent.trim()]));
         this.rows.sort((a, b) => {
-            let aValue = a.children[headerIndex].textContent.trim();
-            let bValue = b.children[headerIndex].textContent.trim();
+            let aValue = keys.get(a);
+            let bValue = keys.get(b);
 
             if (type === 'date') {
                 aValue = aValue === "Unknown" ? new Date(0) : new Date(aValue);

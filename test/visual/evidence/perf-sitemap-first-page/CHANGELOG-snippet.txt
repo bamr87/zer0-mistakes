@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/perf-sitemap-first-page/ -->
+  (evidence: [`test/visual/evidence/perf-sitemap-first-page/`](test/visual/evidence/perf-sitemap-first-page/README.md))

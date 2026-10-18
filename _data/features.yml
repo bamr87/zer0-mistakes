@@ -1322,6 +1322,7 @@ features:
     tests:
       - "test/test_core.sh"
       - "test/test_deployment.sh"
+      - "test/visual/features/sitemap-pagination.spec.js"
     references:
       includes:
         - "_includes/content/sitemap.html"
