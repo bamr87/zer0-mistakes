@@ -70,7 +70,7 @@ ai_chat:
   auth_mode: 'proxy'
   proxy_ready: true                  # widget renders only when this is true
   endpoint: '/api/chat'              # your proxy's chat route
-  model: 'claude-opus-4-8'
+  model: 'claude-opus-5-5'
   max_tokens: 1024
   strict_context: true
   out_of_scope_message: "I can only answer from the content on this page."
@@ -85,7 +85,7 @@ ai_chat:
 - `proxy_ready: false` keeps the widget hidden unless your proxy is deployed.
 - `strict_context: true` grounds answers to the current page; the GitHub
 tools still work because grounding only restricts how questions are answered.
-- `model: 'claude-opus-4-8'` — any current Claude model ID works; the proxy
+- `model: 'claude-opus-5-5'` — any current Claude model ID works; the proxy
   template can pin the model server-side so clients cannot change it.
 
 ## GitHub Actions from the Chat
@@ -205,7 +205,7 @@ bundle exec jekyll serve \
    (`ALLOWED_ORIGINS` in the worker).
 2. Proxy holds a valid `ANTHROPIC_API_KEY`.
 3. Direct mode: the key is valid and the model ID exists (e.g.
-   `claude-opus-4-8`).
+   `claude-opus-5-5`).
 
 ### Issue/PR actions don't work
 

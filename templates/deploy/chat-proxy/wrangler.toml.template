@@ -57,6 +57,6 @@ PR_BRANCH_PREFIX = "chat/"
 # (Grok). "auto" honours the page's ai_chat.provider when that provider has a
 # secret, else Claude first, then Grok. Models are pinned per provider.
 CHAT_PROVIDER = "auto"
-CHAT_MODEL = "claude-opus-4-8"
+CHAT_MODEL = "claude-opus-5-5"
 XAI_CHAT_MODEL = "grok-4.6"
 MAX_TOKENS_CAP = "4096"

@@ -184,7 +184,7 @@ while IFS= read -r want_line; do
     [[ -z "$want_line" ]] && continue
     grep -qxF "$want_line" <<< "$_res" || { _res_ok=0; echo "    missing: $want_line"; }
 done <<< "$_want"
-grep -qF "auto_oauth=anthropic authsrc=CLAUDE_CODE_OAUTH_TOKEN (OAuth) model=claude-sonnet-5" <<< "$_res" || {
+grep -qF "auto_oauth=anthropic authsrc=CLAUDE_CODE_OAUTH_TOKEN (OAuth) model=claude-sonnet-5-5" <<< "$_res" || {
     _res_ok=0; echo "    missing: OAuth anthropic resolution"; }
 [[ $_res_ok -eq 1 ]] && pass "AI provider resolution + extraction matrix" \
     || fail "AI provider resolution + extraction matrix"
@@ -199,7 +199,7 @@ site:
   title: "Config Title"
 ai:
   provider: claude-cli
-  model: claude-sonnet-5
+  model: claude-sonnet-5-5
 YAML
 cfg_json="$(ZER0_NO_AI=1 "$INSTALL" plan "$cfg_out" 2>/dev/null)"
 if printf '%s' "$cfg_json" | jq -e '.site.title=="Config Title" and .ai.provider=="claude-cli" and .profile=="github-pages"' >/dev/null 2>&1; then

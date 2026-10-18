@@ -280,7 +280,7 @@
   "ai": {
     "available": {{ pf_ai_available | jsonify }},
     "auto": {{ site.page_feedback.ai.auto | default: false | jsonify }},
-    "model": {{ site.page_feedback.ai.model | default: "claude-opus-4-8" | jsonify }},
+    "model": {{ site.page_feedback.ai.model | default: "claude-opus-5-5" | jsonify }},
     "maxTokens": {{ site.page_feedback.ai.max_tokens | default: 1024 }}
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "zer0-mistakes-theme-tools",
-  "version": "1.31.0",
+  "version": "1.31.2",
   "private": true,
   "description": "Theme tooling: Playwright tests; vendor:mermaid copies Mermaid from node_modules (no jsDelivr); optional css:bootstrap for advanced Bootstrap SCSS. Committed assets/vendor/ is GitHub Pages–safe.",
   "scripts": {
@@ -20,5 +20,9 @@
     "bootstrap": "5.3.3",
     "mermaid": "10.9.8",
     "sass": "^1.80.0"
+  },
+  "overrides": {
+    "katex": "0.18.4",
+    "uuid": "^11.1.1"
   }
 }

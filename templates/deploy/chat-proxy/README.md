@@ -73,7 +73,7 @@ Environment: `WIZARD_TARGET_ROOT` (default: the theme's parent directory), `WIZA
 
 | Provider | Secret | Model pin (default) | Upstream |
 | --- | --- | --- | --- |
-| `anthropic` (Claude) | one of the three Anthropic modes below | `CHAT_MODEL` (`claude-opus-4-8`) | `https://api.anthropic.com/v1/messages` (`ANTHROPIC_BASE_URL` overrides) |
+| `anthropic` (Claude) | one of the three Anthropic modes below | `CHAT_MODEL` (`claude-opus-5-5`) | `https://api.anthropic.com/v1/messages` (`ANTHROPIC_BASE_URL` overrides) |
 | `xai` (Grok) | `XAI_API_KEY` (`wrangler secret put XAI_API_KEY`) | `XAI_CHAT_MODEL` (`grok-4.6`) | `https://api.x.ai/v1/chat/completions` (`XAI_BASE_URL` overrides) |
 
 `CHAT_PROVIDER` pins the provider (`anthropic` | `xai`). `auto` (default) honours the client's `provider` field only when that provider has a secret, else takes the first configured one — Claude, then Grok — so a page can never pick a provider you did not fund. A client model is accepted only from the pinned provider's family (`claude-*` / `grok-*`) and only when no server pin is set. Image rendering (dev proxy) uses `IMAGE_PROVIDER` / `XAI_IMAGE_MODEL` (`grok-imagine-image-2.0`) / `OPENAI_IMAGE_MODEL` (`gpt-image-2`).

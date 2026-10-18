@@ -103,7 +103,7 @@ providers:
     token_hint: "Mint one with `claude setup-token`, or create an API key at console.anthropic.com."
     console: "https://console.anthropic.com/"
     env: "CLAUDE_CODE_OAUTH_TOKEN"
-    models: [claude-opus-4-8, claude-opus-5, claude-sonnet-5, claude-haiku-4-5]
+    models: [claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5]
   - id: xai
     label: "Grok"
     vendor: "xAI"
