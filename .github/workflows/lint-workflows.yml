@@ -98,6 +98,7 @@ jobs:
               '_includes/components/theme-info.html',
               '_layouts/default.html',
               '_sass/main.scss',
+              'README.md',  # rendered as the homepage; #535 skipped the pixel tier
           ]
 
           def glob_to_regex(pat):
