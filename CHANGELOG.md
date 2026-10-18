@@ -12,6 +12,13 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.2](https://github.com/bamr87/zer0-mistakes/compare/v1.31.1...v1.31.2) (2026-10-18)
+
+
+### Bug Fixes
+
+* **ci:** give ui-audit's Jekyll serve 240s to become ready, not 90s ([#524](https://github.com/bamr87/zer0-mistakes/issues/524)) ([209a0e6](https://github.com/bamr87/zer0-mistakes/commit/209a0e6e394c162817aa11ad6bd2d803aa410842))
+
 ## [1.31.1](https://github.com/bamr87/zer0-mistakes/compare/v1.31.0...v1.31.1) (2026-10-17)
 
 
