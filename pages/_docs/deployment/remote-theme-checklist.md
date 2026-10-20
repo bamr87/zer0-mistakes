@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-09-03T00:00:00.000Z
+lastmod: 2026-10-18T00:00:00.000Z
 title: Remote-Theme Consumer Checklist
 description: What remote_theme does not deliver on GitHub Pages, and the files and config every Zer0-Mistakes consumer must add to avoid silent breakage.
 preview: /images/previews/remote-theme-consumer-checklist.png
@@ -66,7 +66,7 @@ plugins:
 
 None of these are inherited from the theme — declare your own: `collections`, `defaults`, `permalink`, `theme_skin`, `theme_color`, `theme_background`.
 
-The `favicon:` block, by contrast, is entirely optional: `favicon.theme_color_light` / `favicon.theme_color_dark` fall back to the theme's surface colors (`#ffffff` / `#212529`), and the `theme-color` tags are emitted even when you declare nothing.
+The `favicon:` block, by contrast, is entirely optional: `favicon.theme_color_light` / `favicon.theme_color_dark` fall back to the theme's surface colors (`#ffffff` / `#212529`), and the `theme-color` tags are emitted even when you declare nothing. Without `favicon.ico`, the theme links a root `/favicon.ico`, `/favicon.png` or `/favicon.svg` only if your site actually ships that file (none → no icon link, rather than a 404 on every page). Set `favicon.ico: /path/to/icon` to point it at an icon kept elsewhere. Likewise, tag and category badges in the page intro link to `/tags/` only when your site has that page (or sets `tags_page:`); otherwise they render as plain labels.
 
 ### 3. ⚠️ Do not copy the theme's `_config.yml` wholesale
 
