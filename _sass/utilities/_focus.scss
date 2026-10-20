@@ -29,8 +29,19 @@ summary:focus-visible {
 // Safe here specifically because the element is tabindex="-1": it is never
 // reachable by Tab, so no keyboard user can land on it and be left without an
 // indicator. Do not generalise this selector to focusable elements.
-#main-content:focus {
+#main-content:focus,
+#page-content:focus {
   outline: none;
+}
+
+// The header's "Skip to main content" link (core/header.html). Bootstrap's
+// visually-hidden-focusable reveals it on focus, but it sat at `z-3` under the
+// fixed-top navbar (z-index 1030), so a focused skip link was invisible. When
+// focused it is pinned to the viewport above the navbar and the cookie banner.
+.zer0-skip-to-content:focus,
+.zer0-skip-to-content:focus-within {
+  position: fixed !important;
+  z-index: var(--zer0-layer-skip-link, 1100) !important;
 }
 
 // Skip-to-content link — visually hidden until focused

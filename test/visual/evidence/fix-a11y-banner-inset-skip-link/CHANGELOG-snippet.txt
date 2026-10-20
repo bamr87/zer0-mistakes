@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-a11y-banner-inset-skip-link/ -->
+  (evidence: [`test/visual/evidence/fix-a11y-banner-inset-skip-link/`](test/visual/evidence/fix-a11y-banner-inset-skip-link/README.md))

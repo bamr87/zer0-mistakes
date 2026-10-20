@@ -1,0 +1,128 @@
+{
+  "slug": "fix-a11y-banner-inset-skip-link",
+  "generator": "test/visual/pr-evidence.mjs",
+  "base": "http://127.0.0.1:4120",
+  "before": "http://127.0.0.1:4119",
+  "beforeLabel": "BEFORE — base branch",
+  "afterLabel": "AFTER — this PR",
+  "routes": [
+    {
+      "route": "/",
+      "beforeRendered": true
+    },
+    {
+      "route": "/docs/features/toc/",
+      "beforeRendered": true
+    }
+  ],
+  "sweep": [
+    {
+      "route": "/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/toc/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    }
+  ]
+}

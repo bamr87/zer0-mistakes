@@ -43,8 +43,17 @@
 {% comment %} ================================ {% endcomment %}
 {% comment %} UI strings resolve per page language (core/i18n.html sets `ui`) {% endcomment %}
 {%- include core/i18n.html -%}
-{% comment %} Accessibility: allows keyboard users to skip navigation {% endcomment %}
-<a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
+{% comment %} Accessibility: allows keyboard users to skip navigation.
+     Target: `#main-content` (the single <main> in root.html) unless the page or
+     a layout in its chain sets `skip_link_target` in front matter. Layouts with
+     their own navigation inside <main> point it past that chrome, e.g.
+     default.html (docs sidebar + TOC) → `page-content`. Jekyll merges layout
+     front matter up the chain with the innermost layout winning, so a child
+     layout (a site's quest layout, say) can override its parent's target.
+     `.zer0-skip-to-content` lifts it above the fixed-top navbar when focused
+     (_sass/utilities/_focus.scss); `z-3` left it underneath, invisible. {% endcomment %}
+{%- assign skip_link_target = page.skip_link_target | default: layout.skip_link_target | default: "main-content" -%}
+<a href="#{{ skip_link_target }}" class="zer0-skip-to-content visually-hidden-focusable position-absolute top-0 start-0 m-3 btn btn-primary">
   {{ ui.skip_main_content | default: "Skip to main content" }}
 </a>
 
