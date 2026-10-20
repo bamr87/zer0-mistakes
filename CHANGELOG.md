@@ -910,6 +910,8 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **`require_consent` now means no analytics until the visitor accepts.** With `posthog.privacy.require_consent: true`, PostHog used to load opted-out on a first visit: the browser still fetched `array.js`, `config.js` and `surveys.js` and stored `ph_<key>_posthog` before any banner choice, and Google Analytics ignored consent entirely. `_includes/analytics/posthog.html` now boots PostHog only once analytics consent exists, and `_includes/analytics/google-analytics.html` follows the same flag (override per site with `google_analytics_require_consent`). Both load as soon as the visitor clicks Accept All or saves preferences with Analytics on, through the banner's `cookieConsentChanged` event, so no reload is needed. Reject All keeps them off. Sites without the flag load exactly as before. Regression test: `test/visual/features/analytics-consent.spec.js`.
+
 - **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).
   `_includes/components/halfmoon.html` server-rendered Light/Dark/Auto all
   `aria-pressed="false"`, and on load `assets/js/halfmoon.js` marked the
@@ -1591,6 +1593,20 @@ off the `data-repo` attribute, not the page origin, so the iframe renders and re
   `jekyll-remote-theme` + `webrick`, and both the Gemfile and the remote
   `_config.yml` template add `jekyll-include-cache` (required by the theme's
   layouts).
+- **The cookie banner covered page content and controls.** While the banner is
+  showing, `cookie-consent.html` now publishes its height as
+  `--zer0-cookie-banner-inset` (kept current with a ResizeObserver). The page
+  reserves that much bottom padding and scroll padding, and the floating
+  buttons (back to top, AI chat, graph, TOC/sidebar FABs) move up above it.
+  Hero CTAs and keyboard focus no longer end up underneath. All of it is
+  removed as soon as a choice is made.
+- **The skip link opened underneath the fixed navbar.** When focused it is now
+  `position: fixed` at `--zer0-layer-skip-link` (1100, above the navbar's
+  1030). On `default.html` (docs) pages it now targets `#page-content` (the
+  article column), not `#main-content`, which starts with the docs sidebar and
+  TOC. Layouts and pages can set `skip_link_target` in front matter.
+- **Back to top had no visible keyboard focus.** It now draws a 2px
+  primary-color `:focus-visible` outline.
 
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 

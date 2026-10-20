@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "fix-includes-favicon-tags-404",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "d95b48266cf2b812d7a4d6134ee9b91294c36caf",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-10-18T15:56:19+00:00"
+}

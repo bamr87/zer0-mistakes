@@ -227,6 +227,7 @@ features:
     tests:
       - "test/test_quality.sh"
       - "test/visual/core/security.spec.js"
+      - "test/visual/features/analytics-consent.spec.js"
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -257,6 +258,7 @@ features:
       issue: null
     tests:
       - "test/test_quality.sh"
+      - "test/visual/features/banner-inset-skip-link.spec.js"
     references:
       include: "_includes/components/cookie-consent.html"
       config: "_config.yml"
@@ -390,6 +392,7 @@ features:
       issue: null
     tests:
       - "test/visual/core/accessibility.spec.js"
+      - "test/visual/features/banner-inset-skip-link.spec.js"
     references:
       include: "_includes/core/header.html"
       styles: "_sass/custom.scss"
@@ -946,6 +949,7 @@ features:
       issue: null
     tests:
       - "test/visual/features/content-enhancements.spec.js"
+      - "test/visual/features/banner-inset-skip-link.spec.js"
     references:
       scripts:
         - "assets/js/back-to-top.js"
@@ -1209,6 +1213,7 @@ features:
       issue: null
     tests:
       - "test/test_quality.sh"
+      - "test/visual/features/analytics-consent.spec.js"
     references:
       includes:
         - "_includes/analytics/google-analytics.html"
@@ -2204,7 +2209,7 @@ features:
 
   - id: ZER0-079
     title: "Config-Driven Favicon and Browser Identity"
-    description: "Head include emitting favicon, SVG icon, Apple touch icon, web manifest, and theme-color tags from an optional favicon config block, with an explicit /favicon.ico fallback that works on baseurl deployments"
+    description: "Head include emitting favicon, SVG icon, Apple touch icon, web manifest, and theme-color tags from an optional favicon config block, with an existence-gated root favicon fallback (.ico, .png, .svg) that works on baseurl deployments and never links a missing file"
     implemented: true
     version: "1.28.0"
     link: "/"
@@ -2224,7 +2229,7 @@ features:
         - "_includes/core/head.html"
       docs: "pages/_docs/features/favicon.md"
     features:
-      - "Zero-config default: explicit /favicon.ico link on every page (fixes silent 404s and baseurl project sites)"
+      - "Zero-config default: explicit link to the root /favicon.ico (else /favicon.png, else /favicon.svg) only when that file exists in site.static_files — no 404 for remote-theme consumers without one (#536)"
       - "Optional SVG favicon, PNG sizes, apple-touch-icon, and web manifest links"
       - "scheme-aware theme-color metas tracking --bs-body-bg (light #ffffff / dark #212529), emitted even with no config; favicon.theme_color pins a single value"
 

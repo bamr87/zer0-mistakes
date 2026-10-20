@@ -10,7 +10,7 @@
   Params:      none — reads the optional `favicon:` block in _config.yml:
 
                favicon:
-                 ico         : /favicon.ico                    # legacy .ico (default)
+                 ico         : /favicon.ico                    # legacy .ico (always emitted when set)
                  svg         : /assets/images/favicon.svg      # scalable icon (optional)
                  png         : /assets/images/favicon-32.png   # PNG icon (optional)
                  png_size    : 32x32                           # sizes attr for png (optional)
@@ -20,9 +20,13 @@
                  theme_color_light : "#ffffff"                 # light-scheme chrome (optional)
                  theme_color_dark  : "#212529"                 # dark-scheme chrome (optional)
 
-               With NO config at all this still emits the explicit
-               /favicon.ico link (every consumer site carries one at root)
-               AND both theme-color tags. That last part is the point of the
+               With NO `favicon.ico` configured, the default icon link is
+               emitted only for a root icon file that actually exists in
+               site.static_files: /favicon.ico, else /favicon.png, else
+               /favicon.svg — and nothing at all when none exists. A
+               remote_theme consumer does not get this repo's favicon.ico, so
+               an unconditional /favicon.ico link 404'd on every page of such
+               sites (issue #536). Both theme-color tags are always emitted. That last part is the point of the
                fallbacks below: a remote_theme consumer does not inherit this
                repo's _config.yml (see remote-theme-checklist.md), so a
                config-gated tag emitted nothing at all on exactly the sites
@@ -31,8 +35,40 @@
                run through relative_url so baseurl deployments resolve.
 {%- endcomment -%}
 {%- assign _fav = site.favicon -%}
-{%- assign _fav_ico = _fav.ico | default: '/favicon.ico' -%}
-<link rel="icon" href="{{ _fav_ico | relative_url }}" sizes="32x32">
+{%- comment -%}
+  Default icon (issue #536). A configured `favicon.ico` is trusted as-is.
+  Otherwise probe site.static_files (each entry's `path` is source-relative,
+  e.g. "/favicon.ico") for a root icon, in order .ico -> .png -> .svg, and
+  emit a link only for one that exists. The .png/.svg fallbacks are skipped
+  when the same kind is already configured via favicon.png / favicon.svg, so
+  the page never carries two links of one type.
+{%- endcomment -%}
+{%- assign _fav_default = '' -%}
+{%- assign _fav_default_type = '' -%}
+{%- if _fav.ico -%}
+  {%- assign _fav_default = _fav.ico -%}
+{%- else -%}
+  {%- assign _fav_hit = site.static_files | where: "path", "/favicon.ico" | first -%}
+  {%- if _fav_hit -%}
+    {%- assign _fav_default = '/favicon.ico' -%}
+  {%- elsif _fav.png == nil -%}
+    {%- assign _fav_hit = site.static_files | where: "path", "/favicon.png" | first -%}
+    {%- if _fav_hit -%}
+      {%- assign _fav_default = '/favicon.png' -%}
+      {%- assign _fav_default_type = 'image/png' -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if _fav_default == '' and _fav.svg == nil -%}
+    {%- assign _fav_hit = site.static_files | where: "path", "/favicon.svg" | first -%}
+    {%- if _fav_hit -%}
+      {%- assign _fav_default = '/favicon.svg' -%}
+      {%- assign _fav_default_type = 'image/svg+xml' -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if _fav_default != '' %}
+<link rel="icon"{% if _fav_default_type != '' %} type="{{ _fav_default_type }}"{% endif %} href="{{ _fav_default | relative_url }}"{% if _fav_default_type == '' %} sizes="32x32"{% endif %}>
+{%- endif %}
 {%- if _fav.svg %}
 <link rel="icon" type="image/svg+xml" href="{{ _fav.svg | relative_url }}">
 {%- endif %}

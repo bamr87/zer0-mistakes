@@ -86,3 +86,34 @@
     }
   }
 }
+
+// ----------------------------------------------------------------------------
+// Reserve the banner's space while it is up
+// ----------------------------------------------------------------------------
+// components/cookie-consent.html sets `zer0-cookie-banner-open` on <html> and
+// `--zer0-cookie-banner-inset` to the banner's height (kept current by a
+// ResizeObserver) while the banner is shown, and removes both once a choice
+// hides it. Without this the fixed bar covered the end of every page, the
+// floating buttons (Back to top sat fully under it at 1366px), and whatever
+// keyboard focus scrolled to near the bottom edge (WCAG 2.4.11).
+html.zer0-cookie-banner-open {
+  // Focus and anchor scrolling stop above the banner, not under it.
+  scroll-padding-bottom: var(--zer0-cookie-banner-inset, 0px);
+
+  body {
+    // The last content on the page can scroll clear of the banner.
+    padding-bottom: var(--zer0-cookie-banner-inset, 0px);
+  }
+
+  // Lift the floating buttons (both FAB stacks) above the banner. `translate`
+  // composes with the `transform` hover/active lifts these buttons already
+  // use, so it does not fight them.
+  #backToTopBtn,
+  #aiChatToggle,
+  #obsidianLocalGraphFab,
+  .pf-fab,
+  .bd-toc-fab,
+  .bd-sidebar-fab {
+    translate: 0 calc(-1 * var(--zer0-cookie-banner-inset, 0px));
+  }
+}

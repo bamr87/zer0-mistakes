@@ -1,6 +1,9 @@
 ---
 # Features: ZER0-001, ZER0-008, ZER0-019
 layout: root
+# The skip link (core/header.html) jumps past the docs sidebar, intro and
+# TOC straight to the page body below.
+skip_link_target: page-content
 ---
 {% comment %}
   ===================================================================
@@ -122,7 +125,11 @@ layout: root
         {% comment %} MAIN CONTENT BODY              {% endcomment %}
         {% comment %} =============================== {% endcomment %}
         {% comment %} Where the actual page content is rendered {% endcomment %}
-        <div class="bd-content ps-lg-2">
+        {% comment %} Skip-link target for this layout (see front matter). tabindex="-1"
+             lets the link move keyboard focus here, not just scroll (same reason
+             as #main-content in root.html); its focus ring is suppressed in
+             _sass/utilities/_focus.scss. {% endcomment %}
+        <div id="page-content" class="bd-content ps-lg-2" tabindex="-1">
             {{ content }}
 
             {%- comment -%}
