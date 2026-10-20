@@ -107,16 +107,18 @@ cookie_consent:
 ### Integration with Analytics
 
 ```yaml
-# PostHog only loads with analytics consent
+# PostHog and Google Analytics load only after the visitor accepts analytics
 posthog:
   enabled: true
-  require_consent: true
+  privacy:
+    require_consent: true
 
-# Google Analytics with consent
-google_analytics:
-  tracking_id: UA-XXXXXXXX-X
-  require_consent: true
+google_analytics: G-XXXXXXXXXX
+# GA follows posthog.privacy.require_consent; set this to override it for GA alone
+# google_analytics_require_consent: true
 ```
+
+Before a choice is made nothing is requested from PostHog or Google and no analytics cookie is set. **Accept All** (or saving preferences with Analytics on) loads both on the spot, without a reload; **Reject All** keeps them off.
 
 ## Banner Customization
 

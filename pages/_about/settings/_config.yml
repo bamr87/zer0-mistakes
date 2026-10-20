@@ -282,8 +282,10 @@ posthog:
     mask_all_inputs      : true   # Mask form inputs in session recordings
     ip_anonymization     : false  # Anonymize IP addresses
     respect_gpc          : true   # Honor the Global Privacy Control signal (like DNT; a legal signal under CCPA/CPRA)
-    require_consent      : false  # true = start opted OUT (memory-only persistence, no cookies) until the visitor
-                                  # accepts the "analytics" category in the theme's cookie-consent banner
+    require_consent      : false  # true = load nothing (no PostHog or Google Analytics request, no cookies) until the
+                                  # visitor accepts the "analytics" category in the theme's cookie-consent banner;
+                                  # both load on acceptance without a reload. GA follows this flag unless
+                                  # `google_analytics_require_consent` is set.
     geoip_disable        : false  # true = stop PostHog resolving IP → location on every event
 
 # Page Views - Per-page view counter ##############################################

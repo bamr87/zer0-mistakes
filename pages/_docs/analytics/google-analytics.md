@@ -120,16 +120,18 @@ Or use environment check:
 
 ### With Consent Check
 
-```javascript
-{% raw %}{% if site.google_analytics.require_consent %}
-// Only load if consent given
-if (CookieConsent.hasConsent('analytics')) {
-  gtag('config', '{{ site.google_analytics.tracking_id }}');
-}
-{% else %}
-gtag('config', '{{ site.google_analytics.tracking_id }}');
-{% endif %}{% endraw %}
+The theme's include waits for consent when the site requires it. One flag sets the posture for PostHog, Google Analytics and the page-view counter:
+
+```yaml
+posthog:
+  privacy:
+    require_consent: true   # nothing loads until the visitor accepts analytics
+
+# Optional: override for Google Analytics alone (e.g. a site without PostHog)
+google_analytics_require_consent: true
 ```
+
+With consent required, `gtag.js` is not requested and no `_ga` cookie is set until the visitor accepts the **analytics** category in the cookie banner. Accepting loads it immediately (the banner dispatches `cookieConsentChanged`), without a reload. Reject keeps it off, and withdrawing consent later sets `window['ga-disable-<ID>']`. With neither flag set, GA loads on every production page as before.
 
 ### Consent Mode v2
 
