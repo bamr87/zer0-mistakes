@@ -40,9 +40,8 @@
   {% assign footer_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
   {% comment %} Powered by Row {% endcomment %}
   <div class="container-xl footer-powered-by">
-    <p class="footer-powered-by-copyright text-center mb-0">
-      &copy; {{ site.time | date: "%Y" }} {{ site.name | default: site.title }}
-    </p>
+    {%- comment -%} The copyright line lives once, in the bottom bar below.
+       A second "© year name" line here printed the notice twice (backlog T-054). {%- endcomment -%}
     <div class="footer-powered-by-row">
       <span class="footer-powered-by-label" id="footer-powered-by-label">
         {{ ui.powered_by | default: "Powered by" }}:
