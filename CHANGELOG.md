@@ -12,6 +12,23 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.31.3](https://github.com/bamr87/zer0-mistakes/compare/v1.31.2...v1.31.3) (2026-10-20)
+
+
+### Bug Fixes
+
+* **a11y:** cookie banner reserves its space, skip link above navbar, back-to-top focus ring ([#540](https://github.com/bamr87/zer0-mistakes/issues/540)) ([7012568](https://github.com/bamr87/zer0-mistakes/commit/70125682a7df9ee533cb0440aa07b89697045238))
+* **analytics:** load GA and PostHog only after analytics consent ([#539](https://github.com/bamr87/zer0-mistakes/issues/539)) ([caa349b](https://github.com/bamr87/zer0-mistakes/commit/caa349b43019de37c27ae429ea15c497f637dc5b))
+* **ci:** visual-evidence autogen starts Jekyll without LiveReload; re-renders evidence for edited generators ([#547](https://github.com/bamr87/zer0-mistakes/issues/547)) ([2dbeff1](https://github.com/bamr87/zer0-mistakes/commit/2dbeff1a3274bda845622af99ffb98732769ba6c))
+* **includes:** print the footer copyright notice once ([#558](https://github.com/bamr87/zer0-mistakes/issues/558)) ([388745f](https://github.com/bamr87/zer0-mistakes/commit/388745f19b74be06b600f54af621db07786735d6))
+* **includes:** stop favicon and tag badges linking missing paths ([#549](https://github.com/bamr87/zer0-mistakes/issues/549)) ([ec28e80](https://github.com/bamr87/zer0-mistakes/commit/ec28e803b060b8aec282db0e2b4db77b8f55f56d))
+
+
+### Performance Improvements
+
+* **navigation:** yield between start-up steps; scroll spy measures in idle time ([#542](https://github.com/bamr87/zer0-mistakes/issues/542)) ([b1a9e3e](https://github.com/bamr87/zer0-mistakes/commit/b1a9e3efbc692e2989e0ccd7bca041e12e8a12c2))
+* **sitemap:** render only the first page of index rows; build the rest from compact JSON ([#541](https://github.com/bamr87/zer0-mistakes/issues/541)) ([9838e8e](https://github.com/bamr87/zer0-mistakes/commit/9838e8e2a0f03dc358531242e79d4475d5f32fa2))
+
 ## [1.31.2](https://github.com/bamr87/zer0-mistakes/compare/v1.31.1...v1.31.2) (2026-10-18)
 
 
