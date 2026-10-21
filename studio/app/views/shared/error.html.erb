@@ -1,0 +1,5 @@
+<% content_for :title, "Refused" %>
+<div class="flash alert" role="alert"><%= @error_message %></div>
+<% unless request.xhr? || turbo_frame_request? %>
+  <p class="dim">Nothing was written. <%= link_to "Back", :back %></p>
+<% end %>

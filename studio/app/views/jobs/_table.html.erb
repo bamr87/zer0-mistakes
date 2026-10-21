@@ -1,0 +1,19 @@
+<% if jobs.any? %>
+  <table class="list">
+    <thead><tr><th>#</th><th>Kind</th><th>Status</th><th>Site</th><th>When</th><th>Took</th></tr></thead>
+    <tbody>
+      <% jobs.each do |job| %>
+        <tr>
+          <td><%= link_to "##{job.id}", job_path(job), class: "mono" %></td>
+          <td><%= job.title %></td>
+          <td><span class="badge <%= { "succeeded" => "ok", "failed" => "err", "cancelled" => "warn", "running" => "live" }[job.status] %>"><%= job.status %></span></td>
+          <td><%= job.site ? link_to(job.site.name, site_path(job.site)) : content_tag(:span, "—", class: "dim") %></td>
+          <td class="dim small"><%= time_ago_in_words(job.created_at) %> ago</td>
+          <td class="dim small mono"><%= job.duration ? "#{job.duration.round(1)}s" : "—" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="dim">No job yet.</p>
+<% end %>

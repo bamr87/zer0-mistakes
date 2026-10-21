@@ -1,0 +1,26 @@
+// Backgrounds (fixture): three skins, so `contrast` is background-only.
+:root {
+  --zer0-bg-gradient: none;
+  --zer0-bg-pattern-size: 60px 60px;
+}
+
+[data-theme-skin="air"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/air.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/air.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/air.svg')"};
+  --zer0-bg-pattern-size: 50px 50px;
+}
+
+[data-theme-skin="aqua"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/aqua.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/aqua.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/aqua.svg')"};
+  --zer0-bg-pattern-size: 48px 48px;
+}
+
+[data-theme-skin="contrast"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/contrast.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/contrast.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/contrast.svg')"};
+  --zer0-bg-pattern-size: 40px 40px;
+}

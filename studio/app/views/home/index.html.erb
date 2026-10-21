@@ -1,0 +1,77 @@
+<% content_for :title, "Dashboard" %>
+<% content_for :topbar_actions do %>
+  <%= button_to "Run doctor", design_doctor_path, method: :post, class: "btn" %>
+  <%= button_to "Build preview", design_previews_path, method: :post, class: "btn" %>
+<% end %>
+
+<div class="grid cols-3">
+  <div class="card">
+    <h2>Theme</h2>
+    <p class="big mono"><%= theme_version || "?" %></p>
+    <p class="dim mono small"><%= ThemeRoot.path %></p>
+    <% mismatched = @versions.reject(&:ok?) %>
+    <% if mismatched.any? %>
+      <p><span class="badge warn"><%= mismatched.size %> version file(s) out of step</span> <%= link_to "Versions", update_versions_path %></p>
+    <% else %>
+      <p><span class="badge ok">versions in lockstep</span></p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Doctor</h2>
+    <% if @doctor %>
+      <% s = @doctor.stats_hash %>
+      <p><span class="badge <%= s["errors"].to_i.zero? ? "ok" : "err" %>"><%= s["errors"].to_i %> errors</span> <span class="badge <%= s["warnings"].to_i.zero? ? "ok" : "warn" %>"><%= s["warnings"].to_i %> warnings</span></p>
+      <p class="dim small"><%= time_ago_in_words(@doctor.finished_at || @doctor.created_at) %> ago · <%= link_to "findings", design_doctor_path %></p>
+    <% else %>
+      <p class="dim">Never run. <%= link_to "Run it", design_doctor_path %>.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Skins</h2>
+    <p>
+      <% @skins.each do |name| %>
+        <%= link_to name, design_skin_path(name), class: "chip #{'active' if name == @default_skin}" %>
+      <% end %>
+    </p>
+    <p class="dim small">default: <span class="mono"><%= @default_skin %></span></p>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1.3rem">
+  <div class="card">
+    <h2>Sites <span class="dim small"><%= link_to "all", sites_path %></span></h2>
+    <% if @sites.any? %>
+      <table class="list">
+        <tbody>
+          <% @sites.each do |site| %>
+            <tr>
+              <td><%= link_to site.name, site_path(site) %></td>
+              <td class="mono dim"><%= site.mode %></td>
+              <td class="dim small"><%= site.last_audit_at ? "audited #{time_ago_in_words(site.last_audit_at)} ago" : "never audited" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="dim">No site registered. <%= link_to "Register one", sites_path %>.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Jobs <span class="dim small"><%= link_to "all", jobs_path %></span></h2>
+    <%= render "jobs/table", jobs: @jobs %>
+  </div>
+</div>
+
+<% if @builds.any? %>
+  <div class="card" style="margin-top:1.3rem">
+    <h2>Previews</h2>
+    <p>
+      <% @builds.each do |b| %>
+        <%= link_to "#{b.id} · #{time_ago_in_words(b.built_at)} ago", design_previews_path(build: b.id), class: "chip" %>
+      <% end %>
+    </p>
+  </div>
+<% end %>

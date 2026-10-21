@@ -1,0 +1,72 @@
+/*
+ * kit: zer0-ui-tokens 1.0.1 — source of truth for every zer0 Rails panel; consumers vendor this file byte-identically
+ *
+ * The zer0 design-token layer: palette, radii, spacing, shadow and font
+ * stacks as CSS custom properties — dark-first, with a prefers-color-scheme
+ * light override — plus the box-sizing reset. Nothing component-level lives
+ * here; components stay in each app's own stylesheet and read these tokens.
+ *
+ * Consumers: zer0-image-generator/web (this app) and zer0-CMS (a vendored,
+ * byte-identical copy that themes Administrate). Change a token here, bump the
+ * kit version above, then re-vendor. See docs/ZER0-STACK.md.
+ *
+ * Cascade: everything sits in `@layer zer0-tokens`. Unlayered rules beat any
+ * layer whatever the load order, so an app's own stylesheet can override a
+ * token without a specificity fight. That matters here: propshaft's
+ * `stylesheet_link_tag :app` links every app/assets/**\/*.css sorted by path,
+ * which loads this file AFTER application.css.
+ *
+ * Pending consolidation: application.css still declares its own copy of these
+ * tokens (identical today, so there is no visual change). It keeps that copy
+ * until the in-flight edit to application.css lands; then the copy there is
+ * deleted and this file becomes the only declaration. Until then
+ * test/ruby/test_zer0_tokens.rb fails if the two copies drift.
+ */
+
+@layer zer0-tokens {
+  :root {
+    color-scheme: dark light;
+
+    /* Palette — echoes the retro engine defaults: ink base, phosphor accents. */
+    --bg:            #0d1117;
+    --bg-raised:     #161b22;
+    --bg-inset:      #0a0e14;
+    --border:        #26303d;
+    --border-strong: #3a4757;
+    --text:          #e6edf3;
+    --text-dim:      #9aa7b4;
+    --text-faint:    #6b7684;
+
+    --accent:        #58a6ff;
+    --accent-warm:   #f0a742;
+    --ok:            #3fb950;
+    --warn:          #d29922;
+    --err:           #f85149;
+
+    --radius:   10px;
+    --radius-sm: 6px;
+    --gap:      1rem;
+    --maxw:     1320px;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg:            #f6f8fa;
+      --bg-raised:     #ffffff;
+      --bg-inset:      #eef1f4;
+      --border:        #d5dbe1;
+      --border-strong: #c0c8d0;
+      --text:          #1c2128;
+      --text-dim:      #57606a;
+      --text-faint:    #8b949e;
+      --accent:        #0969da;
+      --shadow: 0 1px 2px rgba(140,149,159,.15), 0 8px 24px rgba(140,149,159,.15);
+    }
+  }
+
+  * { box-sizing: border-box; }
+}

@@ -1,0 +1,11 @@
+/* Color tokens (fixture mirror) */
+:root,
+[data-bs-theme="light"] {
+  --zer0-color-primary: #007bff;
+  --zer0-color-accent: #ffe484;
+  --zer0-color-border-translucent: color-mix(in srgb, var(--zer0-color-border) 42%, transparent);
+}
+
+[data-bs-theme="dark"] {
+  --zer0-color-accent: #ffd400;
+}

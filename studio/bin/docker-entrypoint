@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+# The studio image's entrypoint. Before the server starts: a secret key base
+# (from the environment, else one generated once into the storage volume so
+# sessions and preview tokens survive restarts) and the three SQLite databases
+# on that volume. jemalloc, when the image carries it, trims Ruby's memory use.
+if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
+  export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
+fi
+
+if [ -z "${SECRET_KEY_BASE}" ]; then
+  key_file=storage/secret_key_base
+  if [ ! -s "$key_file" ]; then
+    (umask 077 && ruby -rsecurerandom -e 'print SecureRandom.hex(64)' > "$key_file")
+  fi
+  SECRET_KEY_BASE="$(cat "$key_file")"
+  export SECRET_KEY_BASE
+fi
+
+case "$1 $2" in
+  "bin/rails server"|"./bin/rails server"|"rails server")
+    ./bin/rails db:prepare
+    ;;
+esac
+
+exec "$@"

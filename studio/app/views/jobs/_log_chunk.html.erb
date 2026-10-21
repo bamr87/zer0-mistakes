@@ -1,0 +1,1 @@
+<% text.each_line do |line| %><span class="<%= line.start_with?("[ERROR]") ? "err" : line.start_with?("[WARN]") ? "warn" : line.start_with?("===") ? "hdr" : "" %>"><%= line %></span><% end %>

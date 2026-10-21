@@ -1,0 +1,39 @@
+<% content_for :title, @editor.scss_rel %>
+<% content_for :crumbs do %><%= link_to "Tokens", design_tokens_path %> / <span class="mono"><%= @editor.scss_rel %></span><% end %>
+
+<%= render "shared/parity", parity: @parity %>
+
+<%= form_with url: design_token_path(@editor.slug), method: :patch, data: { controller: "preview-fetch", preview_fetch_url_value: diff_design_token_path(@editor.slug) } do |f| %>
+  <%= hidden_field_tag :base_digest, @editor.base_digest %>
+  <div class="grid cols-2" style="align-items:start">
+    <div class="card">
+      <h2><%= @editor.title %> <span class="dim small mono"><%= @editor.scss_rel %></span></h2>
+      <p class="dim small">Mirror: <span class="mono"><%= @editor.css_rel %></span>. A token whose mirror cannot be matched is saved to the source only and flagged.</p>
+      <table class="list tokens">
+        <thead><tr><th>Selector</th><th>Token</th><th>Value</th><th>Mirror</th></tr></thead>
+        <tbody>
+          <% @editor.tokens.each do |t| %>
+            <tr>
+              <td class="mono dim small"><%= t.selector %></td>
+              <td class="mono"><%= t.name %></td>
+              <td><%= text_field_tag "tokens[#{t.id}]", t.value, class: "mono wide", data: { action: "input->preview-fetch#queue" } %></td>
+              <td class="mono dim small">
+                <% if t.mirror_missing? %><span class="badge warn">none</span>
+                <% elsif t.mirror_value == t.value %><span class="badge ok">same</span>
+                <% else %><%= t.mirror_value %><% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="btn-row">
+        <%= f.submit "Save both files", class: "btn primary" %>
+        <span class="dim small">The source is written first; if the mirror refuses, the source is put back.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Diff</h3>
+      <div data-preview-fetch-target="output"><p class="dim">Edit a value to see what would change.</p></div>
+    </div>
+  </div>
+<% end %>

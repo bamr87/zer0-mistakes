@@ -1,0 +1,22 @@
+# Fixture consumer site (remote_theme, pinned).
+title                    : "consumer-remote"
+remote_theme             : "bamr87/zer0-mistakes@v9.9.9"
+
+# Appearance ------------------------------------------------------------------
+theme_skin               : "aqua" # one of the theme's skins
+color_mode_default       : light
+color_mode_lock          : true
+user_overrides           : true
+
+theme_background:
+  enabled: true           # Master toggle
+  gradient_opacity: 0.6   # Hero gradient
+  blend_mode: overlay
+
+# Brand colours; hex, quoted.
+theme_color:
+  main:         "#0077b6"
+  secondary:    "#6c757d" # muted
+
+plugins:
+  - jekyll-feed

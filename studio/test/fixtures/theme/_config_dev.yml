@@ -1,0 +1,18 @@
+# Fixture development override.
+remote_theme             : false
+theme                    : "jekyll-theme-zer0"
+url                      : "http://localhost:4000"
+
+exclude:
+  - .jekyll-cache/
+  - Gemfile
+  - scripts/
+  - studio/
+  - test/
+  - docs/
+  - node_modules/
+  - vendor/bundle/
+  - .obsidian/
+  - "*.canvas"
+  - "*.excalidraw.md"
+  - pages/_notes/_templates/

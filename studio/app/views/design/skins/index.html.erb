@@ -1,0 +1,23 @@
+<% content_for :title, "Skins" %>
+<% content_for :crumbs do %>Design / Skins<% end %>
+
+<div class="card">
+  <h2>Palette skins</h2>
+  <p class="dim">From <span class="mono">_data/theme_skins.yml</span>; each one is an <span class="mono">@include zer0-skin-palette(…)</span> in <span class="mono">_sass/theme/_skins.scss</span>, mirrored in <span class="mono">_design-system/tokens/skins.css</span>, with background layers in <span class="mono">_backgrounds.scss</span> and <span class="mono">theme_backgrounds.yml</span>.</p>
+  <table class="list">
+    <thead><tr><th>Skin</th><th>Brand</th><th>Accent</th><th>Links (light / dark)</th><th>Contrast</th></tr></thead>
+    <tbody>
+      <% @skins.each do |skin| %>
+        <% p = skin.palette %>
+        <% failing = skin.contrast.reject(&:pass?).size %>
+        <tr>
+          <td><%= link_to skin.name, design_skin_path(skin.name) %> <% if skin.name == @default %><span class="badge">default</span><% end %></td>
+          <td><span class="swatch" style="--c:<%= p["brand"] %>"></span> <span class="mono"><%= p["brand"] %></span></td>
+          <td><span class="swatch" style="--c:<%= p["accent"] %>"></span> <span class="mono"><%= p["accent"] %></span></td>
+          <td class="mono small"><%= p["link_light"] %> / <%= p["link_dark"] %></td>
+          <td><%= failing.zero? ? content_tag(:span, "AA", class: "badge ok") : content_tag(:span, "#{failing} below AA", class: "badge warn") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

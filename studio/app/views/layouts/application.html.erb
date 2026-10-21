@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= [content_for(:title).presence, "zer0 studio"].compact.join(" · ") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236fa8dc'/><text x='50' y='68' font-size='58' font-family='monospace' font-weight='800' text-anchor='middle' fill='%2308111f'>0</text></svg>">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body data-controller="sidebar">
+    <div class="nav-scrim" data-action="click->sidebar#close"></div>
+    <div class="app">
+      <%= render "shared/sidebar" %>
+      <div class="main">
+        <div class="topbar">
+          <div class="crumbs">
+            <button type="button" class="nav-toggle" data-action="sidebar#toggle" aria-label="Open navigation">☰</button>
+            <%= content_for(:crumbs).presence || link_to("Dashboard", root_path) %>
+          </div>
+          <div class="btn-row"><%= yield :topbar_actions %></div>
+        </div>
+        <div class="content">
+          <% flash.each do |type, message| %>
+            <div class="flash <%= type.to_s == "notice" ? "notice" : "alert" %>"><%= message %></div>
+          <% end %>
+          <% if @notice %><div class="flash notice"><%= @notice %></div><% end %>
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
