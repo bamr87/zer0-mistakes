@@ -77,4 +77,4 @@ python3 -c "import yaml; yaml.safe_load(open('_data/features.yml'))"
 
 ## Feature Count
 
-Current count: **87 features** (as of 2026-09-07, gem v1.29.0)
+Current count: **88 features** (as of 2026-10-21, gem v1.31.3)

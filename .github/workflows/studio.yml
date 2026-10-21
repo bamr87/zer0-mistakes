@@ -108,10 +108,12 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:3300/up
-          curl -fsS -o /tmp/tokens.html -w '%{http_code}\n' http://127.0.0.1:3300/design/tokens | tee /tmp/status
+          # No -f on the status probes: a 4xx is an answer to check, not a curl failure.
+          curl -sS -o /tmp/tokens.html -w '%{http_code}\n' http://127.0.0.1:3300/design/tokens | tee /tmp/status
           grep -q '^200$' /tmp/status
           grep -q '_sass/tokens/_color.scss' /tmp/tokens.html
-          curl -fsS -o /dev/null -w '%{http_code}\n' -H 'Host: attacker.example' http://127.0.0.1:3300/ | grep -q '^403$'
+          curl -sS -o /dev/null -w '%{http_code}\n' -H 'Host: attacker.example' http://127.0.0.1:3300/ | tee /tmp/host-status
+          grep -q '^403$' /tmp/host-status
           kill "$(cat tmp/pids/server.pid)"
 
   docker:
@@ -134,7 +136,7 @@ jobs:
             sleep 2
           done
           curl -fsS http://127.0.0.1:3300/up
-          curl -fsS -o /tmp/skins.html -w '%{http_code}\n' http://127.0.0.1:3300/design/skins | tee /tmp/status
+          curl -sS -o /tmp/skins.html -w '%{http_code}\n' http://127.0.0.1:3300/design/skins | tee /tmp/status
           grep -q '^200$' /tmp/status
           grep -q 'Palette skins' /tmp/skins.html
           docker logs studio | tail -20

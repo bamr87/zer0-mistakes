@@ -1,3 +1,4 @@
+# Feature: ZER0-088
 # frozen_string_literal: true
 
 require "digest"

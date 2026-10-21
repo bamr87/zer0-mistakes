@@ -2577,11 +2577,6 @@ features:
         - "studio/app/services/theme_doctor.rb"
         - "studio/app/services/script_runner.rb"
         - "studio/app/services/preview_builder.rb"
-        - "scripts/design-system-check.rb"
-        - "scripts/bin/audit-consumer"
-        - "scripts/bin/release"
-        - "scripts/propagate.rb"
-      data: "_data/theme_skins.yml"
       config: "_config.yml"
       pages:
         - "studio/README.md"
