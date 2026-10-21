@@ -101,6 +101,7 @@ jobs:
           SECRET_KEY_BASE: ci-only-not-a-secret
           SOLID_QUEUE_IN_PUMA: '1'
           PORT: '3300'
+          PIDFILE: tmp/pids/server.pid
         run: |
           bin/rails server -d
           for _ in $(seq 1 30); do
