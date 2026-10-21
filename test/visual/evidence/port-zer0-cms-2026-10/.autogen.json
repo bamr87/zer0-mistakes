@@ -2,8 +2,8 @@
   "schema": "visual-autogen-manifest/v1",
   "slug": "port-zer0-cms-2026-10",
   "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "755abd226d33f42521b169813937bb51a378c241",
+  "rendered_from": "0e52954fec49e23391507dbfbd8d0c9fe0721886",
   "base_ref": "origin/main",
   "before_site": true,
-  "generated_at": "2026-10-21T18:04:15+00:00"
+  "generated_at": "2026-10-21T18:27:25+00:00"
 }
