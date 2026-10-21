@@ -124,15 +124,10 @@
     {
       "@type": "Person",
       "@id": "{{ site.url }}/#author",
-      "name": "{{ site.founder | default: 'Amr Abdel-Motaleb' }}",
-      "alternateName": "bamr87",
-      "url": "https://github.com/bamr87",
-      "sameAs": [
-        "https://github.com/bamr87",
-        "https://x.com/bamr87"
-      ],
-      "jobTitle": "Software Developer",
-      "knowsAbout": ["Jekyll", "Docker", "Bootstrap", "GitHub Pages", "Static Site Generation"]
+      "name": "{{ site.founder | default: site.author.name | default: site.title }}"{% if site.github_user %},
+      "alternateName": "{{ site.github_user }}",
+      "url": "https://github.com/{{ site.github_user }}",
+      "sameAs": ["https://github.com/{{ site.github_user }}"]{% endif %}
     }
   ]
 }

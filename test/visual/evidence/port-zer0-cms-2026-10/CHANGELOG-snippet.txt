@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/port-zer0-cms-2026-10/ -->
+  (evidence: [`test/visual/evidence/port-zer0-cms-2026-10/`](test/visual/evidence/port-zer0-cms-2026-10/README.md))
