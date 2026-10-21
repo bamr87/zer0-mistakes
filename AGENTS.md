@@ -128,7 +128,13 @@ docker-compose exec -T jekyll bundle exec jekyll build \
 # Quality
 markdownlint "**/*.md" --ignore node_modules
 yamllint -c .github/config/.yamllint.yml .
+
+# zer0 studio — the Rails workbench beside the theme (studio/AGENTS.md)
+docker compose --profile studio up --build # http://localhost:3300
+cd studio && bin/rails test && bin/rails zeitwerk:check
 ```
+
+`studio/` is a Rails app that edits this theme (tokens, skins, consumer configs) through digest-guarded writes and runs the theme's own scripts as jobs. It is excluded by both Jekyll configs, never packaged by the gemspec and never in the theme image; work inside it follows [`studio/AGENTS.md`](./studio/AGENTS.md).
 
 ---
 

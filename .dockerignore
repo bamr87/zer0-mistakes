@@ -52,6 +52,10 @@ Dockerfile*
 docker-compose*.yml
 .dockerignore
 
+# zer0 studio has its own image (studio/Dockerfile, built from studio/) and
+# mounts this checkout at runtime; it never rides into the theme image.
+studio/
+
 # Temporary files
 tmp/
 temp/
