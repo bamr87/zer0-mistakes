@@ -17,7 +17,7 @@ bin/rails db:prepare
 SOLID_QUEUE_IN_PUMA=1 bin/rails server -p 3300
 ```
 
-The studio works on `THEME_DIR` (default: the parent of `studio/`) and offers the site directories under `SITES_DIR` (default: the theme's `examples/`) for registration. Previews need the theme's gems: in Docker the `bundle_cache` volume the `jekyll` service fills is shared, and a first build installs them if they are missing; natively, `bundle install` in the theme root first.
+The studio works on `THEME_DIR` (default: the parent of `studio/`) and offers the site directories under `SITES_DIR` (default: the theme's `examples/`) for registration. Previews need the theme's gems: in Docker the `bundle_cache` volume the `jekyll` service fills is shared and used when it satisfies the theme's lock; when it does not and it belongs to root (it usually does — the theme image runs as root), the entrypoint points `THEME_BUNDLE_PATH` at `storage/theme-bundle` instead and the first preview build installs them there (a minute or two, visible in the job log). Natively, `bundle install` in the theme root first.
 
 Access is **this machine only** unless `STUDIO_PASSWORD` (and optionally `STUDIO_USER`, default `zer0`) is set, in which case HTTP basic auth applies to every page and the preview iframe carries a short-lived signed token instead. `STUDIO_HOSTS` adds host names to the two loopback ones; an unknown `Host` is refused.
 
