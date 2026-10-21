@@ -1,0 +1,30 @@
+<% content_for :title, "Previews" %>
+<% content_for :crumbs do %>Design / Previews<% end %>
+<% content_for :topbar_actions do %>
+  <%= button_to "Build preview", design_previews_path, method: :post, class: "btn primary" %>
+<% end %>
+
+<% if @running %>
+  <div class="flash notice">A build is <%= @running.status %> — <%= link_to "follow it", job_path(@running) %>.</div>
+<% end %>
+
+<div class="card">
+  <h2>Docs-site previews</h2>
+  <p class="dim">The theme's own site, built with <span class="mono">bundle exec jekyll build</span> and its two configs into <span class="mono">studio/tmp/previews/</span>, shown from the other loopback origin so the theme's colour-mode scripts keep their own storage. The newest five builds are kept.</p>
+  <% if @builds.any? %>
+    <p>
+      <% @builds.each do |b| %>
+        <%= link_to "#{b.id} · #{b.meta['theme_version']} · #{time_ago_in_words(b.built_at)} ago", design_previews_path(build: b.id), class: "chip #{'active' if b.id == @current&.id}" %>
+      <% end %>
+    </p>
+  <% else %>
+    <p class="dim">No build yet.</p>
+  <% end %>
+</div>
+
+<% if @current %>
+  <div class="card" style="margin-top:1rem">
+    <h3><span class="mono"><%= @current.id %></span> <span class="dim small"><%= @current.meta["pages"] %> pages in <%= @current.meta["seconds"] %>s</span> <a href="<%= @iframe_url %>" target="_blank" rel="noopener" class="dim small">open in a tab ↗</a></h3>
+    <iframe class="preview" src="<%= @iframe_url %>" title="Preview <%= @current.id %>"></iframe>
+  </div>
+<% end %>

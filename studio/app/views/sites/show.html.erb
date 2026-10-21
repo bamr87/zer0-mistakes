@@ -1,0 +1,66 @@
+<% content_for :title, @site.name %>
+<% content_for :crumbs do %><%= link_to "Sites", sites_path %> / <%= @site.name %><% end %>
+<% content_for :topbar_actions do %>
+  <%= link_to "Theme config", site_theme_config_path(@site), class: "btn" %>
+  <%= button_to "Audit", audit_site_path(@site), method: :post, class: "btn primary" %>
+  <%= button_to "Forget", site_path(@site), method: :delete, class: "btn danger", form: { data: { turbo_confirm: "Forget #{@site.name}? Its files are untouched." } } %>
+<% end %>
+
+<div class="grid cols-2" style="align-items:start">
+  <div class="card">
+    <h2><%= @site.name %></h2>
+    <table class="list">
+      <tbody>
+        <tr><td class="dim">Path</td><td class="mono small"><%= @site.path %></td></tr>
+        <tr><td class="dim">Mode</td><td class="mono"><%= @site.mode %></td></tr>
+        <tr><td class="dim">Theme pin</td><td class="mono small"><%= @pin || "—" %></td></tr>
+        <tr><td class="dim">Skin</td><td class="mono"><%= @config["theme_skin"] || "(theme default)" %></td></tr>
+        <tr><td class="dim">Colour mode</td><td class="mono"><%= @config["color_mode_default"] || "auto" %><%= " (locked)" if @config["color_mode_lock"] == "true" %></td></tr>
+        <tr><td class="dim">User overrides</td><td class="mono"><%= @config["user_overrides"] || "false" %></td></tr>
+        <% if @site.source_subdir.present? %><tr><td class="dim">Source</td><td class="mono"><%= @site.source_subdir %></td></tr><% end %>
+        <% if @site.notes.present? %><tr><td class="dim">Notes</td><td><%= @site.notes %></td></tr><% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>In <span class="mono">_data/consumers.yml</span></h3>
+      <% if @consumer %>
+        <table class="list">
+          <tbody>
+            <tr><td class="dim">Repo</td><td class="mono"><%= @consumer.repo %></td></tr>
+            <tr><td class="dim">Declared mode</td><td class="mono"><%= @consumer.mode %></td></tr>
+            <tr><td class="dim">Dispatch</td><td class="mono"><%= @consumer.dispatch.inspect %></td></tr>
+            <% @consumer.pins.each do |pin| %>
+              <tr><td class="dim">Pin</td><td class="mono small"><%= pin["file"] %> (<%= pin["kind"] %>)<%= " — #{pin['note']}" if pin["note"] %></td></tr>
+            <% end %>
+            <% if @consumer.risk.present? %><tr><td class="dim">Risk</td><td class="small"><%= @consumer.risk %></td></tr><% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="dim">Not listed. Set the repository on this site to join it to an entry, or add the entry to the registry.</p>
+      <% end %>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h3>Last audit <% if @site.last_audit_at %><span class="dim small"><%= time_ago_in_words(@site.last_audit_at) %> ago</span><% end %></h3>
+      <% if @site.audit_summary.any? %>
+        <table class="list">
+          <tbody>
+            <% @site.audit_summary.each do |key, value| %>
+              <tr><td class="dim mono small"><%= key %></td><td class="mono small"><%= value.is_a?(Array) ? "#{value.size} item(s)" : value.is_a?(Hash) ? value.map { |k, v| "#{k}: #{v}" }.join(", ") : value %></td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="dim">Never audited.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:1.3rem">
+  <h3>Jobs</h3>
+  <%= render "jobs/table", jobs: @jobs %>
+</div>

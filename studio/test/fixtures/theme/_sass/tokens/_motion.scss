@@ -1,0 +1,5 @@
+// motion tokens (fixture)
+:root {
+  --zer0-motion-base: 1rem;
+}
+@media (prefers-reduced-motion: reduce) { :root { --zer0-motion-base: 0s; } }

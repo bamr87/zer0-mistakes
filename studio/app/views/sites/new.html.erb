@@ -1,0 +1,16 @@
+<% content_for :title, "Register a site" %>
+<% content_for :crumbs do %><%= link_to "Sites", sites_path %> / Register<% end %>
+
+<div class="card narrow">
+  <h2>Register a site</h2>
+  <% if @site.errors.any? %>
+    <div class="flash alert"><%= @site.errors.full_messages.join(". ") %></div>
+  <% end %>
+  <%= form_with model: @site do |f| %>
+    <label class="field col"><span>Path (inside <span class="mono"><%= SitesRoot.path %></span>)</span><%= f.text_field :path, class: "mono wide", required: true %></label>
+    <label class="field col"><span>Name (defaults to the directory name)</span><%= f.text_field :name, class: "wide" %></label>
+    <label class="field col"><span>Repository (owner/name, to join <span class="mono">_data/consumers.yml</span>)</span><%= f.text_field :repo, class: "mono wide", placeholder: "bamr87/it-journey" %></label>
+    <label class="field col"><span>Notes</span><%= f.text_area :notes, class: "wide", rows: 3 %></label>
+    <div class="btn-row"><%= f.submit "Register", class: "btn primary" %></div>
+  <% end %>
+</div>

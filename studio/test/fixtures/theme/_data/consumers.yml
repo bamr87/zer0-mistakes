@@ -1,0 +1,29 @@
+# fixture consumer registry
+version: 1
+defaults:
+  branch: main
+  dispatch_event: theme-release
+consumers:
+  - repo: bamr87/consumer-remote
+    mode: remote_theme_pinned
+    site: https://consumer-remote.example
+    dispatch: true
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+  - repo: bamr87/consumer-gem
+    mode: gem
+    site: https://consumer-gem.example
+    dispatch: true
+    pins:
+      - file: Gemfile
+        kind: gemfile
+  - repo: bamr87/floating
+    mode: remote_theme_floating
+    dispatch: false
+    risk: >-
+      Unpinned.
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+        note: no tag

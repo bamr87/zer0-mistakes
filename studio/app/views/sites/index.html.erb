@@ -1,0 +1,45 @@
+<% content_for :title, "Sites" %>
+<% content_for :crumbs do %>Customize / Sites<% end %>
+<% content_for :topbar_actions do %>
+  <%= link_to "Register a site", new_site_path, class: "btn primary" %>
+<% end %>
+
+<div class="card">
+  <h2>Registered</h2>
+  <% if @sites.any? %>
+    <table class="list">
+      <thead><tr><th>Site</th><th>Mode</th><th>Path</th><th>In consumers.yml</th><th>Last audit</th></tr></thead>
+      <tbody>
+        <% @sites.each do |site| %>
+          <tr>
+            <td><%= link_to site.name, site_path(site) %></td>
+            <td class="mono"><%= site.mode %></td>
+            <td class="mono dim small"><%= site.path %></td>
+            <td><%= @registry.find(site.repo.presence || site.name) ? content_tag(:span, "yes", class: "badge ok") : content_tag(:span, "no", class: "badge") %></td>
+            <td class="dim small"><%= site.last_audit_at ? "#{time_ago_in_words(site.last_audit_at)} ago" : "never" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="dim">Nothing registered.</p>
+  <% end %>
+</div>
+
+<div class="card" style="margin-top:1rem">
+  <h2>Found under <span class="mono"><%= SitesRoot.path %></span></h2>
+  <% if @discoverable.any? %>
+    <table class="list">
+      <tbody>
+        <% @discoverable.each do |path| %>
+          <tr>
+            <td class="mono"><%= path %></td>
+            <td><%= button_to "Register", sites_path, params: { site: { path: path, discovered: "1" } }, class: "btn small" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="dim">Every site directory there is registered, or there is none. Set <span class="mono">SITES_DIR</span> to a directory of checkouts.</p>
+  <% end %>
+</div>

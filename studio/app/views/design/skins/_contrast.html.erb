@@ -1,0 +1,13 @@
+<% contrast = local_assigns.fetch(:contrast, @contrast) %>
+<table class="list">
+  <tbody>
+    <% contrast.each do |r| %>
+      <tr>
+        <td class="small"><%= r.rule %></td>
+        <td><span class="swatch" style="--c:<%= r.fg %>;--bg:<%= r.bg %>">Aa</span></td>
+        <td class="mono"><%= r.ratio %>:1</td>
+        <td><span class="badge <%= r.pass? ? "ok" : "warn" %>"><%= r.pass? ? "pass" : "below #{r.minimum}" %></span></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

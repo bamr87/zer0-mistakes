@@ -1,0 +1,52 @@
+<% content_for :title, "Skin #{@skin.name}" %>
+<% content_for :crumbs do %><%= link_to "Skins", design_skins_path %> / <span class="mono"><%= @skin.name %></span><% end %>
+<% p = @skin.palette %>
+
+<%= render "shared/parity", parity: @parity %>
+
+<%= form_with url: design_skin_path(@skin.name), method: :patch, data: { controller: "preview-fetch", preview_fetch_url_value: diff_design_skin_path(@skin.name), preview_fetch_contrast_url_value: contrast_design_skin_path(@skin.name) } do |f| %>
+  <%= hidden_field_tag :base_digest, @skin.base_digest %>
+  <div class="grid cols-2" style="align-items:start">
+    <div class="card">
+      <h2><%= @skin.name %></h2>
+      <h3>Palette <span class="dim small mono">_skins.scss · skins.css</span></h3>
+      <div class="fields">
+        <% { "brand" => "Brand", "accent" => "Accent", "link_light" => "Link (light)", "link_light_hover" => "Link hover (light)", "link_dark" => "Link (dark)", "link_dark_hover" => "Link hover (dark)" }.each do |field, label| %>
+          <label class="field">
+            <span><%= label %></span>
+            <span class="swatch" style="--c:<%= p[field] %>"></span>
+            <%= text_field_tag "skin[#{field}]", p[field], class: "mono", data: { action: "input->preview-fetch#queue" } %>
+          </label>
+        <% end %>
+      </div>
+      <p class="dim small">RGB triplet (derived from the brand): <span class="mono"><%= p["brand_rgb"] %></span></p>
+
+      <h3>Backgrounds <span class="dim small mono">_backgrounds.scss · theme_backgrounds.yml</span></h3>
+      <div class="fields">
+        <label class="field"><span>Pattern size</span><%= text_field_tag "skin[pattern_size]", p["pattern_size"], class: "mono", placeholder: "48px 48px", data: { action: "input->preview-fetch#queue" } %></label>
+        <% { "bg_primary" => "Primary", "bg_secondary" => "Secondary", "bg_accent" => "Accent" }.each do |field, label| %>
+          <label class="field">
+            <span><%= label %></span>
+            <span class="swatch" style="--c:<%= p[field] %>"></span>
+            <%= text_field_tag "skin[#{field}]", p[field], class: "mono", data: { action: "input->preview-fetch#queue" } %>
+          </label>
+        <% end %>
+      </div>
+      <div class="btn-row">
+        <%= f.submit "Save the four files", class: "btn primary" %>
+        <span class="dim small">Written in order; a refused write undoes the earlier ones.</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3>Contrast</h3>
+        <div data-preview-fetch-target="contrast"><%= render "design/skins/contrast", contrast: @contrast %></div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Diff</h3>
+        <div data-preview-fetch-target="output"><p class="dim">Edit a value to see what would change.</p></div>
+      </div>
+    </div>
+  </div>
+<% end %>

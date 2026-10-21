@@ -1,0 +1,34 @@
+<% content_for :title, "Versions" %>
+<% content_for :crumbs do %>Update / Versions<% end %>
+<% content_for :topbar_actions do %>
+  <% ScriptRunner::LEVELS.each do |level| %>
+    <%= button_to "Dry-run #{level}", update_release_path, method: :post, params: { level: level }, class: "btn" %>
+  <% end %>
+<% end %>
+
+<div class="grid cols-2" style="align-items:start">
+  <div class="card">
+    <h2>Version files</h2>
+    <p class="dim small">Source of truth: <span class="mono">lib/jekyll-theme-zer0/version.rb</span>. release-please and <span class="mono">scripts/bin/manifest</span> keep the rest in step; a mismatch here is a release that did not finish.</p>
+    <table class="list">
+      <thead><tr><th>File</th><th>Version</th><th></th></tr></thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr>
+            <td class="mono small"><%= row.file %></td>
+            <td class="mono"><%= row.present ? (row.version || "?") : "missing" %></td>
+            <td><%= row.ok? ? content_tag(:span, "ok", class: "badge ok") : content_tag(:span, "out of step", class: "badge warn") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @last_dry_run %>
+      <p class="dim small">Last dry run: job <%= link_to "##{@last_dry_run.id}", job_path(@last_dry_run) %> (<%= @last_dry_run.params_hash["level"] %>), <%= @last_dry_run.status %>.</p>
+    <% end %>
+    <p class="dim small">The studio never releases: a dry run shows what <span class="mono">scripts/bin/release</span> would do, and merging release-please's pull request publishes the gem.</p>
+  </div>
+  <div class="card">
+    <h3>CHANGELOG.md</h3>
+    <pre class="logbox small"><%= @changelog %></pre>
+  </div>
+</div>

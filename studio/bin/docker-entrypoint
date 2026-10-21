@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+# The studio image's entrypoint. Before the server starts: a secret key base
+# (from the environment, else one generated once into the storage volume so
+# sessions and preview tokens survive restarts) and the three SQLite databases
+# on that volume. jemalloc, when the image carries it, trims Ruby's memory use.
+if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
+  export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
+fi
+
+if [ -z "${SECRET_KEY_BASE}" ]; then
+  key_file=storage/secret_key_base
+  if [ ! -s "$key_file" ]; then
+    (umask 077 && ruby -rsecurerandom -e 'print SecureRandom.hex(64)' > "$key_file")
+  fi
+  SECRET_KEY_BASE="$(cat "$key_file")"
+  export SECRET_KEY_BASE
+fi
+
+# The theme's bundle lives in the volume the jekyll service fills
+# (THEME_BUNDLE_PATH). That volume usually belongs to root — the theme image
+# runs as root, and its ruby/<abi>/ tree is root-owned even where the volume
+# root is world-writable — so this unprivileged user can read it but not
+# install into it. The shared path serves when it already satisfies the
+# theme's lock, or when this user can write where Bundler would; otherwise
+# the gems go to a studio-owned path in the storage volume, installed by the
+# first preview build.
+theme_bundle_usable() {
+  BUNDLE_GEMFILE="${THEME_DIR:-/theme}/Gemfile" BUNDLE_PATH="$1" BUNDLE_APP_CONFIG="${THEME_BUNDLE_APP_CONFIG:-/dev/null}" \
+    bundle check >/dev/null 2>&1 && return 0
+  abi="$1/ruby/$(ruby -e 'print RbConfig::CONFIG["ruby_version"]')"
+  mkdir -p "$abi" 2>/dev/null && touch "$abi/.zer0-studio-write" 2>/dev/null && rm -f "$abi/.zer0-studio-write" && return 0
+  return 1
+}
+if [ -n "${THEME_BUNDLE_PATH:-}" ] && [ -f "${THEME_DIR:-/theme}/Gemfile" ] && ! theme_bundle_usable "${THEME_BUNDLE_PATH}"; then
+  echo "zer0 studio: ${THEME_BUNDLE_PATH} neither satisfies the theme's Gemfile.lock nor accepts installs from this user; using storage/theme-bundle"
+  THEME_BUNDLE_PATH=/studio/storage/theme-bundle
+  export THEME_BUNDLE_PATH
+  mkdir -p "${THEME_BUNDLE_PATH}"
+fi
+
+case "$1 $2" in
+  "bin/rails server"|"./bin/rails server"|"rails server")
+    ./bin/rails db:prepare
+    ;;
+esac
+
+exec "$@"

@@ -1,0 +1,7 @@
+<% content_for :title, "Jobs" %>
+<% content_for :crumbs do %>Jobs<% end %>
+
+<div class="card">
+  <h2>Jobs</h2>
+  <%= render "jobs/table", jobs: @jobs %>
+</div>

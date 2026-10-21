@@ -1,5 +1,9 @@
 extends: default
 
+# The studio is a Rails app with Rails' own YAML conventions.
+ignore: |
+  studio/
+
 rules:
   line-length:
     max: 120

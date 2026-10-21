@@ -1,0 +1,6 @@
+<% content_for :title, "No theme" %>
+<div class="card">
+  <h2>This is not a theme checkout</h2>
+  <p><span class="mono"><%= ThemeRoot.path %></span> is missing <span class="mono"><%= ThemeRoot.missing.join(", ") %></span>.</p>
+  <p class="dim">Start the studio from <span class="mono">studio/</span> inside a zer0-mistakes checkout, or set <span class="mono">THEME_DIR</span> to one. <span class="mono">/up</span> still answers so a container stays healthy while you fix it.</p>
+</div>

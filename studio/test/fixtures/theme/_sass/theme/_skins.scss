@@ -1,0 +1,41 @@
+// ==========================================================================
+// Skin color tokens (fixture) — two skins on the real mixin's signature.
+// ==========================================================================
+@mixin zer0-skin-palette(
+  $brand, $brand-rgb, $accent, $accent-rgb: null,
+  $link-light: null,       // WCAG-AA color on white (light mode)
+  $link-light-hover: null,
+  $link-dark: null,        // WCAG-AA color on dark bg (dark mode)
+  $link-dark-hover: null
+) {
+  --zer0-color-primary: #{$brand};
+  --zer0-color-primary-rgb: #{$brand-rgb};
+  --zer0-color-accent: #{$accent};
+  --zer0-color-border: rgba(#{$brand-rgb}, 0.28);
+
+  &[data-bs-theme="dark"] {
+    --bs-link-color: #{$link-dark};
+  }
+}
+
+// Air — pale blue; link colors chosen for AA.
+[data-theme-skin="air"] {
+  @include zer0-skin-palette(
+    #6fa8dc, "111, 168, 220", #b8d4e3,
+    $link-light:       #1e5fa8,
+    $link-light-hover: #154a87,
+    $link-dark:        #b8d4e3,
+    $link-dark-hover:  #d6eaf4
+  );
+}
+
+/* Aqua — the brand itself fails AA on white; the links do not. */
+[data-theme-skin="aqua"] {
+  @include zer0-skin-palette(
+    #00b4d8, "0, 180, 216", #90e0ef,
+    $link-light:       #006d99,
+    $link-light-hover: #005577,
+    $link-dark:        #67d7ec,
+    $link-dark-hover:  #9ae8f5
+  );
+}

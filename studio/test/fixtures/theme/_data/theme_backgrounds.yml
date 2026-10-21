@@ -1,0 +1,35 @@
+# Theme Background Presets (fixture): three skins, one of them background-only.
+defaults:
+  texture_opacity: 0.04
+  blend_mode: overlay
+
+skins:
+  air:
+    label: "Air"
+    colors:
+      primary: "#e8f4f8"   # hero
+      secondary: "#b8d4e3"
+      accent: "#6fa8dc"
+    gradient: "assets/backgrounds/gradients/air.svg"
+    pattern: "assets/backgrounds/patterns/air.svg"
+    noise: "assets/backgrounds/noise/air.svg"
+
+  aqua:
+    label: "Aqua"
+    colors:
+      primary: "#0077b6"
+      secondary: "#00b4d8"
+      accent: "#90e0ef"
+    gradient: "assets/backgrounds/gradients/aqua.svg"
+    pattern: "assets/backgrounds/patterns/aqua.svg"
+    noise: "assets/backgrounds/noise/aqua.svg"
+
+  contrast:
+    label: "Contrast"
+    colors:
+      primary: "#000000"
+      secondary: "#ffffff"
+      accent: "#ffd400"
+    gradient: "assets/backgrounds/gradients/contrast.svg"
+    pattern: "assets/backgrounds/patterns/contrast.svg"
+    noise: "assets/backgrounds/noise/contrast.svg"

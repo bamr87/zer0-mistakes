@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
 # Version: 1.29.0
-# Last Updated: 2026-09-07
+# Last Updated: 2026-10-21
 
 features:
   # ============================================================================
@@ -2546,3 +2546,45 @@ features:
       - "Project session — list/open an existing site under WIZARD_TARGET_ROOT, tree/read, write/edit (unique snippet)/delete text files behind confirmation cards, git status/diff/log/init, jekyll build inside the container"
       - "Image generation — generate_image renders with grok-imagine-image-2.0 (or gpt-image-2) into assets/ (PNG/JPEG/WebP sniffed, 8 MB cap) with a thumbnail card; generated sites carry ai_chat.provider, preview_images and the matching .env.example keys"
       - "Validation — test/test_providers.mjs (mock xAI + Anthropic upstreams), test/test_wizard_store.mjs (project + asset rules), setup-wizard.spec.js (mocked proxy: connect as Grok, token never stored, open mode, existing sites), evidence in test/visual/evidence/site-builder-providers/"
+
+  - id: ZER0-088
+    title: "zer0 studio — the Rails theme workbench"
+    description: "A Rails 8.1 app at studio/ that designs, customizes and updates this theme from a browser: token and skin editors with live diffs and WCAG contrast, a read-only theme doctor, docs-site preview builds shown in a cross-origin iframe, consumer-site registration with the audit as a live-logged job, the version lockstep table, release dry runs and the consumer pin matrix. Every write is a digest-guarded atomic rename of a file the allow-list names; every script run is the theme's own"
+    implemented: true
+    version: "1.32.0"
+    link: "https://github.com/bamr87/zer0-mistakes/tree/main/studio"
+    docs: "studio/README.md"
+    tags: [studio, rails, design-tokens, skins, doctor, preview, consumers, release]
+    date: 2026-10-21
+    provenance:
+      introduced_in: "1.32.0"
+      pr: null
+      commit: "89068b2"
+      issue: null
+    tests:
+      - "studio/test/services/token_editor_test.rb"
+      - "studio/test/services/skin_editor_test.rb"
+      - "studio/test/services/theme_doctor_test.rb"
+      - "studio/test/services/script_runner_test.rb"
+      - "studio/test/integration/security_test.rb"
+      - "studio/test/integration/previews_test.rb"
+      - "studio/test/integration/gem_boundary_test.rb"
+    references:
+      scripts:
+        - "studio/app/services/token_editor.rb"
+        - "studio/app/services/skin_editor.rb"
+        - "studio/app/services/site_theme_config.rb"
+        - "studio/app/services/theme_doctor.rb"
+        - "studio/app/services/script_runner.rb"
+        - "studio/app/services/preview_builder.rb"
+      config: "_config.yml"
+      pages:
+        - "studio/README.md"
+        - "studio/AGENTS.md"
+    components:
+      - "Design — _sass/tokens/* with their _design-system/tokens/* mirrors edited together (ScssDeclarations splices values by byte range, so comments and formatting survive), skins across _skins.scss, skins.css, _backgrounds.scss and theme_backgrounds.yml with the RGB triplet derived from the brand, a live unified diff under every form, WCAG 2.1 contrast per skin, and scripts/design-system-check.rb after every save"
+      - "Doctor — read-only rules with findings.jsonl-shaped output: token parity, the skin registries, background assets the gem does not ship, link contrast, the settings page's byte copy of _config.yml, the studio/ exclusion"
+      - "Previews — the docs site built as a job with the theme's own bundle exec jekyll build into studio/tmp/previews/<id>, shown from the OTHER loopback origin so the theme's colour-mode storage stays apart from the studio's; the newest five builds are kept"
+      - "Customize — consumer checkouts under SITES_DIR registered by realpath, their theme keys in _config.yml rewritten one line at a time, scripts/bin/audit-consumer as a job whose JSON report lands on the site, _data/consumers.yml joined by repository name"
+      - "Update — the six version files against lib/jekyll-theme-zer0/version.rb, scripts/bin/release --dry-run and scripts/propagate.rb (report mode) as jobs; the studio never releases or dispatches"
+      - "Boundary — studio/ is excluded by both Jekyll configs and scripts/bin/validate, never packaged by the gemspec (gem_boundary_test), never in the theme image (.dockerignore); loopback-only unless STUDIO_PASSWORD; nonce CSP without unsafe-inline; every path through ConfinedPath, every write through AtomicWrite; the Docker image runs Solid Queue inside Puma with Solid Cable for live logs"

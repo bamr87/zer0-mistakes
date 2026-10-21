@@ -1,0 +1,34 @@
+# Fixture theme site configuration — column-aligned like the real one.
+title                    : "fixture"
+remote_theme             : false
+theme                    : "jekyll-theme-zer0"
+
+theme_skin               : "air" # "air", "aqua"
+color_mode_default       : auto
+color_mode_lock          : false
+appearance_panel         : true
+user_overrides           : false
+
+theme_background:
+  enabled: true           # Master toggle
+  gradient_opacity: 0.6   # Hero gradient
+  blend_mode: overlay
+
+theme_color:
+  main:         "#007bff"
+  secondary:    "#6c757d"
+
+exclude:
+  # ── Jekyll cache ─────────────────────────────────────────────────────────
+  - .jekyll-cache/
+  - Gemfile
+  - scripts/
+  - studio/
+  - test/
+  - docs/
+  - node_modules/
+  - vendor/bundle/
+  - .obsidian/
+  - "*.canvas"
+  - "*.excalidraw.md"
+  - pages/_notes/_templates/

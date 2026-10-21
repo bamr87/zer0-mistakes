@@ -1,0 +1,7 @@
+<%# The design-system-check verdict after a save. %>
+<% if parity %>
+  <div class="card <%= parity.ok? ? "ok" : "warn" %>">
+    <h3>design-system-check <span class="badge <%= parity.ok? ? "ok" : "warn" %>"><%= parity.ok? ? "OK" : "drift" %></span></h3>
+    <pre class="logbox small"><%= parity.output.to_s.lines.last(20).join %></pre>
+  </div>
+<% end %>

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Fixture stand-in for scripts/bin/validate. With a `slow` file in the theme
+# root it prints a line a second for thirty seconds (the cancel test); with a
+# `fail` file it exits 3.
+if [ -f fail ]; then
+  echo "validate: something is wrong" >&2
+  exit 3
+fi
+if [ -f slow ]; then
+  for i in $(seq 1 30); do
+    echo "tick $i"
+    sleep 1
+  done
+fi
+echo "validate: ok $*"
+if [ -n "$PROBE" ]; then echo "probe=$PROBE"; fi

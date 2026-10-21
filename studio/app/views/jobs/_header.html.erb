@@ -1,0 +1,15 @@
+<div class="card">
+  <div class="row">
+    <div>
+      <h2><%= job.title %> <span class="badge <%= { "succeeded" => "ok", "failed" => "err", "cancelled" => "warn", "running" => "live" }[job.status] %>"><%= job.status %></span></h2>
+      <p class="dim small">
+        <% if job.site %><%= link_to job.site.name, site_path(job.site) %> · <% end %>
+        queued <%= time_ago_in_words(job.created_at) %> ago<% if job.started_at %>, started <%= time_ago_in_words(job.started_at) %> ago<% end %><% if job.duration %>, <%= job.duration.round(1) %>s<% end %>
+      </p>
+      <% if job.error.present? %><p class="err mono small"><%= job.error %></p><% end %>
+    </div>
+    <div class="btn-row">
+      <% unless job.finished? %><%= button_to "Cancel", cancel_job_path(job), method: :post, class: "btn danger" %><% end %>
+    </div>
+  </div>
+</div>

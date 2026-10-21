@@ -1,0 +1,48 @@
+<nav class="sidebar" data-sidebar-target="panel" aria-label="Main">
+  <%= link_to root_path, class: "brand" do %>
+    <span class="glyph">0</span>
+    <span>zer0 studio</span>
+    <% if theme_version %><span class="version mono"><%= theme_version %></span><% end %>
+  <% end %>
+
+  <% nav = lambda do |label, path, icon, active, count = nil|
+       link_to(path, class: (active ? "active" : nil), "aria-current": (active ? "page" : nil)) do
+         concat content_tag(:span, icon, class: "ico")
+         concat content_tag(:span, label)
+         concat content_tag(:span, count, class: "nav-count") if count
+       end
+     end %>
+
+  <div class="nav-group">
+    <div class="label">Design</div>
+    <div class="nav">
+      <%= nav.call("Tokens", design_tokens_path, "◧", controller_path == "design/tokens") %>
+      <%= nav.call("Skins", design_skins_path, "◐", controller_path == "design/skins") %>
+      <%= nav.call("Doctor", design_doctor_path, "✚", controller_path == "design/doctors") %>
+      <%= nav.call("Previews", design_previews_path, "▭", controller_path == "design/previews") %>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="label">Customize</div>
+    <div class="nav">
+      <%= nav.call("Sites", sites_path, "▤", controller_path.start_with?("sites")) %>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="label">Update</div>
+    <div class="nav">
+      <%= nav.call("Versions", update_versions_path, "#", controller_path == "update/versions") %>
+      <%= nav.call("Consumers", update_consumers_path, "⇄", controller_path == "update/consumers") %>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="label">Studio</div>
+    <div class="nav">
+      <%= nav.call("Jobs", jobs_path, "≡", controller_path == "jobs", (active_jobs_count.positive? ? active_jobs_count : nil)) %>
+      <%= nav.call("Settings", settings_path, "⚙", controller_path == "settings") %>
+    </div>
+  </div>
+</nav>

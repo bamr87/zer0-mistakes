@@ -1,0 +1,4 @@
+#!/bin/bash
+# Fixture stand-in for scripts/bin/release.
+echo "release: $*"
+echo "[DRY RUN] Would bump 9.9.9 ($1)"
