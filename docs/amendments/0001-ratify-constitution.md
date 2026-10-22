@@ -1,3 +1,13 @@
+---
+title: "0001 Ratify the Constitution"
+description: "Amendment record that ratifies the zer0-mistakes constitution."
+date: 2026-10-22T00:00:00.000Z
+lastmod: 2026-10-22T00:00:00.000Z
+categories: [docs]
+tags: [governance, amendments]
+author: bamr87
+---
+
 <!-- kit: governance v0.1.0 -->
 # 0001 — Ratify the constitution
 
@@ -7,7 +17,7 @@
 - **Ratified by:** the merged PR that adds this record (docs/feature-catalog)
 - **Affects:** whole constitution; feature catalog and PRD link (UPS-WORK-15, UPS-WORK-16)
 - **Supersedes:** none
-- **Related:** [docs/constitution.md](../constitution.md), [features/features.yml](../../features/features.yml)
+- **Related:** [docs/constitution.md](../constitution.md), [_data/features.yml](../../_data/features.yml)
 
 ## Context
 

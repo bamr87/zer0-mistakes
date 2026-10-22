@@ -1,3 +1,13 @@
+---
+title: "Amendment Record Template"
+description: "Template for a numbered constitution amendment record; copy to NNNN-kebab-slug.md."
+date: 2026-10-22T00:00:00.000Z
+lastmod: 2026-10-22T00:00:00.000Z
+categories: [docs]
+tags: [governance, amendments, template]
+author: bamr87
+---
+
 <!-- kit: governance v0.1.0 · copy to NNNN-kebab-slug.md (next free number) -->
 # NNNN — Title of the amendment
 
