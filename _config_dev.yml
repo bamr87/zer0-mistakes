@@ -115,6 +115,7 @@ exclude:
   # ── Jekyll cache ─────────────────────────────────────────────────────────
   - .sass-cache/
   - .jekyll-cache/
+  - features/
 
   # ── Obsidian vault working files ─────────────────────────────────────────
   - .obsidian/
