@@ -1,0 +1,21 @@
+<% content_for :title, "Tokens" %>
+<% content_for :crumbs do %>Design / Tokens<% end %>
+
+<div class="card">
+  <h2>Token files</h2>
+  <p class="dim">Each Sass source under <span class="mono">_sass/tokens/</span> has a plain-CSS mirror under <span class="mono">_design-system/tokens/</span>. The studio edits both together and runs <span class="mono">scripts/design-system-check.rb</span> after every save.</p>
+  <table class="list">
+    <thead><tr><th>File</th><th>Mirror</th><th>Tokens</th><th>Unmirrored</th></tr></thead>
+    <tbody>
+      <% @editors.each do |e| %>
+        <% missing = e.tokens.count(&:mirror_missing?) %>
+        <tr>
+          <td><%= link_to e.scss_rel, design_token_path(e.slug), class: "mono" %></td>
+          <td class="mono dim"><%= e.css_rel %></td>
+          <td><%= e.tokens.size %></td>
+          <td><%= missing.zero? ? content_tag(:span, "0", class: "badge ok") : content_tag(:span, missing, class: "badge warn") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

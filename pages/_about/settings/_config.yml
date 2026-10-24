@@ -965,6 +965,9 @@ exclude:
   - scripts/
   - "*.sh"
 
+  # ── zer0 studio — the Rails workbench beside the theme (studio/README.md) ─
+  - studio/
+
   # ── Docker configuration ──────────────────────────────────────────────────
   - docker/
   - docker-compose.yml

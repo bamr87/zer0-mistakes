@@ -93,3 +93,11 @@ _config_secrets_local.yml
 vendor/
 node_modules/
 chrome-debug-profile/
+
+# zer0 studio (studio/) — its databases, logs, preview builds and key
+studio/log/
+studio/tmp/
+studio/storage/
+studio/db/*.sqlite3*
+studio/config/master.key
+studio/config/credentials/*.key

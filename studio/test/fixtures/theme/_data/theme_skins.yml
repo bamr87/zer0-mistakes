@@ -1,0 +1,6 @@
+# Theme skin registry — ordered list for UI iteration.
+order:
+  - air
+  - aqua
+
+default: air

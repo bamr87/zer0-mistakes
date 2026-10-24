@@ -1,0 +1,38 @@
+<% content_for :title, "Doctor" %>
+<% content_for :crumbs do %>Design / Doctor<% end %>
+<% content_for :topbar_actions do %>
+  <%= button_to "Run doctor", design_doctor_path, method: :post, class: "btn primary" %>
+<% end %>
+
+<% if @running %>
+  <div class="flash notice">A doctor pass is <%= @running.status %> — <%= link_to "follow it", job_path(@running) %>.</div>
+<% end %>
+
+<div class="card">
+  <h2>Theme doctor</h2>
+  <p class="dim">Read-only rules over the checkout: token parity, the skin registries, background assets, link contrast, the settings page's byte copy of <span class="mono">_config.yml</span>, and the <span class="mono">studio/</span> exclusion. Fix what it flags in the theme; the studio reports and never auto-fixes.</p>
+  <% if @job %>
+    <p class="dim small">Last pass: job <%= link_to "##{@job.id}", job_path(@job) %>, <%= @job.status %>, <%= time_ago_in_words(@job.finished_at || @job.created_at) %> ago.</p>
+    <% if @findings.empty? %>
+      <p><span class="badge ok">clean</span></p>
+    <% else %>
+      <table class="list">
+        <thead><tr><th>Severity</th><th>Check</th><th>Rule</th><th>File</th><th>Evidence</th><th>Fingerprint</th></tr></thead>
+        <tbody>
+          <% @findings.each do |f| %>
+            <tr>
+              <td><span class="badge <%= f["severity"] == "error" ? "err" : "warn" %>"><%= f["severity"] %></span></td>
+              <td class="mono small"><%= f["check_id"] %></td>
+              <td class="mono small"><%= f["rule"] %></td>
+              <td class="mono small"><%= f["file"] %></td>
+              <td class="small"><%= f["evidence"] %></td>
+              <td class="mono dim small"><%= f["fingerprint"] %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% else %>
+    <p class="dim">Never run.</p>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<% content_for :title, "Consumers" %>
+<% content_for :crumbs do %>Update / Consumers<% end %>
+<% content_for :topbar_actions do %>
+  <%= button_to "Report drift (GitHub)", drift_update_consumers_path, method: :post, class: "btn" %>
+<% end %>
+
+<div class="card">
+  <h2>Pin matrix <span class="dim small">from <span class="mono">_data/consumers.yml</span></span></h2>
+  <p class="dim small">Dispatch event: <span class="mono"><%= @registry.defaults["dispatch_event"] %></span>. A registered checkout with the same repository name is linked.</p>
+  <table class="list">
+    <thead><tr><th>Repository</th><th>Mode</th><th>Site</th><th>Dispatch</th><th>Pins</th><th>Checkout</th></tr></thead>
+    <tbody>
+      <% @registry.entries.each do |e| %>
+        <tr>
+          <td class="mono"><%= e.repo %></td>
+          <td><span class="badge <%= e.pinned? ? "ok" : "warn" %>"><%= e.mode %></span></td>
+          <td class="small"><%= e.site_url.present? ? link_to(e.site_url, e.site_url, target: "_blank", rel: "noopener") : "—" %></td>
+          <td class="mono"><%= e.dispatch.inspect %></td>
+          <td class="mono small"><%= e.pins.map { |p| "#{p['file']} (#{p['kind']})" }.join(", ").presence || "—" %></td>
+          <td><% site = @sites[e.name] %><%= site ? link_to(site.name, site_path(site)) : content_tag(:span, "—", class: "dim") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% if @last %>
+    <p class="dim small">Last propagate report: job <%= link_to "##{@last.id}", job_path(@last) %>, <%= @last.status %>, <%= time_ago_in_words(@last.finished_at || @last.created_at) %> ago.</p>
+  <% end %>
+</div>

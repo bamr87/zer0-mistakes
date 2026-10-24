@@ -1,0 +1,12 @@
+// Color tokens (fixture)
+:root {
+  // Brand / accent ---------------------------------------------------------
+  --zer0-color-primary: var(--bs-primary, #007bff);
+  --zer0-color-accent: var(--bd-accent, #ffe484); // the yellow
+  --zer0-color-border-translucent: color-mix(in srgb, var(--zer0-color-border) 42%, transparent);
+  --zer0-logo-red: #a11111;
+}
+
+[data-bs-theme="dark"] {
+  --zer0-color-accent: #ffd400;
+}

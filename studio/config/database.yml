@@ -1,0 +1,39 @@
+# SQLite everywhere. The studio's own tables (sites, jobs) live in `primary`;
+# Solid Queue and Solid Cable each get a database of their own so a busy job
+# log never contends with a page read. Everything is under storage/, which the
+# Docker image owns and compose mounts as a named volume.
+default: &default
+  adapter: sqlite3
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  primary:
+    <<: *default
+    database: storage/development.sqlite3
+  queue:
+    <<: *default
+    database: storage/development_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/development_cable.sqlite3
+    migrations_paths: db/cable_migrate
+
+# Jobs run inline and the cable is the test adapter, so one database is enough.
+test:
+  <<: *default
+  database: storage/test.sqlite3
+
+production:
+  primary:
+    <<: *default
+    database: storage/production.sqlite3
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate

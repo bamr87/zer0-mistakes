@@ -1,0 +1,144 @@
+# =============================================================================
+# studio.yml — zer0 studio, the Rails workbench at studio/
+# =============================================================================
+#
+# Path-filtered to the studio and the two Jekyll configs it must stay excluded
+# from. Three jobs: the suite (SQLite, Ruby 3.3 — the theme's toolchain), a
+# production boot that answers /up and a design page from loopback against
+# this checkout as the theme, and the Docker image built from studio/ and
+# run with the checkout mounted.
+#
+# No model is called, no secret is read, nothing is written to the repository.
+# =============================================================================
+
+name: zer0 studio
+
+on:
+  pull_request:
+    paths:
+      - 'studio/**'
+      - '_config.yml'
+      - '_config_dev.yml'
+      - '.github/workflows/studio.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'studio/**'
+      - '_config.yml'
+      - '_config_dev.yml'
+      - '.github/workflows/studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  RUBY_VERSION: '3.3'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: Tests, Zeitwerk and the gem boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          working-directory: studio
+          bundler-cache: true
+
+      - name: Prepare the test database
+        working-directory: studio
+        run: bin/rails db:prepare
+        env:
+          RAILS_ENV: test
+
+      - name: Zeitwerk
+        working-directory: studio
+        run: bin/rails zeitwerk:check
+
+      - name: Test
+        working-directory: studio
+        run: bin/rails test
+        env:
+          RAILS_ENV: test
+          CI: '1'
+
+  boot:
+    name: Production boot
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          working-directory: studio
+          bundler-cache: true
+
+      - name: Precompile and prepare
+        working-directory: studio
+        run: bin/rails assets:precompile db:prepare
+        env:
+          RAILS_ENV: production
+          SECRET_KEY_BASE: ci-only-not-a-secret
+
+      - name: Boot and answer
+        working-directory: studio
+        env:
+          RAILS_ENV: production
+          SECRET_KEY_BASE: ci-only-not-a-secret
+          SOLID_QUEUE_IN_PUMA: '1'
+          PORT: '3300'
+          PIDFILE: tmp/pids/server.pid
+        run: |
+          bin/rails server -d
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:3300/up >/dev/null 2>&1 && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:3300/up
+          # No -f on the status probes: a 4xx is an answer to check, not a curl failure.
+          curl -sS -o /tmp/tokens.html -w '%{http_code}\n' http://127.0.0.1:3300/design/tokens | tee /tmp/status
+          grep -q '^200$' /tmp/status
+          grep -q '_sass/tokens/_color.scss' /tmp/tokens.html
+          curl -sS -o /dev/null -w '%{http_code}\n' -H 'Host: attacker.example' http://127.0.0.1:3300/ | tee /tmp/host-status
+          grep -q '^403$' /tmp/host-status
+          kill "$(cat tmp/pids/server.pid)"
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: docker build -t zer0-studio:ci ./studio
+
+      - name: Run against this checkout
+        run: |
+          docker run -d --name studio -p 127.0.0.1:3300:3000 \
+            -v "$PWD:/theme" -e THEME_DIR=/theme -e SOLID_QUEUE_IN_PUMA=1 \
+            -e STUDIO_TRUST_DOCKER_GATEWAY=1 zer0-studio:ci
+          for _ in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:3300/up >/dev/null 2>&1 && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:3300/up
+          curl -sS -o /tmp/skins.html -w '%{http_code}\n' http://127.0.0.1:3300/design/skins | tee /tmp/status
+          grep -q '^200$' /tmp/status
+          grep -q 'Palette skins' /tmp/skins.html
+          docker logs studio | tail -20
+          docker rm -f studio

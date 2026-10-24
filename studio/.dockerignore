@@ -1,0 +1,13 @@
+# The image carries the app and its bundle; state and local artefacts stay out.
+/.git
+/log/*
+/tmp/*
+/storage/*
+/db/*.sqlite3*
+/config/master.key
+/config/credentials/*.key
+/public/assets
+/test
+/.env*
+/README.md
+/AGENTS.md

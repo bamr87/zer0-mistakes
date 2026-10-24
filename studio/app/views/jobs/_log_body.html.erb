@@ -1,0 +1,1 @@
+<% if job.log.present? %><%= render "jobs/log_chunk", text: job.log %><% elsif job.finished? %><span class="dim">(no output)</span><% else %><span class="dim">waiting for output…</span><% end %>

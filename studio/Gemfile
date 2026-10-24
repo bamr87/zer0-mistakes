@@ -1,0 +1,23 @@
+# zer0 studio — the theme's Rails workbench (studio/README.md).
+#
+# Ruby 3.3, the theme's own CI toolchain. The gem set is the Rails 8.1
+# default minus what the studio does not use; Gemfile.lock is committed, as
+# the theme's is, so the image and CI run exactly what passed here.
+source "https://rubygems.org"
+
+gem "rails", "~> 8.1.4"
+gem "propshaft"
+gem "sqlite3", ">= 2.1"
+gem "puma", ">= 5.0"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+
+# Jobs and their live logs: Solid Queue runs inside Puma (SOLID_QUEUE_IN_PUMA)
+# and Solid Cable carries the Turbo Stream broadcasts between its workers and
+# the web threads — the async adapter cannot cross that process boundary.
+gem "solid_queue"
+gem "solid_cable"
+
+gem "bootsnap", require: false

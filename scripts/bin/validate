@@ -369,7 +369,8 @@ required_exclusions = [
   'node_modules/',
   'vendor/bundle/',
   'test/',
-  'pages/_notes/_templates/'
+  'pages/_notes/_templates/',
+  'studio/'
 ]
 
 # Normalize trailing slashes so '.obsidian' and '.obsidian/' are treated the same;
@@ -395,7 +396,7 @@ end
 # _config_dev.yml. Those belong to the example, not to this site's config
 # surface, so prune the tree rather than registering every example's configs in
 # classified_files below (which would need editing for each new example).
-ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache test/fixtures examples]
+ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache test/fixtures examples studio]
 config_like_files = []
 
 Find.find('.') do |path|

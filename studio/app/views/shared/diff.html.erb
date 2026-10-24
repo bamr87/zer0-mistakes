@@ -1,0 +1,5 @@
+<% if @diff.blank? %>
+  <p class="dim">No change.</p>
+<% else %>
+  <pre class="diff"><% @diff.each_line do |line| %><span class="<%= line.start_with?("+") ? "add" : line.start_with?("-") ? "del" : line.start_with?("@@") ? "hunk" : "" %>"><%= line %></span><% end %></pre>
+<% end %>

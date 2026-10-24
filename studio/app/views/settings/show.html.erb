@@ -1,0 +1,14 @@
+<% content_for :title, "Settings" %>
+<% content_for :crumbs do %>Settings<% end %>
+
+<div class="card">
+  <h2>How this studio was started</h2>
+  <p class="dim small">Read from the environment; nothing here is editable from the page, and no secret is shown.</p>
+  <table class="list">
+    <tbody>
+      <% @rows.each do |label, value| %>
+        <tr><td class="dim"><%= label %></td><td class="mono small"><%= value %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

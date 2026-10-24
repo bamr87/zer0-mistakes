@@ -1,0 +1,16 @@
+# Runtime state of the studio: databases, logs, preview builds, the key.
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+/storage/*
+!/storage/.keep
+/db/*.sqlite3
+/db/*.sqlite3-*
+/config/master.key
+/config/credentials/*.key
+/public/assets
+.byebug_history
+.env*

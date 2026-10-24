@@ -1,0 +1,40 @@
+<% content_for :title, "Job ##{@job.id}" %>
+<% content_for :crumbs do %><%= link_to "Jobs", jobs_path %> / #<%= @job.id %><% end %>
+
+<%# Subscribe to this job's Turbo Stream so the header and log update live. %>
+<%= turbo_stream_from @job %>
+
+<div id="job-header"><%= render "jobs/header", job: @job %></div>
+
+<div class="card" style="margin-top:1.3rem">
+  <h2>Log</h2>
+  <div class="logbox" id="job-log" data-controller="autoscroll"><%= render "jobs/log_body", job: @job %></div>
+</div>
+
+<% if @job.stats_hash.any? %>
+  <div class="card" style="margin-top:1.3rem">
+    <h3>Result</h3>
+    <% if @job.kind == "theme_doctor" %>
+      <p><%= @job.stats_hash["errors"] %> error(s), <%= @job.stats_hash["warnings"] %> warning(s) — <%= link_to "the findings", design_doctor_path %>.</p>
+    <% elsif @job.kind == "preview_build" && @job.stats_hash["build_id"] %>
+      <p><%= link_to "Open preview #{@job.stats_hash['build_id']}", design_previews_path(build: @job.stats_hash["build_id"]) %> — <%= @job.stats_hash["pages"] %> pages in <%= @job.stats_hash["seconds"] %>s.</p>
+    <% else %>
+      <table class="list"><tbody>
+        <% @job.stats_hash.each do |k, v| %>
+          <tr><td class="dim mono small"><%= k %></td><td class="mono small"><%= v.is_a?(Hash) || v.is_a?(Array) ? v.to_json.truncate(400) : v %></td></tr>
+        <% end %>
+      </tbody></table>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @job.params_hash.any? %>
+  <div class="card" style="margin-top:1.3rem">
+    <h3>Parameters</h3>
+    <table class="list"><tbody>
+      <% @job.params_hash.each do |k, v| %>
+        <tr><td class="dim"><%= k %></td><td class="mono"><%= v %></td></tr>
+      <% end %>
+    </tbody></table>
+  </div>
+<% end %>

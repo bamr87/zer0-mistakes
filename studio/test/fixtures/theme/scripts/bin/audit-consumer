@@ -1,0 +1,14 @@
+#!/bin/bash
+# Fixture stand-in for scripts/bin/audit-consumer: pure JSON on stdout, a
+# note on stderr, the consumer path echoed back so a test can see it arrived.
+consumer=""
+mode="auto"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --consumer-path) consumer="$2"; shift 2 ;;
+    --mode) mode="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+echo "auditing $consumer" >&2
+printf '{"consumer":"%s","mode":"%s","identical":["_includes/custom/head.html"],"stale":[],"missing":[],"unjustified":0}\n' "$consumer" "$mode"
