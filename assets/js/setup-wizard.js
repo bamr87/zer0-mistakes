@@ -1250,7 +1250,7 @@
       '  {%- when "cta" -%}',
       '    <div class="text-center">{% if s.cta %}{% include components/cta-button.html label=s.cta.label url=s.cta.url variant="light" size="lg" %}{% endif %}</div>',
       '  {%- when "latest_posts" -%}',
-      '    <div class="row g-4">{% for post in site.posts limit: s.limit | default: 3 %}<div class="col-md-4"><a class="card h-100 text-decoration-none" href="{{ post.url | relative_url }}"><div class="card-body"><p class="small text-body-secondary mb-1">{{ post.date | date: "%B %-d, %Y" }}</p><h3 class="h5 card-title">{{ post.title }}</h3><p class="card-text text-body-secondary mb-0">{{ post.description | default: post.excerpt | strip_html | truncate: 140 }}</p></div></a></div>{% endfor %}</div>',
+      '    <div class="row g-4">{% assign post_limit = s.limit | default: 3 %}{% for post in site.posts limit: post_limit %}<div class="col-md-4"><a class="card h-100 text-decoration-none" href="{{ post.url | relative_url }}"><div class="card-body"><p class="small text-body-secondary mb-1">{{ post.date | date: "%B %-d, %Y" }}</p><h3 class="h5 card-title">{{ post.title }}</h3><p class="card-text text-body-secondary mb-0">{{ post.description | default: post.excerpt | strip_html | truncate: 140 }}</p></div></a></div>{% endfor %}</div>',
       '  {%- when "quote" -%}',
       '    {% assign q = s.items | first %}<figure class="text-center mb-0"><blockquote class="blockquote fs-3"><p>“{{ q.quote }}”</p></blockquote>{% if q.author %}<figcaption class="blockquote-footer mt-2">{{ q.author }}</figcaption>{% endif %}</figure>',
       '  {%- else -%}',

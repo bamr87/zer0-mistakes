@@ -238,6 +238,7 @@ appearance_panel         : true
 ## Identity #####################################################################
 
 author:
+  key                    : "bamr87" # the _data/authors.yml entry bylines and E-E-A-T cards use by default
   name                   : *name # *name is a YAML reference pointing to the &anchor earlier
   avatar                 : "/assets/images/gravatar-small.png"
   email_hash             : &email_hash '71d7a4fc9712df49e13d606e620f89c7' # https://en.gravatar.com/site/check/{ site.email }

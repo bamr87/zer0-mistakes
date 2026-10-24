@@ -10,7 +10,7 @@
            (AI Engine Optimization) and E-E-A-T signals.
 
   Parameters:
-  - author_key (optional): Key from _data/authors.yml (default: "bamr87")
+  - author_key (optional): Key from _data/authors.yml (default: site.author.key, else the first author)
   - style (optional): "banner" | "card" (default: "banner")
 
   Usage:
@@ -23,8 +23,18 @@
   ===================================================================
 {% endcomment %}
 
-{% assign author_key = include.author_key | default: "bamr87" %}
-{% assign author = site.data.authors[author_key] %}
+{% comment %} The author comes from the include, else the site's configured author key,
+   else the `default` entry of _data/authors.yml, else its first entry. No person is
+   baked into the theme. {% endcomment %}
+{% assign author_key = include.author_key | default: site.author.key %}
+{% if author_key == nil and site.data.authors.default %}{% assign author_key = "default" %}{% endif %}
+{% if author_key %}
+  {% assign author = site.data.authors[author_key] %}
+{% else %}
+  {% assign first_author = site.data.authors | first %}
+  {% assign author_key = first_author[0] %}
+  {% assign author = first_author[1] %}
+{% endif %}
 {% assign eeat_style = include.style | default: "banner" %}
 
 {% comment %} Resolve avatar: full URL (e.g. GitHub) as-is, relative path prefixed,
