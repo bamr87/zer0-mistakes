@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-10-19
-  next_id: 55
+  next_id: 56
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1496,3 +1496,21 @@ tasks:
     links: { issue: 537, pr: 549, roadmap: null }
     created: 2026-10-18
     updated: 2026-10-18
+
+  - id: T-055
+    title: "AI chat panel title is an <h6> at document depth 2 (heading skip on every page that ships the chat)"
+    status: open
+    priority: P2
+    area: a11y
+    risk: low
+    effort: S
+    source: issue
+    route: theme-ui
+    summary: "Discovered during the #555 fix: `_includes/components/ai-chat.html` renders `<h6 id=\"aiChatTitle\">Zer0 Assistant</h6>` outside <main>, after h3-level chrome, so the whole-page outline on every page that ships the chat jumps h3 -> h6 (WCAG 1.3.1). Same size-picked-tag pattern as #436 / #555."
+    acceptance:
+      - "The chat title is `<h2 class=\"h6 ...\">` (or the level matching its container) and keeps `id=\"aiChatTitle\"` for aria-labelledby."
+      - "test/visual/core/heading-outline.spec.js covers the chat region the way CHROME_REGIONS covers the cookie dialog."
+      - "No visual change (snapshot diff empty)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-10-29
+    updated: 2026-10-29
