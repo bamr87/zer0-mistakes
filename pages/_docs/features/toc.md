@@ -103,7 +103,19 @@ The range is set where the TOC is included, with the `h_min` / `h_max` parameter
 {% raw %}{% include content/toc.html html=content h_min=1 h_max=3 %}{% endraw %}
 ```
 
-The include itself defaults to `h_min=1` and `h_max=6`; anything outside the range is skipped, as is any heading without an `id`.
+The include itself defaults to `h_min=1` and `h_max=6`; anything outside the range is skipped, as is any heading without an `id`, or with the `no_toc` class.
+
+### Scoping the TOC to the Body
+
+`sidebar-right.html` receives the whole rendered child layout, so a layout's own headings (an article's `<h1>` title, the "About the Author" aside) would otherwise land in the TOC. A layout opts out by wrapping its body in two HTML comments:
+
+```liquid
+{% raw %}<!-- zer0:toc-start -->
+{{ content }}
+<!-- zer0:toc-end -->{% endraw %}
+```
+
+When the markers are present, the TOC parses only the HTML between them and starts at `h2` (`h_min=2`), since the page title already heads the page. The `article` layout uses them; layouts without the markers, docs included, keep the `h_min=1` behaviour above. A heading that must keep its `id` but stay out of the TOC can take `class="no_toc"`, as the author-bio heading does.
 
 ## Styling
 
