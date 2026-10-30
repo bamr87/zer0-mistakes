@@ -129,8 +129,10 @@ skip_link_target: page-content
              lets the link move keyboard focus here, not just scroll (same reason
              as #main-content in root.html); its focus ring is suppressed in
              _sass/utilities/_focus.scss. {% endcomment %}
+        {% comment %} The TOC-scope sentinels (#552) have done their job in
+             sidebar-right.html above; they never reach the visitor. {% endcomment %}
         <div id="page-content" class="bd-content ps-lg-2" tabindex="-1">
-            {{ content }}
+            {{ content | remove: '<zer0-toc-start></zer0-toc-start>' | remove: '<zer0-toc-end></zer0-toc-end>' }}
 
             {%- comment -%}
               Optional Obsidian-style backlinks panel. Opt-in for the generic

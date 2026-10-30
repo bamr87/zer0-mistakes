@@ -8,9 +8,11 @@
  * title (every section nested under "Title ›") and ended with "About the
  * Author", as if theme chrome were a section of the post.
  *
- * The fix: article.html wraps its body in <!-- zer0:toc-start/end --> and the
- * TOC parses that slice from h2; the author-bio heading also carries no_toc.
- * Layouts without the markers (docs) keep the old behaviour, asserted below.
+ * The fix: article.html wraps its body in empty <zer0-toc-start>/<zer0-toc-end>
+ * sentinels and the TOC parses that slice from h2; the author-bio heading also
+ * carries no_toc. default.html strips the sentinels, so none reach the visitor
+ * (they are elements, not HTML comments, because of the #375 comment gate).
+ * Layouts without the sentinels (docs) keep the old behaviour, asserted below.
  *
  * Run: npm run test:smoke
  */
@@ -44,6 +46,14 @@ test.describe('TOC is scoped to the page body', { tag: '@critical' }, () => {
     expect(hrefs, 'the author bio is theme chrome, not a section (issue #552)').not.toContain('#about-the-author');
   });
 
+  test('the TOC-scope sentinels never reach the visitor', async ({ page, request }) => {
+    await open(page, ARTICLE);
+    const html = (await (await request.get(page.url())).body()).toString('utf8');
+    expect(html, 'default.html must strip <zer0-toc-start> after the TOC is built').not.toContain('<zer0-toc-start>');
+    expect(html, 'default.html must strip <zer0-toc-end> after the TOC is built').not.toContain('<zer0-toc-end>');
+    await expect(page.locator('zer0-toc-start, zer0-toc-end')).toHaveCount(0);
+  });
+
   test('the author bio keeps its id for aria-labelledby', async ({ page }) => {
     await open(page, ARTICLE);
     const bio = page.locator('aside[aria-labelledby="about-the-author"]');
@@ -52,7 +62,7 @@ test.describe('TOC is scoped to the page body', { tag: '@critical' }, () => {
   });
 
   test('every docs TOC link targets a heading on the page', async ({ page }) => {
-    // Docs layouts carry no zer0:toc markers, so their TOC is parsed exactly
+    // Docs layouts carry no zer0-toc sentinels, so their TOC is parsed exactly
     // as before. Pin that it still renders and still resolves.
     await open(page, DOCS);
     const hrefs = await tocHrefs(page);

@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-09-05T00:00:00.000Z
+lastmod: 2026-10-30T00:00:00.000Z
 title: Table of Contents with Scroll Spy
 description: Automatic table of contents built from a page's h1-h3 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
 keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
@@ -26,7 +26,7 @@ Automatic table of contents generation from page headings with active section hi
 
 ![A documentation page with the "On this page" table of contents in the right column, listing the page's headings; the current section is highlighted as you scroll](/assets/images/docs/features/docs-layout.png)
 
-The **On this page** panel on the right is the table of contents, built from the page's `h1`–`h3` headings.
+The **On this page** panel on the right is the table of contents, built from the page's `h1`–`h3` headings (`h2`–`h3` on layouts that [scope the TOC to the body](#scoping-the-toc-to-the-body), such as `article`).
 
 ## Overview
 
@@ -107,15 +107,15 @@ The include itself defaults to `h_min=1` and `h_max=6`; anything outside the ran
 
 ### Scoping the TOC to the Body
 
-`sidebar-right.html` receives the whole rendered child layout, so a layout's own headings (an article's `<h1>` title, the "About the Author" aside) would otherwise land in the TOC. A layout opts out by wrapping its body in two HTML comments:
+`sidebar-right.html` receives the whole rendered child layout, so a layout's own headings (an article's `<h1>` title, the "About the Author" aside) would otherwise land in the TOC. A layout opts out by wrapping its body in two empty sentinel elements:
 
 ```liquid
-{% raw %}<!-- zer0:toc-start -->
+{% raw %}<zer0-toc-start></zer0-toc-start>
 {{ content }}
-<!-- zer0:toc-end -->{% endraw %}
+<zer0-toc-end></zer0-toc-end>{% endraw %}
 ```
 
-When the markers are present, the TOC parses only the HTML between them and starts at `h2` (`h_min=2`), since the page title already heads the page. The `article` layout uses them; layouts without the markers, docs included, keep the `h_min=1` behaviour above. A heading that must keep its `id` but stay out of the TOC can take `class="no_toc"`, as the author-bio heading does.
+When the sentinels are present, the TOC parses only the HTML between them and starts at `h2` (`h_min=2`), since the page title already heads the page. `default.html` then removes them, so they never reach the visitor. They are elements rather than HTML comments because theme templates may not ship HTML comments (#375). The `article` layout uses them; layouts without the sentinels, docs included, keep the `h_min=1` behaviour above. A heading that must keep its `id` but stay out of the TOC can take `class="no_toc"`, as the author-bio heading does.
 
 ## Styling
 

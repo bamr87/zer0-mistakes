@@ -2,7 +2,7 @@
 
 **Bug.** `_includes/navigation/sidebar-right.html` is included from `default.html`, where `content` is the whole rendered child layout. On every `article` page the "On this page" TOC therefore parsed the post's `<h1 id="page-title">` (so every section nested under "Title ›") and the author-bio aside's `<h2 id="about-the-author">` (listed last, as if it were a section of the post).
 
-**Fix.** `article.html` wraps its body in `<!-- zer0:toc-start -->` / `<!-- zer0:toc-end -->`. When the markers are present, `sidebar-right.html` parses only that slice, starting at `h2`. As a fallback, the author-bio heading carries `no_toc` and keeps its `id` for `aria-labelledby`. Layouts without the markers, docs included, are unchanged.
+**Fix.** `article.html` wraps its body in empty `<zer0-toc-start></zer0-toc-start>` / `<zer0-toc-end></zer0-toc-end>` sentinels. When they are present, `sidebar-right.html` parses only that slice, starting at `h2`, and `default.html` then strips them, so they never reach the visitor. They are elements, not HTML comments, because the theme's #375 gate forbids shipping HTML comments. As a fallback, the author-bio heading carries `no_toc` and keeps its `id` for `aria-labelledby`. Layouts without the sentinels, docs included, are unchanged.
 
 **What the images show.**
 - `01-before-after-posts-…png`: the demo post at 1280px and 1440px. BEFORE, the TOC starts with the post title and ends with "About the Author". AFTER, it runs from "Start With Observable Signals" to "What Good Looks Like", the five body `h2`s.

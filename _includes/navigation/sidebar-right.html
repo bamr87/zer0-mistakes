@@ -59,14 +59,16 @@
 
         `content` here is the whole rendered child layout. A layout that adds
         headings around its body (article: the <h1> title, the author bio)
-        wraps the body in <!-- zer0:toc-start --> / <!-- zer0:toc-end -->; the
-        TOC then parses only that slice, from h2, since the page title already
-        heads the page (#552). Layouts without the markers are unchanged.
+        wraps the body in <zer0-toc-start></zer0-toc-start> and
+        <zer0-toc-end></zer0-toc-end>; the TOC then parses only that slice,
+        from h2, since the page title already heads the page (#552).
+        default.html strips the sentinels from the delivered page. Layouts
+        without them are unchanged.
       {% endcomment %}
       {% assign toc_src = content %}
       {% assign toc_h_min = 1 %}
-      {% if content contains '<!-- zer0:toc-start -->' %}
-        {% assign toc_src = content | split: '<!-- zer0:toc-start -->' | last | split: '<!-- zer0:toc-end -->' | first %}
+      {% if content contains '<zer0-toc-start></zer0-toc-start>' %}
+        {% assign toc_src = content | split: '<zer0-toc-start></zer0-toc-start>' | last | split: '<zer0-toc-end></zer0-toc-end>' | first %}
         {% assign toc_h_min = 2 %}
       {% endif %}
       {% if toc_src contains '<h2' or toc_src contains '<h3' or toc_src contains '<h4' %}

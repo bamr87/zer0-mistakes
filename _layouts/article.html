@@ -389,12 +389,14 @@ layout: default
   {% comment %} ================================ {% endcomment %}
   {% comment %} ARTICLE CONTENT                  {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {% comment %} The zer0:toc markers scope the right-sidebar TOC to the body, so the
-     page title and the author-bio aside stay out of it (#552). {% endcomment %}
+  {% comment %} The zer0-toc-start/end sentinels scope the right-sidebar TOC to the
+     body, so the page title and the author-bio aside stay out of it (#552).
+     default.html strips them from the delivered page. They are empty elements,
+     not HTML comments, so they pass the #375 comment gate. {% endcomment %}
   <div class="post-content e-content {% if post_type == 'featured' %}fs-5{% endif %}" itemprop="articleBody">
-    <!-- zer0:toc-start -->
+    <zer0-toc-start></zer0-toc-start>
     {{ content }}
-    <!-- zer0:toc-end -->
+    <zer0-toc-end></zer0-toc-end>
   </div>
   
   {% comment %} ================================ {% endcomment %}

@@ -121,15 +121,15 @@ L'include lui-même utilise par défaut `h_min=1` et `h_max=6` ; tout ce qui se 
 
 ### Limiter la table des matières au corps
 
-`sidebar-right.html` reçoit toute la mise en page enfant rendue, si bien que les titres propres à une mise en page (le `<h1>` d'un article, l'encadré « À propos de l'auteur ») se retrouveraient sinon dans la table des matières. Une mise en page s'en affranchit en entourant son corps de deux commentaires HTML :
+`sidebar-right.html` reçoit toute la mise en page enfant rendue, si bien que les titres propres à une mise en page (le `<h1>` d'un article, l'encadré « À propos de l'auteur ») se retrouveraient sinon dans la table des matières. Une mise en page s'en affranchit en entourant son corps de deux éléments sentinelles vides :
 
 ```liquid
-{% raw %}<!-- zer0:toc-start -->
+{% raw %}<zer0-toc-start></zer0-toc-start>
 {{ content }}
-<!-- zer0:toc-end -->{% endraw %}
+<zer0-toc-end></zer0-toc-end>{% endraw %}
 ```
 
-Quand les marqueurs sont présents, la table des matières n'analyse que le HTML compris entre eux et commence au `h2` (`h_min=2`), puisque le titre de la page est déjà en tête. La mise en page `article` les utilise ; les mises en page sans marqueurs, dont la documentation, gardent le comportement `h_min=1` ci-dessus. Un titre qui doit garder son `id` sans figurer dans la table des matières peut prendre `class="no_toc"`, comme le titre de la biographie de l'auteur.
+Quand les sentinelles sont présentes, la table des matières n'analyse que le HTML compris entre elles et commence au `h2` (`h_min=2`), puisque le titre de la page est déjà en tête. `default.html` les retire ensuite, si bien qu'elles n'atteignent jamais le visiteur. Ce sont des éléments plutôt que des commentaires HTML, car les modèles du thème ne doivent pas livrer de commentaires HTML (#375). La mise en page `article` les utilise ; les mises en page sans sentinelles, dont la documentation, gardent le comportement `h_min=1` ci-dessus. Un titre qui doit garder son `id` sans figurer dans la table des matières peut prendre `class="no_toc"`, comme le titre de la biographie de l'auteur.
 
 ## Mise en forme
 
