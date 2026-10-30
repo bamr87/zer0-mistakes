@@ -47,7 +47,19 @@ permissions:
   contents: read
 
 concurrency:
-  group: issue-autopilot
+  # The `issues: [labeled]` trigger fires for EVERY label applied to any issue,
+  # including the area:*/priority:*/autopilot:* labels this pipeline applies
+  # itself during triage. `gate`'s job-level `if` skips those without booting a
+  # runner, but a WORKFLOW-level group still admits the run: with one pass
+  # running and one queued, each further no-op label event CANCELLED the queued
+  # one. That accounted for 13 of the 37 cancelled runs on `main` over five
+  # weeks — red-adjacent noise in every CI-health metric, from runs that never
+  # intended to do anything.
+  #
+  # Give every non-actionable label event its own group. It still skips, but it
+  # no longer queues behind — or cancels — a real pass, and real passes
+  # (schedule, dispatch, `autopilot:go`) stay serialized under the shared name.
+  group: issue-autopilot${{ (github.event_name == 'issues' && github.event.label.name != 'autopilot:go') && format('-noop-{0}', github.run_id) || '' }}
   cancel-in-progress: false
 
 jobs:
