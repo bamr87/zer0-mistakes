@@ -97,9 +97,7 @@ jobs:
           cache: npm
 
       - name: Install Playwright dependencies
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
+        uses: ./.github/actions/setup-playwright
 
       - name: Playwright full smoke tier
         env:

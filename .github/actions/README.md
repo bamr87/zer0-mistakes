@@ -8,10 +8,12 @@ Composite actions encapsulate common workflow steps into reusable components, re
 
 ```
 .github/actions/
-├── configure-git/     # Git identity configuration
-├── quality-checks/    # Code quality validation
-├── setup-ruby/        # Ruby environment setup
-└── test-suite/        # Test execution
+├── configure-git/      # Git identity configuration
+├── playwright-tests/   # Run a Playwright tier
+├── quality-checks/     # Code quality validation
+├── setup-playwright/   # npm deps + a CACHED chromium
+├── setup-ruby/         # Ruby environment setup
+└── test-suite/         # Test execution
 ```
 
 ## Actions
@@ -114,6 +116,30 @@ Runs code quality checks including linting and formatting validation.
 - Project structure validation (required files/directories)
 
 **Used by:** `ci.yml`
+
+---
+
+### 5. `setup-playwright`
+
+Installs npm dependencies and a **cached** chromium build. Prefer this over a bare `npx playwright install --with-deps chromium`: the browser is ~170 MB and nothing was caching it, so every Playwright run in the repo re-downloaded it.
+
+**Usage:**
+```yaml
+- uses: ./.github/actions/setup-playwright
+  with:
+    npm-install: 'true'   # Default: 'true' — set false if the caller ran `npm ci`
+    browser: 'chromium'   # Default: 'chromium'
+```
+
+**Inputs:**
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `npm-install` | No | `'true'` | Run `npm ci` first |
+| `browser` | No | `'chromium'` | Playwright browser to install |
+
+**How the cache works:** `~/.cache/ms-playwright` keyed on `runner.os` + browser + `hashFiles('package-lock.json')`, so a Playwright version bump fetches the matching browser rather than reusing a stale one. On a cache hit the browser download is skipped but `playwright install-deps` still runs — the apt system libraries live outside the cached directory.
+
+**Used by:** `ci.yml`, `nightly-extended.yml`, `ui-audit.yml`, `playwright-tests`
 
 ---
 
