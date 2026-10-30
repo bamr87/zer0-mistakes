@@ -289,6 +289,14 @@ posthog:
                                   # `google_analytics_require_consent` is set.
     geoip_disable        : false  # true = stop PostHog resolving IP → location on every event
 
+# Cookie consent banner (components/cookie-consent.html) ######################
+# The banner, its "Manage Cookies" modal and the footer "Cookie Preferences"
+# button render only when something above needs consent: google_analytics,
+# google_tag_manager, or posthog.enabled. A site with no tracker shows none.
+cookie_consent:
+  # enabled              : true   # unset = auto; true = always render (trackers added via
+                                  # _includes/custom/ hooks); false = never render
+
 # Page Views - Per-page view counter ##############################################
 # Tracks a view for the page being read and displays the count in the article
 # meta row (components/page-views.html; badge markup, behaviour in

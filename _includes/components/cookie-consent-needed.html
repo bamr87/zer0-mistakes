@@ -1,0 +1,37 @@
+{%- comment -%}
+  ===================================================================
+  COOKIE CONSENT GATE — does this site need a consent banner?
+  ===================================================================
+
+  Path: _includes/components/cookie-consent-needed.html
+  Decides whether the cookie-consent banner, its "Manage" modal and the
+  footer "Cookie Preferences" button render. Asking consent for cookies a
+  site never sets is misleading, so the banner appears only when the build
+  configures something that needs consent (#566):
+
+  - `site.google_analytics` is set (analytics/google-analytics.html)
+  - `site.google_tag_manager` is set (analytics/google-tag-manager-head.html)
+  - `site.posthog.enabled` is true (analytics/posthog.html)
+
+  `cookie_consent.enabled` overrides the detection either way: `true` forces
+  the banner on (for trackers loaded through custom/ hooks the theme cannot
+  see), `false` suppresses it. Unset = auto.
+
+  An empty string counts as unset: the setup wizard writes
+  `google_analytics: ''` for a blank field, and '' is truthy in Liquid.
+
+  Every input is `site.*`, so callers inside include_cached stay valid.
+
+  Output is `true` or nothing. Capture it (brace-free so this comment does
+  not self-execute):
+    capture needs_consent -> include components/cookie-consent-needed.html
+    if needs_consent == "true" -> render the banner / button
+  ===================================================================
+{%- endcomment -%}
+{%- assign _consent = false -%}
+{%- if site.google_analytics and site.google_analytics != "" -%}{%- assign _consent = true -%}{%- endif -%}
+{%- if site.google_tag_manager and site.google_tag_manager != "" -%}{%- assign _consent = true -%}{%- endif -%}
+{%- if site.posthog.enabled == true -%}{%- assign _consent = true -%}{%- endif -%}
+{%- if site.cookie_consent.enabled == true -%}{%- assign _consent = true -%}{%- endif -%}
+{%- if site.cookie_consent.enabled == false -%}{%- assign _consent = false -%}{%- endif -%}
+{%- if _consent -%}true{%- endif -%}

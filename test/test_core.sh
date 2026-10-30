@@ -1280,6 +1280,37 @@ test_consumer_404_gates() {
     fi
 }
 
+test_cookie_consent_gate() {
+    log_info "Testing the cookie-consent banner renders only when a tracker needs consent (issue #566)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the cookie-consent gate check"
+        return 0
+    fi
+
+    # Builds throwaway sites through the real root layout, so it needs the
+    # bundle (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the cookie-consent gate check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_cookie_consent_gate.rb; then
+        log_success "cookie-consent banner, modal and footer button follow the tracker config"
+        return 0
+    else
+        log_error "cookie-consent gate check failed (see above)"
+        return 1
+    fi
+}
+
 test_content_liquid_is_raw_protected() {
     log_info "Testing Liquid shown as code in content is raw-protected..."
 
@@ -1917,6 +1948,7 @@ run_core_tests() {
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
+    run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     

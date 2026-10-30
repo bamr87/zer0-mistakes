@@ -445,6 +445,8 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Changed
 
+- **The cookie-consent banner renders only when the site has something that needs consent** ([#566](https://github.com/bamr87/zer0-mistakes/issues/566)). The banner, its "Manage Cookies" modal and the footer "Cookie Preferences" button used to render on every page, so a site with no tracker asked first-time visitors to consent to analytics cookies it never sets. They now render only when `google_analytics`, `google_tag_manager` or `posthog.enabled` is configured (blank ids count as unset). The new `cookie_consent.enabled` key overrides this: `true` forces the banner on (for trackers added through `_includes/custom/` hooks) and `false` turns it off. The setup wizard no longer writes `enabled: true`. Regression test: `test/test_cookie_consent_gate.rb` (run by `test_core.sh`). (evidence: [`test/visual/evidence/cookie-consent-gate/`](test/visual/evidence/cookie-consent-gate/README.md) — no-tracker site: banner, modal and footer button 1 → 0)
+
 - **Navigation start-up no longer runs as one long task.**
   `assets/js/modules/navigation/index.js` now wires sidebar state, keyboard
   shortcuts, focus management and the navbar first, then yields to the main

@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/cookie-consent-gate/`](test/visual/evidence/cookie-consent-gate/README.md) — no-tracker site: banner, modal and footer button 1 → 0)
