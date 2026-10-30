@@ -17,11 +17,18 @@
   --zer0-layer-backdrop: 1040;
 
   // Floating action buttons (stack bottom-to-top) --------------------------
-  --zer0-layer-fab-back-to-top: 1050;
-  --zer0-layer-fab-feedback: 1051;   // page-feedback FAB (bottom-left)
-  --zer0-layer-fab-chat: 1052;
-  --zer0-layer-fab-toc: 1055;
-  --zer0-layer-fab-local-graph: 1060;
+  // The whole band sits between the header and the backdrop, so an open
+  // overlay always covers every FAB: header 1030 < FABs < backdrop 1040 <
+  // offcanvas 1045 < modal 1055. FABs never overlap the fixed header, so
+  // nothing else had to move. Putting the band above the overlays (the old
+  // 1050-1060) left the TOC and local-graph FABs painted over — and still
+  // hit-testable on top of — the open search modal, nav menu and TOC panel
+  // (issue #572). Keep every FAB in 1031-1039.
+  --zer0-layer-fab-back-to-top: 1031;
+  --zer0-layer-fab-feedback: 1032;   // page-feedback FAB (bottom-left)
+  --zer0-layer-fab-chat: 1033;
+  --zer0-layer-fab-toc: 1034;
+  --zer0-layer-fab-local-graph: 1035;
 
   // Overlay surfaces -------------------------------------------------------
   --zer0-layer-offcanvas: 1045;
