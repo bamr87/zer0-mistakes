@@ -120,7 +120,7 @@ Configuration: Uses site.posthog settings from _config.yml
               Analytics Cookies
             </h3>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="analyticsCookies" checked>
+              <input class="form-check-input" type="checkbox" id="analyticsCookies">
               <label class="form-check-label" for="analyticsCookies">Enable</label>
             </div>
           </div>
@@ -319,10 +319,15 @@ Configuration: Uses site.posthog settings from _config.yml
       setTimeout(finish, 500);
     }
 
-    // Update modal UI with current preferences
+    // Update modal UI with current preferences.
+    // Null-safe: this now runs on every first paint (issue #553), including on
+    // consumers that override the include and ship the banner without the
+    // preferences modal.
     function updateModalUI(consent) {
-      document.getElementById('analyticsCookies').checked = consent.analytics;
-      document.getElementById('marketingCookies').checked = consent.marketing;
+      const analytics = document.getElementById('analyticsCookies');
+      const marketing = document.getElementById('marketingCookies');
+      if (analytics) analytics.checked = !!consent.analytics;
+      if (marketing) marketing.checked = !!consent.marketing;
     }
 
     // Get consent from modal UI
@@ -340,9 +345,14 @@ Configuration: Uses site.posthog settings from _config.yml
       const banner = document.getElementById('cookieConsent');
       const existingConsent = getConsentState();
 
+      // The switches must reflect the state that is actually in force, which on
+      // a first visit is `defaultConsent` (analytics/marketing OFF). Syncing
+      // only for returning visitors is what let the markup's own default win
+      // and recorded consent the visitor never gave (issue #553).
+      updateModalUI(existingConsent || defaultConsent);
+
       if (existingConsent) {
         applyConsent(existingConsent);
-        updateModalUI(existingConsent);
         // Banner already starts hidden via the `hidden` attribute — nothing to do.
       } else if (banner) {
         showConsentBanner();
