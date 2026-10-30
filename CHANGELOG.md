@@ -927,6 +927,26 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Mobile TOC FAB, sidebar toggle and local-graph FAB reach consumer layouts**
+  ([#570](https://github.com/bamr87/zer0-mistakes/issues/570), follow-up to
+  [#373](https://github.com/bamr87/zer0-mistakes/issues/373), ZER0-008).
+  `navigation/sidebar-config.html` decided whether a page renders the
+  `#bdSidebar` / `#tocContents` offcanvases from a hard-coded list of the
+  theme's **own** layout names. That is correct for theme layouts and fails
+  closed for every consumer layout: a remote-theme site whose `quest` layout
+  declares `layout: default` got `#tocContents` and no `#tocFab`, so below `lg`
+  its table of contents was unreachable (about 216 pages on it-journey.dev),
+  and the header sidebar toggle and local-graph FAB were suppressed too. The
+  gate now asks the layout chain — `_layouts/default.html` declares
+  `renders_sidebar_offcanvas: true` and Jekyll's layout front-matter merge makes
+  it visible as `layout.renders_sidebar_offcanvas` at any depth, the same
+  mechanism `core/header.html` already uses for `skip_link_target`. #373's
+  fail-safe is intact: a layout that never reaches `default` declares nothing
+  and still gets no toggle and no dangling `aria-controls`. Consumer workarounds
+  that key on `sidebar_offcanvas_rendered == false` go inert on their own.
+  `test/test_core.sh :: test_sidebar_offcanvas_layout_gate` now pins the
+  key-based gate instead of the list.
+
 - **`require_consent` now means no analytics until the visitor accepts.** With `posthog.privacy.require_consent: true`, PostHog used to load opted-out on a first visit: the browser still fetched `array.js`, `config.js` and `surveys.js` and stored `ph_<key>_posthog` before any banner choice, and Google Analytics ignored consent entirely. `_includes/analytics/posthog.html` now boots PostHog only once analytics consent exists, and `_includes/analytics/google-analytics.html` follows the same flag (override per site with `google_analytics_require_consent`). Both load as soon as the visitor clicks Accept All or saves preferences with Analytics on, through the banner's `cookieConsentChanged` event, so no reload is needed. Reject All keeps them off. Sites without the flag load exactly as before. Regression test: `test/visual/features/analytics-consent.spec.js`.
 
 - **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).

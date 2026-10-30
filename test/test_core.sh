@@ -1733,7 +1733,7 @@ test_navbar_attribute_whitespace() {
 }
 
 test_sidebar_offcanvas_layout_gate() {
-    log_info "Testing sidebar offcanvas layout gate (issue #373)..."
+    log_info "Testing sidebar offcanvas layout gate (issues #373, #570)..."
 
     cd "$PROJECT_ROOT"
 
@@ -1746,20 +1746,44 @@ test_sidebar_offcanvas_layout_gate() {
 import re, sys, pathlib
 
 layouts_dir = pathlib.Path("_layouts")
-cfg = pathlib.Path("_includes/navigation/sidebar-config.html").read_text(encoding="utf-8")
+cfg_path = pathlib.Path("_includes/navigation/sidebar-config.html")
+cfg = cfg_path.read_text(encoding="utf-8")
 
-m = re.search(r'_sidebar_offcanvas_layouts\s*=\s*"([^"]*)"', cfg)
-if not m:
-    print("::error::_sidebar_offcanvas_layouts not found in sidebar-config.html")
-    sys.exit(1)
-declared = {x.strip() for x in m.group(1).split(",") if x.strip()}
+KEY = "renders_sidebar_offcanvas"
+errors = []
 
-# parent[layout] = its `layout:` front-matter value (None when standalone)
-parent = {}
+# ---------------------------------------------------------------------------
+# 1. The gate asks the LAYOUT CHAIN, not a hard-coded list of theme layouts.
+#    The list fails closed for every consumer layout that extends default
+#    (issue #570): #tocContents rendered, #tocFab did not.
+# ---------------------------------------------------------------------------
+if "_sidebar_offcanvas_layouts" in cfg:
+    errors.append(
+        "::error file=%s::the hard-coded _sidebar_offcanvas_layouts list is back. It only "
+        "knows the theme's own layout names, so a consumer layout that extends default gets "
+        "the offcanvas and no way to open it (issue #570). Gate on "
+        "`layout.%s` instead." % (cfg_path, KEY)
+    )
+if not re.search(r"\{%-?\s*if\s+layout\." + KEY + r"\s*-?%\}", cfg):
+    errors.append(
+        "::error file=%s::expected the gate `{%%- if layout.%s -%%}`; "
+        "sidebar_offcanvas_rendered must come from the merged layout front matter." % (cfg_path, KEY)
+    )
+
+# ---------------------------------------------------------------------------
+# 2. Front matter of every layout: its `layout:` parent and whether it declares
+#    the key. Jekyll deep-merges layout data down the chain, so declaring it on
+#    default.html alone covers every descendant, consumer layouts included.
+# ---------------------------------------------------------------------------
+parent, declares = {}, set()
 for f in sorted(layouts_dir.glob("*.html")):
-    head = f.read_text(encoding="utf-8", errors="replace")[:600]
-    pm = re.search(r'^layout:\s*(\S+)\s*$', head, re.M)
+    head = f.read_text(encoding="utf-8", errors="replace")[:900]
+    fm = head.split("---", 2)[1] if head.startswith("---") else head
+    pm = re.search(r'^layout:\s*(\S+)\s*$', fm, re.M)
     parent[f.stem] = pm.group(1) if pm else None
+    km = re.search(r'^' + KEY + r':\s*(\S+)\s*$', fm, re.M)
+    if km and km.group(1).lower() == "true":
+        declares.add(f.stem)
 
 def reaches_default(name, seen=None):
     """True when name is `default` or inherits from it (cycle-safe)."""
@@ -1772,34 +1796,40 @@ def reaches_default(name, seen=None):
     p = parent[name]
     return bool(p) and reaches_default(p, seen)
 
-actual = {n for n in parent if reaches_default(n)}
+# default.html is the layout that emits #bdSidebar / #tocContents, so it is the
+# one that must declare the key.
+if "default" not in declares:
+    errors.append(
+        "::error file=_layouts/default.html::default.html must declare `%s: true` in its front "
+        "matter — it is the layout that emits #bdSidebar/#tocContents, and the merge is what "
+        "lets consumer layouts inherit the toggles (issue #570)." % KEY
+    )
 
-missing = sorted(actual - declared)   # renders the offcanvas, gate says no
-extra   = sorted(declared - actual)   # gate says yes, renders nothing
+# Nothing outside the default chain may declare it: that would re-create #373's
+# dead toggle pointing at an offcanvas the layout never renders.
+stray = sorted(n for n in declares if not reaches_default(n))
+if stray:
+    errors.append(
+        "::error::these layouts declare `%s` but their `layout:` chain never reaches "
+        "default.html, so they render no offcanvas and their toggles would point at nothing "
+        "(issue #373): %s" % (KEY, ", ".join(stray))
+    )
 
-if missing or extra:
-    if missing:
-        print("::error file=_includes/navigation/sidebar-config.html::these layouts reach "
-              "default.html (so they DO render #bdSidebar/#tocContents) but are missing from "
-              "_sidebar_offcanvas_layouts: " + ", ".join(missing) +
-              ". Their sidebar toggle and TOC FAB will not render.")
-    if extra:
-        print("::error file=_includes/navigation/sidebar-config.html::these layouts are listed "
-              "in _sidebar_offcanvas_layouts but do NOT reach default.html, so they render no "
-              "offcanvas: " + ", ".join(extra) +
-              ". Their toggles would point at nothing (issue #373).")
+if errors:
+    for e in errors:
+        print(e)
     sys.exit(1)
 
-print("OK - _sidebar_offcanvas_layouts matches the layout graph: " + ", ".join(sorted(actual)))
+inherit = sorted(n for n in parent if reaches_default(n))
+print("OK - layout.%s gates the offcanvas toggles; declared by %s, inherited by %s"
+      % (KEY, ", ".join(sorted(declares)), ", ".join(inherit)))
 PYEOF
     then
-        log_success "Sidebar offcanvas layout gate matches the layout inheritance graph"
+        log_success "Sidebar offcanvas gate is driven by the layout chain, not a layout-name list"
     else
-        log_error "Sidebar offcanvas layout gate has drifted from _layouts/ (issue #373)"
+        log_error "Sidebar offcanvas layout gate is wrong (issues #373, #570)"
         return 1
     fi
-
-    return 0
 }
 
 test_design_token_parity() {
