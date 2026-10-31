@@ -97,7 +97,7 @@ defaults:
 
 ### Heading Levels
 
-The range is set where the TOC is included, with the `h_min` / `h_max` parameters. `_includes/navigation/sidebar-right.html` renders the right-hand panel with `h_min=1 h_max=3`, so the page title and its h2/h3 sections appear:
+The range is set where the TOC is included, with the `h_min` / `h_max` parameters. `_includes/navigation/sidebar-right.html` renders the right-hand panel with `h_min=1 h_max=3`, so the page title and its h2/h3 sections appear (layouts that [scope the TOC to the body](#scoping-the-toc-to-the-body) start at `h2` instead):
 
 ```liquid
 {% raw %}{% include content/toc.html html=content h_min=1 h_max=3 %}{% endraw %}
@@ -115,7 +115,7 @@ The include itself defaults to `h_min=1` and `h_max=6`; anything outside the ran
 <zer0-toc-end></zer0-toc-end>{% endraw %}
 ```
 
-When the sentinels are present, the TOC parses only the HTML between them and starts at `h2` (`h_min=2`), since the page title already heads the page. `default.html` then removes them, so they never reach the visitor. They are elements rather than HTML comments because theme templates may not ship HTML comments (#375). The `article` layout uses them; layouts without the sentinels, docs included, keep the `h_min=1` behaviour above. A heading that must keep its `id` but stay out of the TOC can take `class="no_toc"`, as the author-bio heading does.
+When the sentinels are present, the TOC parses only the HTML between them and starts at `h2` (`h_min=2`), since the page title already heads the page. `default.html` then removes them, so they never reach the visitor. They are elements rather than HTML comments because theme templates may not ship HTML comments, which ship to production in every rendered page ([#375](https://github.com/bamr87/zer0-mistakes/issues/375)). The `article` layout uses them; layouts without the sentinels, docs included, keep the `h_min=1` behaviour above. A heading that must keep its `id` but stay out of the TOC can take `class="no_toc"`, as the author-bio heading does.
 
 ## Styling
 
