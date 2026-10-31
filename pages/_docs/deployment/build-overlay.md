@@ -1,7 +1,7 @@
 ---
 lastmod: 2026-10-30T00:00:00.000Z
 title: Safe-Mode Build Overlay (Building Outside GitHub Pages)
-description: The recipe for building a Zer0-Mistakes remote-theme site in your own CI — start from your site, copy in only what remote_theme delivers, strip plugins, and run a strict build.
+description: Build a Zer0-Mistakes remote-theme site in your own CI the way GitHub Pages does — start from your site, copy in only what remote_theme delivers.
 preview: /images/previews/safe-mode-build-overlay-building-outside-github-pa.png
 layout: default
 categories:
@@ -19,6 +19,7 @@ keywords:
     - strip _plugins
     - custom CI jekyll
     - strict front matter
+    - remote_theme
 permalink: /docs/deployment/build-overlay/
 difficulty: intermediate
 estimated_reading_time: 8 minutes
@@ -135,6 +136,8 @@ must not exist (unless your own site has those pages). They come from files in t
 your site ships its own; the theme's `_data/` is never merged into a Pages build.
 - **Run a link checker** over `_site` and treat theme-injected 404s as build
   failures, so a regression surfaces in CI rather than for a visitor.
+
+Automate the theme-repo route checks in CI:
 
 ```bash
 for p in AGENTS features fr; do test ! -e "_site/$p" || { echo "leaked: /$p/"; exit 1; }; done
