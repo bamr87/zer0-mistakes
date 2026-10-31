@@ -11,6 +11,29 @@
 # =============================================================================
 version: 2
 updates:
+  # Bundler is listed ONLY to carry the ignore below. Version updates stay off
+  # (open-pull-requests-limit: 0) so the scope note above still holds — gems are
+  # updated by update-dependencies.yml. Security updates are unaffected by that
+  # limit and keep running.
+  #
+  # rubyzip: GHSA advisory wants >= 3.4.0, but `github-pages (232)` requires
+  # `rubyzip (>= 1.3.0, < 3.0)` through `jekyll-remote-theme (0.4.3)`, so
+  # Dependabot cannot resolve it and ends the whole update run with
+  # "Dependabot encountered an error" — a red run on `main` every time the
+  # advisory is re-checked (2026-09-26, 10-03, 10-07, 10-27). The advisory stays
+  # visible in the Security tab; this only stops the unresolvable retry.
+  # Remove this entry when github-pages ships a jekyll-remote-theme that allows
+  # rubyzip 3.x. rubyzip is build-time only (theme fetch), never served.
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: rubyzip
+        versions: [">= 3.0"]
+
   - package-ecosystem: github-actions
     # Scans both .github/workflows/ and .github/actions/ (composite actions).
     directory: /

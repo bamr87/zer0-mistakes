@@ -3,6 +3,9 @@
 # Version: 1.29.0
 # Last Updated: 2026-10-21
 
+# PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
+prd: docs/architecture/prd-requirements.md
+
 features:
   # ============================================================================
   # CORE INFRASTRUCTURE
@@ -12,6 +15,7 @@ features:
     title: "Bootstrap 5.3.3 Theme Integration"
     description: "Professional Jekyll theme with Bootstrap 5.3.3 CDN integration, responsive design, and custom styling"
     implemented: true
+    prd: ["Feature 3"]
     version: "0.1.0"
     link: "/"
     docs: "/docs/bootstrap/"
@@ -41,6 +45,7 @@ features:
     title: "Docker-First Development Environment"
     description: "Universal cross-platform development with Docker Compose. Supports macOS (Intel/Apple Silicon), Linux, and Windows WSL with zero local dependencies"
     implemented: true
+    prd: ["Feature 2"]
     version: "0.1.0"
     link: "/"
     docs: "/docs/docker/"
@@ -68,6 +73,7 @@ features:
     title: "Modular AI-Powered Installer"
     description: "Self-healing installer rebuilt as a modular CLI dispatcher with declarative profiles, deploy plugins (Docker, GitHub Pages, custom), AI agent integration, and a cross-platform test matrix. Replaces the monolithic install.sh while preserving the one-line install UX"
     implemented: true
+    prd: ["Feature 1"]
     version: "1.0.0"
     link: "/"
     docs: "/docs/installation/"
@@ -108,6 +114,7 @@ features:
     title: "AI Preview Image Generator"
     description: "Claude-orchestrated preview-image engine: Claude analyzes each article into an art brief and vision-reviews the render (one corrective regeneration), while OpenAI gpt-image-2 / DALL-E (default), xAI, Stability AI, Google Gemini, or a deterministic local template renders. Per-author styles, batch regeneration"
     implemented: true
+    prd: [TBD]
     version: "1.27.0"
     link: "/docs/features/preview-image-generator/"
     docs: "/docs/features/preview-image-generator/"
@@ -166,6 +173,7 @@ features:
     title: "AI Agent Integration (Copilot + AGENTS.md)"
     description: "Comprehensive AI development assistance with the cross-tool AGENTS.md entry point, file-scoped instruction files (layouts, includes, scripts, sass, obsidian, install, features, version-control, testing, documentation), reusable prompts, and Cursor slash-commands"
     implemented: true
+    prd: ["Feature 7"]
     version: "1.6.0"
     link: "https://github.com/bamr87/zer0-mistakes/blob/main/AGENTS.md"
     docs: "/docs/features/copilot-integration/"
@@ -214,6 +222,7 @@ features:
     title: "PostHog Privacy-First Analytics"
     description: "GDPR/CCPA compliant analytics with PostHog integration. Environment-aware loading with granular user consent management"
     implemented: true
+    prd: ["Feature 4"]
     version: "0.6.0"
     link: "/"
     docs: "/docs/features/posthog-analytics/"
@@ -246,6 +255,7 @@ features:
     title: "Cookie Consent Management"
     description: "GDPR/CCPA compliant cookie consent system with granular permissions, 365-day persistence, and Bootstrap modal preferences"
     implemented: true
+    prd: [TBD]
     version: "0.6.0"
     link: "/"
     docs: "/docs/features/cookie-consent/"
@@ -278,6 +288,7 @@ features:
     title: "Enhanced Sidebar Navigation System"
     description: "Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures. 70% reduction in scroll event overhead"
     implemented: true
+    prd: [TBD]
     version: "0.14.0"
     link: "/"
     docs: "/docs/features/sidebar-navigation/"
@@ -319,6 +330,7 @@ features:
     title: "Keyboard Navigation System"
     description: "Comprehensive keyboard shortcuts for power users. Navigate sections, toggle sidebars, and access features without mouse"
     implemented: true
+    prd: [TBD]
     version: "0.14.0"
     link: "/"
     docs: "/docs/features/keyboard-navigation/"
@@ -353,6 +365,7 @@ features:
     title: "Mobile TOC Floating Action Button"
     description: "Redesigned mobile table of contents access with FAB pattern. Bottom-right positioned 56x56px circular button with proper z-index stacking"
     implemented: true
+    prd: [TBD]
     version: "0.14.0"
     link: "/"
     docs: "/docs/features/mobile-toc/"
@@ -380,6 +393,7 @@ features:
     title: "Skip-to-Content Accessibility Link"
     description: "WCAG 2.1 Level AA compliant skip link. Visually hidden until Tab focus, direct jump to main content bypassing navigation"
     implemented: true
+    prd: [TBD]
     version: "0.14.0"
     link: "/"
     docs: "/docs/features/skip-to-content/"
@@ -405,6 +419,7 @@ features:
     title: "Jupyter Notebook Integration"
     description: "Full Jupyter notebook support with GitHub Pages compatibility. Automated nbconvert conversion, rich content rendering, and responsive design"
     implemented: true
+    prd: [TBD]
     version: "0.13.0"
     link: "/"
     docs: "/docs/features/jupyter-notebooks/"
@@ -441,6 +456,7 @@ features:
     title: "Mermaid Diagram Support"
     description: "Client-side Mermaid.js diagrams for 10+ diagram types, rendered as accessible figures: a zoom / fullscreen / copy-source / SVG-export toolbar, accTitle captions, an error card that keeps the source visible, and colours derived from the live design tokens so diagrams follow the colour mode and skin. GitHub Pages compatible with no build plugins required"
     implemented: true
+    prd: ["Feature 8"]
     version: "1.30.0"
     link: "/docs/features/mermaid-diagrams/"
     docs: "/docs/features/mermaid-diagrams/"
@@ -475,6 +491,7 @@ features:
     title: "Jekyll Collections System"
     description: "Organized content collections for posts, docs, notebooks, about pages, and quickstart guides with custom permalinks and front matter defaults"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/jekyll/collections/"
@@ -509,6 +526,7 @@ features:
     title: "Automated Release Management"
     description: "Semantic versioning with automated commit analysis, changelog generation, gem publishing, and GitHub releases. Full release pipeline automation"
     implemented: true
+    prd: ["Feature 10"]
     version: "0.5.0"
     link: "/"
     docs: "/docs/development/release-management/"
@@ -541,6 +559,7 @@ features:
     title: "Comprehensive Testing Suite"
     description: "Automated testing with core, deployment, and quality test suites. Docker-based testing, CI/CD integration, and detailed reporting"
     implemented: true
+    prd: ["Feature 6"]
     version: "0.10.0"
     link: "/"
     docs: "/docs/development/testing/"
@@ -571,6 +590,7 @@ features:
     title: "Automated Version Bump Workflow"
     description: "Removed in v1.20.0 — the manual version-bump GitHub Actions workflow was superseded by the release-please pipeline (see ZER0-015). Kept for ID stability and historical reference"
     implemented: false
+    prd: ["Feature 5"]
     removed_in: "1.20.0"
     superseded_by: "ZER0-015"
     version: "0.14.2"
@@ -598,6 +618,7 @@ features:
     title: "CodeQL Security Scanning"
     description: "Automated security vulnerability scanning with GitHub CodeQL for Ruby and JavaScript code"
     implemented: true
+    prd: [TBD]
     version: "0.10.0"
     link: "/"
     docs: "/docs/development/security/"
@@ -626,6 +647,7 @@ features:
     title: "Comprehensive Layout System"
     description: "15+ specialized layouts for different content types with consistent hierarchy and Bootstrap integration"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/customization/layouts/"
@@ -672,6 +694,7 @@ features:
     title: "Modular Include Components"
     description: "70+ reusable include components organized by category for maximum flexibility and maintainability"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/customization/includes/"
@@ -709,6 +732,7 @@ features:
     title: "Theme Version Display Plugin"
     description: "Automatic theme version extraction from gem specification with modal display and footer integration"
     implemented: true
+    prd: [TBD]
     version: "0.11.0"
     link: "/"
     docs: "/docs/features/theme-version/"
@@ -740,6 +764,7 @@ features:
     title: "Privacy Policy Page"
     description: "GDPR/CCPA compliant privacy policy with comprehensive data collection transparency and PostHog analytics disclosure"
     implemented: true
+    prd: ["Feature 4"]
     version: "0.15.0"
     link: "/privacy-policy/"
     docs: "/privacy-policy/"
@@ -765,6 +790,7 @@ features:
     title: "Terms of Service Page"
     description: "Legal terms of service framework for site usage with customizable sections"
     implemented: true
+    prd: [TBD]
     version: "0.15.0"
     link: "/terms-of-service/"
     docs: "/terms-of-service/"
@@ -788,6 +814,7 @@ features:
     title: "Product Requirements Document (PRD)"
     description: "Comprehensive PRD detailing product vision, goals, architecture, personas, and feature requirements"
     implemented: true
+    prd: [TBD]
     version: "0.15.0"
     link: "/"
     docs: "/docs/development/prd/"
@@ -815,6 +842,7 @@ features:
     title: "Dual Documentation Architecture"
     description: "Separate technical (/docs/) and public (/pages/_docs/) documentation with MDX support and conversion workflow"
     implemented: true
+    prd: [TBD]
     version: "0.15.0"
     link: "/"
     docs: "/docs/development/documentation/"
@@ -846,6 +874,7 @@ features:
     title: "Automated Dependency Updates"
     description: "GitHub Actions workflow for automated Ruby gem dependency updates with PR creation"
     implemented: true
+    prd: [TBD]
     version: "0.14.2"
     link: "/"
     docs: "/docs/development/dependency-updates/"
@@ -870,6 +899,7 @@ features:
     title: "Continuous Integration (CI) Workflow"
     description: "Comprehensive CI pipeline with multi-Ruby version testing, quality checks, and automated deployment validation"
     implemented: true
+    prd: ["Feature 6"]
     version: "0.10.0"
     link: "/"
     docs: "/docs/development/ci-cd/"
@@ -899,6 +929,7 @@ features:
     title: "Shell Script Automation Library"
     description: "Collection of 15+ automation scripts for building, testing, releasing, and managing the theme"
     implemented: true
+    prd: [TBD]
     version: "0.5.0"
     link: "/"
     docs: "/docs/development/scripts/"
@@ -937,6 +968,7 @@ features:
     title: "Back to Top Button"
     description: "Floating button that appears on scroll, allowing users to quickly return to the top of the page with smooth scrolling animation"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/back-to-top/"
@@ -963,6 +995,7 @@ features:
     title: "Code Copy Button"
     description: "One-click copy functionality for code blocks with visual feedback and clipboard API integration"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/code-copy/"
@@ -989,6 +1022,7 @@ features:
     title: "Dark/Light Mode Toggle"
     description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection, localStorage persistence, and a server+client color_mode_default config knob with FOUC prevention"
     implemented: true
+    prd: [TBD]
     version: "1.23.0"
     link: "/"
     docs: "/docs/features/color-modes/"
@@ -1021,6 +1055,7 @@ features:
     title: "GitHub Pages-Compatible Live Search"
     description: "Self-contained client-side search with live modal, JSON index, and keyboard shortcut activation. Algolia-free — works on bare GitHub Pages with no external service or API key"
     implemented: true
+    prd: [TBD]
     version: "1.5.1"
     link: "/"
     docs: "/docs/features/site-search/"
@@ -1054,6 +1089,7 @@ features:
     title: "Auto-hide Navigation"
     description: "Smart navigation bar that hides on scroll down and reappears on scroll up for maximum content visibility"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/auto-hide-nav/"
@@ -1079,6 +1115,7 @@ features:
     title: "Particles Background"
     description: "Interactive particle animation background using particles.js for visual enhancement on landing pages"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/particles-background/"
@@ -1111,6 +1148,7 @@ features:
     title: "Giscus Comments"
     description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
@@ -1146,6 +1184,7 @@ features:
     title: "MathJax Math Rendering"
     description: "LaTeX-style mathematical equation rendering with MathJax integration for technical documentation"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/mathjax-math/"
@@ -1171,6 +1210,7 @@ features:
     title: "Table of Contents"
     description: "Automatic table of contents generation from page headings with scroll spy and smooth scrolling"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/toc/"
@@ -1201,6 +1241,7 @@ features:
     title: "Google Analytics"
     description: "Google Analytics 4 integration for website traffic analysis with privacy-conscious configuration"
     implemented: true
+    prd: ["Feature 4"]
     version: "0.1.0"
     link: "/"
     docs: "/docs/analytics/google-analytics/"
@@ -1227,6 +1268,7 @@ features:
     title: "Google Tag Manager"
     description: "Google Tag Manager integration for centralized tag management and marketing analytics"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/analytics/google-tag-manager/"
@@ -1257,6 +1299,7 @@ features:
     title: "Breadcrumbs Navigation"
     description: "Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/breadcrumbs/"
@@ -1288,6 +1331,7 @@ features:
     title: "SEO Optimization"
     description: "Comprehensive SEO meta tag generation including Open Graph, Twitter Cards, and JSON-LD structured data"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/seo/meta-tags/"
@@ -1315,6 +1359,7 @@ features:
     title: "Sitemap Generation"
     description: "Automatic XML sitemap and JSON search index generation for search engine discovery and site search"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/seo/sitemap/"
@@ -1352,6 +1397,7 @@ features:
     title: "Statistics Dashboard"
     description: "Content statistics dashboard layout with metrics visualization for posts, categories, and tags"
     implemented: true
+    prd: [TBD]
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/statistics-dashboard/"
@@ -1389,6 +1435,7 @@ features:
     title: "Obsidian Vault Integration"
     description: "Render an Obsidian vault as a Jekyll site without losing wiki-links, embeds, callouts, or backlinks. Includes a Liquid wiki-index, JS client-side resolver, optional Ruby plugin, and a contract that keeps GitHub Pages and self-build deployments rendering identically"
     implemented: true
+    prd: [TBD]
     version: "1.3.0"
     link: "/docs/obsidian/"
     docs: "/docs/obsidian/"
@@ -1427,6 +1474,7 @@ features:
     title: "Obsidian Graph Views (Full + Local)"
     description: "Obsidian-desktop-style graph views: a full site graph with a Filters/Display/Forces settings panel, collection legend-filters, tag:/path: search, zoom + fullscreen controls and hover previews, plus a per-page local graph panel with depth and direction controls"
     implemented: true
+    prd: [TBD]
     version: "1.28.0"
     link: "/docs/obsidian/graph/"
     docs: "/docs/obsidian/graph/"
@@ -1464,6 +1512,7 @@ features:
     title: "Bare-Minimum Remote-Theme Starter"
     description: "Three-file welcome starter (_config.yml + Gemfile + index.md) that bootstraps a working remote-theme site with no scaffolding required. Footer, welcome, and info partials degrade gracefully when collections are empty"
     implemented: true
+    prd: [TBD]
     version: "1.2.0"
     link: "/"
     docs: "/docs/quickstart/bare-minimum/"
@@ -1486,6 +1535,7 @@ features:
     title: "Site Configuration Detection & Smart 404"
     description: "Auto-detects whether the site is a fork, remote-theme consumer, or full clone, and renders a smart 404 page that guides users back to a working entry point"
     implemented: true
+    prd: [TBD]
     version: "0.22.18"
     link: "/404.html"
     docs: "/docs/features/smart-404/"
@@ -1507,6 +1557,7 @@ features:
     title: "Config-Driven Frontmatter Validation"
     description: "Schema-driven frontmatter validation system with configurable rules per collection. Catches missing required fields, bad date formats, and unknown layouts before Jekyll builds"
     implemented: true
+    prd: [TBD]
     version: "0.22.17"
     link: "/"
     docs: "/docs/development/frontmatter-validation/"
@@ -1528,6 +1579,7 @@ features:
     title: "Dynamic Collection-Based Navigation Fallback"
     description: "Zero-config navigation: when no _data/navigation entry exists, the navbar auto-populates from Jekyll collections so brand-new sites have a usable nav out of the box"
     implemented: true
+    prd: [TBD]
     version: "0.22.15"
     link: "/"
     docs: "/docs/features/dynamic-navigation/"
@@ -1548,6 +1600,7 @@ features:
     title: "Admin Layout & Configuration Dashboards"
     description: "Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place"
     implemented: true
+    prd: [TBD]
     version: "0.21.4"
     link: "/admin/"
     docs: "/docs/features/admin-dashboard/"
@@ -1570,6 +1623,7 @@ features:
     title: "AGENTS.md Cross-Tool Agent Entry Point"
     description: "Repository-root entry point for AI coding agents (Copilot, Codex, Cursor, Aider, Jules, Continue, Claude Code, \u2026) that links into the layered guidance under .github/. Single source of truth, no per-tool duplication"
     implemented: true
+    prd: ["Feature 7"]
     version: "0.22.16"
     link: "https://github.com/bamr87/zer0-mistakes/blob/main/AGENTS.md"
     docs: "/docs/development/agents/"
@@ -1590,6 +1644,7 @@ features:
     title: "Data-Driven Roadmap with Auto-Generated Diagram"
     description: "Roadmap page rendered from a YAML data source, with an auto-generated Mermaid diagram embedded in README.md"
     implemented: true
+    prd: [TBD]
     version: "0.22.21"
     link: "/roadmap/"
     docs: "/roadmap/"
@@ -1611,6 +1666,7 @@ features:
     title: "Vendored Bootstrap & Icon Assets"
     description: "Bootstrap 5.3.3 CSS/JS and Bootstrap Icons committed under assets/vendor/ for GitHub Pages safety and offline development. Refreshable via scripts/vendor-install.sh"
     implemented: true
+    prd: [TBD]
     version: "0.21.3"
     link: "/"
     docs: "/docs/features/vendored-assets/"
@@ -1634,6 +1690,7 @@ features:
     title: "AIEO Structured Data, FAQ & Glossary"
     description: "AI-Engine Optimization toolkit: Schema.org JSON-LD, E-E-A-T signals, FAQ page, and glossary collection for stronger AI search and LLM grounding"
     implemented: true
+    prd: [TBD]
     version: "0.21.5"
     link: "/glossary/"
     docs: "/docs/seo/aieo/"
@@ -1659,6 +1716,7 @@ features:
     title: "ES6 Modular Navigation Architecture"
     description: "Navigation JavaScript refactored into ES6 modules with hover dropdowns, settings modal, and a navbar that degrades gracefully on slow connections"
     implemented: true
+    prd: [TBD]
     version: "0.18.0"
     link: "/"
     docs: "/docs/features/navigation-architecture/"
@@ -1682,6 +1740,7 @@ features:
     title: "DevContainer Configuration"
     description: "VS Code Dev Container configuration for one-click cloud development environments (GitHub Codespaces, JetBrains Gateway, etc.) with Jekyll, Ruby, and Bootstrap toolchain pre-installed"
     implemented: true
+    prd: [TBD]
     version: "0.17.0"
     link: "/"
     docs: "/docs/development/devcontainer/"
@@ -1702,6 +1761,7 @@ features:
     title: "Local Docker Publishing Pipeline"
     description: "Removed in v1.8.1 — the dedicated docker-compose.publish.yml / docker-compose.prod.yml local-publish path was retired; gem publishing now runs through the release-please CI pipeline (see ZER0-015) and scripts/bin/release. Kept for ID stability"
     implemented: false
+    prd: ["Feature 10"]
     removed_in: "1.8.1"
     superseded_by: "ZER0-015"
     version: "0.21.1"
@@ -1724,6 +1784,7 @@ features:
     title: "Notes Collection & Notebook Layout"
     description: "Dedicated _notes collection alongside _notebooks, with shared standardized layouts for short-form knowledge capture distinct from blog posts"
     implemented: true
+    prd: [TBD]
     version: "0.20.0"
     link: "/notes/"
     docs: "/notes/"
@@ -1746,6 +1807,7 @@ features:
     title: "Performance: Page-URL Cache for Obsidian Resolver"
     description: "Cached page-URL lookups and short-circuited rewrites in the Obsidian Liquid pipeline. Measurable build-time improvement on vaults with hundreds of cross-links"
     implemented: true
+    prd: [TBD]
     version: "1.6.0"
     link: "/docs/obsidian/performance/"
     docs: "/docs/obsidian/performance/"
@@ -1766,6 +1828,7 @@ features:
     title: "AI Chat Assistant (Claude or Grok + GitHub)"
     description: "Floating chat grounded in the current page, answered by Claude or Grok through the proxy: streaming replies, GitHub issue/PR actions (after confirmation), and a dev-only mode that edits the page source file live"
     implemented: true
+    prd: [TBD]
     version: "1.30.0"
     link: "/docs/features/ai-chat-assistant/"
     docs: "/docs/features/ai-chat-assistant/"
@@ -1793,6 +1856,7 @@ features:
     title: "Author Profiles System"
     description: "Auto-generated author profile pages and a searchable author directory from _data/authors.yml — each author gets a /authors/:key/ hub with bio, stats, and a filterable grid of their content across collections"
     implemented: true
+    prd: [TBD]
     version: "1.20.0"
     link: "/authors/"
     docs: "/authors/"
@@ -1818,6 +1882,7 @@ features:
     title: "News Homepage Layout"
     description: "Magazine-style news homepage layout with configurable section styles (magazine, grid, list) and full-width content sections"
     implemented: true
+    prd: [TBD]
     version: "0.1.5"
     link: "/"
     docs: "/docs/customization/layouts/"
@@ -1837,6 +1902,7 @@ features:
     title: "Section Layout"
     description: "News section layout with a collapsible sub-category sidebar, section styles, and a featured hero card for organizing posts by section"
     implemented: true
+    prd: [TBD]
     version: "0.20.3"
     link: "/"
     docs: "/docs/customization/layouts/"
@@ -1857,6 +1923,7 @@ features:
     title: "Article Layout & Post Types"
     description: "Article layout for blog posts with post-type variations (standard, featured, breaking, opinion, review, tutorial, listicle, interview) surfaced via a post-type badge"
     implemented: true
+    prd: [TBD]
     version: "0.20.3"
     link: "/"
     docs: "/docs/customization/layouts/"
@@ -1877,6 +1944,7 @@ features:
     title: "Theme Skins & Background Customizer"
     description: "Nine switchable theme skins with fffuel-style SVG backgrounds, a runtime customizer (skin + opacity), a palette generator, and a skin editor — all persisted to localStorage"
     implemented: true
+    prd: ["Feature 13"]
     version: "0.22.10"
     link: "/"
     docs: "/docs/features/color-modes/"
@@ -1906,6 +1974,7 @@ features:
     title: "Nanobar Progress Bar"
     description: "Config-driven page-loading progress bar (color, height, position, z-index, step timing) driven by site.nanobar and injected via a thin include"
     implemented: true
+    prd: [TBD]
     version: "0.22.20"
     link: "/"
     docs: "/docs/features/"
@@ -1930,6 +1999,7 @@ features:
     title: "Setup Wizard"
     description: "Nine-step in-browser wizard that assembles a complete starter project — _config.yml, dev config, Gemfile, docker-compose, navigation, first pages — with per-file download and a self-extracting bundle; the form half of the Site Builder"
     implemented: true
+    prd: [TBD]
     version: "1.30.0"
     link: "/setup/"
     docs: "/docs/features/site-builder/"
@@ -1954,6 +2024,7 @@ features:
     title: "Table CSV Copy"
     description: "One-click CSV copy control injected onto content tables, scoped to article/content wrappers (skips admin and sitemap tables)"
     implemented: true
+    prd: [TBD]
     version: "1.8.0"
     link: "/"
     docs: "/docs/features/"
@@ -1974,6 +2045,7 @@ features:
     title: "Social Share Actions"
     description: "Helper that builds normalized social-share text and URLs (whitespace-collapsed, deduped, length-truncated) for sharing posts"
     implemented: true
+    prd: [TBD]
     version: "1.14.0"
     link: "/"
     docs: "/docs/features/"
@@ -1994,6 +2066,7 @@ features:
     title: "Monthly Archives Page"
     description: "Date-grouped archive of all posts with anchor-linked month sections for chronological browsing"
     implemented: true
+    prd: [TBD]
     version: "0.16.1"
     link: "/archives/"
     docs: "/archives/"
@@ -2013,6 +2086,7 @@ features:
     title: "Live Component Showcase"
     description: "Interactive gallery of Bootstrap 5.3 and theme components (alerts, buttons, cards, accordions, tabs, …) for visual reference and design QA"
     implemented: true
+    prd: [TBD]
     version: "0.22.12"
     link: "/"
     docs: "/docs/customization/includes/"
@@ -2032,6 +2106,7 @@ features:
     title: "AI Content Review Workflow"
     description: "PR workflow that reviews changed Markdown for SEO and quality via a deterministic scorer plus a Claude Code editorial agent, with docs and front-matter validation"
     implemented: true
+    prd: [TBD]
     version: "1.18.0"
     link: "/"
     docs: "/docs/"
@@ -2054,6 +2129,7 @@ features:
     title: "Giscus Digest Workflow"
     description: "Scheduled read-only workflow that surfaces new Giscus (GitHub Discussions) comments to maintainers as a job-summary digest"
     implemented: true
+    prd: [TBD]
     version: "1.22.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
@@ -2075,6 +2151,7 @@ features:
     title: "Visual Evidence Gate"
     description: "CI gate that requires a regression test plus before/after evidence for any UI or behavioural PR (or an explicit opt-out label), enforcing the visual-evidence standard"
     implemented: true
+    prd: [TBD]
     version: "1.20.2"
     link: "/"
     docs: "/docs/development/testing/"
@@ -2096,6 +2173,7 @@ features:
     title: "Autonomous Issue & CI Pipeline"
     description: "Issue-triage to resolve-to-PR autopilot plus a CI self-repair loop and auto-merge, extending the continuous-evolution system (off by default)"
     implemented: true
+    prd: [TBD]
     version: "1.23.0"
     link: "/"
     docs: "/docs/development/ci-cd/"
@@ -2120,6 +2198,7 @@ features:
     title: "Secret Scanning Workflow"
     description: "CI workflow that scans pushes and pull requests for leaked secrets, complementing CodeQL static analysis"
     implemented: true
+    prd: [TBD]
     version: "1.21.0"
     link: "/"
     docs: "/docs/development/security/"
@@ -2139,6 +2218,7 @@ features:
     title: "Unified Settings Panel"
     description: "Navbar settings offcanvas reorganized into Appearance, Site, and Developer tabs — consolidated color-mode/skin/background controls, delegated copy-to-clipboard, and existence-gated admin quick links computed in cached Liquid"
     implemented: true
+    prd: [TBD]
     version: "1.25.0"
     link: "/"
     docs: "/docs/customization/includes/"
@@ -2174,6 +2254,7 @@ features:
     title: "AI-Generated Multilingual Translations"
     description: "Build-time translation pipeline: English stays the only human-maintained language while scripts/translate.rb (Claude Code OAuth) generates alternate-language pages, UI strings, and the manifest behind the language toggle"
     implemented: true
+    prd: [TBD]
     version: "1.27.0"
     link: "/"
     docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/multilingual-translation.md"
@@ -2211,6 +2292,7 @@ features:
     title: "Config-Driven Favicon and Browser Identity"
     description: "Head include emitting favicon, SVG icon, Apple touch icon, web manifest, and theme-color tags from an optional favicon config block, with an existence-gated root favicon fallback (.ico, .png, .svg) that works on baseurl deployments and never links a missing file"
     implemented: true
+    prd: [TBD]
     version: "1.28.0"
     link: "/"
     docs: "/docs/features/favicon/"
@@ -2237,6 +2319,7 @@ features:
     title: "Books Collection — Children's Picture-Book Publishing"
     description: "A `books` collection with immersive cover-to-cover layouts: book landing page (cover hero + TOC), story reading pages with illustration plates and prev/next navigation, bookshelf components, and AI-provenance colophons whose front matter doubles as the image-generation manifest"
     implemented: true
+    prd: [TBD]
     version: "1.28.0"
     link: "/books/zer0-tales/"
     docs: "/docs/features/book-collection/"
@@ -2274,6 +2357,7 @@ features:
     title: "Claude Design System Round-Trip"
     description: "Design-token layer aligned with the zer0-mistakes Claude Design project: corner-radius, logo-palette, and display-size tokens join _sass/tokens/; a git mirror of the design project lives under _design-system/ (plain-CSS tokens, React component specs from buttons to FABs to post cards to skeletons, foundation cards, website UI kit); and a CI parity check fails when theme and mirror drift"
     implemented: true
+    prd: [TBD]
     version: "1.29.0"
     link: "/"
     docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/design-system.md"
@@ -2309,6 +2393,7 @@ features:
     title: "Live Design System Pages"
     description: "The design system published on the site itself: _design-system/ is force-included in the Jekyll build so tokens, styles.css, specimen cards, and component sources get real URLs under /_design-system/, and a /design/ hub page renders the foundation specimens in live iframes, catalogs the component twins, and links the Claude Design page canvas covering all 24 layouts"
     implemented: true
+    prd: [TBD]
     version: "1.29.0"
     link: "/design/"
     docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/design-system.md"
@@ -2343,6 +2428,7 @@ features:
     title: "Page View Counter"
     description: "Per-page view tracking with the count shown in the article meta row — a local-first provider that needs no server, or an HTTP counter endpoint, both gated by DNT, GPC, and consent"
     implemented: true
+    prd: [TBD]
     version: "1.29.0"
     link: "/"
     docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/features/page-views.md"
@@ -2381,6 +2467,7 @@ features:
     title: "Cookbook & Recipes Collection"
     description: "A `recipes` collection whose structured front matter (ingredients, steps, yield, times, ratio_basis) renders as a working recipe page: a fact bar, a serving scaler, an ingredient checklist, a numbered method, a build-time baker's-percentage table, and schema.org Recipe JSON-LD — with client-side scaling and US/metric conversion (volume↔weight via an ingredient density table) layered on as progressive enhancement"
     implemented: true
+    prd: [TBD]
     version: "1.29.0"
     link: "/recipes/"
     docs: "/docs/features/cookbook-collection/"
@@ -2430,6 +2517,7 @@ features:
     title: "Visual Evidence Autogen"
     description: "CI produces a UI pull request's visual artifacts instead of only verifying them: before/after evidence from the PR's generator or a generic base-vs-head render, and 9-skin pixel baselines refreshed only when the reviewer agent judges the diff to be the change the PR describes"
     implemented: true
+    prd: [TBD]
     version: "1.30.0"
     link: "/"
     docs: "/docs/development/testing/"
@@ -2462,6 +2550,7 @@ features:
     title: "Claude-Guided Site Builder"
     description: "An embedded Claude session that rides alongside the setup wizard: it sees every answer, fills in the forms, checks the machine, reads the theme's real source, writes the generated project to disk and starts Docker — through the local dev proxy, with a confirmation card before every action"
     implemented: true
+    prd: [TBD]
     version: "1.30.0"
     link: "/setup/"
     docs: "/docs/features/site-builder/"
@@ -2506,6 +2595,7 @@ features:
     title: "Bring-Your-Own AI Provider (Claude or Grok) and Open Site Builder Sessions"
     description: "The Site Builder and chat proxy answer with Claude (Anthropic) or Grok (xAI): users paste their own token on the Connect step, pick a model and an image renderer, and run a guided or open session that can also modify an existing site file by file and render images with Grok Imagine"
     implemented: true
+    prd: [TBD]
     version: "1.30.0"
     link: "/setup/"
     docs: "/docs/features/site-builder/"
