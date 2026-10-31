@@ -1,0 +1,60 @@
+{
+  "slug": "cookie-consent-gate",
+  "generator": "test/visual/cookie-consent-gate-evidence.mjs",
+  "route": "/",
+  "config": {
+    "google_analytics": "",
+    "google_tag_manager": "",
+    "posthog.enabled": false
+  },
+  "before": "http://127.0.0.1:4101",
+  "after": "http://127.0.0.1:4102",
+  "sweep": [
+    {
+      "width": 390,
+      "before": {
+        "bannerInDom": true,
+        "bannerVisible": true,
+        "bannerHeightPx": 94,
+        "modalInDom": true,
+        "footerCookieButtons": 1,
+        "bannerOpenClass": true,
+        "bodyPaddingBottomPx": 94,
+        "pageErrors": []
+      },
+      "after": {
+        "bannerInDom": false,
+        "bannerVisible": false,
+        "bannerHeightPx": 0,
+        "modalInDom": false,
+        "footerCookieButtons": 0,
+        "bannerOpenClass": false,
+        "bodyPaddingBottomPx": 0,
+        "pageErrors": []
+      }
+    },
+    {
+      "width": 1280,
+      "before": {
+        "bannerInDom": true,
+        "bannerVisible": true,
+        "bannerHeightPx": 48,
+        "modalInDom": true,
+        "footerCookieButtons": 1,
+        "bannerOpenClass": true,
+        "bodyPaddingBottomPx": 48,
+        "pageErrors": []
+      },
+      "after": {
+        "bannerInDom": false,
+        "bannerVisible": false,
+        "bannerHeightPx": 0,
+        "modalInDom": false,
+        "footerCookieButtons": 0,
+        "bannerOpenClass": false,
+        "bodyPaddingBottomPx": 0,
+        "pageErrors": []
+      }
+    }
+  ]
+}

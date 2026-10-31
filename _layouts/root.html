@@ -170,8 +170,13 @@
              consumer markup renders per page. {% endcomment %}
         {%- include custom/footer.html -%}
 
-        {% comment %} Privacy-compliant cookie consent banner — page-invariant. {% endcomment %}
+        {% comment %} Privacy-compliant cookie consent banner — page-invariant. Rendered
+             only when the site configures a tracker or forces it with
+             cookie_consent.enabled (components/cookie-consent-needed.html, #566). {% endcomment %}
+        {%- capture _needs_consent -%}{%- include components/cookie-consent-needed.html -%}{%- endcapture -%}
+        {%- if _needs_consent == "true" -%}
         {%- include_cached components/cookie-consent.html -%}
+        {%- endif -%}
 
         {% comment %} AI Chat Assistant {% endcomment %}
         {%- include components/ai-chat.html -%}

@@ -930,7 +930,7 @@
     L.push('  enabled: ' + (c.on('posthog') && f['posthog.api_key'] ? 'true' : 'false'));
     L.push('  api_key: ' + y(f['posthog.api_key'] || ''));
     L.push('cookie_consent:');
-    L.push('  enabled: true');
+    L.push('  # enabled unset = the banner shows only when an analytics key above is set');
     L.push('  expiry_days: 365');
     L.push('giscus:');
     L.push('  enabled: ' + (c.on('giscus') && f['giscus.repo_id'] && f['giscus.category_id'] ? 'true' : 'false'));
