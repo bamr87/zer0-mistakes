@@ -445,6 +445,17 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Changed
 
+- **CI stops re-downloading the Playwright browser on every run.** A new
+  `.github/actions/setup-playwright` composite action installs npm dependencies
+  and a **cached** chromium (`~/.cache/ms-playwright`, keyed on
+  `package-lock.json`), and `ci.yml`, `nightly-extended.yml`, `ui-audit.yml` and
+  the `playwright-tests` action all go through it. `codeql.yml` and
+  `install-matrix.yml` also gained a concurrency group that cancels superseded
+  pull-request runs (pushes to `main` and the scheduled scans are never
+  cancelled, so the Security tab's alert set is never replaced by a
+  half-finished analysis). Test coverage is unchanged — this is Actions-minute
+  cost only (ZER0-016, ZER0-027).
+
 - **Navigation start-up no longer runs as one long task.**
   `assets/js/modules/navigation/index.js` now wires sidebar state, keyboard
   shortcuts, focus management and the navbar first, then yields to the main

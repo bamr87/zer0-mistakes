@@ -25,12 +25,11 @@ inputs:
 runs:
   using: composite
   steps:
+    # npm ci + a CACHED chromium (see setup-playwright/action.yml): the browser
+    # download was being paid on every run of every caller.
     - name: Install Playwright dependencies
       if: inputs.install-deps == 'true'
-      shell: bash
-      run: |
-        npm ci
-        npx playwright install --with-deps chromium
+      uses: ./.github/actions/setup-playwright
 
     - name: Run Playwright (${{ inputs.project }})
       shell: bash

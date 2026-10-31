@@ -1,0 +1,47 @@
+name: 'Set up Playwright'
+description: 'Install npm dependencies and a CACHED chromium build, so a green run does not re-download the browser every time.'
+
+# WHY THIS EXISTS
+# ---------------
+# `npx playwright install --with-deps chromium` does two different things:
+# downloads the chromium build into ~/.cache/ms-playwright (~170 MB, the slow
+# half) and apt-installs the system libraries it links against. Only the first
+# is cacheable, and nothing in this repo was caching it — ci.yml, the nightly
+# tier, ui-audit.yml and the playwright-tests action each paid the download on
+# every run. The key is the lockfile hash, so a Playwright bump in
+# package-lock.json fetches the matching browser instead of reusing a stale
+# one; on a hit we still run `install-deps`, which is the apt half.
+inputs:
+  npm-install:
+    description: 'Run `npm ci` first. Set to false when the caller already did.'
+    required: false
+    default: 'true'
+  browser:
+    description: 'Playwright browser to install.'
+    required: false
+    default: 'chromium'
+
+runs:
+  using: composite
+  steps:
+    - name: Install npm dependencies
+      if: inputs.npm-install == 'true'
+      shell: bash
+      run: npm ci
+
+    - name: Restore the Playwright browser cache
+      id: cache
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ inputs.browser }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install ${{ inputs.browser }} and its system dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install --with-deps ${{ inputs.browser }}
+
+    - name: Install only the system dependencies (browser restored from cache)
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: npx playwright install-deps ${{ inputs.browser }}
