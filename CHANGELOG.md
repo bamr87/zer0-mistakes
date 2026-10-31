@@ -927,6 +927,21 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Cookie preferences no longer pre-tick Analytics** ([#553](https://github.com/bamr87/zer0-mistakes/issues/553), ZER0-007).
+  `#analyticsCookies` carried a hard-coded `checked` attribute, and the
+  component synced the modal switches from stored consent *only* for returning
+  visitors — so a first-time visitor who opened Cookie Preferences saw Analytics
+  already on, and "Save Preferences" recorded `analytics: true` (and called
+  `posthog.opt_in_capturing()`) without them touching the switch. Pre-ticked
+  boxes are not valid consent (GDPR/ePrivacy Recital 32; CJEU *Planet49*,
+  C-673/17), and the component's own `defaultConsent` already said off. The
+  attribute is gone and `updateModalUI(existingConsent || defaultConsent)` now
+  runs on every first paint, so the switches always mirror the state actually in
+  force; `updateModalUI` became null-safe for consumers that ship the banner
+  without the modal. Accept All is unchanged (explicit consent) and returning
+  visitors still see their saved choices. Regression test:
+  `test/visual/features/cookie-consent-defaults.spec.js`.
+
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**
   Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
   actually failed; the repo's poor headline pass rate came from 37 cancelled and
