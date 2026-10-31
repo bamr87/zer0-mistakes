@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.31.3"
-generated_at: "2026-10-20T03:56:33Z"
+version: "1.32.0"
+generated_at: "2026-10-31T17:59:48Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
@@ -76,9 +76,9 @@ file_checksums:
   _layouts/note.html: "58b97dd42bb72c4b8ff18305287bddab8abf70969e87977252c9ae012b6bea0b"
   _layouts/notebook.html: "2f3d24ebdc079a7ebfc8e1b77b86328fd4ee1512ce2047ac52acb9e814fba146"
   _layouts/recipe.html: "54b3c425fd198068fd15721c9828498aea440159105a9e5b38a1aaee62e87397"
-  _layouts/root.html: "cc7259c2bc8af60b613595fd5116849c95179853dc27c1384f849df66d67146d"
+  _layouts/root.html: "4f9ca66240c8a015b6ef7f169adcf7d17f9e4ae324dee702dfa010c6d7de9a2f"
   _layouts/search.html: "b0b981d3233cab6f1ffec90c81a1340d251bd95a58bf2363d85bab5efe20ed95"
-  _layouts/section.html: "662f332dccfe29bb85c44f224ae318b64bfa130e5edd60b56d1caa442f4e2bb9"
+  _layouts/section.html: "31ceaa76e814d3fcc0eea2d175fd31d63080ddcac456feca001a79b36a8e9740"
   _layouts/setup.html: "b3022e0766a8c288c0f2a618c013860a8cb7305b617b68727aff6bba924b7906"
   _layouts/sitemap-collection.html: "de2e1a74d3261540e1b055b4adeb2b91081e20fe8d5f3dcdb7faa325f41ffd94"
   _layouts/stats.html: "df42629997836865139ba79467d481dce042a40a51e4c9966631f5f97dba76c4"
@@ -96,7 +96,7 @@ file_checksums:
   _includes/components/author-avatar-url.html: "7c9499d7623c9f8eb478fee3028fcc0a29de51f4f10eea87a1db4f67cccb65c3"
   _includes/components/author-bio.html: "6da96d8b4ddfc798e1fd350199e14e31d18649aa6cdde7351b8a629fc8c29abc"
   _includes/components/author-card.html: "5a3d64b0e5249977da6081f61a0753529f3dae58c5bacd1d03dbd1d7be78afd8"
-  _includes/components/author-eeat.html: "0781fc9c2d70a72afeea915bcb457b33fc83eb5d8fae699e1857fbbe84abf53d"
+  _includes/components/author-eeat.html: "f98f69644bb9bba27347c0e4727e7063d3d9c09be4973e1d54c9d6161c88e8d3"
   _includes/components/background-customizer.html: "e7c08df9456d09d96d0fb744ef3cb257905a4ef45ebcda9a4123c1ead6dfb28e"
   _includes/components/background-image.html: "745f8bb3c8fa0dcef0c5f687c015384bebeb60cd08029f924071bdcb09192231"
   _includes/components/background-settings.html: "b16dba76bf7a00533cb8f0782aea6005912bcf302837709fbc9d95ef39dfa087"
@@ -167,7 +167,7 @@ file_checksums:
   _includes/content/giscus.html: "8c49d8a22caef89a3132ba9da5434ddecf33b615f051eee1af7441df0bfef686"
   _includes/content/intro.html: "8580a875177b360f721c8715997608087437bfd668ee63070cf2904e2d35b2f3"
   _includes/content/jsonld-faq.html: "9e4001c9ccebb91ac1b2e51a8a7833e611bd70ae59fee7c599a88597b079a55c"
-  _includes/content/jsonld-software.html: "41624ca1a61687a91878e4147cb6e1fc172ace09bf2d9688e5f1da16cdaecf06"
+  _includes/content/jsonld-software.html: "071e3c39d760cd5edc1f032cf632d04a5fcdf66af7f47f187c8dda1d5332d4d8"
   _includes/content/seo.html: "05a6c4bb5aa9357facd041b85eb3ffc3b1ab0c4fabe7cbfa87f9905618718d5f"
   _includes/content/sitemap.html: "5add1a394ba57979eaf88b84586803a2485b4db5e07a4117e333709c59616ebb"
   _includes/content/toc.html: "b42a00a641db03b4936d4d754a2e14fcf9517c2b8e0257ceba8a6fe2e2003e40"
@@ -198,7 +198,7 @@ file_checksums:
   _includes/navigation/nav_list.html: "3450b282840fb5a82e0ab01d636e3b38e0bdbcc4233cca3e2f2a80fc7c71e3c5"
   _includes/navigation/navbar-mobile-quicklinks.html: "a2c23bbc41f8b27eae1a869893f1e7ecf881f12e34164ab7f8dc4a178011a45e"
   _includes/navigation/navbar.html: "2b2d4446c6be4ed5003cf482a116458858af919f61521d8f89cf1f70adadea68"
-  _includes/navigation/section-sidebar.html: "d77e8328f818a161449263d8293876a53fa0261747949901cf2e19ff6ac2c2b2"
+  _includes/navigation/section-sidebar.html: "c3d5502d398bb3110bce5cf8f9eaa3d46b5322919873de73ecdc626250a0defa"
   _includes/navigation/sidebar-categories.html: "42217519bc109e030b8f6e2578783efbc13838176e0eeba7cc1450641eb2f641"
   _includes/navigation/sidebar-config.html: "40e8bf838a3f819ba65ddad8bd004aeb01a9abc5c5d35a6894ffb18aa798ce24"
   _includes/navigation/sidebar-folders.html: "d6c84e0c62293790efdfb82db4765b113ad332938dba3167d52def12a3d9c0e2"
@@ -323,7 +323,7 @@ file_checksums:
   assets/js/posts-pagination.js: "ed4b98bd1c958766ce604175bbef0681f7bc70d6b9bb306907f2ac676baf36f8"
   assets/js/recipe-scaler.js: "b05aa0cd0fafeadbf4454c4cacf1463f994e263a1f4a79a1d177f35a560a1e6e"
   assets/js/search-modal.js: "2d495ab1d0b2f5aa50af6aa7a9962b80656e78e7d97b8652610fcb0b64ea3632"
-  assets/js/setup-wizard.js: "0ef2dcce4d93e753326999c7360dedda7b7d5b05cec2a52350b0110d0e583d0a"
+  assets/js/setup-wizard.js: "a178d4826cf2dc3444665b95871521eef06589e2be2bf8e4600273edc5a61b02"
   assets/js/share-actions.js: "810a326d8aa33633854364d91caddfff1c769eaa7d437a746f96a752c2e2fdae"
   assets/js/side-bar-folders.js: "133606c23a03b9370308811e0a39187f4dd43b487628f8d875ac631afa28598a"
   assets/js/site-builder.js: "d133bc799bf84094f748f99f44b7ed166c4095d69d6cd28dd98b9fc3cc435ada"
