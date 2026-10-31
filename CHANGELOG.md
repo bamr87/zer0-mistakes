@@ -947,6 +947,25 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   `test/test_core.sh :: test_sidebar_offcanvas_layout_gate` now pins the
   key-based gate instead of the list.
 
+- **CI: the two recurring red/cancelled run sources on `main` are gone.**
+  Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
+  actually failed; the repo's poor headline pass rate came from 37 cancelled and
+  166 skipped runs. Two fixable causes:
+  - `Dependabot Updates` errored on every re-check of the `rubyzip` advisory
+    (2026-09-26, 10-03, 10-07, 10-27): the fix needs `>= 3.4.0`, but
+    `github-pages (232)` pins `rubyzip (>= 1.3.0, < 3.0)` via
+    `jekyll-remote-theme (0.4.3)`, so `security_update_not_possible` failed the
+    whole run. `.github/dependabot.yml` now carries a `bundler` entry — version
+    updates off, so `update-dependencies.yml` keeps ownership of gems — whose
+    only job is to ignore `rubyzip >= 3.0` until `github-pages` allows it. The
+    advisory stays visible in the Security tab.
+  - `🧭 Issue Autopilot` used a workflow-level concurrency group with a constant
+    name, so every `issues: [labeled]` event — including the labels the pipeline
+    applies itself — joined it even though `gate`'s job-level `if` skips them.
+    With one pass running and one queued, each further no-op event cancelled the
+    queued run: 13 of the 37 cancellations. Non-actionable label events now get
+    their own group; real passes stay serialized.
+
 - **`require_consent` now means no analytics until the visitor accepts.** With `posthog.privacy.require_consent: true`, PostHog used to load opted-out on a first visit: the browser still fetched `array.js`, `config.js` and `surveys.js` and stored `ph_<key>_posthog` before any banner choice, and Google Analytics ignored consent entirely. `_includes/analytics/posthog.html` now boots PostHog only once analytics consent exists, and `_includes/analytics/google-analytics.html` follows the same flag (override per site with `google_analytics_require_consent`). Both load as soon as the visitor clicks Accept All or saves preferences with Analytics on, through the banner's `cookieConsentChanged` event, so no reload is needed. Reject All keeps them off. Sites without the flag load exactly as before. Regression test: `test/visual/features/analytics-consent.spec.js`.
 
 - **Color-mode toggle exposes the selected mode** ([#521](https://github.com/bamr87/zer0-mistakes/issues/521)).
