@@ -927,6 +927,22 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **An open overlay now covers the floating action buttons**
+  ([#572](https://github.com/bamr87/zer0-mistakes/issues/572), ZER0-081).
+  The FAB band in `_sass/tokens/_layers.scss` sat *above* the overlay surfaces
+  (back-to-top 1050, feedback 1051, chat 1052, toc 1055, local-graph 1060
+  against backdrop 1040, offcanvas 1045, modal 1055), so with the search modal,
+  the main-nav offcanvas or the TOC panel open the TOC and local-graph FABs
+  painted over it undimmed and stayed hit-testable — `fab-toc` tied with `modal`
+  and won on DOM order, because the FABs render after the footer. The band moved
+  to 1031-1035, between the header (1030) and the backdrop (1040), which is the
+  ordering the file's own header already promised. FABs never overlap the fixed
+  header, so nothing else moved; the non-modal local-graph panel still opens
+  over its own FAB and still has its close button. Stale `var(…, 1051)` /
+  `var(…, 1052)` fallbacks in `_includes/components/ai-chat.html` and
+  `_sass/components/_page-feedback.scss` were retuned with it. New source
+  contract: `test/visual/features/fab-layer-order.spec.js`.
+
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**
   Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
   actually failed; the repo's poor headline pass rate came from 37 cancelled and
