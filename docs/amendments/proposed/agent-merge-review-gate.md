@@ -1,3 +1,13 @@
+---
+title: "Proposed: Agent merge of mergeable PRs, and a review gate"
+description: "Proposed amendment that lets agents merge PRs meeting the mergeable-PR checklist and holds gated PRs behind a review gate."
+date: 2026-10-30T00:00:00.000Z
+lastmod: 2026-10-30T00:00:00.000Z
+categories: [docs]
+tags: [governance, amendments]
+author: bamr87
+---
+
 # NEW — Agent merge of mergeable PRs, and a review gate
 
 - **Status:** proposed
