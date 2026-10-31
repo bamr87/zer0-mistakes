@@ -927,6 +927,8 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Accessibility: section landings have a continuous heading outline** ([#555](https://github.com/bamr87/zer0-mistakes/issues/555)). `layout: section` picked heading tags for their font size, so on `/news/<section>/` the sidebar's `<h5>`/`<h6>` came before the page `<h1>` and card titles jumped `h1 → h5` (WCAG 1.3.1). `_layouts/section.html` and `_includes/navigation/section-sidebar.html` now choose tags by document depth and keep each size with an `.h4`/`.h5`/`.h6` class (the #436 pattern); source order, and so focus order, is unchanged. Visual sizes are unchanged. Pinned by `test/visual/core/heading-outline.spec.js` for the grid, list and magazine styles (evidence: [`test/visual/evidence/section-heading-outline/`](test/visual/evidence/section-heading-outline/README.md)).
+
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**
   Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
   actually failed; the repo's poor headline pass rate came from 37 cancelled and

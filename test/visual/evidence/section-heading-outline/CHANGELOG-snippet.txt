@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/section-heading-outline/`](test/visual/evidence/section-heading-outline/README.md) — 11 heading-level skips → 0 across 3/3 section styles; computed type and box unchanged for all 47 headings; render byte-identical for 0/0 byte-comparable pages)
