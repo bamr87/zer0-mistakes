@@ -927,6 +927,26 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Mobile TOC FAB, sidebar toggle and local-graph FAB reach consumer layouts**
+  ([#570](https://github.com/bamr87/zer0-mistakes/issues/570), follow-up to
+  [#373](https://github.com/bamr87/zer0-mistakes/issues/373), ZER0-008).
+  `navigation/sidebar-config.html` decided whether a page renders the
+  `#bdSidebar` / `#tocContents` offcanvases from a hard-coded list of the
+  theme's **own** layout names. That is correct for theme layouts and fails
+  closed for every consumer layout: a remote-theme site whose `quest` layout
+  declares `layout: default` got `#tocContents` and no `#tocFab`, so below `lg`
+  its table of contents was unreachable (about 216 pages on it-journey.dev),
+  and the header sidebar toggle and local-graph FAB were suppressed too. The
+  gate now asks the layout chain — `_layouts/default.html` declares
+  `renders_sidebar_offcanvas: true` and Jekyll's layout front-matter merge makes
+  it visible as `layout.renders_sidebar_offcanvas` at any depth, the same
+  mechanism `core/header.html` already uses for `skip_link_target`. #373's
+  fail-safe is intact: a layout that never reaches `default` declares nothing
+  and still gets no toggle and no dangling `aria-controls`. Consumer workarounds
+  that key on `sidebar_offcanvas_rendered == false` go inert on their own.
+  `test/test_core.sh :: test_sidebar_offcanvas_layout_gate` now pins the
+  key-based gate instead of the list.
+
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**
   Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
   actually failed; the repo's poor headline pass rate came from 37 cancelled and

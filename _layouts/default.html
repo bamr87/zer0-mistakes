@@ -4,6 +4,12 @@ layout: root
 # The skip link (core/header.html) jumps past the docs sidebar, intro and
 # TOC straight to the page body below.
 skip_link_target: page-content
+# This layout is the one that emits the #bdSidebar / #tocContents offcanvases.
+# navigation/sidebar-config.html reads this through Jekyll's layout front-matter
+# merge, so every layout whose `layout:` chain reaches here — including a
+# consumer's own — gets the sidebar toggle, TOC FAB and local-graph FAB that go
+# with them (issues #373, #570).
+renders_sidebar_offcanvas: true
 ---
 {% comment %}
   ===================================================================
