@@ -122,6 +122,8 @@ permalink: /notes/markdown-tips/
 - [x] Completed task
 - [ ] Incomplete task
 - [ ] Another task
+  - [x] Nested completed
+  - [ ] Nested incomplete
 
 ### Definition Lists
 

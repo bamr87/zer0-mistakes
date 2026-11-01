@@ -24,10 +24,17 @@
  * deliberately NOT live: announcing eight titles and snippets per keystroke is
  * unusable.
  *
+ * #573 — kramdown GFM task lists render `<input class="task-list-item-checkbox">`
+ * with no `<label>`, so every box failed axe `label` (WCAG 1.3.1 / 4.1.2), kept
+ * its list bullet, and sat flush against its text. ui-enhancements.js now points
+ * each box at its item's own text with `aria-labelledby`; _ui-enhancements.scss
+ * drops the bullet and spaces the box.
+ *
  * Run: npm run test:smoke
  */
 const { test, expect } = require('@playwright/test');
-const { VIEWPORTS, UI_ROUTES, waitForJekyll } = require('../fixtures');
+const AxeBuilder = require('@axe-core/playwright').default;
+const { VIEWPORTS, UI_ROUTES, waitForJekyll, gotoOrSkip } = require('../fixtures');
 
 test.describe('Accessible names — footer icon links', { tag: '@critical' }, () => {
   test('every footer social/RSS link has an accessible name at mobile width', async ({ page }) => {
@@ -86,6 +93,60 @@ test.describe('Accessible names — footer icon links', { tag: '@critical' }, ()
         `aria-label "${label}" must contain the visible text "${text}" (WCAG 2.5.3)`
       ).toContain(text.toLowerCase());
     }
+  });
+});
+
+test.describe('Task lists — checkboxes are named and spaced (#573)', { tag: '@critical' }, () => {
+  const TASKS = '/notes/markdown-tips/';
+
+  test('each task-list checkbox is named by its own item text', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, TASKS);
+
+    const boxes = page.locator('.task-list-item-checkbox');
+    expect(await boxes.count(), 'the page should render task-list checkboxes').toBeGreaterThan(0);
+
+    // Resolves only when the computed accessible name is the item's text.
+    await expect(page.getByRole('checkbox', { name: 'Completed task', exact: true })).toHaveCount(1);
+    await expect(page.getByRole('checkbox', { name: 'Incomplete task', exact: true })).toHaveCount(1);
+  });
+
+  test('a parent item is named by its own text, not its nested items', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, TASKS);
+
+    const parent = page.locator('.task-list-item:has(> ul .task-list-item-checkbox)').first();
+    await expect(parent, 'the page should render a nested task list').toHaveCount(1);
+    await expect(
+      parent.locator('> .task-list-item-checkbox, > p > .task-list-item-checkbox')
+    ).toHaveAccessibleName('Another task');
+    await expect(page.getByRole('checkbox', { name: 'Nested completed', exact: true })).toHaveCount(1);
+  });
+
+  test('axe reports no `label` violations on task lists', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, TASKS);
+
+    const results = await new AxeBuilder({ page })
+      .include('.task-list-item')
+      .withRules(['label'])
+      .analyze();
+    expect(
+      results.violations.flatMap((v) => v.nodes.map((n) => n.target.join(' '))),
+      'every task-list checkbox needs an accessible name'
+    ).toEqual([]);
+  });
+
+  test('task-list items have no bullet and a gap between box and text', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, TASKS);
+
+    const style = await page.locator('.task-list-item-checkbox').first().evaluate((box) => ({
+      listStyle: getComputedStyle(box.closest('.task-list-item')).listStyleType,
+      marginRight: parseFloat(getComputedStyle(box).marginRight),
+    }));
+    expect(style.listStyle, 'the item must not keep its bullet').toBe('none');
+    expect(style.marginRight, 'the box must not sit flush against its text').toBeGreaterThan(0);
   });
 });
 
