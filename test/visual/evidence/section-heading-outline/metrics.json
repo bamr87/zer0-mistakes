@@ -1,0 +1,70 @@
+{
+  "slug": "section-heading-outline",
+  "routes": [
+    {
+      "url": "/news/business/",
+      "style": "list",
+      "reverted": 10,
+      "before": {
+        "sequence": "h5 h6 h2 h1 h5 h5 h3 h6 h6 h6 h6 h6",
+        "skips": [
+          "h1->h5",
+          "h3->h6"
+        ]
+      },
+      "after": {
+        "sequence": "h2 h3 h2 h1 h2 h2 h2 h3 h3 h3 h3 h3",
+        "skips": []
+      },
+      "headings": 11,
+      "styleDiffs": [],
+      "pixelIdentical": false,
+      "controlIdentical": false
+    },
+    {
+      "url": "/news/development/",
+      "style": "grid",
+      "reverted": 11,
+      "before": {
+        "sequence": "h5 h6 h2 h1 h5 h5 h5 h3 h6 h6 h6 h6 h6",
+        "skips": [
+          "h1->h5",
+          "h3->h6"
+        ]
+      },
+      "after": {
+        "sequence": "h2 h3 h2 h1 h2 h2 h2 h2 h3 h3 h3 h3 h3",
+        "skips": []
+      },
+      "headings": 12,
+      "styleDiffs": [],
+      "pixelIdentical": false,
+      "controlIdentical": false
+    },
+    {
+      "url": "/news/tutorial/",
+      "style": "magazine",
+      "reverted": 22,
+      "before": {
+        "sequence": "h5 h6 h2 h1 h2 h3 h5 h3 h5 h3 h5 h3 h5 h3 h5 h3 h5 h5 h5 h3 h6 h6 h6 h6 h6",
+        "skips": [
+          "h3->h5",
+          "h3->h5",
+          "h3->h5",
+          "h3->h5",
+          "h3->h5",
+          "h3->h5",
+          "h3->h6"
+        ]
+      },
+      "after": {
+        "sequence": "h2 h3 h2 h1 h2 h2 h3 h2 h3 h2 h3 h2 h3 h2 h3 h2 h3 h3 h3 h2 h3 h3 h3 h3 h3",
+        "skips": []
+      },
+      "headings": 24,
+      "styleDiffs": [],
+      "pixelIdentical": false,
+      "controlIdentical": false
+    }
+  ]
+}
