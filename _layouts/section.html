@@ -287,9 +287,9 @@ layout: root
           {% if subcat_posts_filtered.size > 0 %}
           <section id="{{ subcat | slugify }}" class="subcategory-section mb-5 pb-4 border-bottom scroll-mt-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-              <h3 class="h4 mb-0">
+              <h2 class="h4 mb-0">
                 <i class="bi bi-tag text-primary me-2"></i>{{ subcat | capitalize }}
-              </h3>
+              </h2>
               {% if _tags_linkable %}
               <a href="{{ tags_base | relative_url }}#{{ subcat | slugify }}" class="btn btn-outline-secondary btn-sm">
                 View All <i class="bi bi-arrow-right ms-1"></i>
@@ -318,11 +318,11 @@ layout: root
                       </a>
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title mb-2">
+                      <h3 class="card-title h5 mb-2">
                         <a href="{{ spost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
                           {{ spost.title | truncate: 55 }}
                         </a>
-                      </h5>
+                      </h3>
                       <p class="card-text text-muted small">
                         {{ spost.excerpt | strip_html | truncate: 80 }}
                       </p>
@@ -343,9 +343,9 @@ layout: root
         {% comment %} All Posts Section {% endcomment %}
         <section id="all-posts" class="all-posts-section mb-5 scroll-mt-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="h4 mb-0">
+            <h2 class="h4 mb-0">
               <i class="bi bi-grid text-secondary me-2"></i>All {{ page.title }} Articles
-            </h3>
+            </h2>
           </div>
           
           <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
@@ -378,11 +378,11 @@ layout: root
                         <span class="badge bg-light text-dark">{{ apost.tags | first }}</span>
                       {% endif %}
                     </div>
-                    <h5 class="card-title mb-2">
+                    <h3 class="card-title h5 mb-2">
                       <a href="{{ apost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
                         {{ apost.title | truncate: 55 }}
                       </a>
-                    </h5>
+                    </h3>
                     <p class="card-text text-muted small">
                       {{ apost.excerpt | strip_html | truncate: 80 }}
                     </p>
@@ -459,11 +459,11 @@ layout: root
                         <span class="badge bg-light text-dark">{{ tag }}</span>
                       {% endfor %}
                     </div>
-                    <h5 class="card-title mb-2">
+                    <h2 class="card-title h5 mb-2">
                       <a href="{{ gpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
                         {{ gpost.title | truncate: 60 }}
                       </a>
-                    </h5>
+                    </h2>
                     <p class="card-text text-muted small flex-grow-1">
                       {{ gpost.excerpt | strip_html | truncate: 100 }}
                     </p>
@@ -518,11 +518,11 @@ layout: root
                         <span class="badge bg-light text-dark">{{ tag }}</span>
                       {% endfor %}
                     </div>
-                    <h5 class="card-title">
+                    <h2 class="card-title h5">
                       <a href="{{ lpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
                         {{ lpost.title }}
                       </a>
-                    </h5>
+                    </h2>
                     <p class="card-text text-muted">{{ lpost.excerpt | strip_html | truncate: 200 }}</p>
                     <div class="d-flex gap-3 text-muted small">
                       <span><i class="bi bi-calendar me-1"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
@@ -554,9 +554,9 @@ layout: root
       {% comment %} RELATED SECTIONS           {% endcomment %}
       {% comment %} ========================== {% endcomment %}
       <aside class="related-sections mt-5 pt-4 border-top">
-        <h3 class="h5 mb-3">
+        <h2 class="h5 mb-3">
           <i class="bi bi-compass me-2"></i>Explore Other Sections
-        </h3>
+        </h2>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
           {% for sec_name in news_sections %}
             {% unless sec_name == page.category or sec_name == page.title %}
@@ -572,7 +572,7 @@ layout: root
                    class="card text-center h-100 text-decoration-none border-0 shadow-sm hover-lift">
                   <div class="card-body py-3">
                     <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block"></i>
-                    <h6 class="card-title mb-1 small">{{ sec_name }}</h6>
+                    <h3 class="card-title h6 mb-1 small">{{ sec_name }}</h3>
                     <small class="text-muted">{{ other_section_posts.size }} articles</small>
                   </div>
                 </a>
