@@ -44,12 +44,14 @@ function skips(items) {
   return bad;
 }
 
-/** Regions this PR actually repaired. A whole-page "no skips anywhere"
+/** Regions #436 actually repaired. A whole-page "no skips anywhere"
  *  assertion is the right eventual test, but the theme is not there yet:
- *  after this change 66 of 415 pages still carry a skip, from inline card
- *  markup in the news and section index layouts and from page content that
- *  jumps h1 -> h3. Asserting site-wide now would ship a test that fails on
- *  its own branch, which is worse than asserting less and saying so. */
+ *  after #436, 66 of 415 pages still carried a skip, from inline card markup
+ *  in the news and section index layouts and from page content that jumps
+ *  h1 -> h3. The section layout's whole <main> is now asserted
+ *  (SECTION_ROUTES, #555); the news index layout and page content remain. Asserting site-wide
+ *  now would ship a test that fails on its own branch, which is worse than
+ *  asserting less and saying so. */
 const CHROME_REGIONS = [
   { selector: '#cookieSettingsModal', why: 'cookie dialog — ships on every page' },
   // #info-section (kebab) is the offcanvas. #infoSection is its <h2>'s id,
@@ -62,6 +64,13 @@ const ROUTES = [
   { path: UI_ROUTES.home, why: 'home' },
   { path: '/docs/', why: 'docs — different layout family, same chrome' },
   { path: '/404.html', why: '404 — root-inheriting' },
+];
+
+/** One published section landing per section_style in the demo content. */
+const SECTION_ROUTES = [
+  { path: UI_ROUTES.newsSection, style: 'list' },
+  { path: '/news/development/', style: 'grid' },
+  { path: '/news/tutorial/', style: 'magazine' },
 ];
 
 test.describe('heading outline does not skip levels', { tag: '@critical' }, () => {
@@ -115,6 +124,41 @@ test.describe('heading outline does not skip levels', { tag: '@critical' }, () =
       ).toBe(titleLevel + 1);
     }
   });
+
+  // Regression: #555. The section layout (news section landings) was the
+  // remainder the CHROME_REGIONS note above deferred: a sidebar <h5>/<h6>
+  // rendered before the page <h1>, then h1 -> h5 card titles. One route per
+  // section_style, because each style emits its own card markup.
+  for (const { path, style } of SECTION_ROUTES) {
+    test(`section layout (${style}) has a continuous outline in #main-content on ${path}`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: 'load' }).catch(() => null);
+      test.skip(!res || res.status() >= 400, `${path} not published on this site`);
+      test.skip((await page.locator('.section-layout').count()) === 0, `${path} is not a section layout here`);
+
+      // Everything the layout renders, sidebar included, sits inside root.html's
+      // <main id="main-content">. Site chrome outside it is asserted per region
+      // (CHROME_REGIONS above).
+      const items = await page.locator('#main-content').evaluate((root) =>
+        [...root.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((el) => ({
+          level: Number(el.tagName[1]),
+          text: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
+        })));
+      expect(
+        skips(items),
+        `heading levels jump on the ${style} section page ${path} (issue #555). ` +
+        `Pick the tag for DEPTH and a .h1-.h6 class for SIZE.`
+      ).toEqual([]);
+
+      const h1s = (await outline(page)).filter((h) => h.level === 1);
+      expect(h1s.length, `exactly one <h1> on ${path}`).toBe(1);
+
+      // Nothing in the section layout reaches for h5/h6 to get small type.
+      const deep = await page.evaluate(() =>
+        [...document.querySelectorAll('.section-layout h5, .section-layout h6')]
+          .map((el) => `${el.tagName}: ${(el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40)}`));
+      expect(deep, `h5/h6 used as a size inside the section layout on ${path}`).toEqual([]);
+    });
+  }
 
   test('small type does not mean a deep level', async ({ page }) => {
     // The root cause, asserted directly: the fix must keep the visual size, so
