@@ -938,6 +938,21 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Cookie preferences no longer pre-tick Analytics** ([#553](https://github.com/bamr87/zer0-mistakes/issues/553), ZER0-007).
+  `#analyticsCookies` carried a hard-coded `checked` attribute, and the
+  component synced the modal switches from stored consent *only* for returning
+  visitors — so a first-time visitor who opened Cookie Preferences saw Analytics
+  already on, and "Save Preferences" recorded `analytics: true` (and called
+  `posthog.opt_in_capturing()`) without them touching the switch. Pre-ticked
+  boxes are not valid consent (GDPR/ePrivacy Recital 32; CJEU *Planet49*,
+  C-673/17), and the component's own `defaultConsent` already said off. The
+  attribute is gone and `updateModalUI(existingConsent || defaultConsent)` now
+  runs on every first paint, so the switches always mirror the state actually in
+  force; `updateModalUI` became null-safe for consumers that ship the banner
+  without the modal. Accept All is unchanged (explicit consent) and returning
+  visitors still see their saved choices. Regression test:
+  `test/visual/features/cookie-consent-defaults.spec.js`.
+
 - **Accessibility: section landings have a continuous heading outline** ([#555](https://github.com/bamr87/zer0-mistakes/issues/555)). `layout: section` picked heading tags for their font size, so on `/news/<section>/` the sidebar's `<h5>`/`<h6>` came before the page `<h1>` and card titles jumped `h1 → h5` (WCAG 1.3.1). `_layouts/section.html` and `_includes/navigation/section-sidebar.html` now choose tags by document depth and keep each size with an `.h4`/`.h5`/`.h6` class (the #436 pattern); source order, and so focus order, is unchanged. Visual sizes are unchanged. Pinned by `test/visual/core/heading-outline.spec.js` for the grid, list and magazine styles (evidence: [`test/visual/evidence/section-heading-outline/`](test/visual/evidence/section-heading-outline/README.md)).
 
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**

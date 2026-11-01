@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/grokbot-fix-cookie-consent-analytics-default/ -->
+  (evidence: [`test/visual/evidence/grokbot-fix-cookie-consent-analytics-default/`](test/visual/evidence/grokbot-fix-cookie-consent-analytics-default/README.md))
