@@ -2,8 +2,8 @@
   "schema": "visual-autogen-manifest/v1",
   "slug": "grokbot-fix-fab-layer-tokens",
   "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "2d9793d88d9b779af25466244f0565318491dcfa",
+  "rendered_from": "5562b2660343200934059970bf35bcf0ed04984d",
   "base_ref": "origin/main",
   "before_site": true,
-  "generated_at": "2026-11-01T05:18:00+00:00"
+  "generated_at": "2026-11-02T05:18:09+00:00"
 }
