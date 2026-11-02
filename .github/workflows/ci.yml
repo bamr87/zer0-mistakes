@@ -302,10 +302,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
+      # npm ci + a CACHED chromium. Keyed on package-lock.json, so a Playwright
+      # bump fetches the matching browser instead of reusing a stale one.
       - name: Install Playwright dependencies
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
+        uses: ./.github/actions/setup-playwright
 
       - name: Playwright critical tests (PR gate)
         env:

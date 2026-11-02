@@ -348,7 +348,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - SCSS: `_sass/layouts/_navbar-extras.scss`; tokens in `_sass/tokens/_layers.scss` (`--zer0-layer-fab-*`), `_spacing.scss` (`--zer0-space-fab-*`)
   - Markup: `_includes/navigation/toc-fab.html`, `local-graph-fab.html` (rendered from `footer.html`)
   - JS: visibility driven by `toc-visibility.js` / `sidebar-visibility.js` (toggle `--restore` classes)
-- **API surface:** classes `.bd-toc-fab`, `.bd-sidebar-fab`, `.bd-toc-toggle`, `.bd-sidebar-toggle`, `.bd-toc-fab--restore`, `.bd-sidebar-fab--restore`; ids `#tocFab`, `#sidebarFab`; CSS vars `--zer0-layer-fab-toc` (1055), `--zer0-layer-fab-back-to-top` (1050), `--zer0-layer-fab-local-graph` (1060), `--zer0-space-fab-offset/size/gap`
+- **API surface:** classes `.bd-toc-fab`, `.bd-sidebar-fab`, `.bd-toc-toggle`, `.bd-sidebar-toggle`, `.bd-toc-fab--restore`, `.bd-sidebar-fab--restore`; ids `#tocFab`, `#sidebarFab`; CSS vars `--zer0-layer-fab-toc` (1034), `--zer0-layer-fab-back-to-top` (1031), `--zer0-layer-fab-local-graph` (1035) — the whole FAB band sits below `--zer0-layer-backdrop` (1040) so an open overlay covers it (#572), `--zer0-space-fab-offset/size/gap`
 - **Tests:** `test/visual/features/content-enhancements.spec.js` — "mobile exposes sidebar FAB and ToC FAB" (asserts `#sidebarFab, .bd-sidebar-fab` visible and `#tocFab` attached at the mobile viewport).
 - **Gaps / improvement ideas:** The actual stacking (FABs not overlapping back-to-top) is computed via CSS `calc()` but never asserted with bounding-box overlap checks — `fixtures.js` already provides `boxesOverlap`/`assertStackedVertically` helpers that could verify it. The restore-mode visibility transitions and the local-graph FAB are untested.
 
@@ -534,6 +534,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
 
 - **Purpose:** Builds an "On this page" outline by parsing the rendered page HTML for `h1`–`h6` and emitting a nested list, rendered in the sticky right column / offcanvas. Only runs when the page actually contains `<h2>`/`<h3>`/`<h4>`.
 - **Capabilities:** allejo/jekyll-toc Liquid parser with `h_min`/`h_max`, `sanitize`, `class`, `item_class`, `anchor_class`, `skip_no_ids`, ordered/unordered, `no_toc` skip, base_url; here invoked with `h_min=1 h_max=3 sanitize=true skip_no_ids=true class="list-group-flush" item_class="list-group-item"`; "No sections on this page" fallback; sticky desktop column with scrollable overflow; active-link border-left accent.
+- **Body scoping:** when a layout wraps its body in the empty `<zer0-toc-start>`/`<zer0-toc-end>` sentinels (the `article` layout does, #552), the parser reads only the slice between them, with `h_min=2`. `default.html` strips the sentinels from the delivered page.
 - **Source:**
   - SCSS: `_sass/core/_toc.scss` (`#TableOfContents`, `.toc`, `.toc-toggle`, `.toc-collapse`), plus `.bd-toc nav …` rules in `_sass/core/_docs-layout.scss` and the active shim in `_sass/core/_sidebar-extras.scss`
   - Markup: `_includes/content/toc.html` (parser), `_includes/navigation/sidebar-right.html` (`#tocContents` offcanvas + `nav#TableOfContents` wrapper + toggle button)

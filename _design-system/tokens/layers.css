@@ -15,11 +15,11 @@
   --zer0-layer-backdrop: 1040; /* @kind other */
   --zer0-layer-offcanvas: 1045; /* @kind other */
 
-  --zer0-layer-fab-back-to-top: 1050; /* @kind other */
-  --zer0-layer-fab-feedback: 1051; /* @kind other */
-  --zer0-layer-fab-chat: 1052; /* @kind other */
-  --zer0-layer-fab-toc: 1055; /* @kind other */
-  --zer0-layer-fab-local-graph: 1060; /* @kind other */
+  --zer0-layer-fab-back-to-top: 1031; /* @kind other */
+  --zer0-layer-fab-feedback: 1032; /* @kind other */
+  --zer0-layer-fab-chat: 1033; /* @kind other */
+  --zer0-layer-fab-toc: 1034; /* @kind other */
+  --zer0-layer-fab-local-graph: 1035; /* @kind other */
 
   --zer0-layer-modal: 1055; /* @kind other */
   --zer0-layer-popover: 1070; /* @kind other */
