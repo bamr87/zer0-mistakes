@@ -534,6 +534,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
 
 - **Purpose:** Builds an "On this page" outline by parsing the rendered page HTML for `h1`–`h6` and emitting a nested list, rendered in the sticky right column / offcanvas. Only runs when the page actually contains `<h2>`/`<h3>`/`<h4>`.
 - **Capabilities:** allejo/jekyll-toc Liquid parser with `h_min`/`h_max`, `sanitize`, `class`, `item_class`, `anchor_class`, `skip_no_ids`, ordered/unordered, `no_toc` skip, base_url; here invoked with `h_min=1 h_max=3 sanitize=true skip_no_ids=true class="list-group-flush" item_class="list-group-item"`; "No sections on this page" fallback; sticky desktop column with scrollable overflow; active-link border-left accent.
+- **Body scoping:** when a layout wraps its body in the empty `<zer0-toc-start>`/`<zer0-toc-end>` sentinels (the `article` layout does, #552), the parser reads only the slice between them, with `h_min=2`. `default.html` strips the sentinels from the delivered page.
 - **Source:**
   - SCSS: `_sass/core/_toc.scss` (`#TableOfContents`, `.toc`, `.toc-toggle`, `.toc-collapse`), plus `.bd-toc nav …` rules in `_sass/core/_docs-layout.scss` and the active shim in `_sass/core/_sidebar-extras.scss`
   - Markup: `_includes/content/toc.html` (parser), `_includes/navigation/sidebar-right.html` (`#tocContents` offcanvas + `nav#TableOfContents` wrapper + toggle button)

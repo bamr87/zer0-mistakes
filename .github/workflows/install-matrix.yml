@@ -9,6 +9,12 @@ name: Install Matrix
 # (No push trigger: main is protected, so every change already ran this matrix
 # on its PR; the weekly schedule catches environment/tooling drift.)
 
+# A newer commit on the same PR supersedes the in-flight matrix; the weekly
+# scheduled run is never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   pull_request:
     paths:
