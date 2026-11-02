@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "grokbot-fix-cookie-consent-analytics-default",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "7f745781d4e646709c3bd8e73f4280de5911c206",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-11-01T05:19:24+00:00"
+}
