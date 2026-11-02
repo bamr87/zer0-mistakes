@@ -446,6 +446,16 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 ### Changed
 
 - **The cookie-consent banner renders only when the site has something that needs consent** ([#566](https://github.com/bamr87/zer0-mistakes/issues/566)). The banner, its "Manage Cookies" modal and the footer "Cookie Preferences" button used to render on every page, so a site with no tracker asked first-time visitors to consent to analytics cookies it never sets. They now render only when `google_analytics`, `google_tag_manager` or `posthog.enabled` is configured (blank ids count as unset). The new `cookie_consent.enabled` key overrides this: `true` forces the banner on (for trackers added through `_includes/custom/` hooks) and `false` turns it off. The setup wizard no longer writes `enabled: true`. Regression test: `test/test_cookie_consent_gate.rb` (run by `test_core.sh`). (evidence: [`test/visual/evidence/cookie-consent-gate/`](test/visual/evidence/cookie-consent-gate/README.md) — no-tracker site: banner, modal and footer button 1 → 0)
+- **CI stops re-downloading the Playwright browser on every run.** A new
+  `.github/actions/setup-playwright` composite action installs npm dependencies
+  and a **cached** chromium (`~/.cache/ms-playwright`, keyed on
+  `package-lock.json`), and `ci.yml`, `nightly-extended.yml`, `ui-audit.yml` and
+  the `playwright-tests` action all go through it. `codeql.yml` and
+  `install-matrix.yml` also gained a concurrency group that cancels superseded
+  pull-request runs (pushes to `main` and the scheduled scans are never
+  cancelled, so the Security tab's alert set is never replaced by a
+  half-finished analysis). Test coverage is unchanged — this is Actions-minute
+  cost only (ZER0-016, ZER0-027).
 
 - **Navigation start-up no longer runs as one long task.**
   `assets/js/modules/navigation/index.js` now wires sidebar state, keyboard
@@ -928,6 +938,23 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   `ANTHROPIC_API_KEY` used only when it's absent.
 
 ### Fixed
+
+- **Cookie preferences no longer pre-tick Analytics** ([#553](https://github.com/bamr87/zer0-mistakes/issues/553), ZER0-007).
+  `#analyticsCookies` carried a hard-coded `checked` attribute, and the
+  component synced the modal switches from stored consent *only* for returning
+  visitors — so a first-time visitor who opened Cookie Preferences saw Analytics
+  already on, and "Save Preferences" recorded `analytics: true` (and called
+  `posthog.opt_in_capturing()`) without them touching the switch. Pre-ticked
+  boxes are not valid consent (GDPR/ePrivacy Recital 32; CJEU *Planet49*,
+  C-673/17), and the component's own `defaultConsent` already said off. The
+  attribute is gone and `updateModalUI(existingConsent || defaultConsent)` now
+  runs on every first paint, so the switches always mirror the state actually in
+  force; `updateModalUI` became null-safe for consumers that ship the banner
+  without the modal. Accept All is unchanged (explicit consent) and returning
+  visitors still see their saved choices. Regression test:
+  `test/visual/features/cookie-consent-defaults.spec.js`.
+
+- **Accessibility: section landings have a continuous heading outline** ([#555](https://github.com/bamr87/zer0-mistakes/issues/555)). `layout: section` picked heading tags for their font size, so on `/news/<section>/` the sidebar's `<h5>`/`<h6>` came before the page `<h1>` and card titles jumped `h1 → h5` (WCAG 1.3.1). `_layouts/section.html` and `_includes/navigation/section-sidebar.html` now choose tags by document depth and keep each size with an `.h4`/`.h5`/`.h6` class (the #436 pattern); source order, and so focus order, is unchanged. Visual sizes are unchanged. Pinned by `test/visual/core/heading-outline.spec.js` for the grid, list and magazine styles (evidence: [`test/visual/evidence/section-heading-outline/`](test/visual/evidence/section-heading-outline/README.md)).
 
 - **CI: the two recurring red/cancelled run sources on `main` are gone.**
   Over the five weeks to 2026-10-29, `main` decided 197 runs and only 2 of them
