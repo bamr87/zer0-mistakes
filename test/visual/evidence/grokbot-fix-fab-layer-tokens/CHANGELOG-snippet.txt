@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/grokbot-fix-fab-layer-tokens/ -->
+  (evidence: [`test/visual/evidence/grokbot-fix-fab-layer-tokens/`](test/visual/evidence/grokbot-fix-fab-layer-tokens/README.md))
