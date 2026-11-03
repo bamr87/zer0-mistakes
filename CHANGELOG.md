@@ -12,6 +12,21 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.32.0](https://github.com/bamr87/zer0-mistakes/compare/v1.31.3...v1.32.0) (2026-11-03)
+
+
+### Features
+
+* **studio:** zer0 studio — the Rails workbench beside the theme ([#560](https://github.com/bamr87/zer0-mistakes/issues/560)) ([8817fbe](https://github.com/bamr87/zer0-mistakes/commit/8817fbe84e7d643668a689a941018319e38c549a))
+
+
+### Bug Fixes
+
+* **a11y:** section layout heading outline follows document depth ([#575](https://github.com/bamr87/zer0-mistakes/issues/575)) ([d47eb49](https://github.com/bamr87/zer0-mistakes/commit/d47eb49f7372c88e416350e5b5baa20994a1a825))
+* **privacy:** cookie preferences default Analytics to off ([#578](https://github.com/bamr87/zer0-mistakes/issues/578)) ([0d4a517](https://github.com/bamr87/zer0-mistakes/commit/0d4a517aaf39c71c5d14c2ba464886ecc5e10752))
+* **styles:** move the FAB layer band below the overlay surfaces ([#580](https://github.com/bamr87/zer0-mistakes/issues/580)) ([35eb01e](https://github.com/bamr87/zer0-mistakes/commit/35eb01ec4f1571852540c356a7bd71d20336a976))
+* **toc:** scope the article TOC to the post body ([#576](https://github.com/bamr87/zer0-mistakes/issues/576)) ([6620b04](https://github.com/bamr87/zer0-mistakes/commit/6620b04dcf8985047816ccd22d0347dcd8f1b6aa))
+
 ## [1.31.3](https://github.com/bamr87/zer0-mistakes/compare/v1.31.2...v1.31.3) (2026-10-20)
 
 
