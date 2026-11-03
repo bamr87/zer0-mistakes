@@ -1688,6 +1688,11 @@ off the `data-repo` attribute, not the page origin, so the iframe renders and re
 - **Back to top had no visible keyboard focus.** It now draws a 2px
   primary-color `:focus-visible` outline.
 
+### Fixed
+
+- **Docs-sidebar FAB reachable again below `lg` when the page has a local graph** ([#571](https://github.com/bamr87/zer0-mistakes/issues/571)): the Obsidian local-graph FAB moves to slot 3 of the left-side stack whenever `#sidebarFab` is on the page (`body:has(#sidebarFab)`, `<lg` only), so it no longer covers the sidebar FAB and swallows its taps; at `lg`+ it stays at slot 2 (evidence: [`test/visual/evidence/fab-stack-sidebar/`](test/visual/evidence/fab-stack-sidebar/README.md) — sidebar↔local-graph FAB overlap 3136px² → 0 below lg).
+
+
 ## [1.31.0](https://github.com/bamr87/zer0-mistakes/compare/v1.30.0...v1.31.0) (2026-10-07)
 
 
