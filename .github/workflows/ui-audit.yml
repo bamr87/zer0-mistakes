@@ -73,9 +73,7 @@ jobs:
           cache: npm
 
       - name: Install Playwright
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
+        uses: ./.github/actions/setup-playwright
 
       # NOTE: no `--detach`. Detaching disables Jekyll's watch thread, and the
       # LiveReload reactor rides that thread — while `_config_dev.yml` still

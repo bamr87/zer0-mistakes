@@ -269,6 +269,7 @@ features:
     tests:
       - "test/test_quality.sh"
       - "test/visual/features/banner-inset-skip-link.spec.js"
+      - "test/visual/features/cookie-consent-defaults.spec.js"
     references:
       include: "_includes/components/cookie-consent.html"
       config: "_config.yml"

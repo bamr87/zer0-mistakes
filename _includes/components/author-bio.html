@@ -69,7 +69,9 @@
 
 {% if include.author %}
 <aside class="author-section my-5 pt-4 border-top" aria-labelledby="about-the-author">
-  <h2 id="about-the-author" class="h5 mb-3">
+  {%- comment -%} no_toc: theme chrome, not a section of the post (#552). The
+     id stays -- aria-labelledby above resolves to it. {%- endcomment -%}
+  <h2 id="about-the-author" class="h5 mb-3 no_toc">
     <i class="bi bi-person-badge me-2" aria-hidden="true"></i>{{ bio_heading }}
   </h2>
 

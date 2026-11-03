@@ -1,0 +1,128 @@
+{
+  "slug": "toc-article-scope",
+  "generator": "test/visual/pr-evidence.mjs",
+  "base": "http://127.0.0.1:4000",
+  "before": "http://127.0.0.1:4001",
+  "beforeLabel": "BEFORE — base branch",
+  "afterLabel": "AFTER — this PR",
+  "routes": [
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "beforeRendered": true
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "beforeRendered": true
+    }
+  ],
+  "sweep": [
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2026/04/28/customer-onboarding-scorecards/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/docs/features/code-copy/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    }
+  ]
+}

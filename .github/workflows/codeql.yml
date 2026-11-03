@@ -9,6 +9,13 @@ permissions:
 # definitions for the `actions` language. Deliberately NOT '**.yml' — data/
 # content/config YAML contains nothing CodeQL analyzes, and that glob used to
 # fan out all four language analyses on every _data/_config change.
+# A newer commit on the same PR supersedes the in-flight analysis. Pushes to
+# main and the weekly scan are never cancelled — the default branch's alert set
+# is what the Security tab reads, so a half-finished scan must not replace it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   push:
     branches: [ "main" ]

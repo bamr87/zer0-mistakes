@@ -445,6 +445,17 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Changed
 
+- **CI stops re-downloading the Playwright browser on every run.** A new
+  `.github/actions/setup-playwright` composite action installs npm dependencies
+  and a **cached** chromium (`~/.cache/ms-playwright`, keyed on
+  `package-lock.json`), and `ci.yml`, `nightly-extended.yml`, `ui-audit.yml` and
+  the `playwright-tests` action all go through it. `codeql.yml` and
+  `install-matrix.yml` also gained a concurrency group that cancels superseded
+  pull-request runs (pushes to `main` and the scheduled scans are never
+  cancelled, so the Security tab's alert set is never replaced by a
+  half-finished analysis). Test coverage is unchanged — this is Actions-minute
+  cost only (ZER0-016, ZER0-027).
+
 - **Navigation start-up no longer runs as one long task.**
   `assets/js/modules/navigation/index.js` now wires sidebar state, keyboard
   shortcuts, focus management and the navbar first, then yields to the main
@@ -928,6 +939,35 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 ### Fixed
 
 - **Docs: the safe-mode build overlay recipe is Pages-faithful** ([#565](https://github.com/bamr87/zer0-mistakes/issues/565)). [`/docs/deployment/build-overlay/`](pages/_docs/deployment/build-overlay.md) used to clone the whole theme repo into the build dir and copy the site on top. The theme's `_data/` (its `navigation/docs.yml` sidebar), its root pages (`/AGENTS/`, `/CLAUDE/`), `examples/`, `templates/`, `features/` and `fr/` all leaked into consumer CI builds that production never serves. The recipe now starts from the consumer site and copies in only `_layouts/`, `_includes/`, `_sass/` and `assets/` with `rsync --ignore-existing` (consumer files win), and it explains why an allowlist beats a denylist. The reusable `lh_overlay()` gets the same inversion, and it now writes to the caller's `_site` (`-d "$PWD/$out"` used to expand after the `cd`, so the site landed in the temp dir). `THEME_URL`/`THEME_REF` are overridable, and the "Verifying the overlay matches Pages" checklist gains the `/AGENTS/`, `/features/`, `/fr/` and theme-`_data` checks. Regression test: `test/test_build_overlay_recipe.sh` (run by `test_core.sh`) runs both code blocks verbatim against a minimal consumer.
+- **An open overlay now covers the floating action buttons**
+  ([#572](https://github.com/bamr87/zer0-mistakes/issues/572), ZER0-081).
+  The FAB band in `_sass/tokens/_layers.scss` sat *above* the overlay surfaces
+  (back-to-top 1050, feedback 1051, chat 1052, toc 1055, local-graph 1060
+  against backdrop 1040, offcanvas 1045, modal 1055), so with the search modal,
+  the main-nav offcanvas or the TOC panel open the TOC and local-graph FABs
+  painted over it undimmed and stayed hit-testable — `fab-toc` tied with `modal`
+  and won on DOM order, because the FABs render after the footer. The band moved
+  to 1031-1035, between the header (1030) and the backdrop (1040), which is the
+  ordering the file's own header already promised. FABs never overlap the fixed
+  header, so nothing else moved; the non-modal local-graph panel still opens
+  over its own FAB and still has its close button. Stale `var(…, 1051)` /
+  `var(…, 1052)` fallbacks in `_includes/components/ai-chat.html` and
+  `_sass/components/_page-feedback.scss` were retuned with it. New source
+  contract: `test/visual/features/fab-layer-order.spec.js`.
+- **Cookie preferences no longer pre-tick Analytics** ([#553](https://github.com/bamr87/zer0-mistakes/issues/553), ZER0-007).
+  `#analyticsCookies` carried a hard-coded `checked` attribute, and the
+  component synced the modal switches from stored consent *only* for returning
+  visitors — so a first-time visitor who opened Cookie Preferences saw Analytics
+  already on, and "Save Preferences" recorded `analytics: true` (and called
+  `posthog.opt_in_capturing()`) without them touching the switch. Pre-ticked
+  boxes are not valid consent (GDPR/ePrivacy Recital 32; CJEU *Planet49*,
+  C-673/17), and the component's own `defaultConsent` already said off. The
+  attribute is gone and `updateModalUI(existingConsent || defaultConsent)` now
+  runs on every first paint, so the switches always mirror the state actually in
+  force; `updateModalUI` became null-safe for consumers that ship the banner
+  without the modal. Accept All is unchanged (explicit consent) and returning
+  visitors still see their saved choices. Regression test:
+  `test/visual/features/cookie-consent-defaults.spec.js`.
 
 - **Accessibility: section landings have a continuous heading outline** ([#555](https://github.com/bamr87/zer0-mistakes/issues/555)). `layout: section` picked heading tags for their font size, so on `/news/<section>/` the sidebar's `<h5>`/`<h6>` came before the page `<h1>` and card titles jumped `h1 → h5` (WCAG 1.3.1). `_layouts/section.html` and `_includes/navigation/section-sidebar.html` now choose tags by document depth and keep each size with an `.h4`/`.h5`/`.h6` class (the #436 pattern); source order, and so focus order, is unchanged. Visual sizes are unchanged. Pinned by `test/visual/core/heading-outline.spec.js` for the grid, list and magazine styles (evidence: [`test/visual/evidence/section-heading-outline/`](test/visual/evidence/section-heading-outline/README.md)).
 
