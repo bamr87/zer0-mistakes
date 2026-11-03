@@ -37,7 +37,7 @@ test.describe('Page-feedback widget', () => {
   test.beforeEach(async ({ page }) => {
     // The consent banner is a full-width bar pinned to the bottom of the
     // viewport, on a layer above the FAB stack (--zer0-layer-cookie-banner
-    // 1095 > --zer0-layer-fab-feedback 1051), so it swallows every click aimed
+    // 1095 > --zer0-layer-fab-feedback 1032), so it swallows every click aimed
     // at the FAB. Every other spec that touches lower-screen chrome seeds the
     // choice the way a returning visitor would; this one never did.
     await dismissCookieConsent(page);
