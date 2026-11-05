@@ -572,6 +572,28 @@ a:not(.btn) {
 
 // MOVED → _sass/components/_skeleton.scss (token-aware, dark-mode-safe)
 
+// GFM task lists (#573). kramdown emits
+// `<li class="task-list-item"><input class="task-list-item-checkbox" …>Text`
+// with no whitespace, so without these rules the item keeps its bullet and the
+// box sits flush against its text. The box's width plus its right margin
+// equals its negative left margin, so the text and its wrapped lines keep the
+// list indent. The accessible name is added by assets/js/ui-enhancements.js.
+.task-list-item {
+  list-style-type: none;
+}
+
+.task-list-item-checkbox {
+  width: 1.05em;
+  height: 1.05em;
+  margin: 0 0.55em 0 -1.6em;
+  vertical-align: -0.15em;
+  accent-color: var(--zer0-color-primary);
+}
+
+.task-list-item-checkbox:not(:disabled) {
+  cursor: pointer;
+}
+
 // Print optimizations
 @media print {
   .btn,
