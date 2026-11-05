@@ -1311,6 +1311,22 @@ test_cookie_consent_gate() {
     fi
 }
 
+test_build_overlay_recipe() {
+    log_info "Testing the documented safe-mode build overlay is Pages-faithful (issue #565)..."
+
+    cd "$PROJECT_ROOT"
+
+    # Runs the recipe from pages/_docs/deployment/build-overlay.md verbatim
+    # against a throwaway consumer; skips itself when git/rsync/bundle are absent.
+    if bash test/test_build_overlay_recipe.sh; then
+        log_success "build-overlay recipe delivers only what remote_theme delivers"
+        return 0
+    else
+        log_error "build-overlay recipe check failed (see above)"
+        return 1
+    fi
+}
+
 test_content_liquid_is_raw_protected() {
     log_info "Testing Liquid shown as code in content is raw-protected..."
 
@@ -1949,6 +1965,7 @@ run_core_tests() {
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
+    run_test "Build Overlay Recipe" "test_build_overlay_recipe" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     

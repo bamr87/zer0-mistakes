@@ -939,6 +939,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Docs: the safe-mode build overlay recipe is Pages-faithful** ([#565](https://github.com/bamr87/zer0-mistakes/issues/565)). [`/docs/deployment/build-overlay/`](pages/_docs/deployment/build-overlay.md) used to clone the whole theme repo into the build dir and copy the site on top. The theme's `_data/` (its `navigation/docs.yml` sidebar), its root pages (`/AGENTS/`, `/CLAUDE/`), `examples/`, `templates/`, `features/` and `fr/` all leaked into consumer CI builds that production never serves. The recipe now starts from the consumer site and copies in only `_layouts/`, `_includes/`, `_sass/` and `assets/` with `rsync --ignore-existing` (consumer files win), and it explains why an allowlist beats a denylist. The reusable `lh_overlay()` gets the same inversion, and it now writes to the caller's `_site` (`-d "$PWD/$out"` used to expand after the `cd`, so the site landed in the temp dir). `THEME_URL`/`THEME_REF` are overridable, and the "Verifying the overlay matches Pages" checklist gains the `/AGENTS/`, `/features/`, `/fr/` and theme-`_data` checks. Regression test: `test/test_build_overlay_recipe.sh` (run by `test_core.sh`) runs both code blocks verbatim against a minimal consumer.
 - **An open overlay now covers the floating action buttons**
   ([#572](https://github.com/bamr87/zer0-mistakes/issues/572), ZER0-081).
   The FAB band in `_sass/tokens/_layers.scss` sat *above* the overlay surfaces
