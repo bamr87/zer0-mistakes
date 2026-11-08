@@ -104,9 +104,10 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
         </h1>
       </div>
       <div class="col-md-8">
-        <nav class="nav nav-pills justify-content-md-end flex-wrap">
-          <a class="nav-link text-white active" href="{{ page.url | relative_url }}">
-            <i class="bi bi-house me-1"></i>Home
+        {%- include core/i18n.html -%}
+        <nav class="nav nav-pills justify-content-md-end flex-wrap" aria-label="{{ ui.news_sections_label | default: 'News sections' }}">
+          <a class="nav-link text-white active" href="{{ page.url | relative_url }}" aria-current="page">
+            <i class="bi bi-house me-1" aria-hidden="true"></i>Home
           </a>
           {% for sec_name in news_sections %}
             {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
@@ -116,13 +117,13 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
               {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
             {% endif %}
             <a class="nav-link text-white-50" href="{{ _sec_url | relative_url }}">
-              {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1"></i>{% endif %}
+              {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1" aria-hidden="true"></i>{% endif %}
               {{ sec_name }}
             </a>
           {% endfor %}
           {% if _tags_linkable %}
           <a class="nav-link text-white-50" href="{{ tags_base | relative_url }}">
-            <i class="bi bi-tags me-1"></i>Tags
+            <i class="bi bi-tags me-1" aria-hidden="true"></i>Tags
           </a>
           {% endif %}
         </nav>
