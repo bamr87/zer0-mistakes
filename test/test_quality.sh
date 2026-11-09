@@ -653,10 +653,20 @@ test_cross_platform_files() {
     log_step "Testing cross-platform file compatibility"
     
     cd "$PROJECT_ROOT"
-    
+
+    # Scan the theme's own files, not installed dependencies or build output
+    # (all gitignored). CI runs `bundle config set --local path vendor/bundle`,
+    # so ./vendor holds ~138 installed gems — thousands of .rb/.md/.html files
+    # that this repo does not ship. Forking `file` (and `grep`) once per file
+    # there took ~65s of every Quality Control and Test Suite job, and every
+    # encoding warning it printed was about a third-party gem.
+    local prune=( \( -path ./.git -o -path ./vendor -o -path ./node_modules
+                     -o -path ./.bundle -o -path ./_site -o -path ./.jekyll-cache \)
+                  -prune -o )
+
     # Check file encoding
     local non_utf8_files=0
-    find . -name "*.md" -o -name "*.html" -o -name "*.yml" -o -name "*.yaml" -o -name "*.rb" | while read -r file; do
+    find . "${prune[@]}" \( -name "*.md" -o -name "*.html" -o -name "*.yml" -o -name "*.yaml" -o -name "*.rb" \) -print | while read -r file; do
         if command -v file &>/dev/null; then
             local encoding
             encoding=$(file -b --mime-encoding "$file")
@@ -667,8 +677,9 @@ test_cross_platform_files() {
         fi
     done
     
-    # Check for Windows line endings
-    if find . -name "*.md" -o -name "*.html" -o -name "*.yml" -o -name "*.yaml" -o -name "*.rb" -exec grep -l $'\r' {} \; | head -1 | grep -q .; then
+    # Check for Windows line endings. The name tests are grouped so -exec
+    # applies to every listed type (ungrouped, it bound to *.rb alone).
+    if find . "${prune[@]}" \( -name "*.md" -o -name "*.html" -o -name "*.yml" -o -name "*.yaml" -o -name "*.rb" \) -exec grep -l $'\r' {} \; | head -1 | grep -q .; then
         log_warning "Windows line endings (CRLF) found in some files"
     else
         log_success "No Windows line endings found"
@@ -676,7 +687,7 @@ test_cross_platform_files() {
     
     # Check for case sensitivity issues
     local case_issues=0
-    find . -type f | sort | uniq -d -i | while read -r duplicate; do
+    find . "${prune[@]}" -type f -print | sort | uniq -d -i | while read -r duplicate; do
         log_warning "Potential case sensitivity issue: $duplicate"
         case_issues=$((case_issues + 1))
     done

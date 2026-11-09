@@ -25,11 +25,15 @@
 # Ruby 3.4 breaks compatibility with some older native extensions
 FROM ruby:3.4-slim AS base
 
-# Minimal packages for native gems and Jekyll (no Node/Mermaid/Jupyter here)
+# Minimal packages for native gems and Jekyll (no Node/Mermaid/Jupyter here).
+# libssl-dev + pkg-config: the openssl gem (via jekyll-remote-theme) builds a
+# native extension once a fresh resolve picks it up (test-latest.yml).
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libyaml-dev \
+        libssl-dev \
+        pkg-config \
         zlib1g-dev \
         git && \
     rm -rf /var/lib/apt/lists/* && \
