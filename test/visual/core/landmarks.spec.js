@@ -163,3 +163,92 @@ test.describe('Landmarks — one main landmark per page', () => {
     });
   });
 });
+
+// =============================================================================
+// Navigation landmarks — every <nav> is named (issue #567)
+// =============================================================================
+// The section layout added three bare <nav> elements (the section-switcher
+// pills and the desktop + offcanvas Topics lists) beside the labelled primary
+// nav and breadcrumbs, so a screen reader's landmark list read "navigation,
+// navigation, navigation" (axe `landmark-unique`, WCAG 1.3.1). The active
+// switcher pill was marked only by `class="active"` (no aria-current), and
+// the Bootstrap Icons beside the link text were exposed to assistive tech.
+//
+// Same two layers as above: a source assertion that needs no server, then a
+// rendered check on a section route. `landmark-unique` is an axe
+// best-practice rule, so it is enabled explicitly — the wcag2a/aa audits in
+// accessibility.spec.js would not run it.
+// =============================================================================
+
+const NAV_SOURCE_DIRS = [LAYOUTS_DIR, path.resolve(__dirname, '../../../_includes/navigation')];
+const SECTION_ROUTE = '/news/technology/';
+
+const stripLiquidComments = (src) =>
+  src.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '');
+
+test.describe('Landmarks — every navigation landmark is named', () => {
+  test('no <nav> in _layouts/ or _includes/navigation/ lacks aria-label / aria-labelledby', { tag: '@critical' }, () => {
+    const offenders = [];
+    for (const dir of NAV_SOURCE_DIRS) {
+      for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.html'))) {
+        const body = stripLiquidComments(fs.readFileSync(path.join(dir, file), 'utf8'));
+        for (const tag of body.match(/<nav\b[^>]*>/g) || []) {
+          if (!/\baria-label(ledby)?=/.test(tag)) {
+            offenders.push(`${path.relative(path.resolve(__dirname, '../../..'), path.join(dir, file))}: ${tag}`);
+          }
+        }
+      }
+    }
+    expect(offenders, 'unlabelled <nav> landmarks').toEqual([]);
+  });
+
+  test.describe('rendered section page', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS.desktop);
+      await gotoOrSkip(page, SECTION_ROUTE);
+    });
+
+    test('every navigation landmark has an accessible name', async ({ page }) => {
+      const unnamed = await page.$$eval('nav, [role="navigation"]', (els) =>
+        els
+          .filter((el) => {
+            const label = (el.getAttribute('aria-label') || '').trim();
+            const ids = (el.getAttribute('aria-labelledby') || '').split(/\s+/).filter(Boolean);
+            const labelled = ids.some((id) => (document.getElementById(id)?.textContent || '').trim());
+            return !label && !labelled;
+          })
+          .map((el) => el.outerHTML.slice(0, 120))
+      );
+      expect(unnamed, `unnamed navigation landmarks on ${SECTION_ROUTE}`).toEqual([]);
+    });
+
+    test('the active section pill carries aria-current="page", the others none', async ({ page }) => {
+      const switcher = page.locator('nav.nav-pills');
+      await expect(switcher).toHaveAttribute('aria-label', /\S/);
+
+      const active = switcher.locator('a.nav-link.active');
+      await expect(active).toHaveCount(1);
+      await expect(active).toHaveAttribute('aria-current', 'page');
+      await expect(switcher.locator('a.nav-link[aria-current]')).toHaveCount(1);
+    });
+
+    test('Bootstrap Icons inside section navigation are aria-hidden', async ({ page }) => {
+      const exposed = await page.$$eval(
+        'nav.nav-pills i.bi, .sidebar-nav i.bi, .offcanvas nav i.bi',
+        (icons) => icons.filter((i) => i.getAttribute('aria-hidden') !== 'true').map((i) => i.className)
+      );
+      expect(exposed, 'exposed nav icons').toEqual([]);
+    });
+
+    test('section navigation landmarks pass axe landmark-unique', async ({ page }) => {
+      const results = await new AxeBuilder({ page })
+        .include('.section-layout, nav.nav-pills')
+        .withRules(['landmark-unique'])
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+        `axe landmark-unique violations on ${SECTION_ROUTE}`
+      ).toEqual([]);
+    });
+  });
+});
