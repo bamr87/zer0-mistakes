@@ -26,13 +26,14 @@
 FROM ruby:3.4-slim AS base
 
 # Minimal packages for native gems and Jekyll (no Node/Mermaid/Jupyter here).
-# libssl-dev: the openssl gem (pulled in by jekyll-remote-theme 0.6.x) compiles
-# against the system OpenSSL headers.
+# libssl-dev + pkg-config: the openssl gem (via jekyll-remote-theme) builds a
+# native extension once a fresh resolve picks it up (test-latest.yml).
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        libssl-dev \
         libyaml-dev \
+        libssl-dev \
+        pkg-config \
         zlib1g-dev \
         git && \
     rm -rf /var/lib/apt/lists/* && \

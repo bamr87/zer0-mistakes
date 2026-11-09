@@ -120,7 +120,7 @@ jobs:
           rm -f Gemfile.lock
           # Use Ruby 3.3 (github-pages 232 requires Jekyll 3.10 which is compatible with Ruby 3.x)
           docker run --rm -v "$PWD:/site" -w /site ruby:3.3-slim bash -c '
-            apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libssl-dev libyaml-dev zlib1g-dev &&
+            apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libyaml-dev zlib1g-dev libssl-dev pkg-config && 
             git config --global --add safe.directory /site && 
             gem install bundler -v "~> 2.3" && 
             bundle install
