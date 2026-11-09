@@ -74,36 +74,36 @@
 {% comment %} ================================ {% endcomment %}
 {% comment %} DESKTOP SIDEBAR (Fixed Sticky)   {% endcomment %}
 {% comment %} ================================ {% endcomment %}
-<aside class="section-sidebar-desktop d-none d-lg-block w-100">
+<aside class="section-sidebar-desktop d-none d-lg-block w-100" aria-label="{{ page_title | escape }} sidebar">
   <div class="position-sticky" style="top: 80px;">
     
     {% comment %} Topics Card {% endcomment %}
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h2 class="h5 mb-0">
-          <i class="bi bi-bookmark me-2"></i>Topics
+          <i class="bi bi-bookmark me-2" aria-hidden="true"></i>Topics
         </h2>
         <span class="badge bg-light text-primary">{{ sub_categories.size }}</span>
       </div>
       <div class="card-body p-0">
-        <nav class="nav flex-column sidebar-nav">
+        <nav class="nav flex-column sidebar-nav" aria-label="{{ page_title | escape }} topics">
           {% if _anchors_resolve %}
           <a class="nav-link active" href="#all-posts" data-section="all-posts">
-            <i class="bi bi-grid me-2"></i>
+            <i class="bi bi-grid me-2" aria-hidden="true"></i>
             <span class="nav-text">All Articles</span>
             <span class="badge bg-secondary ms-auto">{{ section_posts.size }}</span>
           </a>
           {% for subcat in _linkable_subcats %}
             {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
             <a class="nav-link" href="#{{ subcat | slugify }}" data-section="{{ subcat | slugify }}">
-              <i class="bi bi-tag me-2"></i>
+              <i class="bi bi-tag me-2" aria-hidden="true"></i>
               <span class="nav-text">{{ subcat | capitalize }}</span>
               <span class="badge bg-light text-dark ms-auto">{{ subcat_posts.size }}</span>
             </a>
           {% endfor %}
           {% else %}
           <button type="button" class="nav-link text-start active" data-filter="all">
-            <i class="bi bi-grid me-2"></i>
+            <i class="bi bi-grid me-2" aria-hidden="true"></i>
             <span class="nav-text">All Articles</span>
             <span class="badge bg-secondary ms-auto">{{ section_posts.size }}</span>
           </button>
@@ -111,7 +111,7 @@
             {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
             {% if subcat_posts.size > 0 %}
             <button type="button" class="nav-link text-start" data-filter="{{ subcat | slugify }}">
-              <i class="bi bi-tag me-2"></i>
+              <i class="bi bi-tag me-2" aria-hidden="true"></i>
               <span class="nav-text">{{ subcat | capitalize }}</span>
               <span class="badge bg-light text-dark ms-auto">{{ subcat_posts.size }}</span>
             </button>
@@ -128,7 +128,7 @@
       {% if sub_categories.size > 15 and _tags_page %}
       <div class="card-footer bg-transparent">
         <a href="{{ _tags_url | relative_url }}" class="btn btn-sm btn-outline-secondary w-100">
-          View All Tags <i class="bi bi-arrow-right ms-1"></i>
+          View All Tags <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
         </a>
       </div>
       {% endif %}
@@ -138,7 +138,7 @@
     <div class="card border-0 shadow-sm mt-3">
       <div class="card-body">
         <h3 class="h6 text-muted mb-3">
-          <i class="bi bi-graph-up me-2"></i>Section Stats
+          <i class="bi bi-graph-up me-2" aria-hidden="true"></i>Section Stats
         </h3>
         <div class="d-flex justify-content-between mb-2">
           <small class="text-muted">Total Articles</small>
@@ -164,34 +164,34 @@
 <div class="offcanvas offcanvas-start" tabindex="-1" id="{{ sidebar_id }}" aria-labelledby="{{ sidebar_id }}Label">
   <div class="offcanvas-header bg-primary text-white">
     <h2 class="offcanvas-title h5" id="{{ sidebar_id }}Label">
-      <i class="bi bi-bookmark me-2"></i>{{ page_title }} Topics
+      <i class="bi bi-bookmark me-2" aria-hidden="true"></i>{{ page_title }} Topics
     </h2>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body p-0">
-    <nav class="nav flex-column">
+    <nav class="nav flex-column" aria-labelledby="{{ sidebar_id }}Label">
       {% if _anchors_resolve %}
       <a class="nav-link active bg-light py-3 border-bottom" href="#all-posts" data-bs-dismiss="offcanvas">
-        <i class="bi bi-grid me-2"></i>All Articles
+        <i class="bi bi-grid me-2" aria-hidden="true"></i>All Articles
         <span class="badge bg-secondary float-end">{{ section_posts.size }}</span>
       </a>
       {% for subcat in _linkable_subcats %}
         {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
         <a class="nav-link text-body-secondary py-3 border-bottom" href="#{{ subcat | slugify }}" data-bs-dismiss="offcanvas">
-          <i class="bi bi-tag me-2"></i>{{ subcat | capitalize }}
+          <i class="bi bi-tag me-2" aria-hidden="true"></i>{{ subcat | capitalize }}
           <span class="badge bg-light text-dark float-end">{{ subcat_posts.size }}</span>
         </a>
       {% endfor %}
       {% else %}
       <button type="button" class="nav-link text-start active bg-light py-3 border-bottom w-100" data-filter="all" data-bs-dismiss="offcanvas">
-        <i class="bi bi-grid me-2"></i>All Articles
+        <i class="bi bi-grid me-2" aria-hidden="true"></i>All Articles
         <span class="badge bg-secondary float-end">{{ section_posts.size }}</span>
       </button>
       {% for subcat in sub_categories %}
         {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
         {% if subcat_posts.size > 0 %}
         <button type="button" class="nav-link text-start text-body-secondary py-3 border-bottom w-100" data-filter="{{ subcat | slugify }}" data-bs-dismiss="offcanvas">
-          <i class="bi bi-tag me-2"></i>{{ subcat | capitalize }}
+          <i class="bi bi-tag me-2" aria-hidden="true"></i>{{ subcat | capitalize }}
           <span class="badge bg-light text-dark float-end">{{ subcat_posts.size }}</span>
         </button>
         {% endif %}
@@ -201,7 +201,7 @@
     {% if _tags_page %}
     <div class="p-3">
       <a href="{{ _tags_url | relative_url }}" class="btn btn-outline-primary w-100">
-        <i class="bi bi-tags me-2"></i>Browse All Tags
+        <i class="bi bi-tags me-2" aria-hidden="true"></i>Browse All Tags
       </a>
     </div>
     {% endif %}
