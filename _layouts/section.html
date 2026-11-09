@@ -120,7 +120,7 @@ layout: root
     <div class="row align-items-center">
       <div class="col-auto d-lg-none">
         <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#sectionSidebar" aria-controls="sectionSidebar">
-          <i class="bi bi-list me-1"></i>Topics
+          <i class="bi bi-list me-1" aria-hidden="true"></i>Topics
         </button>
       </div>
       <div class="col">
@@ -128,11 +128,11 @@ layout: root
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">
               <a href="{{ news_index_url | relative_url }}" class="text-white-50 text-decoration-none">
-                <i class="bi bi-newspaper me-1"></i>News
+                <i class="bi bi-newspaper me-1" aria-hidden="true"></i>News
               </a>
             </li>
             <li class="breadcrumb-item active text-white" aria-current="page">
-              {% if page.icon %}<i class="bi bi-{{ page.icon }} me-1"></i>{% endif %}
+              {% if page.icon %}<i class="bi bi-{{ page.icon }} me-1" aria-hidden="true"></i>{% endif %}
               {{ page.title }}
             </li>
           </ol>
@@ -140,7 +140,7 @@ layout: root
       </div>
       <div class="col-auto">
         <span class="badge bg-secondary">
-          <i class="bi bi-file-text me-1"></i>{{ section_posts.size }} article{% if section_posts.size != 1 %}s{% endif %}
+          <i class="bi bi-file-text me-1" aria-hidden="true"></i>{{ section_posts.size }} article{% if section_posts.size != 1 %}s{% endif %}
         </span>
       </div>
     </div>
@@ -150,7 +150,8 @@ layout: root
 {% comment %} Sub-navigation for other sections {% endcomment %}
 <div class="container-fluid bg-body-tertiary border-bottom py-2 mb-4">
   <div class="container-fluid px-4">
-    <nav class="nav nav-pills flex-nowrap overflow-auto" style="scrollbar-width: none;">
+    {%- include core/i18n.html -%}
+    <nav class="nav nav-pills flex-nowrap overflow-auto" style="scrollbar-width: none;" aria-label="{{ ui.news_sections_label | default: 'News sections' }}">
       {% for sec_name in news_sections %}
         {% assign is_active = false %}
         {% if sec_name == page.category or sec_name == page.title %}
@@ -163,8 +164,8 @@ layout: root
           {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
         {% endif %}
         <a class="nav-link text-nowrap {% if is_active %}active{% else %}text-body-secondary{% endif %}"
-           href="{{ _sec_url | relative_url }}">
-          {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1"></i>{% endif %}
+           href="{{ _sec_url | relative_url }}"{% if is_active %} aria-current="page"{% endif %}>
+          {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1" aria-hidden="true"></i>{% endif %}
           {{ sec_name }}
         </a>
       {% endfor %}
@@ -199,7 +200,7 @@ layout: root
       <header class="section-header mb-4">
         <div class="d-flex align-items-center mb-3">
           {% if page.icon %}
-            <i class="bi bi-{{ page.icon }} fs-1 me-3 text-primary"></i>
+            <i class="bi bi-{{ page.icon }} fs-1 me-3 text-primary" aria-hidden="true"></i>
           {% endif %}
           <div>
             <h1 class="display-5 mb-0">{{ page.title }}</h1>
@@ -234,11 +235,11 @@ layout: root
             <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
               {% if featured_in_section.breaking %}
               <span class="badge bg-danger mb-3 align-self-start">
-                <i class="bi bi-lightning-fill me-1"></i>Breaking
+                <i class="bi bi-lightning-fill me-1" aria-hidden="true"></i>Breaking
               </span>
               {% elsif featured_in_section.featured %}
               <span class="badge bg-warning text-dark mb-3 align-self-start">
-                <i class="bi bi-star-fill me-1"></i>Featured
+                <i class="bi bi-star-fill me-1" aria-hidden="true"></i>Featured
               </span>
               {% endif %}
               {% if featured_in_section.post_type and featured_in_section.post_type != "standard" %}
@@ -250,7 +251,7 @@ layout: root
               <p class="lead text-muted mb-4">{{ featured_in_section.excerpt | strip_html | truncate: 180 }}</p>
               <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
                 <small class="text-muted">
-                  <i class="bi bi-calendar me-1"></i>{{ featured_in_section.date | date: "%B %d, %Y" }}
+                  <i class="bi bi-calendar me-1" aria-hidden="true"></i>{{ featured_in_section.date | date: "%B %d, %Y" }}
                 </small>
                 {% if featured_in_section.author %}
                   <small class="text-muted">
@@ -259,7 +260,7 @@ layout: root
                 {% endif %}
               </div>
               <a href="{{ featured_in_section.url | relative_url }}" class="btn btn-primary btn-lg align-self-start">
-                Read Article <i class="bi bi-arrow-right ms-2"></i>
+                Read Article <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
               </a>
             </div>
             <div class="col-lg-6">
@@ -288,11 +289,11 @@ layout: root
           <section id="{{ subcat | slugify }}" class="subcategory-section mb-5 pb-4 border-bottom scroll-mt-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h2 class="h4 mb-0">
-                <i class="bi bi-tag text-primary me-2"></i>{{ subcat | capitalize }}
+                <i class="bi bi-tag text-primary me-2" aria-hidden="true"></i>{{ subcat | capitalize }}
               </h2>
               {% if _tags_linkable %}
               <a href="{{ tags_base | relative_url }}#{{ subcat | slugify }}" class="btn btn-outline-secondary btn-sm">
-                View All <i class="bi bi-arrow-right ms-1"></i>
+                View All <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
               </a>
               {% endif %}
             </div>
@@ -329,7 +330,7 @@ layout: root
                     </div>
                     <div class="card-footer bg-transparent border-0 pt-0">
                       <small class="text-muted">
-                        <i class="bi bi-calendar me-1"></i>{{ spost.date | date: "%b %d, %Y" }}
+                        <i class="bi bi-calendar me-1" aria-hidden="true"></i>{{ spost.date | date: "%b %d, %Y" }}
                       </small>
                     </div>
                   </div>
@@ -344,7 +345,7 @@ layout: root
         <section id="all-posts" class="all-posts-section mb-5 scroll-mt-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h4 mb-0">
-              <i class="bi bi-grid text-secondary me-2"></i>All {{ page.title }} Articles
+              <i class="bi bi-grid text-secondary me-2" aria-hidden="true"></i>All {{ page.title }} Articles
             </h2>
           </div>
           
@@ -389,7 +390,7 @@ layout: root
                   </div>
                   <div class="card-footer bg-transparent border-0 pt-0">
                     <small class="text-muted">
-                      <i class="bi bi-calendar me-1"></i>{{ apost.date | date: "%b %d, %Y" }}
+                      <i class="bi bi-calendar me-1" aria-hidden="true"></i>{{ apost.date | date: "%b %d, %Y" }}
                     </small>
                   </div>
                 </div>
@@ -435,12 +436,12 @@ layout: root
                   <div class="position-relative">
                     {% if gpost.breaking %}
                       <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
-                        <i class="bi bi-lightning-fill me-1"></i>Breaking
+                        <i class="bi bi-lightning-fill me-1" aria-hidden="true"></i>Breaking
                       </span>
                     {% endif %}
                     {% if gpost.featured %}
                       <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
-                        <i class="bi bi-star-fill me-1"></i>Featured
+                        <i class="bi bi-star-fill me-1" aria-hidden="true"></i>Featured
                       </span>
                     {% endif %}
                     {% if gpost.post_type and gpost.post_type != "standard" and gpost.post_type != "featured" and gpost.post_type != "breaking" %}
@@ -471,7 +472,7 @@ layout: root
                   <div class="card-footer bg-transparent border-top-0">
                     <div class="d-flex justify-content-between align-items-center small text-muted">
                       <span>
-                        <i class="bi bi-calendar me-1"></i>{{ gpost.date | date: "%b %d, %Y" }}
+                        <i class="bi bi-calendar me-1" aria-hidden="true"></i>{{ gpost.date | date: "%b %d, %Y" }}
                       </span>
                       {% if gpost.author %}
                         <span>
@@ -506,10 +507,10 @@ layout: root
                   <div class="card-body">
                     <div class="d-flex gap-2 mb-2 flex-wrap">
                       {% if lpost.breaking %}
-                        <span class="badge bg-danger"><i class="bi bi-lightning-fill me-1"></i>Breaking</span>
+                        <span class="badge bg-danger"><i class="bi bi-lightning-fill me-1" aria-hidden="true"></i>Breaking</span>
                       {% endif %}
                       {% if lpost.featured %}
-                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
+                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>Featured</span>
                       {% endif %}
                       {% if lpost.post_type and lpost.post_type != "standard" %}
                         {% include components/post-type-badge.html post_type=lpost.post_type %}
@@ -525,7 +526,7 @@ layout: root
                     </h2>
                     <p class="card-text text-muted">{{ lpost.excerpt | strip_html | truncate: 200 }}</p>
                     <div class="d-flex gap-3 text-muted small">
-                      <span><i class="bi bi-calendar me-1"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
+                      <span><i class="bi bi-calendar me-1" aria-hidden="true"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
                       {% if lpost.author %}
                         <span>{% include components/author-card.html author=lpost.author style="inline" show_avatar=false %}</span>
                       {% endif %}
@@ -542,7 +543,7 @@ layout: root
       {% else %}
         {% comment %} Empty state {% endcomment %}
         <div class="text-center py-5">
-          <i class="bi bi-inbox fs-1 text-muted"></i>
+          <i class="bi bi-inbox fs-1 text-muted" aria-hidden="true"></i>
           <p class="text-muted mt-3">No articles in this section yet.</p>
           <a href="{{ news_index_url | relative_url }}" class="btn btn-outline-primary">
             Browse all news
@@ -553,9 +554,9 @@ layout: root
       {% comment %} ========================== {% endcomment %}
       {% comment %} RELATED SECTIONS           {% endcomment %}
       {% comment %} ========================== {% endcomment %}
-      <aside class="related-sections mt-5 pt-4 border-top">
-        <h2 class="h5 mb-3">
-          <i class="bi bi-compass me-2"></i>Explore Other Sections
+      <aside class="related-sections mt-5 pt-4 border-top" aria-labelledby="related-sections-heading">
+        <h2 class="h5 mb-3" id="related-sections-heading">
+          <i class="bi bi-compass me-2" aria-hidden="true"></i>Explore Other Sections
         </h2>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
           {% for sec_name in news_sections %}
@@ -571,7 +572,7 @@ layout: root
                 <a href="{{ _sec_url | relative_url }}"
                    class="card text-center h-100 text-decoration-none border-0 shadow-sm hover-lift">
                   <div class="card-body py-3">
-                    <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block"></i>
+                    <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block" aria-hidden="true"></i>
                     <h3 class="card-title h6 mb-1 small">{{ sec_name }}</h3>
                     <small class="text-muted">{{ other_section_posts.size }} articles</small>
                   </div>

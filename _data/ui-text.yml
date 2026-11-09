@@ -83,6 +83,8 @@ en: &DEFAULT_EN
   # Breadcrumb labels (used by _includes/navigation/breadcrumbs.html)
   breadcrumbs_root           : "Home"
   breadcrumbs_aria           : "Breadcrumb"
+  # News section-switcher <nav> label (used by _layouts/section.html and _layouts/news.html)
+  news_sections_label        : "News sections"
   # Keyboard shortcuts modal (Track 5)
   shortcuts_title            : "Keyboard shortcuts"
   shortcuts_search           : "Open search"
