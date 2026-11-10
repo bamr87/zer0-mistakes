@@ -489,9 +489,13 @@
 // see _sass/theme/_backgrounds.scss), but the id keeps the FAB immune to any
 // future generic child rule. Mirrors `#aiChatToggle`. See ai-chat.html.
 //
-// Slot 2 on the left-side FAB stack: sits above the page-feedback FAB
-// (slot 1 = var(--zer0-space-fab-offset)) — same stacking formula as
-// .bd-toc-fab above #backToTopBtn on the right side.
+// Left-side FAB stack (bottom → top):
+//   slot 1  #pageFeedbackFab         always
+//   slot 2  #sidebarFab              <lg only (d-lg-none), when the docs sidebar renders
+//   slot 2  #obsidianLocalGraphFab   at lg+, or <lg on a page without #sidebarFab
+//   slot 3  #obsidianLocalGraphFab   <lg when #sidebarFab is present (#571)
+// Slot n sits at offset + (n - 1) * (size + gap) — the same stacking formula
+// as .bd-toc-fab above #backToTopBtn on the right side.
 #obsidianLocalGraphFab.obsidian-local-graph-fab {
   position: fixed;
   left: var(--zer0-space-fab-offset, 1rem);
@@ -505,6 +509,18 @@
 
   &[hidden] {
     display: none !important;
+  }
+}
+
+// Below lg the docs-sidebar FAB claims slot 2, so the graph FAB moves up to
+// slot 3. Without this the two boxes were identical and the graph FAB (higher
+// z-index) swallowed every tap meant for the sidebar FAB (#571).
+@media (max-width: 991.98px) {
+  body:has(#sidebarFab) #obsidianLocalGraphFab.obsidian-local-graph-fab {
+    bottom: calc(
+      var(--zer0-space-fab-offset, 1rem) +
+      2 * (var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem))
+    );
   }
 }
 
