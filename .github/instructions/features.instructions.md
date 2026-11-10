@@ -26,7 +26,9 @@ The feature registry is the single source of truth for what the theme does. It p
 - id: ZER0-XXX                # REQUIRED. Sequential, zero-padded to 3 digits. Never reuse or reorder.
   title: "Short Name"          # REQUIRED. Title-case, no trailing punctuation.
   description: "One sentence." # REQUIRED. Plain prose, ≤ 200 chars.
-  implemented: true            # REQUIRED. true | false (use false for planned/in-progress).
+  implemented: true            # REQUIRED. true = shipped; false = removed (with `removed_in:`) or planned (with `status: planned`).
+  status: planned              # OPTIONAL. shipped | partial | planned | deprecated | tbd (fleet UPS-WORK-15). `planned` = requested, not yet built.
+  removed_in: "X.Y.Z"          # REQUIRED when a feature is removed (`implemented: false` without `status: planned`).
   version: "X.Y.Z"             # REQUIRED. Gem version that introduced/last materially changed it.
   link: "/path/"               # REQUIRED. Live URL or "/" if no dedicated page.
   docs: "/docs/path/"          # REQUIRED. Public docs URL (prefer `/docs/...` over GitHub URLs).
@@ -51,19 +53,20 @@ The feature registry is the single source of truth for what the theme does. It p
 
 ### Field rules
 
-- **`id`** — Allocate the next free `ZER0-NNN`. Never recycle a retired ID; mark removed features `implemented: false` and append `removed_in: "X.Y.Z"` instead of deleting.
+- **`id`** — Allocate the next free `ZER0-NNN`. Never recycle a retired ID; mark removed features `implemented: false` and append `removed_in: "X.Y.Z"` instead of deleting. A requested feature that is not built yet takes its stable id now, as `implemented: false` + `status: planned`.
+- **`status`** — Optional; when present it must be one of the fleet's five values (`shipped partial planned deprecated tbd`). `status: planned` must pair with `implemented: false` and must not carry `removed_in:` (a removed feature is `status: deprecated` or has no `status:`).
 - **`tags`** — Reuse existing tags before inventing new ones (`grep -hoE "[a-z0-9-]+" _data/features.yml | sort -u` for the current set). Filters in `pages/features.md` rely on stable tag names (`ai`, `docker`, `jekyll`, `bootstrap`, `privacy`, `analytics`, `navigation`, `accessibility`, `ui`, `content`, `jupyter`, `mermaid`, `testing`, `ci-cd`, `automation`, `release`, …).
 - **`docs`** — Prefer site-relative paths (`/docs/features/foo/`) so links survive repo moves. External GitHub URLs are allowed only when no public doc exists.
 - **`references`** — Use real paths that exist at commit time. Stale references break trust in the registry.
 - **`provenance`** — Resolve from git: `git log --follow --diff-filter=A -- <primary reference file>` gives the introducing commit; a `(#N)` suffix in its subject is the `pr`; cross-check the matching `## [version]` block in `CHANGELOG.md` for the `issue`. Pre-PR-era features use `pr: null` with the commit hash. Rendered on `/features/` as a `PR · commit` link.
-- **`tests`** — Every active feature names the test(s) that guard it. Use a real path (a `test/visual/*.spec.js`, `test/test_*.sh`, or `test/*.rb|js`) when one exercises the feature; use `- na: "<reason>"` only for doc/CI/process features, and the reason MUST name the governing workflow or doc. Removed features (`implemented: false`) need neither `provenance` nor `tests`.
+- **`tests`** — Every active feature names the test(s) that guard it. Use a real path (a `test/visual/*.spec.js`, `test/test_*.sh`, or `test/*.rb|js`) when one exercises the feature; use `- na: "<reason>"` only for doc/CI/process features, and the reason MUST name the governing workflow or doc. Removed and planned features (`implemented: false`) need neither `provenance` nor `tests`; planned features need no `removed_in:` either.
 
 ## 🛡 Validation Gate (enforced)
 
 The `features` test suite (`test/test_features.sh`, registered in `test_runner.sh` + CI, and run by `scripts/bin/validate`) **hard-fails** on:
 
 1. `scripts/validate-features.rb` — master/`_data` drift, schema violations,
-stale reference paths, a removed feature missing `removed_in`, and a missing/malformed `provenance` **or** `tests` block on an active feature.
+stale reference paths, a removed feature missing `removed_in` (planned entries are exempt), an unknown `status:`, and a missing/malformed `provenance` **or** `tests` block on an active feature.
 2. `scripts/tag-features --check` — **reverse traceability**: every source file
 a feature lists under `references:` must carry a top-of-file `Feature: ZER0-NNN` comment (the code→registry link, mirroring the registry→code `references:`). Scope and placement are owned by the tool; markdown docs, JSON, vendored/minified libs, directory refs, and `_config.yml` are exempt.
 
@@ -108,6 +111,8 @@ Add, modify, or flag (`implemented: false` + `removed_in:`) an entry **in the sa
 | New layout, include, plugin, script, or workflow that ships user-visible behavior | Add a new `ZER0-NNN` entry **with `provenance` + `tests`**, then `ruby scripts/tag-features --write` to tag its source files — all in the same change |
 | Material change to an existing feature (new sub-capability, new dependency, new docs) | Bump `version`, refresh `date`, update `features:` / `references:` |
 | Renaming or moving referenced files | Update every affected `references:` block |
+| Accepting a feature request that is not built yet | Add a `ZER0-NNN` entry with `implemented: false` + `status: planned` (no `removed_in`, `provenance` or `tests` until it ships) |
+| Shipping a planned feature | Set `implemented: true`, drop `status: planned`, add `provenance` + `tests` + `references` |
 | Removing a feature | Set `implemented: false`, add `removed_in: "X.Y.Z"`, keep the entry |
 | Cutting a release (`./scripts/bin/release …`) | Bump the `# Version:` header to the new gem version, refresh `# Last Updated:` |
 
