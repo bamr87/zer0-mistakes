@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
-title: Cookie Consent Management
-description: GDPR/CCPA compliant cookie consent system with granular permissions and Bootstrap modal preferences.
+lastmod: 2026-10-30T00:00:00.000Z
+title: Cookie Consent Management for Jekyll
+description: GDPR/CCPA-compliant cookie consent with granular permissions and Bootstrap modal preferences, shown only when analytics or tracking is configured.
 preview: /images/previews/cookie-consent-management.png
 layout: default
 categories:
@@ -27,7 +27,7 @@ The Zer0-Mistakes theme includes a GDPR/CCPA compliant cookie consent system wit
 
 ![The site with the cookie-consent banner pinned along the bottom — "We value your privacy" with Manage Cookies, Reject All, and Accept All actions](/assets/images/docs/features/cookie-consent.png)
 
-The banner appears until a visitor makes a choice; "Manage Cookies" opens a modal for granular analytics/marketing toggles. Consent gates analytics loading, so nothing tracks until the visitor opts in.
+When the site configures a tracker (see [When the Banner Appears](#when-the-banner-appears)), the banner appears until a visitor makes a choice; "Manage Cookies" opens a modal for granular analytics/marketing toggles. Consent gates analytics loading, so nothing tracks until the visitor opts in.
 
 ## Overview
 
@@ -40,18 +40,23 @@ The cookie consent system provides:
 
 ## Quick Start
 
-### Enable Cookie Consent
+### When the Banner Appears
 
-The consent banner is included automatically. Configure in `_config.yml`:
+The banner, its "Manage Cookies" modal and the footer "Cookie Preferences" button render only when the site configures something that needs consent. Asking visitors to consent to cookies the site never sets would be misleading, so a site with no tracker shows none of them. The theme detects:
+
+- `google_analytics` set to a measurement ID
+- `google_tag_manager` set to a container ID
+- `posthog.enabled: true`
+
+Override the detection with `cookie_consent.enabled` in `_config.yml`:
 
 ```yaml
 cookie_consent:
-  enabled: true
-  categories:
-    - necessary
-    - analytics
-    - marketing
+  # enabled: true    # force the banner on (e.g. trackers loaded via _includes/custom/ hooks)
+  # enabled: false   # never render it, even with trackers configured
 ```
+
+Leave `enabled` unset for automatic detection.
 
 ## How It Works
 
@@ -82,7 +87,7 @@ graph TD
 
 ```yaml
 cookie_consent:
-  enabled: true
+  enabled: true     # optional: unset = shown only when a tracker is configured
   position: bottom  # bottom, top
   theme: light      # light, dark, auto
   expires: 365      # days
@@ -248,9 +253,9 @@ categories:
 
 ### Banner Not Showing
 
-1. Check `cookie_consent.enabled: true`
+1. Check that a tracker is configured (`google_analytics`, `google_tag_manager` or `posthog.enabled: true`), or force it with `cookie_consent.enabled: true`; `cookie_consent.enabled: false` hides it
 2. Clear browser cookies
-3. Verify include is present
+3. Verify `components/cookie-consent.html` is not overridden or removed from `_layouts/root.html`, which renders it behind the `components/cookie-consent-needed.html` gate
 
 ### Scripts Loading Without Consent
 
