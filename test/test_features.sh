@@ -6,6 +6,9 @@
 #   1. Registry integrity — delegates to scripts/validate-features.rb
 #      (master/_data byte-sync, schema, every active reference path exists,
 #      removed features carry removed_in, provenance/tests warnings).
+#      1b. Lifecycle rules — synthetic one-entry registries prove that
+#      `status: planned` needs no removed_in/provenance/tests while a plain
+#      `implemented: false` still needs removed_in.
 #   2. README count sync — features/README.md "Current count" must match the
 #      number of ZER0-NNN entries in the registry.
 #   3. Backlog visibility — reports how many entries still lack provenance/tests
@@ -51,6 +54,59 @@ if "${RUBY[@]}" scripts/validate-features.rb; then
 else
     bad "Registry integrity checks failed"
 fi
+
+# ---------------------------------------------------------------------------
+# Layer 1b — Lifecycle rules on synthetic registries (hermetic)
+# ---------------------------------------------------------------------------
+# Runs the validator in a scratch dir holding only the gem version file and a
+# one-entry registry, so the planned/removed rules are exercised without
+# touching _data/features.yml.
+section "Lifecycle rules (planned vs removed, synthetic registry)"
+run_synthetic() {  # $1 = extra YAML lines for the entry; prints validator output
+    local dir rc
+    dir="$(mktemp -d)"
+    mkdir -p "$dir/lib/jekyll-theme-zer0" "$dir/_data"
+    cp lib/jekyll-theme-zer0/version.rb "$dir/lib/jekyll-theme-zer0/version.rb"
+    {
+        echo "# Synthetic registry (test/test_features.sh)"
+        echo "# Last Updated: 2026-01-01"
+        echo "features:"
+        echo "  - id: ZER0-001"
+        echo "    title: Synthetic Entry"
+        echo "    description: Lifecycle probe"
+        echo "    version: 0.0.0"
+        echo "    link: /features/"
+        echo "    docs: /features/"
+        echo "    tags: [probe]"
+        echo "    date: 2026-01-01"
+        printf '%s\n' "$1"
+    } > "$dir/_data/features.yml"
+    (cd "$dir" && "${RUBY[@]}" "$PROJECT_ROOT/scripts/validate-features.rb" 2>&1)
+    rc=$?
+    rm -rf "$dir"
+    return $rc
+}
+expect_synthetic() {  # $1 = label, $2 = expected exit (0|1), $3 = entry lines, $4 = expected output fragment
+    local out rc
+    out="$(run_synthetic "$3")"; rc=$?
+    if [[ "$2" == 0 && $rc -eq 0 ]] || [[ "$2" == 1 && $rc -ne 0 ]]; then
+        if [[ -z "${4:-}" || "$out" == *"$4"* ]]; then
+            ok "$1"
+            return
+        fi
+    fi
+    bad "$1 (exit $rc): $out"
+}
+expect_synthetic "status:planned without removed_in: is valid" 0 \
+    "$(printf '    implemented: false\n    status: planned')" "1 planned"
+expect_synthetic "implemented:false without status:planned still requires removed_in:" 1 \
+    "    implemented: false" "requires \`removed_in:\`"
+expect_synthetic "status:planned with removed_in: is rejected" 1 \
+    "$(printf '    implemented: false\n    status: planned\n    removed_in: "1.0.0"')" "contradicts \`removed_in:\`"
+expect_synthetic "status:planned with implemented:true is rejected" 1 \
+    "$(printf '    implemented: true\n    status: planned')" 'requires implemented:false'
+expect_synthetic "status outside the fleet set is rejected" 1 \
+    "$(printf '    implemented: false\n    status: someday')" 'status must be one of'
 
 # ---------------------------------------------------------------------------
 # Layer 2 — README feature-count sync

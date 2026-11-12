@@ -254,11 +254,15 @@
               {% if site.terms_of_service_url or footer_page_urls contains _terms_needle or footer_page_urls contains _terms_alt_needle %}
                 <li class="list-inline-item"><a href="{{ site.terms_of_service_url | default: '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
               {% endif %}
+              {% comment %} Same gate as the banner in root.html: no modal, no button (#566). {% endcomment %}
+              {% capture _needs_consent %}{% include components/cookie-consent-needed.html %}{% endcapture %}
+              {% if _needs_consent == "true" %}
               <li class="list-inline-item">
                 <button type="button" class="footer-inline-button text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
                   Cookie Preferences
                 </button>
               </li>
+              {% endif %}
             </ul>
           </div>
         </div>
