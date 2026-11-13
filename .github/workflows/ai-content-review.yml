@@ -163,11 +163,13 @@ jobs:
       # (a refused one hands over to the next), enforces the dollar cap and
       # meters the call.
       #
-      # The allowlist grants no edit or comment tool — posting is done by the
-      # sticky-comment step below. The runner's permission mode is fixed at
-      # `acceptEdits`, though, so unlike the bare CLI call this replaced, the
-      # allowlist alone no longer makes a write impossible: the prompt forbids
-      # it, the job token cannot write contents, and nothing here commits.
+      # Read-only: the allowlist grants no edit or comment tool — posting is
+      # done by the sticky-comment step below — and `permission-mode: default`
+      # makes that allowlist the whole grant (headless, a tool outside it is
+      # refused), as when this step called the CLI itself. Keep the input: the
+      # runner's own default, `acceptEdits`, approves an edit the allowlist
+      # never granted. It needs the claude-run of bamr87/bamr87#840 or later;
+      # an older one ignores the input and runs with `acceptEdits`.
       - name: Run content-reviewer agent (headless)
         id: agent
         uses: bamr87/bamr87/.github/actions/claude-run@main
@@ -189,6 +191,7 @@ jobs:
           model: claude-sonnet-5-5
           max-turns: "30"
           max-budget-usd: "10"
+          permission-mode: default
           out: /tmp/agent-review.md
 
       # Decide whether a review actually HAPPENED, and fail the job if it did

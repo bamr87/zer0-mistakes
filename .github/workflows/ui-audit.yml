@@ -14,8 +14,9 @@
 #      report. It runs through the fleet's AI step (bamr87/bamr87
 #      .github/actions/claude-run): the credential in this repo's
 #      CLAUDE_AUTH_ORDER, a dollar cap, a turn cap, metered. The agent is
-#      told to change nothing and is granted only read tools; the job never
-#      commits or pushes.
+#      read-only — it is granted only read tools, in the default permission
+#      mode, where a tool outside the grant is refused; it never edits files
+#      or posts.
 #
 # Findings land in ONE sticky issue (labeled source:ui-audit) that the issue
 # autopilot / /repo-audit triages into the backlog, feeding /issue-plan →
@@ -152,10 +153,15 @@ jobs:
       # The fleet's AI step. `continue-on-error`: a failed agent tier is a note
       # in the issue (next step), never a red audit — the sweep's own findings
       # still have to be filed, as when this step swallowed the CLI's exit
-      # status itself. The step runs with `--permission-mode acceptEdits` (the
-      # runner's fixed mode), so "read-only" is the prompt and the tool grant,
-      # not the permission mode.
-      - name: Run ui-auditor agent (headless)
+      # status itself.
+      #
+      # Read-only: `permission-mode: default` makes the tool allowlist the
+      # whole grant (headless, a tool outside it is refused), as when this step
+      # called the CLI itself. Keep the input: the runner's own default,
+      # `acceptEdits`, approves an edit the allowlist never granted. It needs
+      # the claude-run of bamr87/bamr87#840 or later; an older one ignores the
+      # input and runs with `acceptEdits`.
+      - name: Run ui-auditor agent (headless, read-only)
         id: agent
         if: steps.ai-gate.outputs.enabled == 'true'
         continue-on-error: true
@@ -174,6 +180,7 @@ jobs:
           model: claude-sonnet-5-5
           max-turns: "40"
           max-budget-usd: "10"
+          permission-mode: default
           out: /tmp/ui-audit-agent.md
 
       # No report, or one that did not come from the agent: say so instead. The
