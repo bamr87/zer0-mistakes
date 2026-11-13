@@ -5,8 +5,12 @@ name: Content & Docs Review
 #   1. Deterministic SEO + quality checks (scripts/content-review.rb) — always
 #      runs, no secrets required, works on fork PRs.
 #   2. Claude Code content-reviewer agent — runs only when a Claude credential
-#      is configured (CLAUDE_CODE_OAUTH_TOKEN preferred, ANTHROPIC_API_KEY as
-#      fallback), for editorial/consistency/polish review.
+#      is configured (CLAUDE_CODE_OAUTH_TOKEN and/or ANTHROPIC_API_KEY, tried
+#      in this repo's CLAUDE_AUTH_ORDER), for editorial/consistency/polish
+#      review. It goes through the fleet's AI step (bamr87/bamr87
+#      .github/actions/claude-run): a dollar cap, a turn cap, metered.
+#      Kill switch: repo variable AI_CONTENT_REVIEW_ENABLED=false stops this
+#      tier only (unset means on); tiers 1 and 3 always run.
 #   3. Docs front matter, internal links, and markdownlint (formerly the
 #      separate docs-validate.yml).
 # See .github/instructions/content-review.instructions.md for the contract.
@@ -132,7 +136,7 @@ jobs:
   ai-review:
     name: Claude Code content review
     needs: deterministic-review
-    if: ${{ github.event_name == 'pull_request' && needs.deterministic-review.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
+    if: ${{ vars.AI_CONTENT_REVIEW_ENABLED != 'false' && github.event_name == 'pull_request' && needs.deterministic-review.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -154,58 +158,67 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
+      # The fleet's AI step (bamr87/bamr87 .github/actions/claude-run): it
+      # installs the CLI, takes the credential in this repo's CLAUDE_AUTH_ORDER
+      # (a refused one hands over to the next), enforces the dollar cap and
+      # meters the call.
+      #
+      # The allowlist grants no edit or comment tool — posting is done by the
+      # sticky-comment step below. The runner's permission mode is fixed at
+      # `acceptEdits`, though, so unlike the bare CLI call this replaced, the
+      # allowlist alone no longer makes a write impossible: the prompt forbids
+      # it, the job token cannot write contents, and nothing here commits.
       - name: Run content-reviewer agent (headless)
         id: agent
+        uses: bamr87/bamr87/.github/actions/claude-run@main
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          BASE_REF: origin/${{ github.base_ref }}
+          AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}
+        with:
+          prompt: |-
+            Use the content-reviewer subagent to review the Markdown content files
+            changed on this branch versus origin/${{ github.base_ref }}. Follow
+            .github/instructions/content-review.instructions.md and the
+            per-collection thresholds in .github/config/content_review.yml. Focus
+            on SEO, consistency, polish, accessibility, and technical accuracy.
+            Output ONLY the final Markdown review (verdict + per-file findings +
+            summary) to stdout. Do not modify any files, and do not print anything
+            before or after the review itself.
+          tools: "Task,Read,Grep,Glob,Bash(ruby scripts/content-review.rb:*),Bash(git diff:*),Bash(git merge-base:*),Bash(cat /tmp/content-review.json)"
+          model: claude-sonnet-5-5
+          max-turns: "30"
+          max-budget-usd: "10"
+          out: /tmp/agent-review.md
+
+      # Decide whether a review actually HAPPENED, and fail the job if it did
+      # not. The agent step used to end by piping stdout straight into the sticky
+      # comment and exiting 0 — which is how `401 OAuth access token has been
+      # revoked` got posted to PR #414 under a green check (#418). Hence a
+      # separate, unit-tested guard — scripts/ci/test_agent_review_result.py
+      # drives it with that exact output. `Post agent review` is `if: always()`,
+      # so the failure notice still reaches the PR.
+      #
+      # What the guard is told: the AI step fails when the call was attempted
+      # and failed (status 1), and a review that came from the runner's
+      # single-shot API fallback is no review either — that call has no tools,
+      # so it cannot have read the diff. The usage ledger the step leaves in
+      # $RUNNER_TEMP names the fallback.
+      - name: Decide whether a review actually happened
+        if: ${{ !cancelled() && steps.agent.outcome != 'skipped' }}
+        env:
+          AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
-          set +e
-          # House convention: OAuth wins when both are set — drop the API key
-          # entirely so an empty-string secret never triggers empty-key auth.
-          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-            unset ANTHROPIC_API_KEY
+          status=0
+          [ "$AGENT_OUTCOME" = "success" ] || status=1
+          if grep -qs '"source":"api-fallback"' "${RUNNER_TEMP}"/ai-usage/reported-*.jsonl; then
+            echo "::warning::Claude Code failed and the text below came from the single-shot API fallback (no tools, so no diff was read) — treating it as no review."
+            status=1
           fi
-          read -r -d '' PROMPT <<EOF
-          Use the content-reviewer subagent to review the Markdown content files
-          changed on this branch versus ${BASE_REF}. Follow
-          .github/instructions/content-review.instructions.md and the
-          per-collection thresholds in .github/config/content_review.yml. Focus
-          on SEO, consistency, polish, accessibility, and technical accuracy.
-          Output ONLY the final Markdown review (verdict + per-file findings +
-          summary) to stdout. Do not modify any files, and do not print anything
-          before or after the review itself.
-          EOF
-          # Read-only allowlist: the agent never writes — posting is done by the
-          # sticky-comment step below, so no edit/comment tools are granted.
-          claude -p "$PROMPT" \
-            --model claude-sonnet-5-5 \
-            --max-turns 30 \
-            --allowedTools "Task,Read,Grep,Glob,Bash(ruby scripts/content-review.rb:*),Bash(git diff:*),Bash(git merge-base:*),Bash(cat /tmp/content-review.json)" \
-            --output-format text \
-            > /tmp/agent-review.md 2> /tmp/agent-err.log
-          status=$?
-          echo "claude exit status: $status"
-          echo "----- stderr (tail) -----"
-          tail -n 50 /tmp/agent-err.log || true
-          # Decide whether a review actually HAPPENED, and fail the job if it did
-          # not. This step used to end by piping stdout straight into the sticky
-          # comment and exiting 0 — which is how `401 OAuth access token has been
-          # revoked` got posted to PR #414 under a green check (#418). Checking
-          # `$status` alone would not have caught it: the CLI reported the auth
-          # failure on stdout. Hence a separate, unit-tested guard —
-          # scripts/ci/test_agent_review_result.py drives it with that exact
-          # output. `Post agent review` is `if: always()`, so the failure notice
-          # still reaches the PR.
-          set -e
+          echo "agent step: $AGENT_OUTCOME → status $status"
           python3 scripts/ci/agent_review_result.py \
             --status "$status" \
             --stdout /tmp/agent-review.md \
-            --stderr /tmp/agent-err.log \
             --out /tmp/agent-review-final.md
 
       - name: Post agent review

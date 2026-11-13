@@ -11,13 +11,20 @@
 #      CLAUDE_CODE_OAUTH_TOKEN preferred, ANTHROPIC_API_KEY as fallback):
 #      reads the sweep output and the component contract
 #      (docs/architecture/ui-components.md) and writes a prioritized findings
-#      report. The agent is read-only — it never edits files or posts.
+#      report. It runs through the fleet's AI step (bamr87/bamr87
+#      .github/actions/claude-run): the credential in this repo's
+#      CLAUDE_AUTH_ORDER, a dollar cap, a turn cap, metered. The agent is
+#      told to change nothing and is granted only read tools; the job never
+#      commits or pushes.
 #
 # Findings land in ONE sticky issue (labeled source:ui-audit) that the issue
 # autopilot / /repo-audit triages into the backlog, feeding /issue-plan →
 # /issue-implement (theme-ui / a11y-fixer lanes) → evidence-gated fix PRs.
 # That closes the loop: audit → issue → plan → fix → verify, humans reviewing
 # at the PR boundary.
+#
+# Kill switch: repo variable UI_AUDIT_ENABLED=false stops the scheduled audit
+# (both tiers) without a commit. Unset means on; a manual dispatch always runs.
 # ==============================================================================
 
 name: UI/UX Audit
@@ -42,6 +49,7 @@ env:
 jobs:
   ui-audit:
     name: Sweep + agent review
+    if: github.event_name == 'workflow_dispatch' || vars.UI_AUDIT_ENABLED != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -141,39 +149,44 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Install Claude Code CLI
+      # The fleet's AI step. `continue-on-error`: a failed agent tier is a note
+      # in the issue (next step), never a red audit — the sweep's own findings
+      # still have to be filed, as when this step swallowed the CLI's exit
+      # status itself. The step runs with `--permission-mode acceptEdits` (the
+      # runner's fixed mode), so "read-only" is the prompt and the tool grant,
+      # not the permission mode.
+      - name: Run ui-auditor agent (headless)
+        id: agent
         if: steps.ai-gate.outputs.enabled == 'true'
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Run ui-auditor agent (headless, read-only)
-        if: steps.ai-gate.outputs.enabled == 'true'
+        continue-on-error: true
+        uses: bamr87/bamr87/.github/actions/claude-run@main
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}
+        with:
+          prompt: |-
+            Use the ui-auditor subagent to review the UI/UX sweep in
+            test/ui-audit/output/ against docs/architecture/ui-components.md.
+            Output ONLY the final Markdown findings report to stdout. Do not
+            modify any files.
+          tools: "Task,Read,Grep,Glob"
+          model: claude-sonnet-5-5
+          max-turns: "40"
+          max-budget-usd: "10"
+          out: /tmp/ui-audit-agent.md
+
+      # No report, or one that did not come from the agent: say so instead. The
+      # runner's single-shot API fallback has no tools, so it cannot have read
+      # the sweep — its answer is not a review (the usage ledger names it).
+      - name: Note a failed agent tier
+        if: steps.ai-gate.outputs.enabled == 'true'
+        env:
+          AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
-          set +e
-          # House convention: OAuth wins when both are set — drop the API key
-          # entirely so an empty-string secret never triggers empty-key auth.
-          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-            unset ANTHROPIC_API_KEY
-          fi
-          read -r -d '' PROMPT <<'EOF'
-          Use the ui-auditor subagent to review the UI/UX sweep in
-          test/ui-audit/output/ against docs/architecture/ui-components.md.
-          Output ONLY the final Markdown findings report to stdout. Do not
-          modify any files.
-          EOF
-          claude -p "$PROMPT" \
-            --model claude-sonnet-5-5 \
-            --max-turns 40 \
-            --allowedTools "Task,Read,Grep,Glob" \
-            --output-format text \
-            > /tmp/ui-audit-agent.md 2> /tmp/ui-audit-err.log
-          status=$?
-          echo "claude exit status: $status"
-          tail -n 30 /tmp/ui-audit-err.log || true
-          if [ ! -s /tmp/ui-audit-agent.md ]; then
-            echo "_Agent tier produced no output (exit ${status}) — see run logs._" \
+          if [ ! -s /tmp/ui-audit-agent.md ] \
+             || grep -qs '"source":"api-fallback"' "${RUNNER_TEMP}"/ai-usage/reported-*.jsonl; then
+            echo "_Agent tier produced no output (agent step: ${AGENT_OUTCOME}) — see run logs._" \
               > /tmp/ui-audit-agent.md
           fi
 
