@@ -185,6 +185,37 @@ test.describe('Table of contents', { tag: '@critical' }, () => {
   });
 });
 
+// Issue #570 (follow-up to #373): the offcanvas toggles were gated on a
+// hard-coded list of the theme's own layout names, so a consumer layout that
+// chains to `default` rendered #tocContents with no #tocFab. The gate now
+// reads `layout.renders_sidebar_offcanvas`, declared once by default.html and
+// inherited through Jekyll's layout front-matter merge at any depth.
+test.describe('Offcanvas toggles follow the layout chain (issue #570)', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const ROOT = path.resolve(__dirname, '..', '..', '..');
+  const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
+
+  test('gate keys on the layout front-matter flag, not a layout-name list', () => {
+    const gate = read('_includes/navigation/sidebar-config.html');
+    expect(gate).not.toContain('_sidebar_offcanvas_layouts');
+    expect(gate).toContain('{%- if layout.renders_sidebar_offcanvas -%}');
+
+    const front = read('_layouts/default.html').split(/^---$/m)[1] || '';
+    expect(front).toMatch(/^renders_sidebar_offcanvas:\s*true\s*$/m);
+  });
+
+  for (const route of [DOC, UI_ROUTES.quickstartArticle]) {
+    test(`a page that renders #tocContents also renders #tocFab (${route})`, async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS.mobile);
+      await gotoOrSkip(page, route);
+      const toc = await page.locator('#tocContents').count();
+      if (route === DOC) expect(toc).toBeGreaterThan(0);
+      if (toc > 0) await expect(page.locator('#tocFab')).toBeAttached();
+    });
+  }
+});
+
 test.describe('MathJax', () => {
   test('ZER0-036 MathJax typesets equations on math pages', async ({ page }) => {
     await waitForJekyll(page, '/docs/features/mathjax-math/');
