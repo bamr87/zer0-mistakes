@@ -143,15 +143,15 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 **Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
 
-Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
+Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential is set and content actually changed), run through the fleet's `claude-run` step: the credential in this repo's `CLAUDE_AUTH_ORDER`, `claude-sonnet-5-5`, 30 turns, a $10 cap, metered; (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`). Kill switch for tier 2 only: `AI_CONTENT_REVIEW_ENABLED=false`.
 
-**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice.
+**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice. The guard also treats an answer from the runner's single-shot API fallback as no review: that call has no tools, so it cannot have read the diff.
 
 ### `issue-autopilot.yml` — Issue autopilot
 
 **Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
 
-One bounded pass of the autonomous issue pipeline: gate → triage (label/route open issues) → verify-close (close human issues already fixed on `main`, CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). See `docs/systems/continuous-evolution.md`.
+One bounded pass of the autonomous issue pipeline: gate → triage (label/route open issues) → verify-close (close human issues already fixed on `main`, CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). An `autopilot:go` label starts a run only when the repository owner applied it. Each agent step is turn-capped (triage 20, verify 20, resolve 60) under the `claude-run` default $10 cap, and each job that runs one has a timeout. See `docs/systems/continuous-evolution.md`.
 
 ### `issue-pr-auto-merge.yml` — Issue PR auto-merge
 
@@ -169,7 +169,7 @@ Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist 
 
 **Triggers:** `workflow_run` completion of the Comprehensive CI Pipeline
 
-For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths. Stands down when the only red job is `Visual Snapshots` — stale baselines are producible artifacts that `visual-evidence-autogen.yml` owns.
+For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless (the fleet's `claude-run` step: `claude-sonnet-5-5`, 40 turns, a $10 cap, metered) to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths. Stands down when the only red job is `Visual Snapshots` — stale baselines are producible artifacts that `visual-evidence-autogen.yml` owns. Kill switch: `CI_SELF_REPAIR_ENABLED=false`.
 
 ### `milestone-assign.yml` — Milestone assignment
 
@@ -181,7 +181,7 @@ Assigns merged PRs to the milestone when exactly one is open; otherwise no-op.
 
 **Triggers:** Weekly schedule (Mon 07:23 UTC), Manual dispatch
 
-Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential. Findings land in one sticky issue labeled `source:ui-audit`.
+Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential and run through the fleet's `claude-run` step (`claude-sonnet-5-5`, 40 turns, a $10 cap, metered; read tools only, in the `default` permission mode, so a tool outside that grant is refused). Findings land in one sticky issue labeled `source:ui-audit`. Kill switch for the scheduled audit: `UI_AUDIT_ENABLED=false` (a manual dispatch always runs).
 
 **The serve step must not use `--detach`.** It disables Jekyll's watch thread, which the LiveReload reactor rides on — leaving `livereload_port: 35729` bound but silent while pages still load `livereload.js`. The hanging subresource blocks `load`, so every `page.goto(..., waitUntil: 'load')` times out. The `curl -sf` readiness gate cannot detect this (it never requests a subresource), which is how the audit captured **zero** evidence for six weeks while reporting success ([#321](https://github.com/bamr87/zer0-mistakes/issues/321)). Keep the invocation in step with `test/test_playwright.sh:69-74`: background it with `&`, and stop it in an `always()` step.
 
@@ -233,10 +233,13 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 GITHUB_TOKEN            # Automatically provided
 RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
 DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
-CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential — all AI tiers (claude.yml,
-                        # ai-content-review, ci-self-repair, ui-audit, autopilot)
-ANTHROPIC_API_KEY       # Fallback Claude credential — same AI tiers, used only
-                        # when CLAUDE_CODE_OAUTH_TOKEN is absent
+CLAUDE_CODE_OAUTH_TOKEN # Claude credential `oauth` — all AI tiers (claude.yml,
+                        # ai-content-review, ci-self-repair, ui-audit, autopilot,
+                        # visual-evidence-autogen)
+ANTHROPIC_API_KEY       # Claude credential `api_key` — same AI tiers. Which one
+                        # is tried first is the CLAUDE_AUTH_ORDER variable
+                        # (default oauth,api_key); on the claude-run lanes a
+                        # refused credential hands over to the next
 CLOUDFLARE_API_TOKEN    # Chat proxy deploy
 CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 
@@ -244,8 +247,11 @@ CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 ISSUE_AUTOPILOT_ENABLED / ISSUE_RESOLVE_ENABLED / ISSUE_AUTOCLOSE_ENABLED /
 ISSUE_VERIFY_CLOSE_ENABLED / ISSUE_AUTOMERGE_ENABLED
 
-# Kill switch (default ON — set to `false` to stop the lane)
+# Kill switches (default ON — set to `false` to stop the lane)
 VISUAL_EVIDENCE_AUTOGEN_ENABLED   # visual-evidence-autogen.yml
+AI_CONTENT_REVIEW_ENABLED         # ai-content-review.yml (the Claude tier only)
+CI_SELF_REPAIR_ENABLED            # ci-self-repair.yml
+UI_AUDIT_ENABLED                  # ui-audit.yml (scheduled runs; dispatch bypasses)
 ```
 
 ## Composite Actions Used
@@ -257,7 +263,7 @@ Shared composite actions live in `.github/actions/`:
 - `test-suite` — theme test suite execution
 - `playwright-tests` — Playwright tier runner with artifact upload
 - `configure-git` — git identity for automated commits
-- `claude-run` — the universal Claude Code step for the issue autopilot
+- `claude-run` — the universal Claude Code step (consumed from the hub) behind every AI lane here except the `@claude` handler: issue autopilot, visual-evidence autogen, content review, CI self-repair, UI audit
 
 See [`.github/actions/README.md`](../actions/README.md).
 

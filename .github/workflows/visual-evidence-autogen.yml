@@ -225,9 +225,15 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}   # the runner tries the credentials in this order
         with:
           agent: visual-evidence-reviewer
           tools: "Read,Grep,Glob,Write,Bash(ls:*),Bash(cat:*)"
+          # Turn cap, sized from the lane's own usage ledger: 13 metered
+          # reviews took 9-16 turns (ai-usage artifacts, 2026-10-16 to
+          # 2026-11-05); 1.5 x 16, rounded up to the next 10. The dollar cap is
+          # the action's default ($10).
+          max-turns: "30"
           prompt: >-
             Read test/visual-results/autogen/brief.md — it describes what this run
             rendered for the pull request and where every image is. Then, as the
