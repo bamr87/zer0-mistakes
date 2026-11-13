@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/grokbot-fix-sidebar-offcanvas-layout-gate/ -->
+  (evidence: [`test/visual/evidence/grokbot-fix-sidebar-offcanvas-layout-gate/`](test/visual/evidence/grokbot-fix-sidebar-offcanvas-layout-gate/README.md))

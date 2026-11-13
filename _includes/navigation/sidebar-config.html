@@ -156,15 +156,24 @@
   Clicking did nothing, and assistive tech followed aria-controls to an element
   that was not there.
 
-  There is no Liquid API for "resolve the layout inheritance chain", so the set
-  of layouts that reach default.html is listed here explicitly. It is pinned by
-  a test (test/test_core.sh :: test_sidebar_offcanvas_layout_gate) that reads
-  the front matter of every _layouts/*.html and fails if reality drifts from
-  this list — the same invariant pattern #425 used for the pixel-gate filter.
-  Add a layout here when, and only when, its `layout:` chain reaches default.
+  This used to be a hard-coded list of the theme's own layout names, which
+  fails CLOSED for every CONSUMER layout: a remote-theme site whose `quest`
+  layout declares `layout: default` renders #tocContents but got no #tocFab, so
+  below `lg` its table of contents was unreachable (issue #570).
+
+  The layout chain answers instead. _layouts/default.html declares
+  `renders_sidebar_offcanvas: true` in its front matter, and Jekyll's
+  Renderer#render_layout deep-merges each layout's data down the chain
+  (`payload["layout"] = deep_merge(layout.data, payload["layout"])`), so the key
+  is visible as `layout.renders_sidebar_offcanvas` on every page that reaches
+  default at ANY depth, from the theme or a consumer. core/header.html already
+  relies on the same merge for `skip_link_target`.
+
+  Still fails safe: a layout that never reaches default declares nothing, so it
+  gets no toggle and no dangling aria-controls (#373's invariant). Pinned by
+  test/test_core.sh :: test_sidebar_offcanvas_layout_gate.
 {%- endcomment -%}
-{%- assign _sidebar_offcanvas_layouts = "default,article,author,authors,collection,cookbook,note,notebook,recipe,tag" | split: "," -%}
 {%- assign sidebar_offcanvas_rendered = false -%}
-{%- if _sidebar_offcanvas_layouts contains page.layout -%}
+{%- if layout.renders_sidebar_offcanvas -%}
   {%- assign sidebar_offcanvas_rendered = true -%}
 {%- endif -%}
