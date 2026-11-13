@@ -210,10 +210,17 @@ jobs:
 
       - name: Load Docker Image
         run: |
-          # Load the image and capture its ID
-          docker load -i /tmp/jekyll-image.tar
-          # Get the image ID from docker images
-          IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
+          set -euo pipefail
+          # Take the ID from docker load's own output. `docker images | head -1`
+          # returned whichever image on the runner was newest (a preinstalled
+          # agent-firewall image), so validation ran in the wrong container.
+          OUTPUT=$(docker load -i /tmp/jekyll-image.tar)
+          echo "$OUTPUT"
+          IMAGE_ID=$(echo "$OUTPUT" | awk '/Loaded image ID:/ {print $4}' | head -1)
+          if [[ -z "${IMAGE_ID}" ]]; then
+            echo "::error::docker load reported no image ID"
+            exit 1
+          fi
           echo "📋 Loaded image ID: $IMAGE_ID"
           # Tag it for easy reference
           docker tag $IMAGE_ID zer0-mistakes-jekyll-test:latest
@@ -342,8 +349,8 @@ jobs:
 
           IMAGE_ID=$(echo "$OUTPUT" | awk '/Loaded image ID:/ {print $4}' | head -1)
           if [[ -z "${IMAGE_ID}" ]]; then
-            # Fallback: take the most recent image ID
-            IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
+            echo "::error::docker load reported no image ID"
+            exit 1
           fi
 
           echo "image_id=${IMAGE_ID}" >> "$GITHUB_OUTPUT"
