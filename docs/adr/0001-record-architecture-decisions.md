@@ -1,7 +1,17 @@
+---
+title: "ADR 0001: Record architecture decisions"
+description: "Why this repository keeps a numbered log of decisions that are hard to reverse, in docs/adr/, and how a record is written."
+date: 2026-11-14T00:00:00.000Z
+lastmod: 2026-11-14T00:00:00.000Z
+categories: [docs]
+tags: [architecture, adr, decisions]
+author: bamr87
+---
+
 # ADR 0001 — Record architecture decisions
 
 - **Status**: accepted
-- **Date**: YYYY-MM-DD
+- **Date**: 2026-11-14
 - **Deciders**: the maintainers
 - **Related**: bamr87/bamr87 `specs/WORK.md` UPS-WORK-04
 
@@ -15,12 +25,12 @@ Record every such decision as an Architecture Decision Record in `docs/adr/NNNN-
 
 ## Consequences
 
-**Positive**
+### Positive
 
 - The reason behind each lasting choice is one link away.
 - Agents can check a proposed change against accepted ADRs before making it.
 
-**Negative**
+### Negative
 
 - A small writing cost on the PRs that need an ADR.
 

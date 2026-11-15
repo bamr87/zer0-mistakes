@@ -1,3 +1,13 @@
+---
+title: "ADR template"
+description: "The template every architecture decision record starts from: status, context, decision, consequences, alternatives considered and what it supersedes."
+date: 2026-11-14T00:00:00.000Z
+lastmod: 2026-11-14T00:00:00.000Z
+categories: [docs]
+tags: [architecture, adr, template]
+author: bamr87
+---
+
 # ADR NNNN — Title in sentence case
 
 - **Status**: proposed
@@ -15,11 +25,11 @@ What we will do, stated in full sentences. Name the files, interfaces or setting
 
 ## Consequences
 
-**Positive**
+### Positive
 
 - …
 
-**Negative**
+### Negative
 
 - …
 
