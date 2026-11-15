@@ -135,7 +135,7 @@ Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview; pushe
 
 **Triggers:** Push to `main` touching `templates/deploy/chat-proxy/`, Manual dispatch
 
-Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. It no longer uploads `ANTHROPIC_API_KEY` to the Worker (the key is disabled for now, 2026-11-15); the Worker keeps whatever Anthropic credential is already set on the Cloudflare side.
 
 ## Automation & AI Pipeline
 
@@ -143,7 +143,7 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 **Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
 
-Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
+Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when `CLAUDE_CODE_OAUTH_TOKEN` is set — OAuth only; the `ANTHROPIC_API_KEY` fallback is disabled for now — and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
 
 **The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice.
 
@@ -233,10 +233,10 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 GITHUB_TOKEN            # Automatically provided
 RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
 DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
-CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential — all AI tiers (claude.yml,
+CLAUDE_CODE_OAUTH_TOKEN # The Claude credential — all AI tiers (claude.yml,
                         # ai-content-review, ci-self-repair, ui-audit, autopilot)
-ANTHROPIC_API_KEY       # Fallback Claude credential — same AI tiers, used only
-                        # when CLAUDE_CODE_OAUTH_TOKEN is absent
+ANTHROPIC_API_KEY       # DISABLED for now (2026-11-15): Claude auth is OAuth only;
+                        # no workflow reads it. Re-add the references to restore.
 CLOUDFLARE_API_TOKEN    # Chat proxy deploy
 CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 

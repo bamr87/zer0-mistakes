@@ -5,8 +5,8 @@ name: Content & Docs Review
 #   1. Deterministic SEO + quality checks (scripts/content-review.rb) — always
 #      runs, no secrets required, works on fork PRs.
 #   2. Claude Code content-reviewer agent — runs only when a Claude credential
-#      is configured (CLAUDE_CODE_OAUTH_TOKEN preferred, ANTHROPIC_API_KEY as
-#      fallback), for editorial/consistency/polish review.
+#      is configured (CLAUDE_CODE_OAUTH_TOKEN only; the ANTHROPIC_API_KEY
+#      fallback is disabled for now, 2026-11-15), for editorial/consistency/polish review.
 #   3. Docs front matter, internal links, and markdownlint (formerly the
 #      separate docs-validate.yml).
 # See .github/instructions/content-review.instructions.md for the contract.
@@ -65,14 +65,14 @@ jobs:
         id: ai-gate
         env:
           OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Claude auth: OAuth only (CLAUDE_CODE_OAUTH_TOKEN). ANTHROPIC_API_KEY disabled for now (2026-11-15); to restore, re-add the secrets.ANTHROPIC_API_KEY reference.
         run: |
-          if [ -n "$OAUTH" ] || [ -n "$KEY" ]; then
+          if [ -n "$OAUTH" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
             echo "::notice::A Claude credential is present, so the review tier will run. Presence is not validity — a revoked token fails the tier loudly rather than posting a green non-review."
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY set — skipping the Claude Code review tier."
+            echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN set (Claude auth is OAuth only; ANTHROPIC_API_KEY disabled for now) — skipping the Claude Code review tier."
           fi
 
       - name: Checkout
@@ -161,14 +161,16 @@ jobs:
         id: agent
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Claude auth: OAuth only (CLAUDE_CODE_OAUTH_TOKEN). ANTHROPIC_API_KEY disabled for now (2026-11-15); to restore, re-add the secrets.ANTHROPIC_API_KEY reference.
           BASE_REF: origin/${{ github.base_ref }}
         run: |
           set +e
-          # House convention: OAuth wins when both are set — drop the API key
-          # entirely so an empty-string secret never triggers empty-key auth.
-          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-            unset ANTHROPIC_API_KEY
+          # Claude auth: OAuth only — ANTHROPIC_API_KEY is disabled for now
+          # (2026-11-15), so drop it unconditionally; nothing falls back to it.
+          unset ANTHROPIC_API_KEY
+          if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is empty — Claude auth is OAuth only (ANTHROPIC_API_KEY disabled for now)."
+            exit 1
           fi
           read -r -d '' PROMPT <<EOF
           Use the content-reviewer subagent to review the Markdown content files
