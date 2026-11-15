@@ -939,6 +939,25 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Mobile TOC FAB, sidebar toggle and local-graph FAB reach consumer layouts**
+  ([#570](https://github.com/bamr87/zer0-mistakes/issues/570), follow-up to
+  [#373](https://github.com/bamr87/zer0-mistakes/issues/373), ZER0-008).
+  `navigation/sidebar-config.html` decided whether a page renders the
+  `#bdSidebar` / `#tocContents` offcanvases from a hard-coded list of the
+  theme's **own** layout names. That is correct for theme layouts and fails
+  closed for every consumer layout: a remote-theme site whose `quest` layout
+  declares `layout: default` got `#tocContents` and no `#tocFab`, so below `lg`
+  its table of contents was unreachable (about 216 pages on it-journey.dev),
+  and the header sidebar toggle and local-graph FAB were suppressed too. The
+  gate now asks the layout chain — `_layouts/default.html` declares
+  `renders_sidebar_offcanvas: true` and Jekyll's layout front-matter merge makes
+  it visible as `layout.renders_sidebar_offcanvas` at any depth, the same
+  mechanism `core/header.html` already uses for `skip_link_target`. #373's
+  fail-safe is intact: a layout that never reaches `default` declares nothing
+  and still gets no toggle and no dangling `aria-controls`. Consumer workarounds
+  that key on `sidebar_offcanvas_rendered == false` go inert on their own.
+  `test/test_core.sh :: test_sidebar_offcanvas_layout_gate` now pins the
+  key-based gate instead of the list.
 - **Accessibility: GFM task lists are labelled and laid out** ([#573](https://github.com/bamr87/zer0-mistakes/issues/573)). kramdown renders `- [ ]` as `<li class="task-list-item"><input class="task-list-item-checkbox">Text` with no `<label>` and no whitespace, and the theme had no rule for it: each item kept its bullet, the box sat flush against its text, and axe `label` fired once per checkbox (WCAG 1.3.1 / 4.1.2; 3, 20 and 6 nodes on the it-journey.dev canary pages). `_sass/components/_ui-enhancements.scss` now drops the bullet and spaces the box while keeping wrapped lines on the list indent, and `assets/js/ui-enhancements.js` wraps each item's own text (stopping at a nested list) in a `<span id>` that the box names itself by through `aria-labelledby`; no `<label>` wrapper, so click behaviour is unchanged. `/notes/markdown-tips/` now renders a nested task list too. Pinned by `test/visual/core/accessible-names.spec.js` (accessible name, nested-item name, axe `label` = 0, computed style).
 - **A11y: author-card social links name the author** ([#568](https://github.com/bamr87/zer0-mistakes/issues/568)). The full author card ("About the Author", on every post) rendered its GitHub, LinkedIn, Website and Email buttons as icon-only links named by `title=` alone, and X by the bare `aria-label="X"`, so screen-reader and touch users got no reliable name and never learned *whose* profile it was (WCAG 2.4.4 / 4.1.2). Each link now carries an explicit `aria-label` such as "Vega on GitHub (opens in a new tab)" or "Email Vega", following the footer's #435 pattern; `title` stays as the tooltip, so nothing changes visually. Every Bootstrap Icons glyph in `_includes/components/author-card.html`, including the `bi-person*` avatar placeholders, is now `aria-hidden="true"`. Regression test: `test/visual/features/authors.spec.js` § "Author-card social link names (issue #568)".
 - **A11y: section pages name their navigation landmarks and mark the current section** ([#567](https://github.com/bamr87/zer0-mistakes/issues/567)). Every `layout: section` page added three unnamed `<nav>` landmarks beside the labelled primary nav and breadcrumbs, so a screen reader's landmark list read "navigation, navigation, navigation" (axe `landmark-unique`, WCAG 1.3.1). The active section-switcher pill was "current" only visually, and the Bootstrap Icons beside link text were exposed (4.1.2). Now the switcher `<nav>` is labelled "News sections" (new `ui-text` key `news_sections_label`), and the desktop Topics `<nav>` is "<Section> topics". The offcanvas Topics `<nav>` is `aria-labelledby` its drawer title. The two sidebar `<aside>`s are named, and the active pill carries `aria-current="page"`. Every decorative `bi` icon in `_layouts/section.html` and `_includes/navigation/section-sidebar.html` is `aria-hidden="true"`; the three icon-only status badges are unchanged. Two more unnamed `<nav>`s get labels: the news index's section switcher (`_layouts/news.html`, whose active "Home" pill also gets `aria-current`) and the listicle quick-nav in `_layouts/article.html`. Nothing changes visually. Regression tests: `test/visual/core/landmarks.spec.js` § "every navigation landmark is named". The source layer covers `_layouts/` and `_includes/navigation/`, and the rendered layer runs axe `landmark-unique` on `/news/technology/`.
