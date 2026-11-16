@@ -43,6 +43,8 @@ preview: /assets/images/wizard-on-journey.png
 hero_image: /assets/images/wizard-on-journey.png
 excerpt: "AI-native Jekyll theme for GitHub Pages — multi-agent ready (Copilot, Codex, Cursor, Claude), AI-powered install & preview images, AIEO-optimized, with Docker-first development and 43 documented features"
 ---
+> zer0-mistakes's direction is to become the ultimate open home for all things Jekyll themes and GitHub Pages craft: data, tools, resources and transparency, with Docker-first setup, privacy-first features, and an AI-friendly theme for everyone ([constitution](docs/constitution.md) §1).
+
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment) [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0) [![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml) [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-purple.svg)](https://getbootstrap.com/) [![AI-Native](https://img.shields.io/badge/AI--Native-Copilot%20%7C%20Codex%20%7C%20Cursor%20%7C%20Claude-8A2BE2)](AGENTS.md) [![AIEO](https://img.shields.io/badge/AIEO-Optimized-ff69b4)](#-aieo-optimized--built-for-ai-citation)
 
 # zer0-mistakes
