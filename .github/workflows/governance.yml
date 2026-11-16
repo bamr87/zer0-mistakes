@@ -1,0 +1,72 @@
+name: Governance
+
+# The fleet governance check (UPS-WORK-15/16, hub tools/governance_lint.py):
+# the PRD's generated "Feature catalog" block in
+# docs/architecture/prd-requirements.md must equal what prd-sync renders from
+# _data/features.yml, every catalog `status:` is one the fleet knows, every
+# `prd:` ref resolves in the PRD, and docs/constitution.md + docs/amendments/
+# are well formed. Nothing ran it before #591, so the block drifted silently:
+# a shipped feature was missing and two removed ones read "planned".
+#
+# Fix a stale block by regenerating it, never by hand:
+#   python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write
+#
+# The checker comes from the hub at the `v2` tag, not `main`, so a renderer
+# change on the hub's main cannot turn every open PR here red at once; when v2
+# moves and renders differently, the same prd-sync fixes it. No path filter on
+# purpose: the rendering also depends on which link/docs paths exist in the
+# repo, so a PR outside the catalog can stale the block too, and this job
+# costs seconds. No model, no secrets, read-only token, fork-safe.
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: governance-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  governance:
+    name: Governance check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Fetch the hub checker (bamr87/bamr87 @ v2)
+        uses: actions/checkout@v7
+        with:
+          repository: bamr87/bamr87
+          ref: v2
+          path: .hub
+          sparse-checkout: /tools/governance_lint.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Install PyYAML (the checker's only dependency)
+        run: python3 -m pip install --disable-pip-version-check --quiet pyyaml
+
+      - name: Check the PRD feature block, catalog, constitution and amendments
+        run: |
+          rc=0
+          python3 .hub/tools/governance_lint.py check . > "$RUNNER_TEMP/governance.txt" || rc=$?
+          cat "$RUNNER_TEMP/governance.txt"
+          # Each finding becomes an annotation on the PR's Checks page.
+          sed -n -e 's/^  error: \(.*\)$/::error::\1/p' \
+                 -e 's/^  warn:  \(.*\)$/::warning::\1/p' "$RUNNER_TEMP/governance.txt"
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Governance check failed. A stale feature block is regenerated, never hand-edited: python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write"
+          fi
+          exit "$rc"
