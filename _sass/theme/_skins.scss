@@ -4,6 +4,21 @@
 // Maps each data-theme-skin to Bootstrap + --zer0-color-* tokens so skin
 // previews affect buttons, links, borders, cards, nav, and alerts — not just
 // SVG backgrounds. Color values mirror _data/theme_backgrounds.yml.
+//
+// Contrast contract (WCAG 2.1 SC 1.4.3: 4.5:1 for text; #410 / T-042):
+//   - $brand is a SURFACE colour. Text never uses it raw: the light brands
+//     (air, aqua, mint, plum, sunrise) sit at 2.3-2.7:1 on white and the dark
+//     ones (dirt, neon) at 2.4-2.6:1 on #212529.
+//   - Ordinary brand text (.text-primary, .link-primary, .page-link, outline
+//     buttons) uses the link colour of the current mode.
+//   - Selected and current states (active tab, current crumb, active navbar
+//     link) and text on a brand tint (.alert-primary) use the stronger
+//     link-hover shade: darker than the link in light mode, lighter in dark.
+//   - Text ON a brand fill (.btn-primary, .badge.bg-primary, .text-bg-primary,
+//     active list and page items, the current dropdown item) uses $on-brand,
+//     exposed as --zer0-color-on-primary.
+// Each skin below carries its measured ratios (Python, WCAG 2.x relative
+// luminance; button states use the same 85% / 75% color-mix as the CSS).
 // ==========================================================================
 
 // $link-light / $link-light-hover — link colors for light mode; should reach
@@ -11,22 +26,32 @@
 // $link-dark  / $link-dark-hover  — link colors for dark mode; should reach
 //   WCAG AA (≥4.5:1) against Bootstrap's dark body background (#212529).
 // Falls back to $brand (light) / $accent (dark) when not supplied.
+// $on-brand    — text on a $brand fill. Must reach 4.5:1 on $brand AND on the
+//   .btn-primary hover/active mixes. White only works on the dark brands;
+//   the light ones pass #000 (Bootstrap's color-contrast() dark choice).
+// $brand-shade — what the .btn-primary hover (85%) and active (75%) states mix
+//   toward. Falls back to $accent; a skin whose light accent would pull the
+//   mix under 4.5:1 against $on-brand passes a darker shade instead.
 @mixin zer0-skin-palette(
   $brand, $brand-rgb, $accent, $accent-rgb: null,
   $link-light: null,       // WCAG-AA color on white (light mode)
   $link-light-hover: null, // Hover variant in light mode
   $link-dark: null,        // WCAG-AA color on dark bg (dark mode)
-  $link-dark-hover: null   // Hover variant in dark mode
+  $link-dark-hover: null,  // Hover variant in dark mode
+  $on-brand: #fff,         // Text on a $brand fill (buttons, badges, active items)
+  $brand-shade: null       // .btn-primary hover/active mix target; defaults to $accent
 ) {
   // Resolve: fall back to $brand / $accent when params are omitted
   $_ll:  if($link-light       != null, $link-light,       $brand);
   $_llh: if($link-light-hover != null, $link-light-hover, $_ll);
   $_ld:  if($link-dark        != null, $link-dark,        $accent);
   $_ldh: if($link-dark-hover  != null, $link-dark-hover,  $_ld);
+  $_shade: if($brand-shade    != null, $brand-shade,      $accent);
 
   --zer0-color-primary: #{$brand};
   --zer0-color-primary-rgb: #{$brand-rgb};
   --zer0-color-accent: #{$accent};
+  --zer0-color-on-primary: #{$on-brand};
   --bs-primary: #{$brand};
   --bs-primary-rgb: #{$brand-rgb};
 
@@ -44,32 +69,50 @@
   --zer0-color-bg-muted: color-mix(in srgb, #{$brand} 6%, var(--bs-secondary-bg, var(--bs-body-bg)));
 
   // Bootstrap component wiring
+  // Bootstrap leaves --bs-btn-color white; on the light brands that was
+  // 2.2-2.8:1 (air 2.53:1 at rest), so every state takes $on-brand.
   .btn-primary {
+    --bs-btn-color: #{$on-brand};
     --bs-btn-bg: #{$brand};
     --bs-btn-border-color: #{$brand};
-    --bs-btn-hover-bg: color-mix(in srgb, #{$brand} 85%, #{$accent});
-    --bs-btn-hover-border-color: color-mix(in srgb, #{$brand} 85%, #{$accent});
-    --bs-btn-active-bg: color-mix(in srgb, #{$brand} 75%, #{$accent});
-    --bs-btn-active-border-color: color-mix(in srgb, #{$brand} 75%, #{$accent});
+    --bs-btn-hover-color: #{$on-brand};
+    --bs-btn-hover-bg: color-mix(in srgb, #{$brand} 85%, #{$_shade});
+    --bs-btn-hover-border-color: color-mix(in srgb, #{$brand} 85%, #{$_shade});
+    --bs-btn-active-color: #{$on-brand};
+    --bs-btn-active-bg: color-mix(in srgb, #{$brand} 75%, #{$_shade});
+    --bs-btn-active-border-color: color-mix(in srgb, #{$brand} 75%, #{$_shade});
   }
 
   .btn-outline-primary {
-    --bs-btn-color: #{$brand};
+    --bs-btn-color: var(--bs-link-color);
     --bs-btn-border-color: #{$brand};
+    --bs-btn-hover-color: #{$on-brand};
     --bs-btn-hover-bg: #{$brand};
     --bs-btn-hover-border-color: #{$brand};
+    --bs-btn-active-color: #{$on-brand};
     --bs-btn-active-bg: #{$brand};
     --bs-btn-active-border-color: #{$brand};
   }
 
+  // Brand-filled badges: .bg-primary paints the fill, so the badge text has to
+  // follow it (Bootstrap's --bs-badge-color is a fixed #fff). The !important
+  // matches Bootstrap's own on .text-bg-primary.
+  .badge.bg-primary {
+    --bs-badge-color: #{$on-brand};
+  }
+
+  .text-bg-primary {
+    color: #{$on-brand} !important;
+  }
+
   .alert-primary {
-    --bs-alert-color: #{$brand};
+    --bs-alert-color: var(--bs-link-hover-color);
     --bs-alert-bg: rgba(#{$brand-rgb}, 0.12);
     --bs-alert-border-color: rgba(#{$brand-rgb}, 0.35);
   }
 
   .nav-tabs .nav-link.active {
-    color: #{$brand};
+    color: var(--bs-link-hover-color);
     border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
   }
 
@@ -86,6 +129,18 @@
     color: var(--bs-link-color);
   }
 
+  // Current and active links sit on a tint: the sidebar trees mark the current
+  // page (.active, aria-current) on --bs-primary-bg-subtle, the TOC scroll-spy
+  // marks its section on a brand tint. The plain link colour falls under 4.5:1
+  // there (mint 3.68:1, sunrise 4.20:1, aqua 4.38:1 on #cfe2ff), so they take
+  // the stronger link-hover shade. The extra .active / [aria-current] outranks
+  // the rule above; brand-filled .list-group-item / .page-link are left to
+  // their own rules below.
+  a.active:not(.btn):not(.nav-link):not(.dropdown-item):not(.badge):not(.list-group-item):not(.page-link),
+  a[aria-current="page"]:not(.btn):not(.nav-link):not(.dropdown-item):not(.badge) {
+    color: var(--bs-link-hover-color);
+  }
+
   a:not(.btn):not(.badge):hover {
     color: var(--bs-link-hover-color);
   }
@@ -96,8 +151,10 @@
     border-color: var(--zer0-color-border);
   }
 
-  // List group active state
+  // List group active state. !important: an <a class="list-group-item"> is
+  // otherwise repainted by the link rules above (specificity 0,5,1).
   .list-group-item.active {
+    color: #{$on-brand} !important;
     background-color: #{$brand};
     border-color: #{$brand};
   }
@@ -121,16 +178,19 @@
 
   // Pagination & breadcrumbs
   .page-link {
-    color: #{$brand};
+    color: var(--bs-link-color);
   }
 
-  .page-item.active .page-link {
+  // !important for the same reason as .list-group-item.active above.
+  .page-item.active .page-link,
+  .page-link.active {
+    color: #{$on-brand} !important;
     background-color: #{$brand};
     border-color: #{$brand};
   }
 
   .breadcrumb-item.active {
-    color: #{$brand};
+    color: var(--bs-link-hover-color);
   }
 
   // Progress
@@ -147,15 +207,16 @@
     border-color: rgba(var(--bs-primary-rgb), 0.4);
   }
 
-  // Navbar snippet / active nav links
+  // Navbar snippet / active nav links (the navbar is --bs-tertiary-bg)
   .navbar .nav-link.active,
   .navbar .nav-link.show {
-    color: #{$brand};
+    color: var(--bs-link-hover-color);
   }
 
-  // Text & border utilities tied to primary
+  // Text & border utilities tied to primary. Text takes the link colour of
+  // the current mode; the border keeps the brand (non-text, decorative).
   .text-primary {
-    color: #{$brand} !important;
+    color: var(--bs-link-color) !important;
   }
 
   .border-primary {
@@ -163,7 +224,7 @@
   }
 
   .link-primary {
-    color: #{$brand} !important;
+    color: var(--bs-link-color) !important;
   }
 
   // Dark-mode link overrides — switch to lighter tones for contrast on dark bg
@@ -175,86 +236,117 @@
   }
 }
 
+// Measured ratios (WCAG 2.x relative luminance; 4.5:1 is AA for text).
+// "navbar" is --bs-tertiary-bg (#f8f9fa light, #2b3035 dark); "card" is the
+// 10% brand tint on .card; "tints" is the worst of --bs-primary-bg-subtle and
+// the 10-15% brand tints that active states and .alert-primary sit on;
+// "on-brand" is .btn-primary at rest, hover (85% mix) and active (75% mix).
+
 // air — steel blue
-// Light: #1e5fa8 (≈6.5:1 on white) / Dark: #b8d4e3 (≈8.5:1 on #212529)
+//   light link #1e5fa8  6.45 white · 6.12 navbar · 5.94 card; hover #154a87 ≥ 6.77 on tints
+//   dark link  #b8d4e3  9.96 body · 8.60 navbar · 8.40 card; hover #d6eaf4 ≥ 9.56 on tints
+//   on-brand   #000     8.31 · 8.97 · 9.44 (white was 2.53 · 2.34 · 2.23)
 [data-theme-skin="air"] {
   @include zer0-skin-palette(
     #6fa8dc, "111, 168, 220", #b8d4e3,
     $link-light:       #1e5fa8,
     $link-light-hover: #154a87,
     $link-dark:        #b8d4e3,
-    $link-dark-hover:  #d6eaf4
+    $link-dark-hover:  #d6eaf4,
+    $on-brand:         #000
   );
 }
 
 // aqua — cyan/teal
-// Light: #006d99 (≈5.5:1 on white) / Dark: #67d7ec (≈8.0:1 on #212529)
+//   light link #006d99  5.76 white · 5.46 navbar · 5.24 card; hover #005577 ≥ 6.23 on tints
+//   dark link  #67d7ec  9.19 body · 7.93 navbar · 7.84 card; hover #9ae8f5 ≥ 8.73 on tints
+//   on-brand   #000     8.52 · 9.14 · 9.58 (white was 2.46 · 2.30 · 2.19)
 [data-theme-skin="aqua"] {
   @include zer0-skin-palette(
     #00b4d8, "0, 180, 216", #90e0ef,
     $link-light:       #006d99,
     $link-light-hover: #005577,
     $link-dark:        #67d7ec,
-    $link-dark-hover:  #9ae8f5
+    $link-dark-hover:  #9ae8f5,
+    $on-brand:         #000
   );
 }
 
 // dirt — earthy gold/brown
-// Light: #7a5a10 (≈5.0:1 on white) / Dark: #e0b882 (≈7.0:1 on #212529)
+//   light link #7a5a10  6.37 white · 6.04 navbar · 5.59 card; hover #5c430c ≥ 7.06 on tints
+//   dark link  #e0b882  8.34 body · 7.20 navbar · 7.61 card; hover #f0cea0 ≥ 8.96 on tints
+//   on-brand   #fff     5.09 · 5.55 · 5.88 — hover/active mix toward the dark
+//   link-hover brown: toward the #d4a574 accent they were 4.44 · 4.07, and
+//   #000 is only 4.13 on the brand itself.
 [data-theme-skin="dirt"] {
   @include zer0-skin-palette(
     #8b6914, "139, 105, 20", #d4a574,
     $link-light:       #7a5a10,
     $link-light-hover: #5c430c,
     $link-dark:        #e0b882,
-    $link-dark-hover:  #f0cea0
+    $link-dark-hover:  #f0cea0,
+    $on-brand:         #fff,
+    $brand-shade:      #5c430c
   );
 }
 
 // neon — electric purple/blue
-// Light: #5e22cc (≈5.5:1 on white) / Dark: #8ab4ff (≈6.0:1 on #212529)
+//   light link #5e22cc  8.15 white · 7.73 navbar · 7.03 card; hover #4a1aa3 ≥ 8.12 on tints
+//   dark link  #8ab4ff  7.38 body · 6.38 navbar · 6.90 card; hover #b0ccff ≥ 8.53 on tints
+//   on-brand   #fff     5.61 · 5.44 · 5.27
 [data-theme-skin="neon"] {
   @include zer0-skin-palette(
     #8338ec, "131, 56, 236", #3a86ff, "58, 134, 255",
     $link-light:       #5e22cc,
     $link-light-hover: #4a1aa3,
     $link-dark:        #8ab4ff,
-    $link-dark-hover:  #b0ccff
+    $link-dark-hover:  #b0ccff,
+    $on-brand:         #fff
   );
 }
 
 // mint — forest green
-// Light: #2d8059 (≈5.5:1 on white) / Dark: #80cfa8 (≈7.5:1 on #212529)
+//   light link #287652  5.52 white · 5.24 navbar · 5.08 card; hover #1f5a3b ≥ 6.18 on tints
+//   (was #2d8059: 4.83 white, 4.45 on the card tint)
+//   dark link  #80cfa8  8.38 body · 7.23 navbar · 7.07 card; hover #a8e6c4 ≥ 8.35 on tints
+//   on-brand   #000     8.49 · 9.00 · 9.35 (white was 2.47 · 2.33 · 2.24)
 [data-theme-skin="mint"] {
   @include zer0-skin-palette(
     #52b788, "82, 183, 136", #95d5b2,
-    $link-light:       #2d8059,
+    $link-light:       #287652,
     $link-light-hover: #1f5a3b,
     $link-dark:        #80cfa8,
-    $link-dark-hover:  #a8e6c4
+    $link-dark-hover:  #a8e6c4,
+    $on-brand:         #000
   );
 }
 
 // plum — deep violet
-// Light: #6b2477 (≈8.0:1 on white) / Dark: #d4a0f5 (≈7.0:1 on #212529)
+//   light link #6b2477  9.80 white · 9.29 navbar · 8.95 card; hover #4e1958 ≥ 9.96 on tints
+//   dark link  #d4a0f5  7.45 body · 6.43 navbar · 6.37 card; hover #e8c8ff ≥ 8.15 on tints
+//   on-brand   #000     7.81 · 6.75 · 6.10 (white was 2.69 · 3.11 · 3.44)
 [data-theme-skin="plum"] {
   @include zer0-skin-palette(
     #c77dff, "199, 125, 255", #812f85,
     $link-light:       #6b2477,
     $link-light-hover: #4e1958,
     $link-dark:        #d4a0f5,
-    $link-dark-hover:  #e8c8ff
+    $link-dark-hover:  #e8c8ff,
+    $on-brand:         #000
   );
 }
 
 // sunrise — warm terracotta/orange
-// Light: #b54418 (≈5.5:1 on white) / Dark: #ffa87a (≈7.0:1 on #212529)
+//   light link #b54418  5.52 white · 5.24 navbar · 4.98 card; hover #8f3512 ≥ 5.95 on tints
+//   dark link  #ffa87a  8.18 body · 7.06 navbar · 7.15 card; hover #ffd0b0 ≥ 8.85 on tints
+//   on-brand   #000     7.41 · 8.00 · 8.46 (white was 2.84 · 2.62 · 2.48)
 [data-theme-skin="sunrise"] {
   @include zer0-skin-palette(
     #ff6b35, "255, 107, 53", #f7c59f,
     $link-light:       #b54418,
     $link-light-hover: #8f3512,
     $link-dark:        #ffa87a,
-    $link-dark-hover:  #ffd0b0
+    $link-dark-hover:  #ffd0b0,
+    $on-brand:         #000
   );
 }

@@ -2,7 +2,7 @@
 title: "UI/UX Component Spec"
 description: "Single source of truth for every front-end UI/UX component in the zer0-mistakes theme — what it does, the files that implement it (SCSS / includes / layouts / JS / plugins), its API surface (classes, data-attributes, JS globals, events, CSS tokens), and its automated test coverage. Use it to define, test, and improve the UI."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-09-05T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 categories: [docs]
 tags: [architecture, design, ui, testing, components]
 author: bamr87
@@ -840,15 +840,15 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
 ### Named Skins (the 9 `data-theme-skin` palettes)
 
 - **Purpose:** Nine named palettes (air/aqua/dirt/neon/mint/plum/sunrise + dark/contrast for backgrounds) that re-wire Bootstrap components and `--zer0-color-*` tokens plus SVG backgrounds, applied via a `data-theme-skin` attribute on `<html>`.
-- **Capabilities:** `zer0-skin-palette` Sass mixin sets primary/accent/link tokens with WCAG-AA-tuned light & dark link colors, `color-mix` button hover/active and elevated-surface tints, focus ring, and component overrides (`.btn-primary`/`.btn-outline-primary`/`.alert-primary`/`.nav-tabs`/`.card`/`.list-group`/form-controls/pagination/breadcrumb/progress/`pre`/navbar/`.text-primary`/`.border-primary`/`.link-primary`); dark-mode link overrides nested under `&[data-bs-theme="dark"]`; runtime switching + localStorage persistence (see Background Customizer JS).
+- **Capabilities:** `zer0-skin-palette` Sass mixin sets primary/accent/link tokens with WCAG-AA-tuned light & dark link colors, `color-mix` button hover/active and elevated-surface tints, focus ring, and component overrides (`.btn-primary`/`.btn-outline-primary`/`.alert-primary`/`.nav-tabs`/`.card`/`.list-group`/form-controls/pagination/breadcrumb/progress/`pre`/navbar/`.text-primary`/`.border-primary`/`.link-primary`); dark-mode link overrides nested under `&[data-bs-theme="dark"]`; a per-skin on-brand text colour (`$on-brand`, `--zer0-color-on-primary`) for every brand-filled component, so all text clears WCAG AA in light and dark (measured ratios beside each skin); runtime switching + localStorage persistence (see Background Customizer JS).
 - **Source:**
   - SCSS: `_sass/theme/_skins.scss` (mixin + 7 palettes), `_sass/theme/_backgrounds.scss` (9 background sets)
   - Markup: applied on `<html data-theme-skin>` (server-rendered from `site.theme_skin`)
   - JS: `assets/js/background-customizer.js` (`zer0Bg.setSkin`)
   - Plugin/data: `_data/theme_skins.yml` (order + default), `_data/theme_backgrounds.yml` (per-skin colors/assets)
-- **API surface:** attribute `data-theme-skin="air|aqua|contrast|dark|dirt|neon|mint|plum|sunrise"`; CSS vars `--zer0-color-{primary,primary-rgb,accent,border,link,link-hover,bg-elevated,bg-muted}`, `--bs-{primary,primary-rgb,link-color,link-hover-color}`, `--zer0-shadow-focus`; SCSS `@mixin zer0-skin-palette($brand,$brand-rgb,$accent,$accent-rgb,$link-light,$link-light-hover,$link-dark,$link-dark-hover)`
+- **API surface:** attribute `data-theme-skin="air|aqua|contrast|dark|dirt|neon|mint|plum|sunrise"`; CSS vars `--zer0-color-{primary,primary-rgb,accent,on-primary,border,link,link-hover,bg-elevated,bg-muted}`, `--bs-{primary,primary-rgb,link-color,link-hover-color}`, `--zer0-shadow-focus`; SCSS `@mixin zer0-skin-palette($brand,$brand-rgb,$accent,$accent-rgb,$link-light,$link-light-hover,$link-dark,$link-dark-hover,$on-brand,$brand-shade)`
 - **Tests:** `test/visual/skins.spec.js` — per-skin (all 9 from `fixtures.SKINS`): "sets `data-theme-skin` attribute", "persists skin to localStorage", "skin restores after navigation" (poll on `/faq/`), "homepage visual snapshot" (`homepage-<skin>.png`, `maxDiffPixels:150`); plus "`zer0Bg.currentSkin()` returns active skin" and "skin-change event fires with correct detail". Snapshots committed in `skins.spec.js-snapshots/homepage-*-chromium-linux.png`. Asserts attribute/persistence/visual but not per-component token values or contrast.
-- **Gaps / improvement ideas:** **Inconsistency**: `_skins.scss` defines UI palettes for only 7 skins (no `contrast`, no `dark`), yet `_backgrounds.scss` and the customizer offer 9 — `contrast`/`dark` get SVG backgrounds but inherit default Bootstrap component colors. **Default-skin drift**: `theme_skins.yml` default is `air` and lists 7 skins, but `background-customizer.js`/`theme-customizer.js` fall back to `dark`, and the customizer/background includes hardcode a 9-string list — three sources of truth. No automated WCAG-contrast assertion despite carefully annotated AA ratios in the SCSS comments. Snapshots are linux-only (CI), so local runs can't compare baselines.
+- **Gaps / improvement ideas:** **Inconsistency**: `_skins.scss` defines UI palettes for only 7 skins (no `contrast`, no `dark`), yet `_backgrounds.scss` and the customizer offer 9 — `contrast`/`dark` get SVG backgrounds but inherit default Bootstrap component colors. **Default-skin drift**: `theme_skins.yml` default is `air` and lists 7 skins, but `background-customizer.js`/`theme-customizer.js` fall back to `dark`, and the customizer/background includes hardcode a 9-string list — three sources of truth. WCAG contrast is asserted per skin and mode by `test/visual/core/skin-contrast.spec.js` (#410); the `contrast`/`dark` skins keep Bootstrap's palette and are outside it. Snapshots are linux-only (CI), so local runs can't compare baselines.
 
 ### Appearance Panel (`appearance.js`)
 
