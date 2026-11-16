@@ -95,8 +95,8 @@
   }
 
   // Brand-filled badges: .bg-primary paints the fill, so the badge text has to
-  // follow it (Bootstrap's --bs-badge-color is a fixed #fff). The !important
-  // matches Bootstrap's own on .text-bg-primary.
+  // follow it (Bootstrap's --bs-badge-color is a fixed #fff). .text-bg-primary
+  // sets its colour with !important, so the override needs one too.
   .badge.bg-primary {
     --bs-badge-color: #{$on-brand};
   }
