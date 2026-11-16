@@ -16,7 +16,7 @@ button:not(.btn):focus-visible,
 summary:focus-visible {
   outline: 2px solid var(--zer0-color-primary, currentColor);
   outline-offset: 2px;
-  border-radius: 0.125rem;
+  border-radius: 0.125rem; // off-scale: 2px focus-ring corner
 }
 
 // Skip-link target — <main id="main-content" tabindex="-1"> in _layouts/root.html.
@@ -53,7 +53,7 @@ summary:focus-visible {
   padding: 0.5rem 1rem;
   background: var(--zer0-color-primary);
   color: #fff;
-  border-radius: 0.25rem;
+  border-radius: var(--zer0-radius-sm);
   transform: translateY(-200%);
   transition: transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
 
