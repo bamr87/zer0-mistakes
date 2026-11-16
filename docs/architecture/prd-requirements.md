@@ -663,7 +663,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-014](../../_data/features.yml) | Jekyll Collections System | shipped | route `/` · route `/docs/jekyll/collections/` | TBD |
 | [ZER0-015](../../_data/features.yml) | Automated Release Management | shipped | route `/` · route `/docs/development/release-management/` | Feature 10 |
 | [ZER0-016](../../_data/features.yml) | Comprehensive Testing Suite | shipped | route `/` · route `/docs/development/testing/` | Feature 6 |
-| [ZER0-017](../../_data/features.yml) | Automated Version Bump Workflow | planned | route `/` · route `/docs/development/version-bump/` | Feature 5 |
+| [ZER0-017](../../_data/features.yml) | Automated Version Bump Workflow | deprecated | route `/` · route `/docs/development/version-bump/` | Feature 5 |
 | [ZER0-018](../../_data/features.yml) | CodeQL Security Scanning | shipped | route `/` · route `/docs/development/security/` | TBD |
 | [ZER0-019](../../_data/features.yml) | Comprehensive Layout System | shipped | route `/` · route `/docs/customization/layouts/` | TBD |
 | [ZER0-020](../../_data/features.yml) | Modular Include Components | shipped | route `/` · route `/docs/customization/includes/` | TBD |
@@ -703,7 +703,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-054](../../_data/features.yml) | AIEO Structured Data, FAQ & Glossary | shipped | route `/glossary/` · route `/docs/seo/aieo/` | TBD |
 | [ZER0-055](../../_data/features.yml) | ES6 Modular Navigation Architecture | shipped | route `/` · route `/docs/features/navigation-architecture/` | TBD |
 | [ZER0-056](../../_data/features.yml) | DevContainer Configuration | shipped | route `/` · route `/docs/development/devcontainer/` | TBD |
-| [ZER0-057](../../_data/features.yml) | Local Docker Publishing Pipeline | planned | route `/` · route `/docs/development/docker-publishing/` | Feature 10 |
+| [ZER0-057](../../_data/features.yml) | Local Docker Publishing Pipeline | deprecated | route `/` · route `/docs/development/docker-publishing/` | Feature 10 |
 | [ZER0-058](../../_data/features.yml) | Notes Collection & Notebook Layout | shipped | route `/notes/` | TBD |
 | [ZER0-059](../../_data/features.yml) | Performance: Page-URL Cache for Obsidian Resolver | shipped | route `/docs/obsidian/performance/` | TBD |
 | [ZER0-060](../../_data/features.yml) | AI Chat Assistant (Claude or Grok + GitHub) | shipped | route `/docs/features/ai-chat-assistant/` | TBD |
@@ -734,7 +734,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-085](../../_data/features.yml) | Visual Evidence Autogen | shipped | route `/` · route `/docs/development/testing/` | TBD |
 | [ZER0-086](../../_data/features.yml) | Claude-Guided Site Builder | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
 | [ZER0-087](../../_data/features.yml) | Bring-Your-Own AI Provider (Claude or Grok) and Open Site Builder Sessions | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
-| [ZER0-088](../../_data/features.yml) | zer0 studio — the Rails theme workbench | shipped | [link](https://github.com/bamr87/zer0-mistakes/tree/main/studio) · [`studio/README.md`](../../studio/README.md) | TBD |
+| [ZER0-088](../../_data/features.yml) | zer0 studio — the Rails theme workbench | shipped | [link](https://github.com/bamr87/zer0-mistakes/tree/main/studio) · [`studio/README.md`](../../studio/README.md) | Feature 13 |
 
 **Requirement → feature trace**
 
@@ -750,7 +750,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | Feature 10 | ZER0-015, ZER0-057 |
 | Feature 6 | ZER0-016, ZER0-027 |
 | Feature 5 | ZER0-017 |
-| Feature 13 | ZER0-065 |
+| Feature 13 | ZER0-065, ZER0-088 |
 <!-- features:end -->
 <!-- markdownlint-enable MD036 MD059 -->
 

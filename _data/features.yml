@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.29.0
-# Last Updated: 2026-10-21
+# Version: 1.31.3
+# Last Updated: 2026-11-15
 
 # PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
 prd: docs/architecture/prd-requirements.md
@@ -591,6 +591,7 @@ features:
     title: "Automated Version Bump Workflow"
     description: "Removed in v1.20.0 — the manual version-bump GitHub Actions workflow was superseded by the release-please pipeline (see ZER0-015). Kept for ID stability and historical reference"
     implemented: false
+    status: deprecated
     prd: ["Feature 5"]
     removed_in: "1.20.0"
     superseded_by: "ZER0-015"
@@ -1762,6 +1763,7 @@ features:
     title: "Local Docker Publishing Pipeline"
     description: "Removed in v1.8.1 — the dedicated docker-compose.publish.yml / docker-compose.prod.yml local-publish path was retired; gem publishing now runs through the release-please CI pipeline (see ZER0-015) and scripts/bin/release. Kept for ID stability"
     implemented: false
+    status: deprecated
     prd: ["Feature 10"]
     removed_in: "1.8.1"
     superseded_by: "ZER0-015"
@@ -2642,6 +2644,7 @@ features:
     title: "zer0 studio — the Rails theme workbench"
     description: "A Rails 8.1 app at studio/ that designs, customizes and updates this theme from a browser: token and skin editors with live diffs and WCAG contrast, a read-only theme doctor, docs-site preview builds shown in a cross-origin iframe, consumer-site registration with the audit as a live-logged job, the version lockstep table, release dry runs and the consumer pin matrix. Every write is a digest-guarded atomic rename of a file the allow-list names; every script run is the theme's own"
     implemented: true
+    prd: ["Feature 13"]
     version: "1.32.0"
     link: "https://github.com/bamr87/zer0-mistakes/tree/main/studio"
     docs: "studio/README.md"
