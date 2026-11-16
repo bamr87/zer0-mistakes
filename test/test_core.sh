@@ -1280,6 +1280,37 @@ test_consumer_404_gates() {
     fi
 }
 
+test_page_feedback_template() {
+    log_info "Testing the page-feedback no-JS links honour page_feedback.issue_template (issue #636)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the page-feedback template check"
+        return 0
+    fi
+
+    # Builds throwaway consumer sites with the real Jekyll, so it needs the
+    # bundle (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the page-feedback template check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_page_feedback_template.rb; then
+        log_success "FAB, intro and 404 feedback links open the configured issue form"
+        return 0
+    else
+        log_error "page-feedback template check failed (see above)"
+        return 1
+    fi
+}
+
 test_cookie_consent_gate() {
     log_info "Testing the cookie-consent banner renders only when a tracker needs consent (issue #566)..."
 
@@ -1994,6 +2025,7 @@ run_core_tests() {
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
+    run_test "Page Feedback Issue Template" "test_page_feedback_template" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
     run_test "Build Overlay Recipe" "test_build_overlay_recipe" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"

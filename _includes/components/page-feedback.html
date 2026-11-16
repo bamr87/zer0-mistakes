@@ -53,6 +53,8 @@
 
 {%- comment -%} Repo + file coordinates for the issue body (mirrors content/intro.html). {%- endcomment -%}
 {%- assign pf_repo = site.repository | join: "" -%}
+{%- comment -%} Issue form the no-JS href opens; fleet-kit consumers ship page_feedback.yml. {%- endcomment -%}
+{%- assign pf_template = site.page_feedback.issue_template | default: "page_improvement.yml" -%}
 {%- assign pf_branch = site.branch | default: "main" -%}
 {%- assign pf_source_url = "" -%}
 {%- if pf_repo != "" and page.path -%}
@@ -71,7 +73,7 @@
 {%- endcomment -%}
 <a id="pageFeedbackFab"
    class="pf-fab btn shadow-lg position-fixed"
-   href="https://github.com/{{ pf_repo }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+   href="https://github.com/{{ pf_repo }}/issues/new?template={{ pf_template | url_encode }}&labels=page-feedback"
    role="button"
    data-pf-open
    target="_blank"

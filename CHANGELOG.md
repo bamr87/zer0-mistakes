@@ -939,6 +939,15 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **Page-feedback no-JS links open the consumer's issue form**
+  ([#636](https://github.com/bamr87/zer0-mistakes/issues/636)). The FAB, the
+  intro "Improve" link and the 404 report link hard-coded
+  `template=page_improvement.yml`, so on fleet-kit consumer sites (which ship
+  `page_feedback.yml`) they opened a blank issue. New key
+  `page_feedback.issue_template` names the form; it defaults to
+  `page_improvement.yml`, so existing sites render unchanged. Guarded by
+  `test/test_page_feedback_template.rb`.
+
 - **Mobile TOC FAB, sidebar toggle and local-graph FAB reach consumer layouts**
   ([#570](https://github.com/bamr87/zer0-mistakes/issues/570), follow-up to
   [#373](https://github.com/bamr87/zer0-mistakes/issues/373), ZER0-008).
