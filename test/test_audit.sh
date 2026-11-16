@@ -1,6 +1,7 @@
 #!/bin/bash
 # test/test_audit.sh — unit tests for the theme-audit capability
-# Runs against synthetic fixtures under test/fixtures/consumer-{gem,remote}/
+# Runs against synthetic fixtures under test/fixtures/consumer-{gem,remote}/,
+# plus temporary consumers built from the live theme _data/ (section 15).
 # Registered in test/test_runner.sh as the "audit" suite.
 #
 # Usage: ./test/test_audit.sh [--verbose]
@@ -106,6 +107,12 @@ assert_output_contains "manifest: contains themable_paths" "themable_paths:" "$o
 assert_output_contains "manifest: contains plugin_paths" "plugin_paths:" "$output"
 assert_output_contains "manifest: contains config_schema" "config_schema:" "$output"
 assert_output_contains "manifest: contains file_checksums" "file_checksums:" "$output"
+# Vendored theme data (#556): listed, and checksummed like the themable files.
+assert_output_contains "manifest: contains vendored_data_paths" "vendored_data_paths:" "$output"
+assert_output_contains "manifest: lists theme_backgrounds.yml as vendored data" \
+    "  - _data/theme_backgrounds.yml" "$output"
+assert_output_contains "manifest: checksums cover vendored data" \
+    '_data/theme_backgrounds.yml: "' "$output"
 
 # --dry-run stdout must be pure YAML: the freshness gate diffs it straight
 # against the committed manifest, so a stray log line would fail every run.
@@ -387,6 +394,191 @@ fi
 
 assert_output_not_contains "json: no dangling comma before the closing bracket" \
     "}," "$(printf '%s' "$json_output" | tr -d ' \n' | grep -o '},\]}' || true)"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 15. Vendored theme data: STALE / MISSING / MISSING_KEYS ---"
+
+# Jekyll 3.10 never loads a theme's _data/, so a consumer reads the theme's data
+# only from its own copy, which freezes on the day it was made; the audit never
+# looked at _data/ (#556). The consumer is built from the live theme files, so
+# the fixture cannot rot as the theme's data moves on.
+ESC=$(printf '\033')
+strip_ansi() { sed "s/${ESC}\[[0-9;]*m//g"; }
+HAVE_RUBY=0
+command -v ruby >/dev/null 2>&1 && HAVE_RUBY=1
+
+THEME_DATA="$REPO_ROOT/_data"
+DATA_FIX=$(mktemp -d)
+mkdir -p "$DATA_FIX/_data"
+printf 'title: "vendored data fixture"\nremote_theme: bamr87/zer0-mistakes\n' \
+    > "$DATA_FIX/_config.yml"
+# STALE: a copy taken before the theme's latest edit (here, its last line).
+sed '$d' "$THEME_DATA/theme_backgrounds.yml" > "$DATA_FIX/_data/theme_backgrounds.yml"
+# MISSING: no copy of _data/theme_skins.yml at all.
+# MISSING_KEYS: a customised ui-text.yml that kept one of the theme's labels.
+printf 'en:\n  skip_links: "Jump links"\n' > "$DATA_FIX/_data/ui-text.yml"
+
+data_audit() {
+    "$AUDIT_BIN" --consumer-path "$DATA_FIX" --theme-path "$REPO_ROOT" \
+        --mode remote_theme "$@"
+}
+
+data_output=$(data_audit --format text 2>&1 | strip_ansi || true)
+assert_output_contains "data: a stale copy reports STALE" \
+    "[STALE] _data/theme_backgrounds.yml" "$data_output"
+assert_output_contains "data: an absent registry reports MISSING" \
+    "[MISSING] _data/theme_skins.yml" "$data_output"
+
+if [[ "$HAVE_RUBY" == "1" ]]; then
+    assert_output_contains "data: a customised ui-text.yml reports MISSING_KEYS" \
+        "[MISSING_KEYS] _data/ui-text.yml" "$data_output"
+    keys_line=$(printf '%s\n' "$data_output" | grep 'absent from en:' || true)
+    theme_key_count=$(ruby -ryaml -e \
+        'puts YAML.safe_load(File.read(ARGV[0]), aliases: true)["en"].size' \
+        "$THEME_DATA/ui-text.yml")
+    assert_output_contains "data: counts every key the consumer lacks" \
+        "$((theme_key_count - 1)) key(s) absent from en:" "$keys_line"
+    assert_output_contains "data: names a key the consumer lacks" \
+        "skip_main_content" "$keys_line"
+    assert_output_not_contains "data: never names a key the consumer kept" \
+        "skip_links" "$keys_line"
+else
+    info "ruby unavailable — skipping the MISSING_KEYS assertions"
+fi
+
+data_audit --strict > /dev/null 2>&1 && data_strict_exit=0 || data_strict_exit=$?
+assert_exit_code "data: --strict fails on STALE vendored data" "1" "$data_strict_exit"
+
+gh_output=$(data_audit --format github 2>/dev/null || true)
+assert_output_contains "data: github format warns on STALE" \
+    "::warning file=_data/theme_backgrounds.yml::STALE" "$gh_output"
+assert_output_contains "data: github format notes MISSING" \
+    "::notice file=_data/theme_skins.yml::MISSING" "$gh_output"
+if [[ "$HAVE_RUBY" == "1" ]]; then
+    assert_output_contains "data: github format warns on MISSING_KEYS" \
+        "::warning file=_data/ui-text.yml::MISSING_KEYS" "$gh_output"
+fi
+
+# Data gets its own JSON array: for data, IDENTICAL means "current, keep it",
+# so it must never sit in `results`, where IDENTICAL means "safe to delete".
+data_json=$(data_audit --format json 2>/dev/null || true)
+if command -v python3 >/dev/null 2>&1; then
+    json_verdict=$(printf '%s' "$data_json" | HAVE_RUBY="$HAVE_RUBY" python3 -c '
+import json, os, sys
+report = json.load(sys.stdin)
+data = {entry["path"]: entry for entry in report["vendored_data"]}
+assert data["_data/theme_backgrounds.yml"]["status"] == "STALE", data
+assert data["_data/theme_skins.yml"]["status"] == "MISSING", data
+assert not [e for e in report["results"] if e["path"].startswith("_data/")]
+if os.environ.get("HAVE_RUBY") == "1":
+    ui = data["_data/ui-text.yml"]
+    assert ui["status"] == "MISSING_KEYS", ui
+    assert "skip_main_content" in ui["missing_keys"], ui
+    assert "skip_links" not in ui["missing_keys"], ui
+print("ok")
+' 2>&1 || true)
+    assert_equals "data: json reports vendored data in its own array" "ok" "$json_verdict"
+else
+    info "python3 unavailable — skipping the vendored_data JSON assertion"
+fi
+
+stale_sum=$(cksum < "$DATA_FIX/_data/theme_backgrounds.yml")
+data_dry_output=$(data_audit --fix --dry-run 2>&1 | strip_ansi || true)
+assert_output_contains "data: --fix --dry-run lists the refresh" \
+    "Would refresh vendored data from the theme: _data/theme_backgrounds.yml" "$data_dry_output"
+if [[ "$(cksum < "$DATA_FIX/_data/theme_backgrounds.yml")" == "$stale_sum" \
+      && ! -e "$DATA_FIX/_data/theme_skins.yml" ]]; then
+    pass "data: --fix --dry-run writes no file"
+else
+    fail "data: --fix --dry-run wrote a file"
+fi
+
+ui_sum=$(cksum < "$DATA_FIX/_data/ui-text.yml")
+data_audit --fix > /dev/null 2>&1 || true
+if cmp -s "$THEME_DATA/theme_backgrounds.yml" "$DATA_FIX/_data/theme_backgrounds.yml"; then
+    pass "data: --fix refreshes the STALE copy from the theme"
+else
+    fail "data: --fix left _data/theme_backgrounds.yml stale"
+fi
+if cmp -s "$THEME_DATA/theme_skins.yml" "$DATA_FIX/_data/theme_skins.yml"; then
+    pass "data: --fix copies the MISSING registry from the theme"
+else
+    fail "data: --fix did not copy _data/theme_skins.yml"
+fi
+assert_equals "data: --fix never rewrites a customised ui-text.yml" \
+    "$ui_sum" "$(cksum < "$DATA_FIX/_data/ui-text.yml")"
+
+fixed_output=$(data_audit --format text 2>&1 | strip_ansi || true)
+assert_output_contains "data: the refreshed copy reads IDENTICAL" \
+    "[IDENTICAL] _data/theme_backgrounds.yml" "$fixed_output"
+assert_output_contains "data: the copied registry reads IDENTICAL" \
+    "[IDENTICAL] _data/theme_skins.yml" "$fixed_output"
+assert_output_not_contains "data: nothing STALE after --fix" "[STALE]" "$fixed_output"
+
+# MISSING_KEYS is warn-only: a consumer may reword labels and add keys at its
+# own pace, so it must not fail a CI gate that STALE data does.
+data_audit --strict > /dev/null 2>&1 && fixed_strict_exit=0 || fixed_strict_exit=$?
+assert_exit_code "data: MISSING_KEYS alone never fails --strict" "0" "$fixed_strict_exit"
+rm -rf "$DATA_FIX"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 15b. A vendored data fork declared in .theme-overrides.yml is kept ---"
+
+JUST_FIX=$(mktemp -d)
+mkdir -p "$JUST_FIX/_data"
+printf 'remote_theme: bamr87/zer0-mistakes\n' > "$JUST_FIX/_config.yml"
+printf 'overrides:\n  - path: "_data/theme_backgrounds.yml"\n    reason: "site palette"\n' \
+    > "$JUST_FIX/.theme-overrides.yml"
+sed '$d' "$THEME_DATA/theme_backgrounds.yml" > "$JUST_FIX/_data/theme_backgrounds.yml"
+cp "$THEME_DATA/theme_skins.yml" "$JUST_FIX/_data/theme_skins.yml"
+just_sum=$(cksum < "$JUST_FIX/_data/theme_backgrounds.yml")
+
+just_output=$("$AUDIT_BIN" --consumer-path "$JUST_FIX" --theme-path "$REPO_ROOT" \
+    --mode remote_theme --fix 2>&1 | strip_ansi || true)
+assert_output_contains "data: a declared fork reads DIFFERS_JUSTIFIED" \
+    "[DIFFERS_JUSTIFIED] _data/theme_backgrounds.yml" "$just_output"
+assert_equals "data: --fix keeps a declared fork" \
+    "$just_sum" "$(cksum < "$JUST_FIX/_data/theme_backgrounds.yml")"
+"$AUDIT_BIN" --consumer-path "$JUST_FIX" --theme-path "$REPO_ROOT" \
+    --mode remote_theme --strict > /dev/null 2>&1 && just_strict_exit=0 || just_strict_exit=$?
+assert_exit_code "data: a declared fork does not fail --strict" "0" "$just_strict_exit"
+rm -rf "$JUST_FIX"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 15c. vendored_data_paths comes from the manifest, with a fallback ---"
+
+STUB_DATA_THEME=$(mktemp -d)
+mkdir -p "$STUB_DATA_THEME/_data"
+cp "$THEME_DATA/theme_skins.yml" "$THEME_DATA/theme_backgrounds.yml" "$STUB_DATA_THEME/_data/"
+cat > "$STUB_DATA_THEME/_data/theme-manifest.yml" <<'STUB_MANIFEST'
+version: "0.0.0-test"
+themable_paths:
+  - _layouts
+vendored_data_paths:
+  - _data/theme_skins.yml
+STUB_MANIFEST
+BARE_CONSUMER=$(mktemp -d)
+printf 'remote_theme: bamr87/zer0-mistakes\n' > "$BARE_CONSUMER/_config.yml"
+
+listed_output=$("$AUDIT_BIN" --consumer-path "$BARE_CONSUMER" --theme-path "$STUB_DATA_THEME" \
+    --mode remote_theme 2>&1 | strip_ansi || true)
+assert_output_contains "data: audits what the manifest lists" \
+    "[MISSING] _data/theme_skins.yml" "$listed_output"
+assert_output_not_contains "data: audits only what the manifest lists" \
+    "_data/theme_backgrounds.yml" "$listed_output"
+
+# A manifest snapshot cut before the key existed (1.31.x) falls back to the
+# list scripts/lib/audit.sh keeps.
+sed -i.bak '/^vendored_data_paths:/,$d' "$STUB_DATA_THEME/_data/theme-manifest.yml"
+rm -f "$STUB_DATA_THEME/_data/theme-manifest.yml.bak"
+fallback_output=$("$AUDIT_BIN" --consumer-path "$BARE_CONSUMER" --theme-path "$STUB_DATA_THEME" \
+    --mode remote_theme 2>&1 | strip_ansi || true)
+assert_output_contains "data: a manifest without the key falls back to the built-in list" \
+    "[MISSING] _data/theme_backgrounds.yml" "$fallback_output"
+rm -rf "$STUB_DATA_THEME" "$BARE_CONSUMER"
 
 # ---------------------------------------------------------------------------
 echo ""
