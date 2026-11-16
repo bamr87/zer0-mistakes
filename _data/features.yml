@@ -1603,7 +1603,7 @@ features:
     implemented: true
     prd: [TBD]
     version: "0.21.4"
-    link: "/admin/"
+    link: "/about/config/"
     docs: "/docs/features/admin-dashboard/"
     tags: [admin, dashboard, ui, configuration]
     date: 2025-12-28
@@ -2644,7 +2644,7 @@ features:
     implemented: true
     version: "1.32.0"
     link: "https://github.com/bamr87/zer0-mistakes/tree/main/studio"
-    docs: "studio/README.md"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/studio/README.md"
     tags: [studio, rails, design-tokens, skins, doctor, preview, consumers, release]
     date: 2026-10-21
     provenance:
