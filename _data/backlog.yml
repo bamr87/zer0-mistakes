@@ -1172,7 +1172,7 @@ tasks:
     source: user
     route: a11y
     summary: >-
-      Done 2026-11-15. The zer0-skin-palette mixin painted text with the raw
+      Done 2026-11-15 (PR #632). The zer0-skin-palette mixin painted text with the raw
       brand and left Bootstrap's white text on brand fills (air: current nav
       link 2.40:1, .btn-primary 2.53:1). Every skin now passes a measured
       $on-brand ink (--zer0-color-on-primary) for brand fills and all button
@@ -1188,7 +1188,7 @@ tasks:
       - "Every skin passes explicit link colors; measured-ratio table committed as comments."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 632, roadmap: null }
     created: 2026-08-18
     updated: 2026-11-15
 
