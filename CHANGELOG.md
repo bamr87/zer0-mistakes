@@ -939,6 +939,8 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 
 ### Fixed
 
+- **A11y: one `<h1>` per page, and no second banner or contentinfo landmark** ([#593](https://github.com/bamr87/zer0-mistakes/issues/593)). `default.html` renders the page title as the intro hero's `<h1>`, and most Markdown pages open with their own `# Title`, so 225 of the 244 intro pages in the docs build had two. It now rewrites the body's first `<h1>`: dropped when it leads the body and repeats the title (its `id` stays on an empty `<span>`, so anchors and the TOC entry still land), demoted to `<h2>` otherwise. The page-feedback dialog's `<header>`/`<footer>` bars are `<div>`s now; as `<body>`-level elements they were a second `banner` and `contentinfo` whenever the dialog was open. `code-copy.js` numbers a language's code-block regions when a page has more than one ("bash code block 2"), which was the `landmark-unique` count axe reported on closed pages. Regression tests in `test/visual/core/heading-outline.spec.js` and `test/visual/core/landmarks.spec.js` (evidence: [`test/visual/evidence/fix-a11y-single-h1-landmarks/`](test/visual/evidence/fix-a11y-single-h1-landmarks/README.md)).
+
 - **Mobile TOC FAB, sidebar toggle and local-graph FAB reach consumer layouts**
   ([#570](https://github.com/bamr87/zer0-mistakes/issues/570), follow-up to
   [#373](https://github.com/bamr87/zer0-mistakes/issues/373), ZER0-008).
