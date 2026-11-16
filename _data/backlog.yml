@@ -1499,7 +1499,7 @@ tasks:
 
   - id: T-055
     title: "AI chat panel title is an <h6> at document depth 2 (heading skip on every page that ships the chat)"
-    status: open
+    status: done
     priority: P2
     area: a11y
     risk: low
@@ -1511,6 +1511,6 @@ tasks:
       - "The chat title is `<h2 class=\"h6 ...\">` (or the level matching its container) and keeps `id=\"aiChatTitle\"` for aria-labelledby."
       - "test/visual/core/heading-outline.spec.js covers the chat region the way CHROME_REGIONS covers the cookie dialog."
       - "No visual change (snapshot diff empty)."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 642, roadmap: null }
     created: 2026-10-29
-    updated: 2026-10-29
+    updated: 2026-11-16
