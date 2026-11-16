@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-10-19
-  next_id: 56
+  updated: 2026-11-15
+  next_id: 57
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1164,7 +1164,7 @@ tasks:
 
   - id: T-042
     title: "Skin contrast sweep: AA link params, tertiary meta text, per-skin badge/button audit"
-    status: open
+    status: done
     priority: P1
     area: a11y
     risk: standard
@@ -1172,15 +1172,17 @@ tasks:
     source: user
     route: a11y
     summary: >-
-      _sass/theme/_skins.scss: several skins omit the zer0-skin-palette mixin's
-      $link-light/$link-dark params and fall back to $brand/$accent, which fail
-      4.5:1 (yellow/orange/cyan brands on white, saturated brands on #212529) —
-      pass explicit AA-checked values for every skin with a comment table of
-      measured ratios. text-body-tertiary on 11-12px meta text (admin header
-      "Updated…", wizard hints) falls below AA — use --bs-secondary-color at
-      small sizes, tertiary only >= 16px. Audit .btn-primary text per skin
-      (auto-switch to dark text when brand luminance > 0.55 via color-contrast()
-      or a precomputed token).
+      Done 2026-11-15. The zer0-skin-palette mixin painted text with the raw
+      brand and left Bootstrap's white text on brand fills (air: current nav
+      link 2.40:1, .btn-primary 2.53:1). Every skin now passes a measured
+      $on-brand ink (--zer0-color-on-primary) for brand fills and all button
+      states, brand text uses the AA link colours, selected/current states the
+      link-hover shade, mint's light link is #287652 and dirt's button states
+      mix darker; the measured-ratio table sits beside each skin. Gray badges
+      use text-bg-secondary, small meta text text-body-secondary, and
+      .nav-tree-toggle is 24px. test/visual/core/skin-contrast.spec.js checks
+      the 7 palette skins in light and dark; evidence in
+      test/visual/evidence/skin-contrast/. Follow-ups outside the mixin: T-056.
     acceptance:
       - "axe/Lighthouse contrast passes on light + dark for all skins."
       - "Every skin passes explicit link colors; measured-ratio table committed as comments."
@@ -1188,7 +1190,7 @@ tasks:
       - "before/after evidence committed"
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
+    updated: 2026-11-15
 
   - id: T-043
     title: "Mermaid diagrams: render-in-place (no CLS), token-driven theming, figure shell, flash-free theme switch"
@@ -1514,3 +1516,36 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-10-29
     updated: 2026-10-29
+
+  - id: T-056
+    title: "Brand-colour contrast outside the skin mixin: text-white on bg-primary, brand hover text, sidebar count badge"
+    status: open
+    priority: P2
+    area: a11y
+    risk: standard
+    effort: M
+    source: issue
+    route: a11y
+    summary: >-
+      Discovered during the T-042 sweep (#410), which fixed the zer0-skin-palette
+      mixin and the navigation current states only. Still open: about a dozen
+      `bg-primary text-white` sites (card headers, author-avatar fallbacks,
+      feature and landing icons, an offcanvas header) keep white on the light
+      brands (2.2-2.8:1); hover states that paint the raw brand as text
+      (.nav-tree-link, the quicklinks chip over the gray outline-secondary
+      hover fill, .sidebar-categories-link, #info-section tabs) and the
+      $accent hover text on .nav-tabs / .list-group-item-action; brand text in
+      _sass/notebooks.scss, _sass/layouts/_landing.scss, _sass/core/_obsidian.scss
+      ([aria-pressed]) and white-on-primary in _setup-wizard.scss; the
+      sidebar-categories count badge (`text-bg-secondary bg-opacity-25`, white on
+      a 25% gray tint); and the contrast/dark skins keep Bootstrap's #0d6efd link
+      (4.27:1 on the #f8f9fa navbar).
+    acceptance:
+      - "`bg-primary text-white` markup in _includes and _layouts uses text-bg-primary (or an equivalent that follows --zer0-color-on-primary)."
+      - "Hover and focus text on skin-coloured controls reaches 4.5:1 in every palette skin, light and dark."
+      - "The sidebar-categories count badge reaches 4.5:1."
+      - "test/visual/core/skin-contrast.spec.js covers the new cases."
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-11-15
+    updated: 2026-11-15
