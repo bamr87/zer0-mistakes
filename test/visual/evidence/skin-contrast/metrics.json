@@ -1,0 +1,1366 @@
+{
+  "slug": "skin-contrast",
+  "wcagMinimum": 4.5,
+  "skins": [
+    "air",
+    "aqua",
+    "dirt",
+    "neon",
+    "mint",
+    "plum",
+    "sunrise"
+  ],
+  "modes": [
+    "light",
+    "dark"
+  ],
+  "routes": [
+    "/",
+    "/quickstart/",
+    "/quickstart/machine-setup/",
+    "/news/",
+    "/docs/features/sidebar-page-tree/"
+  ],
+  "before": {
+    "stripWorstBySkinMode": {
+      "air/light": {
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#81b3de",
+        "ratio": 2.23
+      },
+      "aqua/light": {
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#24bfde",
+        "ratio": 2.19
+      },
+      "dirt/light": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#7a5a10",
+        "bg": "#8b6914",
+        "ratio": 1.25
+      },
+      "neon/light": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#5e22cc",
+        "bg": "#8338ec",
+        "ratio": 1.45
+      },
+      "mint/light": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#2d8059",
+        "bg": "#52b788",
+        "ratio": 1.95
+      },
+      "plum/light": {
+        "probe": ".alert-primary",
+        "fg": "#c77dff",
+        "bg": "#f8efff",
+        "ratio": 2.41
+      },
+      "sunrise/light": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#b54418",
+        "bg": "#ff6b35",
+        "ratio": 1.95
+      },
+      "air/dark": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#b8d4e3",
+        "bg": "#6fa8dc",
+        "ratio": 1.63
+      },
+      "aqua/dark": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#67d7ec",
+        "bg": "#00b4d8",
+        "ratio": 1.47
+      },
+      "dirt/dark": {
+        "probe": ".alert-primary",
+        "fg": "#8b6914",
+        "bg": "#2e2d26",
+        "ratio": 2.71
+      },
+      "neon/dark": {
+        "probe": ".alert-primary",
+        "fg": "#8338ec",
+        "bg": "#2d2740",
+        "ratio": 2.53
+      },
+      "mint/dark": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#80cfa8",
+        "bg": "#52b788",
+        "ratio": 1.34
+      },
+      "plum/dark": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#d4a0f5",
+        "bg": "#c77dff",
+        "ratio": 1.3
+      },
+      "sunrise/dark": {
+        "probe": ".page-item.active .page-link",
+        "fg": "#ffa87a",
+        "bg": "#ff6b35",
+        "ratio": 1.5
+      }
+    },
+    "stripFailures": [
+      {
+        "skinMode": "air/light",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#7aafdd",
+        "ratio": 2.34
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#81b3de",
+        "ratio": 2.23
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".btn-outline-primary",
+        "fg": "#6fa8dc",
+        "bg": "#ffffff",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".text-primary",
+        "fg": "#6fa8dc",
+        "bg": "#ffffff",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#1e5fa8",
+        "bg": "#6fa8dc",
+        "ratio": 2.55
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".alert-primary",
+        "fg": "#6fa8dc",
+        "bg": "#eef5fb",
+        "ratio": 2.29
+      },
+      {
+        "skinMode": "air/light",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#16bbdb",
+        "ratio": 2.3
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#24bfde",
+        "ratio": 2.19
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".btn-outline-primary",
+        "fg": "#00b4d8",
+        "bg": "#ffffff",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".text-primary",
+        "fg": "#00b4d8",
+        "bg": "#ffffff",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#006d99",
+        "bg": "#00b4d8",
+        "ratio": 2.34
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".alert-primary",
+        "fg": "#00b4d8",
+        "bg": "#e0f6fa",
+        "ratio": 2.2
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/light",
+        "probe": ".nav-tree-link.active",
+        "fg": "#006d99",
+        "bg": "#cfe2ff",
+        "ratio": 4.38
+      },
+      {
+        "skinMode": "dirt/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#967222",
+        "ratio": 4.44
+      },
+      {
+        "skinMode": "dirt/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#9d782c",
+        "ratio": 4.07
+      },
+      {
+        "skinMode": "dirt/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#7a5a10",
+        "bg": "#8b6914",
+        "ratio": 1.25
+      },
+      {
+        "skinMode": "dirt/light",
+        "probe": ".alert-primary",
+        "fg": "#8b6914",
+        "bg": "#f1ede3",
+        "ratio": 4.35
+      },
+      {
+        "skinMode": "neon/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#5e22cc",
+        "bg": "#8338ec",
+        "ratio": 1.45
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#5cbb8e",
+        "ratio": 2.33
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#63bf93",
+        "ratio": 2.24
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".btn-outline-primary",
+        "fg": "#52b788",
+        "bg": "#ffffff",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".text-primary",
+        "fg": "#52b788",
+        "bg": "#ffffff",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#2d8059",
+        "bg": "#52b788",
+        "ratio": 1.95
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".alert-primary",
+        "fg": "#52b788",
+        "bg": "#eaf6f1",
+        "ratio": 2.24
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/light",
+        "probe": ".nav-tree-link.active",
+        "fg": "#2d8059",
+        "bg": "#cfe2ff",
+        "ratio": 3.68
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#bd71ed",
+        "ratio": 3.11
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#b669e0",
+        "ratio": 3.44
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".btn-outline-primary",
+        "fg": "#c77dff",
+        "bg": "#ffffff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".text-primary",
+        "fg": "#c77dff",
+        "bg": "#ffffff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#6b2477",
+        "bg": "#c77dff",
+        "ratio": 3.64
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".alert-primary",
+        "fg": "#c77dff",
+        "bg": "#f8efff",
+        "ratio": 2.41
+      },
+      {
+        "skinMode": "plum/light",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#fe7845",
+        "ratio": 2.62
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#fd8150",
+        "ratio": 2.48
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".btn-outline-primary",
+        "fg": "#ff6b35",
+        "bg": "#ffffff",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".text-primary",
+        "fg": "#ff6b35",
+        "bg": "#ffffff",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".page-item.active .page-link",
+        "fg": "#b54418",
+        "bg": "#ff6b35",
+        "ratio": 1.95
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".alert-primary",
+        "fg": "#ff6b35",
+        "bg": "#ffede7",
+        "ratio": 2.5
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/light",
+        "probe": ".nav-tree-link.active",
+        "fg": "#b54418",
+        "bg": "#cfe2ff",
+        "ratio": 4.2
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#7aafdd",
+        "ratio": 2.34
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#81b3de",
+        "ratio": 2.23
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#b8d4e3",
+        "bg": "#6fa8dc",
+        "ratio": 1.63
+      },
+      {
+        "skinMode": "air/dark",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#16bbdb",
+        "ratio": 2.3
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#24bfde",
+        "ratio": 2.19
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#67d7ec",
+        "bg": "#00b4d8",
+        "ratio": 1.47
+      },
+      {
+        "skinMode": "aqua/dark",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#967222",
+        "ratio": 4.44
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#9d782c",
+        "ratio": 4.07
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".btn-outline-primary",
+        "fg": "#8b6914",
+        "bg": "#212529",
+        "ratio": 3.03
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".text-primary",
+        "fg": "#8b6914",
+        "bg": "#212529",
+        "ratio": 3.03
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#e0b882",
+        "bg": "#8b6914",
+        "ratio": 2.75
+      },
+      {
+        "skinMode": "dirt/dark",
+        "probe": ".alert-primary",
+        "fg": "#8b6914",
+        "bg": "#2e2d26",
+        "ratio": 2.71
+      },
+      {
+        "skinMode": "neon/dark",
+        "probe": ".btn-outline-primary",
+        "fg": "#8338ec",
+        "bg": "#212529",
+        "ratio": 2.75
+      },
+      {
+        "skinMode": "neon/dark",
+        "probe": ".text-primary",
+        "fg": "#8338ec",
+        "bg": "#212529",
+        "ratio": 2.75
+      },
+      {
+        "skinMode": "neon/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#8ab4ff",
+        "bg": "#8338ec",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "neon/dark",
+        "probe": ".alert-primary",
+        "fg": "#8338ec",
+        "bg": "#2d2740",
+        "ratio": 2.53
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#5cbb8e",
+        "ratio": 2.33
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#63bf93",
+        "ratio": 2.24
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#80cfa8",
+        "bg": "#52b788",
+        "ratio": 1.34
+      },
+      {
+        "skinMode": "mint/dark",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#bd71ed",
+        "ratio": 3.11
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#b669e0",
+        "ratio": 3.44
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#d4a0f5",
+        "bg": "#c77dff",
+        "ratio": 1.3
+      },
+      {
+        "skinMode": "plum/dark",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".btn-primary:hover",
+        "fg": "#ffffff",
+        "bg": "#fe7845",
+        "ratio": 2.62
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#fd8150",
+        "ratio": 2.48
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".badge.bg-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".text-bg-primary",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".page-item.active .page-link",
+        "fg": "#ffa87a",
+        "bg": "#ff6b35",
+        "ratio": 1.5
+      },
+      {
+        "skinMode": "sunrise/dark",
+        "probe": ".dropdown-item[aria-current]",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      }
+    ],
+    "navbarCurrentLink": {
+      "air/light": {
+        "probe": "navbar current link",
+        "fg": "#6fa8dc",
+        "bg": "#f8f9fa",
+        "ratio": 2.4
+      },
+      "aqua/light": {
+        "probe": "navbar current link",
+        "fg": "#00b4d8",
+        "bg": "#f8f9fa",
+        "ratio": 2.34
+      },
+      "dirt/light": {
+        "probe": "navbar current link",
+        "fg": "#8b6914",
+        "bg": "#f8f9fa",
+        "ratio": 4.83
+      },
+      "neon/light": {
+        "probe": "navbar current link",
+        "fg": "#8338ec",
+        "bg": "#f8f9fa",
+        "ratio": 5.32
+      },
+      "mint/light": {
+        "probe": "navbar current link",
+        "fg": "#52b788",
+        "bg": "#f8f9fa",
+        "ratio": 2.35
+      },
+      "plum/light": {
+        "probe": "navbar current link",
+        "fg": "#c77dff",
+        "bg": "#f8f9fa",
+        "ratio": 2.55
+      },
+      "sunrise/light": {
+        "probe": "navbar current link",
+        "fg": "#ff6b35",
+        "bg": "#f8f9fa",
+        "ratio": 2.69
+      },
+      "air/dark": {
+        "probe": "navbar current link",
+        "fg": "#6fa8dc",
+        "bg": "#2b3035",
+        "ratio": 5.27
+      },
+      "aqua/dark": {
+        "probe": "navbar current link",
+        "fg": "#00b4d8",
+        "bg": "#2b3035",
+        "ratio": 5.4
+      },
+      "dirt/dark": {
+        "probe": "navbar current link",
+        "fg": "#8b6914",
+        "bg": "#2b3035",
+        "ratio": 2.62
+      },
+      "neon/dark": {
+        "probe": "navbar current link",
+        "fg": "#8338ec",
+        "bg": "#2b3035",
+        "ratio": 2.37
+      },
+      "mint/dark": {
+        "probe": "navbar current link",
+        "fg": "#52b788",
+        "bg": "#2b3035",
+        "ratio": 5.38
+      },
+      "plum/dark": {
+        "probe": "navbar current link",
+        "fg": "#c77dff",
+        "bg": "#2b3035",
+        "ratio": 4.95
+      },
+      "sunrise/dark": {
+        "probe": "navbar current link",
+        "fg": "#ff6b35",
+        "bg": "#2b3035",
+        "ratio": 4.7
+      }
+    },
+    "currentDropdownItem": {
+      "air/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      "dirt/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "air/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#6fa8dc",
+        "ratio": 2.53
+      },
+      "dirt/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "aqua/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      "aqua/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#00b4d8",
+        "ratio": 2.46
+      },
+      "neon/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8338ec",
+        "ratio": 5.61
+      },
+      "neon/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8338ec",
+        "ratio": 5.61
+      },
+      "mint/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      "mint/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#52b788",
+        "ratio": 2.47
+      },
+      "plum/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      "plum/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#c77dff",
+        "ratio": 2.69
+      },
+      "sunrise/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      },
+      "sunrise/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#ff6b35",
+        "ratio": 2.84
+      }
+    },
+    "grayBadge": {
+      "probe": "gray count badge",
+      "fg": "#212529",
+      "bg": "#6c757d",
+      "ratio": 3.29,
+      "className": "badge bg-secondary text-body"
+    },
+    "chevronToggles": [
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      },
+      {
+        "width": 22,
+        "height": 29
+      }
+    ]
+  },
+  "after": {
+    "stripWorstBySkinMode": {
+      "air/light": {
+        "probe": ".btn-outline-primary",
+        "fg": "#1e5fa8",
+        "bg": "#ffffff",
+        "ratio": 6.45
+      },
+      "aqua/light": {
+        "probe": ".btn-outline-primary",
+        "fg": "#006d99",
+        "bg": "#ffffff",
+        "ratio": 5.76
+      },
+      "dirt/light": {
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "neon/light": {
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#714bf1",
+        "ratio": 5.27
+      },
+      "mint/light": {
+        "probe": ".btn-outline-primary",
+        "fg": "#287652",
+        "bg": "#ffffff",
+        "ratio": 5.52
+      },
+      "plum/light": {
+        "probe": ".btn-primary:active",
+        "fg": "#000000",
+        "bg": "#b669e0",
+        "ratio": 6.1
+      },
+      "sunrise/light": {
+        "probe": ".btn-outline-primary",
+        "fg": "#b54418",
+        "bg": "#ffffff",
+        "ratio": 5.52
+      },
+      "air/dark": {
+        "probe": ".btn-primary",
+        "fg": "#000000",
+        "bg": "#6fa8dc",
+        "ratio": 8.31
+      },
+      "aqua/dark": {
+        "probe": ".btn-primary",
+        "fg": "#000000",
+        "bg": "#00b4d8",
+        "ratio": 8.52
+      },
+      "dirt/dark": {
+        "probe": ".btn-primary",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "neon/dark": {
+        "probe": ".btn-primary:active",
+        "fg": "#ffffff",
+        "bg": "#714bf1",
+        "ratio": 5.27
+      },
+      "mint/dark": {
+        "probe": ".nav-tree-link.active",
+        "fg": "#a8e6c4",
+        "bg": "#283b37",
+        "ratio": 8.35
+      },
+      "plum/dark": {
+        "probe": ".btn-primary:active",
+        "fg": "#000000",
+        "bg": "#b669e0",
+        "ratio": 6.1
+      },
+      "sunrise/dark": {
+        "probe": ".btn-primary",
+        "fg": "#000000",
+        "bg": "#ff6b35",
+        "ratio": 7.41
+      }
+    },
+    "stripFailures": [],
+    "navbarCurrentLink": {
+      "air/light": {
+        "probe": "navbar current link",
+        "fg": "#154a87",
+        "bg": "#f8f9fa",
+        "ratio": 8.44
+      },
+      "aqua/light": {
+        "probe": "navbar current link",
+        "fg": "#005577",
+        "bg": "#f8f9fa",
+        "ratio": 7.76
+      },
+      "dirt/light": {
+        "probe": "navbar current link",
+        "fg": "#5c430c",
+        "bg": "#f8f9fa",
+        "ratio": 8.8
+      },
+      "neon/light": {
+        "probe": "navbar current link",
+        "fg": "#4a1aa3",
+        "bg": "#f8f9fa",
+        "ratio": 10.12
+      },
+      "mint/light": {
+        "probe": "navbar current link",
+        "fg": "#1f5a3b",
+        "bg": "#f8f9fa",
+        "ratio": 7.71
+      },
+      "plum/light": {
+        "probe": "navbar current link",
+        "fg": "#4e1958",
+        "bg": "#f8f9fa",
+        "ratio": 12.42
+      },
+      "sunrise/light": {
+        "probe": "navbar current link",
+        "fg": "#8f3512",
+        "bg": "#f8f9fa",
+        "ratio": 7.42
+      },
+      "air/dark": {
+        "probe": "navbar current link",
+        "fg": "#d6eaf4",
+        "bg": "#2b3035",
+        "ratio": 10.74
+      },
+      "aqua/dark": {
+        "probe": "navbar current link",
+        "fg": "#9ae8f5",
+        "bg": "#2b3035",
+        "ratio": 9.66
+      },
+      "dirt/dark": {
+        "probe": "navbar current link",
+        "fg": "#f0cea0",
+        "bg": "#2b3035",
+        "ratio": 8.9
+      },
+      "neon/dark": {
+        "probe": "navbar current link",
+        "fg": "#b0ccff",
+        "bg": "#2b3035",
+        "ratio": 8.2
+      },
+      "mint/dark": {
+        "probe": "navbar current link",
+        "fg": "#a8e6c4",
+        "bg": "#2b3035",
+        "ratio": 9.37
+      },
+      "plum/dark": {
+        "probe": "navbar current link",
+        "fg": "#e8c8ff",
+        "bg": "#2b3035",
+        "ratio": 8.96
+      },
+      "sunrise/dark": {
+        "probe": "navbar current link",
+        "fg": "#ffd0b0",
+        "bg": "#2b3035",
+        "ratio": 9.45
+      }
+    },
+    "currentDropdownItem": {
+      "air/light": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#6fa8dc",
+        "ratio": 8.31
+      },
+      "dirt/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "air/dark": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#6fa8dc",
+        "ratio": 8.31
+      },
+      "dirt/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8b6914",
+        "ratio": 5.09
+      },
+      "aqua/light": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#00b4d8",
+        "ratio": 8.52
+      },
+      "aqua/dark": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#00b4d8",
+        "ratio": 8.52
+      },
+      "neon/light": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8338ec",
+        "ratio": 5.61
+      },
+      "neon/dark": {
+        "probe": "current dropdown item",
+        "fg": "#ffffff",
+        "bg": "#8338ec",
+        "ratio": 5.61
+      },
+      "mint/light": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#52b788",
+        "ratio": 8.49
+      },
+      "mint/dark": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#52b788",
+        "ratio": 8.49
+      },
+      "plum/light": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#c77dff",
+        "ratio": 7.81
+      },
+      "plum/dark": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#c77dff",
+        "ratio": 7.81
+      },
+      "sunrise/light": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#ff6b35",
+        "ratio": 7.41
+      },
+      "sunrise/dark": {
+        "probe": "current dropdown item",
+        "fg": "#000000",
+        "bg": "#ff6b35",
+        "ratio": 7.41
+      }
+    },
+    "grayBadge": {
+      "probe": "gray count badge",
+      "fg": "#ffffff",
+      "bg": "#6c757d",
+      "ratio": 4.69,
+      "className": "badge text-bg-secondary"
+    },
+    "chevronToggles": [
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      },
+      {
+        "width": 24,
+        "height": 29
+      }
+    ]
+  }
+}

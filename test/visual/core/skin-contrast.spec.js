@@ -263,8 +263,8 @@ test.describe('Skin contrast — skin-coloured components reach 4.5:1', () => {
   }
 
   // Second opinion from axe, with the skin's SVG background off so axe can
-  // resolve the backdrop. `passes` must cover the specimen, or this would pass
-  // without having looked at anything.
+  // resolve the backdrop. axe must have decided (passed or failed) nearly every
+  // specimen element, or this would pass without having looked at anything.
   for (const mode of MODES) {
     test(`axe color-contrast passes on the specimen in every skin (${mode})`, async ({ page }) => {
       const violations = [];
@@ -275,13 +275,13 @@ test.describe('Skin contrast — skin-coloured components reach 4.5:1', () => {
           .include('#skin-contrast-specimen')
           .withRules(['color-contrast'])
           .analyze();
-        const checked = results.passes.flatMap((r) => r.nodes).length;
-        expect(checked, `axe evaluated the ${skin} specimen`).toBeGreaterThanOrEqual(SPECIMEN_PROBES - 4);
+        const decided = [...results.passes, ...results.violations].flatMap((r) => r.nodes).length;
+        expect(decided, `axe decided the ${skin} specimen`).toBeGreaterThanOrEqual(SPECIMEN_PROBES - 4);
         for (const v of results.violations) {
           for (const n of v.nodes) violations.push(`${skin}: ${n.html.split('\n')[0].trim()} — ${n.any.map((a) => a.message).join('; ')}`);
         }
       }
-      expect(violations, violations.join('\n')).toEqual([]);
+      expect(violations, `axe color-contrast (${mode}):\n${violations.join('\n')}`).toEqual([]);
     });
   }
 });
