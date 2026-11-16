@@ -51,13 +51,25 @@ function skips(items) {
  *  h1 -> h3. The section layout's whole <main> is now asserted
  *  (SECTION_ROUTES, #555); the news index layout and page content remain. Asserting site-wide
  *  now would ship a test that fails on its own branch, which is worse than
- *  asserting less and saying so. */
+ *  asserting less and saying so.
+ *
+ *  Every region here is a dialog or offcanvas rendered directly under <body>,
+ *  outside <main>, so its title is one level below the page's <h1>: the
+ *  region's outline is walked from an h1 parent, and its first heading must
+ *  be an <h2>. Without that seed a region with a single heading (the chat
+ *  panel's title) could never fail, whatever tag it used. */
+const REGION_PARENT = { level: 1, text: '(page <h1>)' };
 const CHROME_REGIONS = [
   { selector: '#cookieSettingsModal', why: 'cookie dialog — ships on every page' },
   // #info-section (kebab) is the offcanvas. #infoSection is its <h2>'s id,
   // used by aria-labelledby -- targeting that skipped these three tests
   // silently, because the region locator matched nothing.
   { selector: '#info-section', why: 'settings offcanvas incl. the language panel' },
+  // Regression: #586. The chat panel's title was an <h6> for its small type,
+  // so every page that ships the chat jumped to h6 after the h3-level chrome.
+  // Rendered only when site.ai_chat is enabled with a usable auth path
+  // (_config_dev.yml turns it on); the region check skips where it is off.
+  { selector: '#aiChatPanel', why: 'AI chat panel — ships on every page when ai_chat is on' },
 ];
 
 const ROUTES = [
@@ -83,8 +95,9 @@ test.describe('heading outline does not skip levels', { tag: '@critical' }, () =
         const region = page.locator(selector);
         test.skip((await region.count()) === 0, `${selector} not present on this site`);
 
-        // Levels inside the region, plus the region's own title, which is the
-        // parent the first child must sit one below.
+        // Levels inside the region, walked from the page's <h1> (REGION_PARENT):
+        // the region's own title must sit one below it, and each child one
+        // below the title.
         const items = await region.evaluate((root) =>
           [...root.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((el) => ({
             level: Number(el.tagName[1]),
@@ -92,7 +105,7 @@ test.describe('heading outline does not skip levels', { tag: '@critical' }, () =
           })));
 
         expect(
-          skips(items),
+          skips([REGION_PARENT, ...items]),
           `heading levels jump inside ${selector} on ${path}. This region renders on ` +
           `every page of every consumer site, so one skip here is a site-wide ` +
           `WCAG 1.3.1 failure (issue #436). Pick the tag for DEPTH and a ` +
@@ -173,13 +186,16 @@ test.describe('heading outline does not skip levels', { tag: '@critical' }, () =
 
     // Not a ban on h5/h6 -- they are correct at depth 5 and 6. This asserts the
     // chrome specifically no longer reaches for them as a sizing shortcut.
-    const inChrome = await page.evaluate(() =>
-      [...document.querySelectorAll('#cookieSettingsModal h5, #cookieSettingsModal h6, #infoSection h5, #infoSection h6')]
-        .map((el) => `${el.tagName}: ${(el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40)}`));
+    // Built from CHROME_REGIONS so a region added there is covered here too
+    // (this list once named #infoSection, the offcanvas title, and matched nothing).
+    const chromeDeep = CHROME_REGIONS.flatMap(({ selector }) => [`${selector} h5`, `${selector} h6`]).join(', ');
+    const inChrome = await page.evaluate((sel) =>
+      [...document.querySelectorAll(sel)]
+        .map((el) => `${el.tagName}: ${(el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40)}`), chromeDeep);
 
     expect(
       inChrome,
-      `the cookie dialog and settings offcanvas sit at depth 2-3; an h5/h6 there ` +
+      `the cookie dialog, settings offcanvas and chat panel sit at depth 2-3; an h5/h6 there ` +
       `is a font-size choice wearing a structural tag (issue #436). ` +
       `Full-page h5/h6 census for context: ${mismatched.length}`
     ).toEqual([]);

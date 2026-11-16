@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/ai-chat-heading/`](test/visual/evidence/ai-chat-heading/README.md): chat title h6 → <h2 class="h6"> in 4/4 scenarios, header render byte-identical in 4/4)
