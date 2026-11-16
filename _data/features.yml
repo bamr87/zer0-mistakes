@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.29.0
-# Last Updated: 2026-10-21
+# Version: 1.31.3
+# Last Updated: 2026-11-15
 
 # PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
 prd: docs/architecture/prd-requirements.md
@@ -1147,14 +1147,14 @@ features:
 
   - id: ZER0-035
     title: "Giscus Comments"
-    description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
+    description: "GitHub Discussions-powered comments with a configurable widget theme, mapping, input position and language, one gated section for every layout, reactions, and Claude-Code-driven conversations"
     implemented: true
     prd: [TBD]
-    version: "0.1.0"
+    version: "1.32.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
     tags: [comments, github, discussions, engagement, claude-code]
-    date: 2025-01-01
+    date: 2026-11-15
     provenance:
       introduced_in: "0.1.0"
       pr: null
@@ -1162,10 +1162,12 @@ features:
       issue: null
     tests:
       - "test/visual/features/comments.spec.js"
+      - "test/test_giscus_config.rb"
     references:
       includes:
+        - "_includes/content/comments.html"
         - "_includes/content/giscus.html"
-      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html"]
+      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html", "_layouts/recipe.html", "_layouts/book-story.html"]
       config: "_config.yml"
       script: "scripts/bin/giscus-discussions"
       skill: ".github/skills/giscus-conversation/SKILL.md"
@@ -1174,11 +1176,11 @@ features:
         - "pages/_docs/features/giscus-comments.md"
     features:
       - "GitHub Discussions integration"
-      - "Automatic theme detection"
-      - "Pathname-based mapping"
+      - "Widget theme from giscus.data-theme: follows the visitor's OS (preferred_color_scheme) by default, or a fixed theme such as transparent_dark for a dark skin (#574)"
+      - "Page-to-discussion mapping from giscus.data-mapping (pathname by default; url, title, og:title)"
       - "Reaction support"
-      - "Top-positioned input"
-      - "Consistent site.giscus.enabled gating across layouts"
+      - "Comment box position from giscus.data-input-position (top by default) and widget language from giscus.data-lang (en by default)"
+      - "One comment section for every layout (content/comments.html): gated on site.giscus.enabled, on by default in article/note/notebook, opt-in (comments: true) in recipe/book-story; a consumer layout needs one include line"
       - "Claude Code conversation building (read/draft/seed/post via gh)"
 
   - id: ZER0-036

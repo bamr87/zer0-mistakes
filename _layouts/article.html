@@ -39,7 +39,7 @@ layout: default
   
   Dependencies:
   - components/post-type-badge.html: Post type badge display
-  - content/giscus.html: GitHub Discussions comment system
+  - content/comments.html: comment section (gate, heading, giscus widget)
   - site.giscus configuration for comment system
   - Bootstrap 5 components
   ===================================================================
@@ -564,13 +564,7 @@ layout: default
   {% comment %} ================================ {% endcomment %}
   {% comment %} COMMENT SYSTEM                   {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {% if page.comments != false and site.giscus.enabled %}
-    <section class="post-comments mt-5 pt-4 border-top" id="comments">
-      <h2 class="h4 mb-4">
-        <i class="bi bi-chat-dots me-2"></i>Comments
-      </h2>
-      {% include content/giscus.html %}
-    </section>
-  {% endif %}
+  {% comment %} On unless the page sets comments: false (and site.giscus.enabled). {% endcomment %}
+  {% include content/comments.html %}
   
 </article>
