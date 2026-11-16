@@ -2,7 +2,7 @@
 title: "UI/UX Component Spec"
 description: "Single source of truth for every front-end UI/UX component in the zer0-mistakes theme — what it does, the files that implement it (SCSS / includes / layouts / JS / plugins), its API surface (classes, data-attributes, JS globals, events, CSS tokens), and its automated test coverage. Use it to define, test, and improve the UI."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-09-05T00:00:00.000Z
+lastmod: 2026-11-16T00:00:00.000Z
 categories: [docs]
 tags: [architecture, design, ui, testing, components]
 author: bamr87
@@ -1321,7 +1321,7 @@ A suite of dev-facing admin pages (all under `/about/` on the `admin`/`stats`/`s
 - **Capabilities:** env status card (Prod success / Dev warning) using `is_production` heuristic (treats localhost/127.0.0.1/0.0.0.0 URLs as dev even when `JEKYLL_ENV=production`); readonly current-URL input with copy; build-info tiles (build time, Jekyll version, raw `JEKYLL_ENV`); quick-links list (canonical prod origin via `site.domain_url`/`production_url`, dev `localhost:port`, GitHub source) with open-in-tab + copy; dismissible env tip alert; self-contained `copyToClipboard`/`copyUrl`/`showCopyFeedback` script.
 - **Source:**
   - SCSS: —
-  - Markup: `_includes/components/env-switcher.html`, depends on `_includes/components/env-detect.html` (sets `build_env`, `is_local_url`, `is_production`)
+  - Markup: `_includes/components/env-switcher.html`, depends on `_includes/components/env-detect.html` (sets `build_env`, `is_local_url`, `is_production`) and `_includes/core/source-path.html` (sets `source_path`, the Source link's file: collections_dir-prefixed for collection docs, the template on a pager page n > 1; asserted by `test/test_source_links.rb`)
   - JS: inline (defines global `copyToClipboard(inputId, btn)`, `copyUrl(url, btn)`, `showCopyFeedback`)
   - Plugin/data: reads `jekyll.environment`/`jekyll.version`, `site.domain_url`/`production_url`/`url`/`baseurl`/`port`/`repository`/`branch`
 - **API surface:** ids `#currentUrlInput`; JS globals `window.copyToClipboard`, `window.copyUrl`, `window.showCopyFeedback`; `onclick` handlers; CSS vars none.
@@ -1430,9 +1430,9 @@ A suite of dev-facing admin pages (all under `/about/` on the `admin`/`stats`/`s
   - SCSS: —
   - Markup: `_includes/components/dev-shortcuts.html` (consumed by `_includes/components/info-section.html`)
   - JS: — (Bootstrap tooltips; `is_production` from `env-detect.html`)
-  - Plugin/data: reads `site.repository`/`branch`/`collections_dir`/`local_git`/`repository_name`, `page.collection`/`page.path`
+  - Plugin/data: reads `site.repository`/`branch`/`local_git`/`repository_name`; the file path comes from `_includes/core/source-path.html` (`source_path`: `page.path` with the `collections_dir` prefix for collection docs, the template on a pager page n > 1)
 - **API surface:** classes `.dev-shortcuts`, `.btn-group-vertical`; data-attrs `data-bs-toggle="tooltip"`, `data-bs-placement`; depends on outer `is_production`. No ids/globals/events/CSS vars.
-- **Tests:** No automated tests.
+- **Tests:** `test/test_source_links.rb` (run by `test_core.sh`) asserts the GitHub.dev link's file on pager pages, plain pages and collection docs.
 - **Gaps / improvement ideas:** No coverage of the bare-site degradation branch or the production-gated `vscode://` link. The double `replace: "//"` path normalization is brittle for nested paths (won't collapse 3+ consecutive slashes). Relies on a parent-scope `is_production` variable being set (coupling to `info-section.html`) — document or guard.
 
 ---

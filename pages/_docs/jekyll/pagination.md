@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:50.000Z
+lastmod: 2026-11-16T00:00:00.000Z
 title: Pagination
 description: Implement previous/next navigation buttons and paginated post lists in your Jekyll site.
 preview: /images/previews/pagination.png
@@ -127,6 +127,8 @@ plugins:
 paginate: 10
 paginate_path: "/blog/page:num/"
 ```
+
+The template is an `index.html` in the `paginate_path` directory (`blog/index.html` here) or in the nearest parent directory that has one. On page 2 and later, the theme's "View on GitHub" and "Edit on GitHub" links point at that template, because `/blog/page2/index.html` exists only in the built site.
 
 ### Template
 

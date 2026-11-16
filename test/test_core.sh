@@ -1311,6 +1311,39 @@ test_cookie_consent_gate() {
     fi
 }
 
+test_source_links() {
+    log_info "Testing GitHub source links name the file that generated the page (issue #538)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the source-link check"
+        return 0
+    fi
+
+    # Builds throwaway paginated sites through the real default layout, so it
+    # needs jekyll and jekyll-paginate from the bundle (same load-path caveat
+    # as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    local probe='require "jekyll"; require "jekyll-paginate"'
+    if ruby -e "$probe" >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e "$probe" >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll / jekyll-paginate not loadable; skipping the source-link check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_source_links.rb; then
+        log_success "source links point at the template on pager pages and keep the collections_dir prefix"
+        return 0
+    else
+        log_error "source-link check failed (see above)"
+        return 1
+    fi
+}
+
 test_build_overlay_recipe() {
     log_info "Testing the documented safe-mode build overlay is Pages-faithful (issue #565)..."
 
@@ -1995,6 +2028,7 @@ run_core_tests() {
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
+    run_test "Source Links (pager template, collections_dir)" "test_source_links" "unit"
     run_test "Build Overlay Recipe" "test_build_overlay_recipe" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"

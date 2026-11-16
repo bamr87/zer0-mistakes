@@ -51,12 +51,15 @@
 {%- assign pf_show_fab = false -%}
 {%- if site.page_feedback.fab -%}{%- assign pf_show_fab = true -%}{%- endif -%}
 
-{%- comment -%} Repo + file coordinates for the issue body (mirrors content/intro.html). {%- endcomment -%}
+{%- comment -%} Repo + file coordinates for the issue body. The file comes from
+   core/source-path.html, as in content/intro.html: collection docs keep the
+   collections_dir prefix and a pager page n > 1 names its template (issue #538). {%- endcomment -%}
 {%- assign pf_repo = site.repository | join: "" -%}
 {%- assign pf_branch = site.branch | default: "main" -%}
+{%- include core/source-path.html -%}
 {%- assign pf_source_url = "" -%}
-{%- if pf_repo != "" and page.path -%}
-  {%- capture pf_source_url -%}https://github.com/{{ pf_repo }}/blob/{{ pf_branch }}/{{ page.path }}{%- endcapture -%}
+{%- if pf_repo != "" and source_path -%}
+  {%- capture pf_source_url -%}https://github.com/{{ pf_repo }}/blob/{{ pf_branch }}/{{ source_path }}{%- endcapture -%}
 {%- endif -%}
 {%- assign pf_theme = site.theme | default: site.remote_theme | default: "" -%}
 
