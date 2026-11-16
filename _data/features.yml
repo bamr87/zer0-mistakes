@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.29.0
-# Last Updated: 2026-10-21
+# Version: 1.31.3
+# Last Updated: 2026-11-15
 
 # PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
 prd: docs/architecture/prd-requirements.md
@@ -1514,11 +1514,11 @@ features:
     description: "Three-file welcome starter (_config.yml + Gemfile + index.md) that bootstraps a working remote-theme site with no scaffolding required. Footer, welcome, and info partials degrade gracefully when collections are empty"
     implemented: true
     prd: [TBD]
-    version: "1.2.0"
+    version: "1.32.0"
     link: "/"
     docs: "/docs/quickstart/bare-minimum/"
     tags: [setup, quickstart, remote-theme, github-pages]
-    date: 2026-02-25
+    date: 2026-11-15
     provenance:
       introduced_in: "1.2.0"
       pr: null
@@ -1526,11 +1526,17 @@ features:
       issue: null
     tests:
       - "test/test_site_generation.sh"
+      - "test/test_newsletter_gate.rb"
+      - "test/visual/core/footer-newsletter.spec.js"
     references:
       includes:
         - "_includes/components/info-section.html"
         - "_includes/core/footer.html"
       layout: "_layouts/welcome.html"
+      config: "_config.yml"
+      docs: "pages/_docs/quickstart/bare-minimum.md"
+    features:
+      - "Footer newsletter signup is opt-in: it renders only when a provider endpoint is configured (newsletter.endpoint, else news.newsletter.endpoint) and then POSTs the address there; enabled: false hides it, and with no form the policy links span the row (#554)"
 
   - id: ZER0-047
     title: "Site Configuration Detection & Smart 404"

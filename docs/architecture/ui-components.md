@@ -60,7 +60,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Primary Navbar (menubar + dropdowns) | `_includes/navigation/navbar.html` | `features/navbar.spec.js`, `core/styling.spec.js` | 🟡 partial |
 | Navbar Mobile Quicklinks (tablet chips) | `_includes/navigation/navbar-mobile-quicklinks.html` | `features/navbar.spec.js` | 🟡 partial |
 | Head (document head / asset pipeline) | `_includes/core/head.html` | `core/styling.spec.js`, `test/test_quality.sh` | 🟡 partial |
-| Footer | `_includes/core/footer.html` | `core/layout-chrome.spec.js`, `core/responsive.spec.js` | 🟡 partial |
+| Footer | `_includes/core/footer.html` | `core/layout-chrome.spec.js`, `core/responsive.spec.js`, `core/footer-newsletter.spec.js` | 🟡 partial |
 | Breadcrumbs | `_includes/navigation/breadcrumbs.html` | `features/layouts.spec.js`, `features/breadcrumbs.spec.js` | 🟡 partial |
 | Back-to-Top FAB | `_includes/core/footer.html` | — | 🔴 none |
 | Auto-Hide Navbar | `assets/js/auto-hide-nav.js` | — | 🔴 none |
@@ -269,16 +269,16 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
 
 ### Footer
 
-- **Purpose:** The rich site footer: powered-by credits row with Info offcanvas trigger, a dark four-column block (site info / quick links / latest posts / social+RSS), a placeholder subscribe form, policy links, copyright, and the host for the FAB stack + back-to-top + local-graph panel.
-- **Capabilities:** Powered-by links from `site.powered_by` (with trailing Info trigger to `#info-section`); quick links resolved from `site.footer_quick_links` or auto-detected against existing pages (avoids 404s); latest 3 posts (hidden when none); social links from `site.links` + RSS feed; disabled placeholder subscribe form; conditional Privacy/Terms links (only when pages exist) + Cookie Preferences modal trigger; FAB/back-to-top/local-graph excluded on a list of root-only layouts.
+- **Purpose:** The rich site footer: powered-by credits row with Info offcanvas trigger, a dark four-column block (site info / quick links / latest posts / social+RSS), an opt-in newsletter signup, policy links, copyright, and the host for the FAB stack + back-to-top + local-graph panel.
+- **Capabilities:** Powered-by links from `site.powered_by` (with trailing Info trigger to `#info-section`); quick links resolved from `site.footer_quick_links` or auto-detected against existing pages (avoids 404s); latest 3 posts (hidden when none); social links from `site.links` + RSS feed; a newsletter signup form only when a provider endpoint is configured (`site.newsletter.endpoint`, falling back to `site.news.newsletter.endpoint`; `enabled: false` hides it), POSTing the email there, with the policy links spanning the row when it is absent (#554); conditional Privacy/Terms links (only when pages exist) + Cookie Preferences modal trigger; FAB/back-to-top/local-graph excluded on a list of root-only layouts.
 - **Source:**
   - SCSS: `_sass/components/_footer.scss`
   - Markup: `_includes/core/footer.html`
-  - Plugin/data: `site.powered_by`, `site.links`, `site.data.ui-text`
+  - Plugin/data: `site.powered_by`, `site.links`, `site.newsletter` (falls back to `site.news.newsletter`), `site.data.ui-text` (`newsletter_*` strings)
 - **API surface:** classes `.bd-footer`, `.footer-powered-by`, `.footer-powered-by-links`, `.powered-by-link`, `.footer-inline-button`, `.footer-dark-block`, `.footer-nav-columns`, `.footer-latest-posts`, `.footer-subscribe-form`, `.footer-policy-links`; data-attr `data-bs-toggle="offcanvas"`/`"modal"` (`#info-section`, `#cookieSettingsModal`); CSS vars `--zer0-space-*`, `--bs-secondary-color`
 - **Element contract:** the two in-page dialog triggers (Info → `#info-section`, Cookie Preferences → `#cookieSettingsModal`) are `<button type="button">`, not anchors — they open UI rather than navigate (WCAG 4.1.2). `.powered-by-link` is therefore element-agnostic and carries the `<button>` reset (`appearance`/`background`/`border`/`color`); `.footer-inline-button` is the same reset for a button sitting in running text. `#backToTopBtn` stays an `<a href="#">` — scrolling to the top is its actual behaviour.
-- **Tests:** `test/visual/core/layout-chrome.spec.js` — "powered-by credits are real links" (every credit link's href truthy and not `#`); "footer nav columns use equal width at tablet". `test/visual/core/accessibility.spec.js` — "Accessibility — footer in-page toggles are buttons" pins the element contract above and that both triggers still open their dialog. `test/visual/core/responsive.spec.js` "main landmarks visible at {viewport}" asserts `footer.bd-footer` visible across viewports.
-- **Gaps / improvement ideas:** The quick-links auto-detection (skip-when-page-missing) and conditional policy-link rendering are untested — a regression that surfaces 404 links would pass. The disabled subscribe form's accessibility (the `disabled` button + hint association) is unverified. Latest-posts hide-when-empty is untested.
+- **Tests:** `test/visual/core/layout-chrome.spec.js` — "powered-by credits are real links" (every credit link's href truthy and not `#`); "footer nav columns use equal width at tablet". `test/visual/core/accessibility.spec.js` — "Accessibility — footer in-page toggles are buttons" pins the element contract above and that both triggers still open their dialog. `test/visual/core/responsive.spec.js` "main landmarks visible at {viewport}" asserts `footer.bd-footer` visible across viewports. `test/visual/core/footer-newsletter.spec.js` — no newsletter form, disabled control or placeholder text on the default site, and the policy links span the row; `test/test_newsletter_gate.rb` (run by `test_core.sh`) builds throwaway sites for the configured, `news.newsletter` fallback, `enabled: false`, blank-endpoint and custom-`ui-text` variants.
+- **Gaps / improvement ideas:** The quick-links auto-detection (skip-when-page-missing) and conditional policy-link rendering are untested — a regression that surfaces 404 links would pass. Latest-posts hide-when-empty is untested.
 
 ### Breadcrumbs
 
