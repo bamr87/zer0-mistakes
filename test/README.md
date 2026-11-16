@@ -152,7 +152,7 @@ Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put it
 
 | Piece | What it does |
 |-------|--------------|
-| `sweep.mjs` | Walks 6 routes × 3 viewports; writes `output/report.json`, `output/report.md`, `output/screens/*.png`. Findings exit **0** (they are data); capturing **nothing** exits **1** (that is a broken harness, not a clean audit). `report.capture` = `{attempted, captured}` is the harness's own health, kept separate from findings. |
+| `sweep.mjs` | Walks 6 routes × 3 viewports; writes `output/report.json`, `output/report.md`, `output/screens/*.png`. Findings exit **0** (they are data); capturing **nothing** exits **1** (that is a broken harness, not a clean audit). `report.capture` = `{attempted, captured}` is the harness's own health, kept separate from findings. Each finding names its evidence: axe violations carry `targets` (node selectors), and every sub-resource that failed is in `failed_requests` with its URL ([#486](https://github.com/bamr87/zer0-mistakes/issues/486)). Links that fail only because the audit's build is not the deployed site (`LINK_EXEMPTIONS`: `/examples/`, and `/notebooks/` while `_config_dev.yml` disables that collection) go to `exempt_links`, and third-party responses that fail by design (`CONSOLE_EXEMPTIONS`: the giscus "no discussion yet" 404) go to `exempt_console_errors`; both are reported with their reasons and are not findings. |
 | `check-audit-serve.sh` | Regression check for the serve invocation: serves as `ui-audit.yml` does, sweeps, asserts ≥1 screenshot. Run `UI_AUDIT_SERVE_DETACH=1 ./test/ui-audit/check-audit-serve.sh` to watch it go red on the old invocation. |
 
 ```bash

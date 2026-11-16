@@ -3,6 +3,8 @@ assets/css/vendor/bootstrap-from-npm.css
 
 # Playwright styling / visual run output
 test/visual-results/
+# UI audit sweep output (test/ui-audit/sweep.mjs; CI uploads it as an artifact)
+test/ui-audit/output/
 
 _site/
 _site_proxycheck/
