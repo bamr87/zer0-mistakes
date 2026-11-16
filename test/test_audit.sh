@@ -35,11 +35,16 @@ fail() {
     echo -e "${RED}  ✗${NC} $1"
 }
 
+# The assertions read the output from a here-string, not `echo "$actual" |`.
+# Under `set -o pipefail`, grep -q exits on the first match and closes the
+# pipe, so echo dies of SIGPIPE whenever the match comes before the end of a
+# large output (the 56 KB manifest): the pipeline then reads as failed, and an
+# early-matching assertion failed at random.
 assert_output_contains() {
     local test_name="$1"
     local expected="$2"
     local actual="$3"
-    if echo "$actual" | grep -qF "$expected"; then
+    if grep -qF -- "$expected" <<< "$actual"; then
         pass "$test_name"
     else
         fail "$test_name (expected '$expected' in output)"
@@ -54,7 +59,7 @@ assert_output_not_contains() {
     local test_name="$1"
     local unexpected="$2"
     local actual="$3"
-    if echo "$actual" | grep -qF "$unexpected"; then
+    if grep -qF -- "$unexpected" <<< "$actual"; then
         fail "$test_name (unexpected '$unexpected' in output)"
         if [[ "${VERBOSE:-false}" == "true" ]]; then
             echo "    Actual output:"
