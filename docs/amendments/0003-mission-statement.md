@@ -1,3 +1,13 @@
+---
+title: "0003 Missions"
+description: "Amendment record that states three product missions in constitution §1."
+date: 2026-11-16T00:00:00.000Z
+lastmod: 2026-11-16T00:00:00.000Z
+categories: [docs]
+tags: [governance, amendments]
+author: bamr87
+---
+
 <!-- kit: governance v0.1.0 -->
 # 0003 — Missions
 
@@ -29,7 +39,7 @@ zer0-mistakes's direction is to become the ultimate open home for all things Jek
 
 These missions set the course; they do not claim the work is finished. They serve the vision in docs/architecture/prd-requirements.md. The earlier single mission sentence is absorbed into these three. Privacy-first and AI-and-human authoring principles are kept. Every feature must trace to them.
 
-_Source: [architecture/prd-requirements.md](architecture/prd-requirements.md) §1.1._
+_Source: [architecture/prd-requirements.md](../architecture/prd-requirements.md) §1.1._
 
 ## Consequences
 
