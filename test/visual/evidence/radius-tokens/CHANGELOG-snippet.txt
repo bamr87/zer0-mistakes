@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/radius-tokens/ -->
+  (evidence: [`test/visual/evidence/radius-tokens/`](test/visual/evidence/radius-tokens/README.md) — 9304 element radii compared, 0 changed)

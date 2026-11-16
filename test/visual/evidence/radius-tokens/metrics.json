@@ -1,0 +1,264 @@
+{
+  "slug": "radius-tokens",
+  "after": "http://127.0.0.1:4391",
+  "before": "http://127.0.0.1:4392",
+  "routes": [
+    "/",
+    "/docs/",
+    "/features/",
+    "/setup/"
+  ],
+  "widths": [
+    390,
+    1280
+  ],
+  "sentinels": {
+    "--zer0-radius-sm": "11px",
+    "--zer0-radius": "13px",
+    "--zer0-radius-lg": "17px",
+    "--zer0-radius-xl": "19px",
+    "--zer0-radius-pill": "23px",
+    "--zer0-radius-circle": "29%"
+  },
+  "results": [
+    {
+      "route": "/",
+      "width": 390,
+      "elementsWithRadius": 812,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 171,
+          "--zer0-radius": 22,
+          "--zer0-radius-lg": 151,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 1,
+          "--zer0-radius-circle": 6
+        },
+        "before": {
+          "--zer0-radius-sm": 3,
+          "--zer0-radius": 1,
+          "--zer0-radius-lg": 2,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 1,
+          "--zer0-radius-circle": 6
+        }
+      },
+      "compared": 812,
+      "mismatches": []
+    },
+    {
+      "route": "/",
+      "width": 1280,
+      "elementsWithRadius": 811,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 171,
+          "--zer0-radius": 14,
+          "--zer0-radius-lg": 150,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 1,
+          "--zer0-radius-circle": 6
+        },
+        "before": {
+          "--zer0-radius-sm": 3,
+          "--zer0-radius": 1,
+          "--zer0-radius-lg": 1,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 1,
+          "--zer0-radius-circle": 6
+        }
+      },
+      "compared": 811,
+      "mismatches": []
+    },
+    {
+      "route": "/docs/",
+      "width": 390,
+      "elementsWithRadius": 687,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 7,
+          "--zer0-radius": 24,
+          "--zer0-radius-lg": 24,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        },
+        "before": {
+          "--zer0-radius-sm": 4,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 1,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 687,
+      "mismatches": []
+    },
+    {
+      "route": "/docs/",
+      "width": 1280,
+      "elementsWithRadius": 686,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 7,
+          "--zer0-radius": 13,
+          "--zer0-radius-lg": 23,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        },
+        "before": {
+          "--zer0-radius-sm": 4,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 0,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 686,
+      "mismatches": []
+    },
+    {
+      "route": "/features/",
+      "width": 390,
+      "elementsWithRadius": 2349,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 179,
+          "--zer0-radius": 24,
+          "--zer0-radius-lg": 17,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        },
+        "before": {
+          "--zer0-radius-sm": 3,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 1,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 2349,
+      "mismatches": []
+    },
+    {
+      "route": "/features/",
+      "width": 1280,
+      "elementsWithRadius": 2348,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 179,
+          "--zer0-radius": 13,
+          "--zer0-radius-lg": 16,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        },
+        "before": {
+          "--zer0-radius-sm": 3,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 0,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 2348,
+      "mismatches": []
+    },
+    {
+      "route": "/setup/",
+      "width": 390,
+      "elementsWithRadius": 806,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 73,
+          "--zer0-radius": 21,
+          "--zer0-radius-lg": 27,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 22
+        },
+        "before": {
+          "--zer0-radius-sm": 73,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 1,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 806,
+      "mismatches": []
+    },
+    {
+      "route": "/setup/",
+      "width": 1280,
+      "elementsWithRadius": 805,
+      "tokenConsumers": {
+        "after": {
+          "--zer0-radius-sm": 73,
+          "--zer0-radius": 13,
+          "--zer0-radius-lg": 26,
+          "--zer0-radius-xl": 1,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 22
+        },
+        "before": {
+          "--zer0-radius-sm": 73,
+          "--zer0-radius": 0,
+          "--zer0-radius-lg": 0,
+          "--zer0-radius-xl": 0,
+          "--zer0-radius-pill": 0,
+          "--zer0-radius-circle": 0
+        }
+      },
+      "compared": 805,
+      "mismatches": []
+    }
+  ],
+  "totals": {
+    "compared": 9304,
+    "mismatches": 0
+  },
+  "compiledCss": {
+    "tokens": {
+      "--zer0-radius-sm": "0.25rem",
+      "--zer0-radius": "0.375rem",
+      "--zer0-radius-lg": "0.5rem",
+      "--zer0-radius-xl": "0.75rem",
+      "--zer0-radius-pill": "50rem",
+      "--zer0-radius-circle": "50%"
+    },
+    "declarationsBefore": 8915,
+    "declarationsAfter": 8909,
+    "onlyBefore": [
+      {
+        "line": "font-size: 2rem;",
+        "count": 1
+      },
+      {
+        "line": "font-size: 1rem;",
+        "count": 1
+      },
+      {
+        "line": ".bg-primary .display-4 {",
+        "count": 1
+      },
+      {
+        "line": ".bg-primary .lead {",
+        "count": 1
+      },
+      {
+        "line": "}",
+        "count": 2
+      }
+    ],
+    "onlyAfter": []
+  }
+}
