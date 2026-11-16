@@ -1348,7 +1348,7 @@ tasks:
 
   - id: T-047
     title: "pages/_docs/features/toc.md documents a TOC API the theme does not implement"
-    status: open
+    status: done
     priority: P3
     area: docs
     risk: low
@@ -1356,6 +1356,13 @@ tasks:
     source: issue
     route: content-reviewer
     summary: >-
+      Done 2026-11-15 (#637): the Implementation section now names
+      default.html, navigation/sidebar-right.html and the vendored
+      allejo/jekyll-toc parser, quotes the real include call and lists every
+      include parameter; "Enable TOC" became "Showing and Hiding the Panel",
+      documenting the `sidebar` / `post_type` gate that
+      navigation/sidebar-config.html resolves; the Responsive and
+      Troubleshooting sections match the shipped markup and gates.
       Discovered while correcting the scroll-spy sections of
       pages/_docs/features/toc.md: the page's Implementation and Configuration
       halves describe a table of contents this theme does not have. "TOC
@@ -1374,6 +1381,9 @@ tasks:
       - "Front-matter keys documented on the page are read somewhere in _includes, _layouts, _plugins or _config.yml."
       - "scripts/content-review.rb still scores the page in the green band."
       - "Jekyll build with the layered dev configs is green and the page's anchors keep resolving."
+    links: { issue: null, pr: 637, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-11-15
 
   - id: T-048
     title: "Site-level theme_color re-pins --zer0-color-primary over the active skin"
