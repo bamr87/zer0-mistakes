@@ -1164,7 +1164,7 @@ tasks:
       - "Sidebar grouped; no solid-primary active fill."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 630, roadmap: null }
     created: 2026-08-18
     updated: 2026-11-15
 
