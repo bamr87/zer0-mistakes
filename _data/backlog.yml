@@ -923,7 +923,7 @@ tasks:
 
   - id: T-035
     title: "Adopt --zer0-radius-* and display-size tokens across the remaining Sass partials"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: low
@@ -942,14 +942,20 @@ tasks:
       duplicate hero override blocks; anything intentionally off-scale keeps a
       literal plus a comment.
     acceptance:
+      # Literals only: var(--bs-border-radius*) call sites are already tokens
+      # (Bootstrap's) and stay. Intentional off-scale literals carry an
+      # `// off-scale: <why>` comment, which design-system-check.rb now enforces.
       - "No border-radius literal in _sass/** that duplicates a --zer0-radius-* value (grep-clean or commented as intentional)."
+      # Reconciled by deleting the dead 2rem/1rem block. The surviving 1.75rem
+      # title stays a commented literal: --zer0-text-display-5 has a 2rem clamp
+      # floor, so adopting it would enlarge the mobile hero and break criterion 3.
       - "Hero display sizing states one rule set; duplicate @media blocks reconciled."
       - "scripts/design-system-check.rb still green; compiled CSS visually identical (evidence or skip-evidence rationale)."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 641, roadmap: null }
     created: 2026-08-14
-    updated: 2026-08-14
+    updated: 2026-11-16
 
   # --- UI/UX fix list intake (hand-written review, 2026-08-18) ----------------
 
