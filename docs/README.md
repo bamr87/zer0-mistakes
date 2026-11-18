@@ -32,7 +32,9 @@ docs/
 │   ├── extending.md
 │   └── js-api.md
 │
-├── architecture/              # ADRs and system design
+├── adr/                       # Architecture decision records (NNNN-slug.md, indexed in adr/README.md)
+│
+├── architecture/              # System design and requirements
 │   ├── prd-requirements.md
 │   ├── prd-roadmap.md
 │   ├── project-structure.md
@@ -119,6 +121,7 @@ Live preview (built site): `/about/settings/theme-preview/`
 - [Layouts and Includes](architecture/layouts-includes.md)
 - [Build System](architecture/build-system.md)
 - [Product Requirements](architecture/prd-requirements.md)
+- [Architecture Decision Records](adr/README.md)
 
 ### Release Process
 
