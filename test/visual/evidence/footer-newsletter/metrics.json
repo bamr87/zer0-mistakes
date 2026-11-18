@@ -1,0 +1,134 @@
+{
+  "slug": "footer-newsletter",
+  "generator": "test/visual/footer-newsletter-evidence.mjs",
+  "route": "/",
+  "config": {
+    "base": "_config.yml,_config_dev.yml",
+    "configured": {
+      "newsletter": {
+        "endpoint": "https://example.com/subscribe"
+      }
+    }
+  },
+  "before": "http://127.0.0.1:4554",
+  "after": "http://127.0.0.1:4555",
+  "configured": "http://127.0.0.1:4556",
+  "sweep": [
+    {
+      "width": 390,
+      "before": {
+        "formRendered": true,
+        "formAction": null,
+        "formMethod": null,
+        "formOnsubmit": "return false;",
+        "inputDisabled": true,
+        "inputRequired": false,
+        "inputName": "email",
+        "buttonType": "button",
+        "buttonDisabled": true,
+        "buttonTitle": "Configure a newsletter endpoint in your site config",
+        "placeholderCaptionVisible": true,
+        "disabledControls": 2,
+        "policyClasses": "col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links",
+        "policyTextAlign": "start",
+        "pageErrors": []
+      },
+      "after": {
+        "formRendered": false,
+        "formAction": null,
+        "formMethod": null,
+        "formOnsubmit": null,
+        "inputDisabled": null,
+        "inputRequired": null,
+        "inputName": null,
+        "buttonType": null,
+        "buttonDisabled": null,
+        "buttonTitle": null,
+        "placeholderCaptionVisible": false,
+        "disabledControls": 0,
+        "policyClasses": "col-12 text-center footer-policy-links",
+        "policyTextAlign": "center",
+        "pageErrors": []
+      },
+      "configured": {
+        "formRendered": true,
+        "formAction": "https://example.com/subscribe",
+        "formMethod": "post",
+        "formOnsubmit": null,
+        "inputDisabled": false,
+        "inputRequired": true,
+        "inputName": "email",
+        "buttonType": "submit",
+        "buttonDisabled": false,
+        "buttonTitle": null,
+        "placeholderCaptionVisible": false,
+        "disabledControls": 0,
+        "policyClasses": "col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links",
+        "policyTextAlign": "start",
+        "pageErrors": []
+      }
+    },
+    {
+      "width": 1280,
+      "before": {
+        "formRendered": true,
+        "formAction": null,
+        "formMethod": null,
+        "formOnsubmit": "return false;",
+        "inputDisabled": true,
+        "inputRequired": false,
+        "inputName": "email",
+        "buttonType": "button",
+        "buttonDisabled": true,
+        "buttonTitle": "Configure a newsletter endpoint in your site config",
+        "placeholderCaptionVisible": true,
+        "disabledControls": 2,
+        "policyClasses": "col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links",
+        "policyTextAlign": "right",
+        "pageErrors": []
+      },
+      "after": {
+        "formRendered": false,
+        "formAction": null,
+        "formMethod": null,
+        "formOnsubmit": null,
+        "inputDisabled": null,
+        "inputRequired": null,
+        "inputName": null,
+        "buttonType": null,
+        "buttonDisabled": null,
+        "buttonTitle": null,
+        "placeholderCaptionVisible": false,
+        "disabledControls": 0,
+        "policyClasses": "col-12 text-center footer-policy-links",
+        "policyTextAlign": "center",
+        "pageErrors": []
+      },
+      "configured": {
+        "formRendered": true,
+        "formAction": "https://example.com/subscribe",
+        "formMethod": "post",
+        "formOnsubmit": null,
+        "inputDisabled": false,
+        "inputRequired": true,
+        "inputName": "email",
+        "buttonType": "submit",
+        "buttonDisabled": false,
+        "buttonTitle": null,
+        "placeholderCaptionVisible": false,
+        "disabledControls": 0,
+        "policyClasses": "col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links",
+        "policyTextAlign": "right",
+        "pageErrors": []
+      }
+    }
+  ],
+  "submission": {
+    "emptySubmissionBlocked": true,
+    "request": {
+      "url": "https://example.com/subscribe",
+      "method": "POST",
+      "body": "email=reader%40example.com"
+    }
+  }
+}
