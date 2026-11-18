@@ -196,6 +196,20 @@ navigation:
 #     heading     : "Stay Updated"
 #     lead        : "Subscribe to get the latest news and updates delivered to your inbox."
 
+# Newsletter signup (footer) -----------------------------------------------
+# The footer (core/footer.html) renders an email signup form ONLY when a
+# provider endpoint is set; with none, there is no form at all (#554). The
+# form submits the visitor's address straight to your provider (Buttondown,
+# Mailchimp, ConvertKit, Formspree, ...). Without a top-level `newsletter:`
+# block the footer falls back to `news.newsletter` above, so one endpoint
+# serves both the footer and the news band. Unlike the news band, the footer
+# has no mailto: fallback.
+# newsletter:
+#   enabled     : true         # false hides the footer form even when an endpoint is set
+#   endpoint    : ""           # the provider's form action URL; blank = no form
+#   method      : post         # form method (post | get)
+#   email_field : email        # name of the email input the provider expects (Mailchimp: EMAIL)
+
 # Left sidebar defaults -----------------------------------------------------
 # Site-wide defaults for the docs sidebar panel. Pages override via the
 # `sidebar:` front-matter hash; collections via `sidebar:` metadata under
@@ -598,8 +612,14 @@ resources:
 
 ## Giscus Comments (GitHub Discussions) #########################################
 # Powered by https://giscus.app/ — comments are stored as GitHub Discussions.
-# The theme reads exactly three keys: enabled, data-repo-id, data-category-id.
+# Required keys: enabled, data-repo-id, data-category-id. The four commented-out
+# keys below are optional; each falls back to the value shown, so leaving them
+# out renders the widget exactly as before. Values are giscus's own (see the
+# configurator at https://giscus.app/).
 # data-repo is filled automatically from `repository` above.
+# Layouts show comments through _includes/content/comments.html: on by default in
+# article, note and notebook (`comments: false` hides them), opt-in
+# (`comments: true`) in recipe and book-story.
 # Docs: pages/_docs/features/giscus-comments.md
 # NOTE: the key MUST be `giscus` — layouts/includes read `site.giscus.*`.
 
@@ -610,6 +630,10 @@ giscus:
   #   ./scripts/bin/giscus-discussions categories
   data-repo-id: "R_kgDOMFgJHQ"
   data-category-id: "DIC_kwDOMFgJHc4C52bX"
+  # data-theme: "preferred_color_scheme"  # follows the visitor's OS; a dark-skin site wants "transparent_dark"
+  # data-mapping: "pathname"              # page <-> discussion: pathname | url | title | og:title
+  # data-input-position: "top"            # comment box above (top) or below (bottom) the thread
+  # data-lang: "en"                       # widget language, a giscus locale code: fr, de, ja, zh-CN, ...
 
 ## Mermaid Diagram Configuration #################################################
 # Mermaid diagrams support both native markdown code blocks and div syntax

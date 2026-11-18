@@ -1,0 +1,97 @@
+{
+  "generator": "test/ui-audit/sweep.mjs (this PR) run against both builds, _config.yml,_config_dev.yml, no livereload",
+  "before": {
+    "label": "origin/main @ 93e7062, served statically from its jekyll build",
+    "passes": {
+      "attempted": 21,
+      "captured": 21
+    },
+    "flagged": 14,
+    "harness_errors": 0,
+    "axe_violations": {
+      "link-name": {
+        "passes": 3,
+        "nodes": 336
+      },
+      "aria-progressbar-name": {
+        "passes": 3,
+        "nodes": 12
+      },
+      "button-name": {
+        "passes": 3,
+        "nodes": 9
+      }
+    },
+    "console_errors": {
+      "/ @ mobile": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    "exempt_console_errors": 6,
+    "links_checked": 193,
+    "broken_links": [
+      {
+        "href": "/admin/",
+        "status": 404
+      },
+      {
+        "href": "/docs/docs/",
+        "status": 404
+      },
+      {
+        "href": "/docs/jekyll/jekyll-config/",
+        "status": 404
+      },
+      {
+        "href": "/docs/jekyll/jekyll-liquid/",
+        "status": 404
+      },
+      {
+        "href": "/docs/jekyll/jekyll-performance-optimization/",
+        "status": 404
+      },
+      {
+        "href": "/docs/jekyll/jekyll-security/",
+        "status": 404
+      },
+      {
+        "href": "/studio/README.md",
+        "status": 404
+      }
+    ],
+    "exempt_links": [
+      {
+        "href": "/examples/swerve-of-shore/",
+        "status": 404
+      },
+      {
+        "href": "/notebooks/test-notebook/",
+        "status": 404
+      }
+    ]
+  },
+  "after": {
+    "label": "fix/issue-486-ui-audit-a11y-links, jekyll serve --no-watch",
+    "passes": {
+      "attempted": 21,
+      "captured": 21
+    },
+    "flagged": 0,
+    "harness_errors": 0,
+    "axe_violations": {},
+    "console_errors": {},
+    "exempt_console_errors": 6,
+    "links_checked": 186,
+    "broken_links": [],
+    "exempt_links": [
+      {
+        "href": "/examples/swerve-of-shore/",
+        "status": 404
+      },
+      {
+        "href": "/notebooks/test-notebook/",
+        "status": 404
+      }
+    ]
+  }
+}

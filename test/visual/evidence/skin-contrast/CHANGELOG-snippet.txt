@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/skin-contrast/`](test/visual/evidence/skin-contrast/README.md) — air current nav link 2.4:1 → 8.44:1, 0 component strip failures across 7 skins × light/dark after the fix)

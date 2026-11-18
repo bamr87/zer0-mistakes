@@ -93,9 +93,9 @@
     <button type="button" class="btn btn-primary">Default</button>
     <button type="button" class="btn btn-primary btn-sm">Small</button>
     <div class="btn-group" role="group" aria-label="View toggle">
-      <button type="button" class="btn btn-outline-primary"><i class="bi bi-list"></i></button>
-      <button type="button" class="btn btn-outline-primary"><i class="bi bi-grid-3x3-gap"></i></button>
-      <button type="button" class="btn btn-outline-primary"><i class="bi bi-card-text"></i></button>
+      <button type="button" class="btn btn-outline-primary" aria-label="List view"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-outline-primary" aria-label="Grid view"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-outline-primary" aria-label="Card view"><i class="bi bi-card-text" aria-hidden="true"></i></button>
     </div>
   </div>
 </div>
@@ -291,7 +291,7 @@ theme: jekyll-theme-zer0</code></pre>
       <small class="text-muted">95%</small>
     </div>
     <div class="progress" style="height: 8px;">
-      <div class="progress-bar bg-success" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-success" role="progressbar" aria-label="Lighthouse Performance" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
   <div class="mb-3">
@@ -300,7 +300,7 @@ theme: jekyll-theme-zer0</code></pre>
       <small class="text-muted">92%</small>
     </div>
     <div class="progress" style="height: 8px;">
-      <div class="progress-bar bg-info" role="progressbar" style="width: 92%" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-info" role="progressbar" aria-label="Accessibility Score" style="width: 92%" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
   <div class="mb-3">
@@ -309,7 +309,7 @@ theme: jekyll-theme-zer0</code></pre>
       <small class="text-muted">98%</small>
     </div>
     <div class="progress" style="height: 8px;">
-      <div class="progress-bar bg-primary" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-primary" role="progressbar" aria-label="SEO Score" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
   <div class="mb-3">
@@ -318,7 +318,7 @@ theme: jekyll-theme-zer0</code></pre>
       <small class="text-muted">100%</small>
     </div>
     <div class="progress" style="height: 8px;">
-      <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-success" role="progressbar" aria-label="Best Practices" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
 </div>

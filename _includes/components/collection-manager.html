@@ -95,7 +95,7 @@
             {% if collection.permalink %}
               <code class="small">{{ collection.permalink }}</code>
             {% else %}
-              <span class="text-body-tertiary small">default</span>
+              <span class="text-body-secondary small">default</span>
             {% endif %}
           </td>
         </tr>
@@ -140,7 +140,7 @@
                 </li>
               {% endfor %}
               {% if collection.docs.size > 5 %}
-                <li class="text-body-tertiary">… and {{ collection.docs.size | minus: 5 }} more</li>
+                <li class="text-body-secondary">… and {{ collection.docs.size | minus: 5 }} more</li>
               {% endif %}
             </ul>
           {% endif %}

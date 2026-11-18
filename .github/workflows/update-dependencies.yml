@@ -53,10 +53,32 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      # The branch push and the PR use FLEET_TOKEN, not GITHUB_TOKEN: a PR
+      # opened with GITHUB_TOKEN fires no workflows, so the update PRs sat
+      # with no CI until a maintainer approved the runs (#590, #605). There
+      # is deliberately no GITHUB_TOKEN fallback — it would bring that back
+      # silently. Probe, never presence-check: a missing or expired token
+      # fails here, before anything is pushed.
+      - name: Probe FLEET_TOKEN
+        id: fleet-token
+        env:
+          GH_TOKEN: ${{ secrets.FLEET_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error title=FLEET_TOKEN missing::Set the FLEET_TOKEN secret on this repo. Nothing was pushed."
+            exit 1
+          fi
+          if ! login="$(gh api user --jq .login)"; then
+            echo "::error title=FLEET_TOKEN rejected::gh api user failed (expired or revoked?). Nothing was pushed."
+            exit 1
+          fi
+          echo "FLEET_TOKEN authenticates as $login"
+          echo "login=$login" >> "$GITHUB_OUTPUT"
+
       - name: Checkout Repository
         uses: actions/checkout@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FLEET_TOKEN }}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -128,7 +150,7 @@ jobs:
         if: steps.update.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FLEET_TOKEN }}
           commit-message: |
             chore(deps): update Ruby gem dependencies
             
@@ -145,7 +167,10 @@ jobs:
             dependencies
             automated
           assignees: bamr87
-          reviewers: bamr87
+          # GitHub rejects a review request from the PR's own author (422),
+          # which fails this step after the PR is opened, so skip it when
+          # FLEET_TOKEN is bamr87's.
+          reviewers: ${{ steps.fleet-token.outputs.login != 'bamr87' && 'bamr87' || '' }}
 
       - name: Comment on Issue if Failed
         if: failure()
