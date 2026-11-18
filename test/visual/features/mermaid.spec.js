@@ -341,14 +341,18 @@ test.describe('Mermaid diagram figures', () => {
   test('the Mermaid bundle is lazy-loaded when the first diagram nears the viewport', async ({ page }) => {
     // Phone-sized viewport: the docs page's first diagram starts well below
     // the fold, so nothing should fetch the ~1 MB bundle until we scroll.
-    await page.setViewportSize({ width: 390, height: 700 });
+    // 600px tall, not 700: since the page stopped repeating its title as a
+    // body <h1> (#593) the first diagram sits ~75px higher, and 700 + the
+    // 400px lazy margin left too little room for the load-time layout shift.
+    const viewportHeight = 600;
+    await page.setViewportSize({ width: 390, height: viewportHeight });
     const requested = [];
     page.on('request', (req) => { if (/mermaid(\.min)?\.js/.test(req.url())) requested.push(req.url()); });
     await gotoOrSkip(page, DOCS);
     await page.waitForLoadState('networkidle');
 
     const firstTop = await page.locator(FIGURE).first().evaluate((f) => f.getBoundingClientRect().top);
-    test.skip(firstTop < 700 + 400, 'first diagram is inside the lazy-load margin at this width');
+    test.skip(firstTop < viewportHeight + 400, 'first diagram is inside the lazy-load margin at this width');
     expect(requested).toHaveLength(0);
     // Fences are already figures (skeleton + toolbar) before Mermaid loads.
     expect(await page.locator(`${FIGURE}.is-loading`).count()).toBeGreaterThanOrEqual(9);

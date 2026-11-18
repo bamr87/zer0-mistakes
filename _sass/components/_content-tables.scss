@@ -44,24 +44,24 @@ $zer0-content-table-scopes: (
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--zer0-color-border);
-  border-radius: 0.5rem;
+  border-radius: var(--zer0-radius-lg);
   overflow: visible;
   background-color: var(--zer0-color-bg);
 
   thead tr:first-child th:first-child {
-    border-top-left-radius: 0.5rem;
+    border-top-left-radius: var(--zer0-radius-lg);
   }
 
   thead tr:first-child th:last-child {
-    border-top-right-radius: 0.5rem;
+    border-top-right-radius: var(--zer0-radius-lg);
   }
 
   tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 0.5rem;
+    border-bottom-left-radius: var(--zer0-radius-lg);
   }
 
   tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 0.5rem;
+    border-bottom-right-radius: var(--zer0-radius-lg);
   }
   caption {
     caption-side: bottom;
@@ -133,7 +133,7 @@ $zer0-content-table-scopes: (
     background: var(--zer0-color-bg-muted);
     color: var(--zer0-color-code-ink);
     padding: 0.15em 0.4em;
-    border-radius: 0.25rem;
+    border-radius: var(--zer0-radius-sm);
     font-size: 0.875em;
     white-space: nowrap;
   }
@@ -148,7 +148,7 @@ $zer0-content-table-scopes: (
 .content-table-wrapper {
   margin-bottom: var(--zer0-space-4);
   border: 1px solid var(--zer0-color-border);
-  border-radius: 0.5rem;
+  border-radius: var(--zer0-radius-lg);
   // Wide tables must scroll WITHIN this card, not push the page wider. The
   // wrapper sits between the content scope and the table, so the
   // `#{$scope} > table` mobile fallback below no longer matches — without a
@@ -167,8 +167,8 @@ $zer0-content-table-scopes: (
     padding: var(--zer0-space-1) var(--zer0-space-2);
     background-color: color-mix(in srgb, var(--zer0-color-bg-elevated) 88%, var(--zer0-color-primary) 6%);
     border-bottom: 1px solid var(--zer0-color-border);
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
+    border-top-left-radius: var(--zer0-radius-lg);
+    border-top-right-radius: var(--zer0-radius-lg);
   }
 
   > table,
@@ -238,7 +238,7 @@ $zer0-content-table-scopes: (
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       border: 1px solid var(--zer0-color-border);
-      border-radius: 0.5rem;
+      border-radius: var(--zer0-radius-lg);
       margin-bottom: var(--zer0-space-4);
 
       > table:not(#sitemapTable) {

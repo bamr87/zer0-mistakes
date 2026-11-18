@@ -2,7 +2,7 @@
 title: "Design system"
 description: "The Zer0-Mistakes design system: Bootstrap 5.3.3, the semantic --zer0-* token layer, decomposed SCSS partials, and runtime config-driven overrides."
 date: 2026-05-31T20:54:57.000Z
-lastmod: 2026-05-31T20:54:57.000Z
+lastmod: 2026-11-16T12:00:00.000Z
 categories: [docs]
 tags: [ui, styling, theme]
 author: bamr87
@@ -294,7 +294,7 @@ The token layer is mirrored to a **Claude Design** project ([claude.ai/design](h
 
 - `_design-system/` in this repo is the git mirror of that project: `tokens/*.css` (plain-CSS twins of `_sass/tokens/*.scss`), React component specs (`components/` — Button, Badge, Fab/FabStack, Card, FeatureCard, PostCard, Callout, Skeleton, Input, each as `.jsx` + `.d.ts` + `.prompt.md` + a `@dsCard` specimen), guideline specimen cards (`guidelines/` — colors, type, spacing, motion, layers, brand), the marketing-site UI kit (`ui_kits/website/`), and the design guide (`readme.md` + `SKILL.md`).
 - `_sass/tokens/` stays the **source of truth** for token values. Change a token → update its `_design-system/tokens/*.css` twin in the same PR.
-- `scripts/design-system-check.rb` (run by the `core` test suite) fails CI when the two sides disagree, and also flags fallback-less `var(--zer0-…)` references to tokens that are never declared.
+- `scripts/design-system-check.rb` (run by the `core` test suite) fails CI when the two sides disagree. It also flags `var(--zer0-…)` references to tokens that are never declared (fallback-less ones anywhere, and ones hiding behind a fallback inside a token family such as `--zer0-radius-*`), and `border-radius` literals in `_sass/` that duplicate a `--zer0-radius-*` value without an `// off-scale: <why>` comment.
 - Push/pull mechanics, the file map, and what is deliberately *not* mirrored (compiled bundles, byte-identical imagery) live in [`_design-system/SYNC.md`](../../_design-system/SYNC.md).
 - The mirror is **published on the live site** (`include: [_design-system]` in `_config.yml`): tokens and `styles.css` are linkable at `/_design-system/…`, and the `/design/` hub page (`pages/_about/design.md`) renders the foundation specimens live, catalogs the component twins, and links the Claude Design page canvas (ZER0-082).
 

@@ -137,8 +137,54 @@ renders_sidebar_offcanvas: true
              _sass/utilities/_focus.scss. {% endcomment %}
         {% comment %} The TOC-scope sentinels (#552) have done their job in
              sidebar-right.html above; they never reach the visitor. {% endcomment %}
+        {%- comment -%}
+          One <h1> per page (issue #593). When the intro above has rendered
+          page.title as the page's <h1>, the body must not add a second one —
+          yet most Markdown pages open with `# Title` (kramdown emits
+          <h1 id="title">), and some child layouts print their own heading.
+          So the FIRST <h1> of the body is rewritten, once:
+            - it is the body's leading element and its text is page.title
+              (compared through slugify, so case, punctuation and a decorative
+              emoji do not count): dropped, with its id kept on an empty
+              <span> so #anchors and the TOC link still land;
+            - anything else (different text, or a heading further in): demoted
+              to <h2>, attributes and text intact, so nothing written vanishes.
+          The TOC above is built from the original `content`, so its entries
+          and levels do not change. Layouts that skip the intro (article, note,
+          recipe, cookbook, hide_intro) render the body untouched. The landing
+          layout, which does not inherit this one, solves the same problem in
+          CSS (`.landing-content-body > h1:first-of-type`).
+        {%- endcomment -%}
+        {%- assign _page_body = content | remove: '<zer0-toc-start></zer0-toc-start>' | remove: '<zer0-toc-end></zer0-toc-end>' -%}
+        {%- assign _h1_title_key = page.title | strip_html | slugify -%}
+        {%- assign _h1_rewrite = false -%}
+        {%- if _skip_intro == false and _h1_title_key != "" and _page_body contains '<h1' -%}
+          {%- assign _h1_before = _page_body | split: '<h1' | first -%}
+          {%- assign _h1_rest = _page_body | remove_first: _h1_before -%}
+          {%- if _h1_rest contains '</h1>' -%}
+            {%- assign _h1_rewrite = true -%}
+            {%- assign _h1_inner = _h1_rest | remove_first: '<h1' | split: '</h1>' | first -%}
+            {%- assign _h1_html = '<h1' | append: _h1_inner | append: '</h1>' -%}
+            {%- assign _h1_after = _h1_rest | remove_first: _h1_html -%}
+            {%- assign _h1_attrs = _h1_inner | split: '>' | first | default: '' -%}
+            {%- assign _h1_key = _h1_inner | remove_first: _h1_attrs | remove_first: '>' | strip_html | slugify -%}
+            {%- assign _h1_id = '' -%}
+            {%- if _h1_attrs contains ' id="' -%}
+              {%- assign _h1_id = _h1_attrs | split: ' id="' | last | split: '"' | first -%}
+            {%- endif -%}
+            {%- assign _h1_leading = _h1_before | strip -%}
+            {%- if _h1_leading == "" and _h1_key == _h1_title_key -%}
+              {%- assign _h1_replacement = '' -%}
+              {%- if _h1_id != '' -%}
+                {%- assign _h1_replacement = '<span id="' | append: _h1_id | append: '"></span>' -%}
+              {%- endif -%}
+            {%- else -%}
+              {%- assign _h1_replacement = '<h2' | append: _h1_inner | append: '</h2>' -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif %}
         <div id="page-content" class="bd-content ps-lg-2" tabindex="-1">
-            {{ content | remove: '<zer0-toc-start></zer0-toc-start>' | remove: '<zer0-toc-end></zer0-toc-end>' }}
+            {% if _h1_rewrite %}{{ _h1_before }}{{ _h1_replacement }}{{ _h1_after }}{% else %}{{ _page_body }}{% endif %}
 
             {%- comment -%}
               Optional Obsidian-style backlinks panel. Opt-in for the generic

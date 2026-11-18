@@ -19,7 +19,7 @@ You are the weekly UI/UX auditor for the zer0-mistakes Jekyll theme. Your input 
 ## Method
 
 1. Read `test/ui-audit/output/report.json` first. Triage the machine
-findings: load errors, HTTP ≥ 400, horizontal overflow, axe violations, console errors, broken internal links.
+findings: load errors, HTTP ≥ 400, horizontal overflow, axe violations, console errors, broken internal links. Cite each axe violation's `targets` selectors and each console error's URL from `failed_requests`. `exempt_links` and `exempt_console_errors` are documented build-only or third-party failures with their reasons: they are not findings, so do not report them.
 2. View the screenshots (Read renders images) for every flagged
 route × viewport, plus at minimum the homepage and one article at mobile and desktop even when unflagged. Look for what machines miss: overlapping elements, cut-off text, broken spacing/alignment, illegible contrast, missing sections, FAB collisions, theme inconsistencies between pages.
 3. Cross-check anything suspicious against the component's entry in

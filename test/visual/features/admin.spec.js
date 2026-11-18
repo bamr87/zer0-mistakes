@@ -11,6 +11,12 @@
 //     a strict "exactly one active link" check folded in from admin-nav.
 //   - Admin layout — mobile responsive: sidebar toggle, hidden desktop
 //     sidebar, and offcanvas sidebar behavior on mobile viewports.
+//   - Admin layout — actions, groups and heading (#409, @critical): every
+//     header action reachable at 375/768/1280px (first as a button, the rest
+//     behind "More actions"), sidebar grouped under Configure / System /
+//     Links labels, counts as plain numerals and statuses as dot + word,
+//     the active item a tint with aria-current (not a solid primary pill),
+//     and a single "Administration" heading in the DOM.
 //   - Admin layout — console errors: no console errors across admin pages.
 //   - Admin navigation links: sidebar nav item completeness, external link
 //     target/rel attributes, and cross-page navigation via sidebar clicks.
@@ -141,6 +147,120 @@ test.describe('Admin layout — mobile responsive', () => {
       await expect(offcanvas.locator('.nav.nav-pills')).toBeVisible();
     });
   }
+});
+
+// #409 (T-041). Before it, the header actions sat in a `d-none d-md-flex`
+// wrapper (none reachable on a phone), the sidebar was one flat list with
+// pill badges and Bootstrap's solid-primary active pill, and the DOM held two
+// "Administration" headings (a desktop <h6> plus the offcanvas title). Every
+// test here fails on that markup.
+test.describe('Admin layout — actions, groups and heading (#409)', { tag: '@critical' }, () => {
+  // /about/settings/theme-preview/ declares two admin_actions, so it covers
+  // both the button and the "More actions" dropdown.
+  const ACTIONS_URL = '/about/settings/theme-preview/';
+  const ACTION_HREFS = ['/about/settings/theme/', '/about/settings/components/'];
+  const GROUPS = ['Configure', 'System', 'Links'];
+
+  for (const [name, viewport] of [['375px', VIEWPORTS.mobile], ['768px', VIEWPORTS.tablet], ['1280px', VIEWPORTS.desktop]]) {
+    test(`every header action is reachable at ${name}`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await waitForJekyll(page, ACTIONS_URL);
+      const actions = page.locator('.admin-actions');
+      await expect(actions).toBeVisible();
+
+      // The first action is a button at every width.
+      const primary = actions.locator(`a.btn[href$="${ACTION_HREFS[0]}"]`);
+      await expect(primary).toBeVisible();
+
+      // The rest are items of an accessible "More actions" dropdown.
+      const toggle = actions.getByRole('button', { name: 'More actions' });
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await toggle.click();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+      for (const href of ACTION_HREFS) {
+        const link = actions.locator(`a[href$="${href}"]`);
+        await expect(link, `${href} is reachable`).toBeVisible();
+        const box = await link.boundingBox();
+        expect(box.x, `${href} starts on screen`).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width, `${href} ends on screen`).toBeLessThanOrEqual(viewport.width);
+      }
+      await expect(actions.locator(`.dropdown-item[href$="${ACTION_HREFS[1]}"]`)).toBeVisible();
+    });
+  }
+
+  test('a page without admin_actions renders no action group', async ({ page }) => {
+    await waitForJekyll(page, '/about/config/');
+    await expect(page.locator('.admin-actions')).toHaveCount(0);
+  });
+
+  test('sidebar items sit under Configure, System and Links labels', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, '/about/config/');
+    const sidebar = page.locator('nav.admin-sidebar');
+    await expect(sidebar.locator('.admin-nav-group-label')).toHaveText(GROUPS);
+    for (const group of GROUPS) {
+      // The label names its list (aria-labelledby), and the list is not empty.
+      // Case-insensitive: the label is drawn uppercase by CSS.
+      const list = sidebar.getByRole('list', { name: new RegExp(`^${group}$`, 'i') });
+      await expect(list).toBeVisible();
+      expect(await list.locator('a.nav-link').count(), `${group} has links`).toBeGreaterThan(0);
+    }
+    // List labels, not headings: the sidebar adds nothing to the page outline.
+    await expect(sidebar.locator('h1, h2, h3, h4, h5, h6')).toHaveCount(0);
+  });
+
+  test('group label ids are unique across the desktop and offcanvas copies', async ({ page }) => {
+    await waitForJekyll(page, '/about/config/');
+    const ids = await page.locator('.admin-nav-group-label').evaluateAll((els) => els.map((el) => el.id));
+    expect(ids).toHaveLength(GROUPS.length * 2);
+    expect(new Set(ids).size, `duplicate ids: ${ids.join(', ')}`).toBe(ids.length);
+    const dangling = await page.locator('.admin-nav [aria-labelledby]').evaluateAll((els) =>
+      els.filter((el) => !document.getElementById(el.getAttribute('aria-labelledby'))).length);
+    expect(dangling).toBe(0);
+  });
+
+  test('counts are plain numerals and statuses a dot plus a word', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, '/about/config/');
+    const sidebar = page.locator('nav.admin-sidebar');
+    await expect(sidebar.locator('.badge')).toHaveCount(0);
+    await expect(sidebar.locator('a[href$="/about/settings/collections/"] .admin-nav-count')).toHaveText(/^\d+$/);
+    for (const href of ['/about/settings/analytics/', '/about/settings/environment/']) {
+      const status = sidebar.locator(`a[href$="${href}"] .admin-nav-status`);
+      await expect(status).toHaveText(/^(On|Off|Prod|Dev)$/);
+      await expect(status.locator('.admin-nav-dot[aria-hidden="true"]')).toHaveCount(1);
+    }
+  });
+
+  test('the active item is a semibold tint with aria-current, not a solid primary pill', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, '/about/config/');
+    const active = page.locator('nav.admin-sidebar .nav-link.active');
+    await expect(active).toHaveCount(1);
+    await expect(active).toHaveAttribute('aria-current', 'page');
+    const style = await active.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      // Alpha of the computed background, whichever syntax it serializes to:
+      // rgb()/rgba() for a plain colour, color(srgb … / a) for color-mix().
+      const bg = cs.backgroundColor;
+      const slash = bg.match(/\/\s*([\d.]+)\s*\)$/);
+      const rgba = bg.match(/^rgba\((?:[^,]+,){3}\s*([\d.]+)\)$/);
+      const alpha = slash ? Number(slash[1]) : rgba ? Number(rgba[1]) : 1;
+      return { bg, alpha, weight: Number(cs.fontWeight) };
+    });
+    expect(style.alpha, `active background ${style.bg} is a tint, not a solid fill`).toBeGreaterThan(0);
+    expect(style.alpha, `active background ${style.bg} is a tint, not a solid fill`).toBeLessThan(0.5);
+    expect(style.weight).toBeGreaterThanOrEqual(600);
+  });
+
+  test('the DOM holds one "Administration" heading, the offcanvas title', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, '/about/config/');
+    const headings = page.locator('h1, h2, h3, h4, h5, h6').filter({ hasText: /^\s*Administration\s*$/ });
+    await expect(headings).toHaveCount(1);
+    await expect(headings).toHaveId('adminSidebarLabel');
+  });
 });
 
 test.describe('Admin layout — console errors', () => {

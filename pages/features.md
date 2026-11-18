@@ -398,13 +398,13 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         </td>
         <td>
           {% if feature.docs %}
-          <a href="{{ feature.docs }}" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-book"></i>
+          <a href="{{ feature.docs }}" class="btn btn-sm btn-outline-primary" aria-label="{{ feature.title | escape }} documentation">
+            <i class="bi bi-book" aria-hidden="true"></i>
           </a>
           {% endif %}
           {% if feature.link and feature.link != '/' %}
-          <a href="{{ feature.link }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-link-45deg"></i>
+          <a href="{{ feature.link }}" class="btn btn-sm btn-outline-secondary" aria-label="{{ feature.title | escape }} live page">
+            <i class="bi bi-link-45deg" aria-hidden="true"></i>
           </a>
           {% endif %}
         </td>

@@ -6,6 +6,7 @@
 #   --theme-path <dir>            Explicit theme path (auto-resolved if omitted)
 #   --mode {gem|remote_theme}     Deployment mode (auto-detected if omitted)
 #   --fix                         Delete IDENTICAL files + copy MISSING/STALE plugins
+#                                 + refresh STALE/MISSING vendored _data
 #   --overwrite-plugins           Combined with --fix: replace STALE plugins too
 #   --strict                      Exit non-zero on any unjustified drift (for CI)
 #   --format {text|json|github}   Output format (default: text)
@@ -52,17 +53,44 @@ DESCRIPTION:
       OK                 Plugin matches current theme version
       NOT_REQUIRED       Gem mode — theme loads plugins itself
 
+    Vendored data classifications (both modes):
+      Jekyll 3.10 (GitHub Pages) never loads a theme's _data/, so a site
+      reads the theme's data only from its own copy, and that copy does NOT
+      float with remote_theme. Re-run the audit after every theme update.
+
+      Theme-owned registries you copy verbatim (manifest vendored_data_paths:
+      _data/theme_skins.yml, _data/theme_backgrounds.yml):
+      IDENTICAL          Your copy matches the theme → current, keep it
+      STALE              Your copy differs and is NOT listed in
+                         .theme-overrides.yml → --fix refreshes it from the
+                         theme; counts toward --strict
+      DIFFERS_JUSTIFIED  Your copy differs and is listed → intentional
+      MISSING            No copy → informational (the theme's includes fall
+                         back to built-in defaults); --fix copies it
+
+      Data you customise (YAML files in manifest theme_data_paths, i.e.
+      _data/ui-text.yml): only keys are compared, never values.
+      MISSING_KEYS       Keys the theme's en: block has that yours lacks
+                         → warn-only, never fails --strict; add them by hand
+                         (--fix never edits a file you customise)
+      OK                 Every key is present
+      MISSING            No copy → informational
+
 OPTIONS:
     --consumer-path <dir>         Consumer repo root (default: current directory)
     --theme-path <dir>            Explicit theme path (auto-resolved if omitted)
     --mode {gem|remote_theme}     Force deployment mode (auto-detected if omitted)
     --fix                         Fix issues: delete IDENTICAL files; copy
-                                  MISSING_PLUGIN files from theme
+                                  MISSING_PLUGIN files from theme; refresh
+                                  STALE and MISSING vendored data from theme
     --overwrite-plugins           With --fix: also replace STALE_PLUGIN files
-    --strict                      Exit 1 if any DIFFERS_UNJUSTIFIED or
-                                  MISSING_PLUGIN issues found (use in CI)
+    --strict                      Exit 1 if any DIFFERS_UNJUSTIFIED,
+                                  MISSING_PLUGIN or STALE vendored data
+                                  issues found (use in CI)
     --format {text|json|github}   Output format
-                                  github emits ::warning annotations for CI
+                                  github emits ::warning annotations for CI;
+                                  json reports vendored data in its own
+                                  "vendored_data" array beside "results"
     --verbose                     Show debug output
     --dry-run                     Show what --fix would do without changing files
     --help, -h                    Show this help
@@ -83,6 +111,9 @@ EXAMPLES:
 
     # Fix including stale plugins
     ./scripts/bin/audit-consumer --fix --overwrite-plugins
+
+    # After a theme update: refresh vendored _data that fell behind
+    ./scripts/bin/audit-consumer --consumer-path ~/github/lifehacker.dev --fix --dry-run
 EOF
 }
 
@@ -175,7 +206,8 @@ fi
 OVERRIDES_FILE="$CONSUMER_ROOT/.theme-overrides.yml"
 [[ -f "$OVERRIDES_FILE" ]] || OVERRIDES_FILE="$CONSUMER_PATH/.theme-overrides.yml"
 OVERRIDE_PATHS_TMP=$(mktemp)
-trap 'rm -f "$OVERRIDE_PATHS_TMP"' EXIT
+KEYS_ERR_TMP=$(mktemp)
+trap 'rm -f "$OVERRIDE_PATHS_TMP" "$KEYS_ERR_TMP"' EXIT
 
 if [[ -f "$OVERRIDES_FILE" ]]; then
     info "Override manifest: $OVERRIDES_FILE"
@@ -222,6 +254,26 @@ if [[ ${#REQUIRED_PLUGIN_FILES[@]} -eq 0 && ${#OPTIONAL_PLUGIN_FILES[@]} -eq 0 ]
         "_plugins/content_statistics_generator.rb"
         "_plugins/theme_version.rb"
     )
+fi
+
+# Data the theme ships but cannot deliver (see "Scan vendored theme data").
+# A manifest snapshot cut before `vendored_data_paths` existed (1.31.x and
+# older) lacks the key, so fall back to the list scripts/lib/audit.sh keeps.
+VENDORED_DATA_FILES=()
+THEME_DATA_FILES=()
+if [[ -n "$MANIFEST" ]] && manifest_has_key "$MANIFEST" "vendored_data_paths"; then
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && VENDORED_DATA_FILES+=("$line")
+    done < <(manifest_list "$MANIFEST" "vendored_data_paths")
+else
+    VENDORED_DATA_FILES=("${THEME_VENDORED_DATA_PATHS[@]}")
+fi
+if [[ -n "$MANIFEST" ]] && manifest_has_key "$MANIFEST" "theme_data_paths"; then
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && THEME_DATA_FILES+=("$line")
+    done < <(manifest_list "$MANIFEST" "theme_data_paths")
+else
+    THEME_DATA_FILES=("_data/ui-text.yml")
 fi
 
 # ---------------------------------------------------------------------------
@@ -302,6 +354,73 @@ if [[ ${#ALL_PLUGIN_FILES[@]} -gt 0 ]]; then
 fi
 
 # ---------------------------------------------------------------------------
+# Scan vendored theme data
+# ---------------------------------------------------------------------------
+# Jekyll 3.10, which GitHub Pages and the github-pages gem run, never loads a
+# theme's _data/ in either mode, so every consumer keeps its own copy of the
+# theme's data, and the floating remote_theme never updates it: a copy freezes
+# on the day it was made (#556). The pass runs in both modes.
+STALE_DATA_FILES=()
+MISSING_DATA_FILES=()
+DATA_JSON_ENTRIES=()
+DATA_STALE_COUNT=0
+DATA_MISSING_COUNT=0
+DATA_MISSING_KEYS_COUNT=0
+
+# report_data <classification> <relpath> [missing_keys]
+report_data() {
+    if [[ "$FORMAT" == "json" ]]; then
+        DATA_JSON_ENTRIES+=("$(data_json_entry "$1" "$2" "${3:-}")")
+    else
+        print_data_classification "$1" "$2" "$FORMAT" "${3:-}"
+    fi
+}
+
+[[ "$FORMAT" == "text" ]] && echo ""
+[[ "$FORMAT" == "text" ]] && info "--- Vendored theme data (does not float with remote_theme) ---"
+
+for data_rel in ${VENDORED_DATA_FILES[@]+"${VENDORED_DATA_FILES[@]}"}; do
+    classification=$(classify_vendored_data "$RESOLVED_THEME" "$CONSUMER_PATH" "$data_rel" "$OVERRIDE_PATHS_TMP")
+    [[ -n "$classification" ]] || continue   # this theme checkout does not ship it
+    report_data "$classification" "$data_rel"
+    case "$classification" in
+        STALE)
+            STALE_DATA_FILES+=("$data_rel")
+            DATA_STALE_COUNT=$((DATA_STALE_COUNT + 1)) ;;
+        MISSING)
+            MISSING_DATA_FILES+=("$data_rel")
+            DATA_MISSING_COUNT=$((DATA_MISSING_COUNT + 1)) ;;
+    esac
+done
+
+for data_rel in ${THEME_DATA_FILES[@]+"${THEME_DATA_FILES[@]}"}; do
+    # Only a YAML file has keys to compare. A directory such as _data/navigation
+    # is the consumer's own content end to end.
+    [[ -f "$RESOLVED_THEME/$data_rel" ]] || continue
+    case "$data_rel" in
+        *.yml|*.yaml) ;;
+        *) continue ;;
+    esac
+    if [[ ! -f "$CONSUMER_PATH/$data_rel" ]]; then
+        report_data "MISSING" "$data_rel"
+        continue
+    fi
+
+    keys_status=0
+    missing_keys=$(missing_data_keys "$RESOLVED_THEME/$data_rel" "$CONSUMER_PATH/$data_rel" 2>"$KEYS_ERR_TMP") || keys_status=$?
+    if [[ "$keys_status" -eq 2 ]]; then
+        warn "ruby not found: skipped the key check of $data_rel"
+    elif [[ "$keys_status" -ne 0 ]]; then
+        warn "Could not compare the keys of $data_rel: $(head -n 1 "$KEYS_ERR_TMP")"
+    elif [[ -n "$missing_keys" ]]; then
+        DATA_MISSING_KEYS_COUNT=$((DATA_MISSING_KEYS_COUNT + $(printf '%s\n' "$missing_keys" | wc -l)))
+        report_data "MISSING_KEYS" "$data_rel" "$missing_keys"
+    else
+        report_data "OK" "$data_rel"
+    fi
+done
+
+# ---------------------------------------------------------------------------
 # Apply fixes
 # ---------------------------------------------------------------------------
 if [[ "$FIX" == "true" ]]; then
@@ -341,14 +460,36 @@ if [[ "$FIX" == "true" ]]; then
             fi
         fi
     done
+
+    # Vendored data is the theme's to own: take its copy. A file declared in
+    # .theme-overrides.yml is DIFFERS_JUSTIFIED and never listed here, and a
+    # file the consumer customises (ui-text.yml) is never written.
+    for data_rel in ${STALE_DATA_FILES[@]+"${STALE_DATA_FILES[@]}"} ${MISSING_DATA_FILES[@]+"${MISSING_DATA_FILES[@]}"}; do
+        if [[ "$DRY_RUN" == "true" ]]; then
+            info "[DRY RUN] Would refresh vendored data from the theme: $data_rel"
+        else
+            mkdir -p "$(dirname "$CONSUMER_PATH/$data_rel")"
+            cp "$RESOLVED_THEME/$data_rel" "$CONSUMER_PATH/$data_rel"
+            success "Refreshed vendored data from the theme: $data_rel"
+        fi
+    done
 fi
 
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 # Entries are printed without a trailing newline (see print_classification),
-# so close the array on its own line.
-[[ "$FORMAT" == "json" ]] && printf '\n]}\n'
+# so close each array on its own line. Vendored data gets its own array: for
+# data, IDENTICAL means "current, keep it", not the themable "safe to delete".
+if [[ "$FORMAT" == "json" ]]; then
+    printf '\n],"vendored_data":['
+    data_sep=""
+    for data_entry in ${DATA_JSON_ENTRIES[@]+"${DATA_JSON_ENTRIES[@]}"}; do
+        printf '%s\n  %s' "$data_sep" "$data_entry"
+        data_sep=","
+    done
+    printf '\n]}\n'
+fi
 
 if [[ "$FORMAT" == "text" ]]; then
     echo ""
@@ -357,9 +498,15 @@ if [[ "$FORMAT" == "text" ]]; then
     info "DIFFERS_UNJUSTIFIED files:          ${#DIFFERS_UNJUSTIFIED_FILES[@]}"
     info "Required plugin issues:            $PLUGIN_ISSUES"
     [[ "$OPTIONAL_PLUGIN_ISSUES" -gt 0 ]] && info "Optional plugins not vendored:     $OPTIONAL_PLUGIN_ISSUES (informational)"
+    info "STALE vendored data files:         $DATA_STALE_COUNT (refresh with --fix)"
+    [[ "$DATA_MISSING_COUNT" -gt 0 ]] && info "MISSING vendored data files:       $DATA_MISSING_COUNT (informational; --fix copies them)"
+    [[ "$DATA_MISSING_KEYS_COUNT" -gt 0 ]] && info "Data keys missing (warn-only):     $DATA_MISSING_KEYS_COUNT"
 fi
 
-TOTAL_ISSUES=$((DRIFT_COUNT + PLUGIN_ISSUES))
+# STALE vendored data is unjustified drift like DIFFERS_UNJUSTIFIED. MISSING
+# data and MISSING_KEYS are warn-only: the theme's includes degrade to
+# built-in defaults, so neither fails --strict.
+TOTAL_ISSUES=$((DRIFT_COUNT + PLUGIN_ISSUES + DATA_STALE_COUNT))
 
 if [[ "$STRICT" == "true" && "$TOTAL_ISSUES" -gt 0 ]]; then
     error "Strict mode: $TOTAL_ISSUES unjustified drift issue(s) found."

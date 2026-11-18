@@ -152,9 +152,32 @@ document.addEventListener('DOMContentLoaded', function () {
     if (preElement) preElements.add(preElement);
   });
 
+  // Every region needs a name of its own (axe landmark-unique, #593): two
+  // blocks both called "bash code block" are one landmark listed twice in a
+  // screen reader's region list, with nothing to tell them apart. So count the
+  // names first, and number a name's blocks ("bash code block 2") only when
+  // the page has more than one of it.
+  function regionName(preElement) {
+    return (getLanguageLabel(preElement) || 'Code') + ' code block';
+  }
+  function needsRegionName(preElement) {
+    return !!preElement.querySelector('code') &&
+      !preElement.hasAttribute('tabindex') &&
+      !preElement.hasAttribute('aria-label');
+  }
+  var regionNameTotals = {};
+  var regionNameSeen = {};
+  preElements.forEach(function (preElement) {
+    if (!needsRegionName(preElement)) return;
+    var name = regionName(preElement);
+    regionNameTotals[name] = (regionNameTotals[name] || 0) + 1;
+  });
+
   preElements.forEach(function (preElement) {
     var codeElement = preElement.querySelector('code');
     if (!codeElement) return;
+
+    var labelRegion = needsRegionName(preElement);
 
     ensureLineNumbers(preElement, codeElement);
 
@@ -164,8 +187,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!preElement.hasAttribute('tabindex')) {
       preElement.setAttribute('tabindex', '0');
       if (!preElement.hasAttribute('role')) preElement.setAttribute('role', 'region');
-      if (!preElement.hasAttribute('aria-label')) {
-        preElement.setAttribute('aria-label', (getLanguageLabel(preElement) || 'Code') + ' code block');
+      if (labelRegion) {
+        var name = regionName(preElement);
+        if (regionNameTotals[name] > 1) {
+          regionNameSeen[name] = (regionNameSeen[name] || 0) + 1;
+          name += ' ' + regionNameSeen[name];
+        }
+        preElement.setAttribute('aria-label', name);
       }
     }
 

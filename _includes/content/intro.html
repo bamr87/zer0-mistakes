@@ -14,10 +14,6 @@
     - Metadata row: author, dates, category, difficulty, tags, view source
 {% endcomment %}
 {%- include core/i18n.html -%}
-{% if page.collection %}
-  {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
-  {% assign testvar = "collection exists" %}
-{% endif %}
 
 {% comment %} Intro Section {% endcomment %}
 
@@ -53,15 +49,12 @@
 {% endcomment %}
 {% assign repo_branch = site.branch | default: "main" %}
 {% comment %}
-  Only join with "/" when there is a collection directory. Pages outside a
-  collection have an empty page_dir, and the unconditional join produced
-  ".../blob/main//pages/tags.md" (double slash) in the edit/source links.
+  core/source-path.html computes the file once for every GitHub blob link:
+  the collections_dir prefix only for collection docs (no "//" on plain
+  pages), and the template on a pager page n > 1 (issue #538).
 {% endcomment %}
-{% if page_dir and page_dir != "" %}
-  {% assign file_path = page_dir | append: "/" | append: page.path %}
-{% else %}
-  {% assign file_path = page.path %}
-{% endif %}
+{% include core/source-path.html %}
+{% assign file_path = source_path %}
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
 {% assign page_absolute_url = page.url | absolute_url %}
@@ -139,8 +132,24 @@
     {% endfor %}
   {% endif %}
   {% if page.categories contains "docs" %}
+    {% comment %} Docs section badge (issue #486). A page whose only category is
+       "docs" used to link /docs/docs/, and a category with no section index
+       (e.g. "setup") linked a 404. The section root is /docs/ itself, and any
+       other section is linked only when a page or doc at that URL is in the
+       build; otherwise the badge renders as plain text. {% endcomment %}
     {% assign intro_category_slug = intro_category | append: '' | slugify %}
-    {% capture intro_category_url %}{{ site.baseurl }}/docs/{{ intro_category_slug }}/{% endcapture %}
+    {% if intro_category_slug == "docs" %}
+      {% assign intro_docs_section = "/docs/" %}
+    {% else %}
+      {% assign intro_docs_section = "/docs/" | append: intro_category_slug | append: "/" %}
+    {% endif %}
+    {% assign intro_docs_index = site.docs | where: "url", intro_docs_section | first %}
+    {% unless intro_docs_index %}
+      {% assign intro_docs_index = site.html_pages | where: "url", intro_docs_section | first %}
+    {% endunless %}
+    {% if intro_docs_index %}
+      {% capture intro_category_url %}{{ site.baseurl }}{{ intro_docs_section }}{% endcapture %}
+    {% endif %}
   {% else %}
     {% assign intro_category_slug = intro_category | append: '' | slugify %}
     {% if intro_tags_linkable %}

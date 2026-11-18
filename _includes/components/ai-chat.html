@@ -87,7 +87,10 @@
   <div class="ai-chat-header d-flex align-items-center justify-content-between p-3">
     <div class="d-flex align-items-center gap-2">
       <i class="bi {{ site.ai_chat.icon | default: 'bi-robot' }} fs-5" aria-hidden="true"></i>
-      <h6 id="aiChatTitle" class="mb-0 fw-semibold">Zer0 Assistant</h6>
+      {% comment %} An <h2>: the panel is a top-level dialog under <body>, one
+           level below the page's <h1>, like the cookie dialog. The .h6 class
+           keeps the small type; the tag states the depth (#586, #436). {% endcomment -%}
+      <h2 id="aiChatTitle" class="h6 mb-0 fw-semibold">Zer0 Assistant</h2>
     </div>
     <button type="button"
             class="btn btn-sm btn-outline-light border-0"

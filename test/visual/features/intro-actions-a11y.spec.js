@@ -77,6 +77,10 @@ test.describe('Intro actions, nav toggles and badge links (a11y)', () => {
 
   test('badge links keep white text under the neon skin (>= 4.5:1)', async ({ page }) => {
     await waitForJekyll(page, PAGE);
+    // Badge text follows each skin's on-brand ink since #410 (#000 on air,
+    // #fff on neon), and links animate `color` over 0.2s. Freeze transitions
+    // so the switch below is read in its settled state, not mid-fade.
+    await page.addStyleTag({ content: '*, *::before, *::after { transition: none !important; }' });
     await page.evaluate(() => document.documentElement.setAttribute('data-theme-skin', 'neon'));
     const badges = await page.locator('a.badge.bg-primary').evaluateAll((els) =>
       els.slice(0, 5).map((el) => {

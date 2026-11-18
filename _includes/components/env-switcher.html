@@ -14,6 +14,7 @@
   - site.domain_url: Canonical production origin (YAML array joined in Liquid); not overridden by jekyll serve
   - site.url: Overwritten during jekyll serve — do not use alone for “Prod” quick links
   - site.port: Development port (default 4000)
+  - core/source-path.html: the Source link's file (`source_path`)
   - Copy buttons use data-zer0-copy / data-zer0-copy-target, handled by
     the delegated listener in info-section.html (no inline handlers)
   - Bootstrap 5 components
@@ -166,15 +167,18 @@
     {% endunless %}
 
     {% if site.repository %}
-    {% comment %} GitHub Source {% endcomment %}
+    {% comment %} GitHub Source. source_path is the file that generated this
+       page: collections_dir-prefixed for collection docs, the template on a
+       pager page (issue #538). {% endcomment %}
+    {% include core/source-path.html %}
     <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center min-w-0">
         <span class="badge bg-dark me-2">Source</span>
         <span class="font-monospace small text-truncate min-w-0">
-          {{ page.path | split: "/" | last }}
+          {{ source_path | split: "/" | last }}
         </span>
       </div>
-      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch | default: 'main' }}/{% if page.collection %}{{ site.collections_dir }}/{% endif %}{{ page.path }}"
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch | default: 'main' }}/{{ source_path }}"
          target="_blank"
          rel="noopener"
          class="btn btn-sm btn-outline-dark flex-shrink-0"

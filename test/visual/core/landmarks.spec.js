@@ -29,7 +29,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
-const { VIEWPORTS, gotoOrSkip } = require('../fixtures');
+const { VIEWPORTS, gotoOrSkip, dismissCookieConsent } = require('../fixtures');
 
 const LAYOUTS_DIR = path.resolve(__dirname, '../../../_layouts');
 
@@ -251,4 +251,67 @@ test.describe('Landmarks — every navigation landmark is named', () => {
       ).toEqual([]);
     });
   });
+});
+
+// =============================================================================
+// Dialog chrome is not a landmark — the page-feedback dialog (issue #593)
+// =============================================================================
+// The "Improve this page" dialog is a <body> child on every page. Its title
+// bar was a <header> and its button row a <footer>, and outside any sectioning
+// element those ARE `banner` and `contentinfo` landmarks: whenever the dialog
+// was open the page had two of each, both unnamed (axe landmark-no-duplicate-
+// banner, landmark-no-duplicate-contentinfo, landmark-unique). Hidden, the
+// dialog is out of the accessibility tree, so a closed-dialog scan stayed
+// green; the rendered checks below open it first.
+//
+// The `landmark-unique` count the issue measured on a closed page came from
+// elsewhere: code-copy.js makes every <pre> a focusable `region` named
+// "<lang> code block", so two bash blocks were two regions with one name. It
+// now numbers a name's blocks when a page has more than one.
+// =============================================================================
+
+const FEEDBACK_INCLUDE = path.resolve(__dirname, '../../../_includes/components/page-feedback.html');
+const FEEDBACK_ROUTES = ['/', '/docs/installation/'];
+const LANDMARK_RULES = ['landmark-unique', 'landmark-no-duplicate-banner', 'landmark-no-duplicate-contentinfo'];
+
+test.describe('Landmarks — no second banner or contentinfo, no repeated region name (#593)', () => {
+  test('page-feedback.html renders no <header> or <footer> element', { tag: '@critical' }, () => {
+    const body = stripLiquidComments(fs.readFileSync(FEEDBACK_INCLUDE, 'utf8'));
+    expect(
+      body.match(/<\/?(header|footer)\b[^>]*>/g) || [],
+      'the dialog is a <body> child: a <header>/<footer> in it is a second page banner/contentinfo'
+    ).toEqual([]);
+  });
+
+  test('code-block regions each carry a name of their own', async ({ page }) => {
+    await gotoOrSkip(page, '/docs/installation/');
+    // code-copy.js labels the blocks on DOMContentLoaded.
+    await expect(page.locator('pre[role="region"][aria-label]').first()).toBeAttached();
+    const names = await page.$$eval('pre[role="region"][aria-label]', (els) =>
+      els.map((el) => el.getAttribute('aria-label')));
+    expect(names.length, 'the fixture page should have several code blocks').toBeGreaterThan(1);
+    const repeated = names.filter((n, i) => names.indexOf(n) !== i);
+    expect(repeated, `code-block region names repeat on /docs/installation/: ${names.join(' | ')}`).toEqual([]);
+  });
+
+  for (const route of FEEDBACK_ROUTES) {
+    test(`with the dialog open, ${route} passes the axe landmark uniqueness rules`, async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS.desktop);
+      // The consent banner sits above the FAB stack and would take the click.
+      await dismissCookieConsent(page);
+      await gotoOrSkip(page, route);
+
+      const fab = page.locator('#pageFeedbackFab');
+      test.skip((await fab.count()) === 0, 'page feedback is not enabled on this site');
+      await fab.click();
+      const dialog = page.locator('#pageFeedbackModal');
+      await expect(dialog).toBeVisible();
+
+      const results = await new AxeBuilder({ page }).withRules(LANDMARK_RULES).analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+        `axe landmark violations on ${route} with the feedback dialog open`
+      ).toEqual([]);
+    });
+  }
 });

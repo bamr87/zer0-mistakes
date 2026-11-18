@@ -1,0 +1,58 @@
+{%- comment -%}
+  Component:   source-path
+  Path:        _includes/core/source-path.html
+  Purpose:     Assign `source_path`, the repo-relative path of the file that
+               generated the current page. Every GitHub blob link the theme
+               builds reads it, so they all agree.
+  Params:      none. Reads page.path, page.collection, site.collections_dir,
+               paginator and site.paginate_path.
+  Output:      assigns `source_path` (nil when page.path is nil).
+  Used by:     components/env-switcher.html, components/dev-shortcuts.html,
+               components/page-feedback.html, content/intro.html
+  Notes:
+    - Collection documents: Jekyll reports page.path relative to
+      collections_dir, so the prefix is added back
+      (pages/_posts/x.md). With no collections_dir there is no prefix and
+      no "//".
+    - Pager pages (issue #538): on jekyll-paginate page n > 1, page.path is
+      the generated output path (pages/2/index.html), which is not a file in
+      the repo. Such a page resolves to its template instead. jekyll-paginate
+      v1, the GitHub Pages plugin, has no paginator.first_page_path. It picks
+      the index.html in the paginate_path's directory, or in the nearest
+      ancestor that has one, so the same walk runs here against site.pages.
+      If no template is found, page.path stands.
+{%- endcomment -%}
+{%- assign source_path = page.path -%}
+{%- if page.collection -%}
+  {%- capture _sp_collections_dir -%}{{ site.collections_dir }}{%- endcapture -%}
+  {%- if _sp_collections_dir != "" -%}
+    {%- assign source_path = _sp_collections_dir | append: "/" | append: page.path -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if paginator and site.paginate_path -%}
+  {%- if paginator.page > 1 -%}
+    {%- comment -%}
+      Candidate templates, deepest first: "/blog/page/:num/" gives
+      blog/page/index.html, blog/index.html, index.html. The last segment
+      holds :num, so it is not a directory.
+    {%- endcomment -%}
+    {%- assign _sp_segments = site.paginate_path | split: "/" -%}
+    {%- assign _sp_dir_count = _sp_segments | size | minus: 1 -%}
+    {%- assign _sp_prefix = "" -%}
+    {%- assign _sp_candidates = "index.html" -%}
+    {%- for _sp_segment in _sp_segments limit: _sp_dir_count -%}
+      {%- if _sp_segment != "" -%}
+        {%- assign _sp_prefix = _sp_prefix | append: _sp_segment | append: "/" -%}
+        {%- assign _sp_candidates = _sp_prefix | append: "index.html," | append: _sp_candidates -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign _sp_candidates = _sp_candidates | split: "," -%}
+    {%- for _sp_candidate in _sp_candidates -%}
+      {%- assign _sp_template = site.pages | where: "path", _sp_candidate | first -%}
+      {%- if _sp_template -%}
+        {%- assign source_path = _sp_template.path -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}

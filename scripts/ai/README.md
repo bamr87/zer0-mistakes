@@ -31,7 +31,7 @@ Auth from the job env, OAuth first (`CLAUDE_CODE_OAUTH_TOKEN`, then `ANTHROPIC_A
     tools: "Read,Grep,Glob,Bash(gh:*)"
 ```
 
-Inputs: `prompt`, `agent`, `tools`, `mcp`, `system`, `out`, `model`, `max-turns`. Callers in this repo: `issue-autopilot.yml` (triage, verify, resolve) and `visual-evidence-autogen.yml`. Where a lane is the standard shape (gate on a `*_ENABLED` variable, run one agent, open one PR), the hub also offers the reusable `bamr87/bamr87/.github/workflows/ai-lane.yml@main`; the matrix-fed autopilot is deliberately not that shape.
+Inputs: `prompt`, `agent`, `tools`, `mcp`, `system`, `out`, `model`, `max-turns`, `max-budget-usd` (default 10). Callers in this repo: `issue-autopilot.yml` (triage, verify, resolve), `visual-evidence-autogen.yml`, `ai-content-review.yml`, `ci-self-repair.yml` and `ui-audit.yml`; each passes `AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}` so the runner tries the credentials in this repo's order. Where a lane is the standard shape (gate on a `*_ENABLED` variable, run one agent, open one PR), the hub also offers the reusable `bamr87/bamr87/.github/workflows/ai-lane.yml@main`; the matrix-fed autopilot is deliberately not that shape.
 
 ## Metering companions are kit files too
 

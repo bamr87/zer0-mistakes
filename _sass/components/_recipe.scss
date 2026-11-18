@@ -18,7 +18,7 @@
 :root {
   --zer0-recipe-accent: var(--bs-primary);
   --zer0-recipe-surface: var(--bs-tertiary-bg);
-  --zer0-recipe-radius: 0.75rem;
+  --zer0-recipe-radius: var(--zer0-radius-xl);
   // Ingredient lists stay readable at a narrow measure even in a wide column.
   --zer0-recipe-measure: 34rem;
 }
@@ -464,7 +464,7 @@
 .cookbook-cover img {
   width: 100%;
   height: auto;
-  border-radius: 0.35rem 0.75rem 0.75rem 0.35rem;
+  border-radius: 0.35rem 0.75rem 0.75rem 0.35rem; // off-scale: cookbook spine on the left; one cover shape, so the 12px fore-edge stays literal too
   box-shadow:
     inset 0.35rem 0 0.5rem -0.35rem rgba(0, 0, 0, 0.4),
     0 0.6rem 1.25rem rgba(0, 0, 0, 0.2);

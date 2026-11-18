@@ -266,15 +266,11 @@ section,
 }
 
 // Mobile Responsiveness Improvements
+// The hero's mobile type sizes live in ONE rule set: "Improved Mobile Hero
+// Section" below. This block used to set `.bg-primary .display-4` to 2rem and
+// `.bg-primary .lead` to 1rem under the same query; the later block always won
+// (same selectors, same specificity), so those two rules were dead (#390).
 @media (max-width: 768px) {
-  .bg-primary .display-4 {
-    font-size: 2rem;
-  }
-  
-  .bg-primary .lead {
-    font-size: 1rem;
-  }
-  
   .btn-lg {
     padding: 0.625rem 1.25rem;
     font-size: 1rem;
@@ -452,18 +448,21 @@ a:not(.btn) {
   }
 }
 
-// Improved Mobile Hero Section
+// Improved Mobile Hero Section — the one rule set for the hero's mobile type.
+// Both sizes stay literal on purpose: the fluid --zer0-text-display-5 token is
+// clamp(2rem, 5vw, 3rem), whose 2rem floor would enlarge the mobile hero, and
+// the type scale has no 0.95rem step.
 @media (max-width: 768px) {
   .bg-primary {
     padding: 2rem 0 !important;
-    
+
     .display-4 {
-      font-size: 1.75rem;
+      font-size: 1.75rem; // off-scale: below the 2rem floor of --zer0-text-display-5
       line-height: 1.3;
     }
-    
+
     .lead {
-      font-size: 0.95rem;
+      font-size: 0.95rem; // off-scale: no 0.95rem step on the type scale
     }
     
     .btn-lg {
@@ -534,7 +533,7 @@ a:not(.btn) {
     width: 80%;
     height: 2px;
     background-color: currentColor;
-    border-radius: 2px;
+    border-radius: 2px; // off-scale: rounds the ends of a 2px-high active underline
   }
 }
 

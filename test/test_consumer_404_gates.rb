@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# test/test_consumer_404_gates.rb — regression guard for issues #536 / #537.
+# test/test_consumer_404_gates.rb — regression guard for issues #536 / #537 / #486.
 #
 # A remote_theme consumer gets this theme's _includes/ but NOT this repo's
 # root files or pages: no /favicon.ico, no /tags/ index. Two includes used to
@@ -9,6 +9,11 @@
 # badges). A served-page test can't see that — it always runs with this repo's
 # own pages — so this builds tiny throwaway consumer sites that reuse the
 # theme's _includes/ and asserts what each variant renders.
+#
+# #486: the intro's docs-section badge built /docs/<category>/ for every page in
+# the "docs" category, so a page whose only category is "docs" linked
+# /docs/docs/ and a category with no section index linked a 404. The "docs badge"
+# cases pin the existence gate that replaced it.
 #
 # Usage: bundle exec ruby test/test_consumer_404_gates.rb   (exit 0 = pass)
 
@@ -33,13 +38,13 @@ LAYOUT = <<~HTML
   <body>{% include content/intro.html %}</body>
 HTML
 
-def build(files: {}, config: {})
+def build(files: {}, config: {}, page: PAGE)
   Dir.mktmpdir("zer0-consumer-") do |dir|
     src = File.join(dir, "src")
     FileUtils.mkdir_p(File.join(src, "_layouts"))
     FileUtils.cp_r(File.join(REPO, "_includes"), File.join(src, "_includes"))
     File.write(File.join(src, "_layouts", "probe.html"), LAYOUT)
-    File.write(File.join(src, "probe.md"), PAGE)
+    File.write(File.join(src, "probe.md"), page)
     files.each do |rel, body|
       path = File.join(src, rel)
       FileUtils.mkdir_p(File.dirname(path))
@@ -62,6 +67,17 @@ end
 def tag_hrefs(html)
   html.scan(/<a [^>]*href="[^"]*#(?:alpha|beta|guides)"[^>]*>/)
 end
+
+def docs_badge_hrefs(html)
+  html.scan(/<a class="bd-intro-meta-link bd-intro-badge" href="([^"]*)"/).flatten
+end
+
+def docs_page(*categories)
+  "---\nlayout: probe\ntitle: Probe\ncategories: [#{categories.join(', ')}]\n---\nProbe body.\n"
+end
+
+DOCS_INDEX = "---\npermalink: /docs/\ntitle: Docs\n---\nDocs\n"
+SETUP_INDEX = "---\npermalink: /docs/setup/\ntitle: Setup\n---\nSetup\n"
 
 TAGS_PAGE = "---\npermalink: /tags/\ntitle: Tags\n---\nTags\n"
 
@@ -88,11 +104,26 @@ CASES = [
   ["site.tags_page configured, no page -> badges link to it", {},
    { "tags_page" => "/topics/" },
    ->(h) { tag_hrefs(h).size == 3 && h.include?('href="/topics/#beta"') }],
+  ["docs badge: only category docs -> badge links /docs/, never /docs/docs/ (#486)",
+   { "docs/index.md" => DOCS_INDEX }, {},
+   ->(h) { docs_badge_hrefs(h) == ["/docs/"] }, docs_page("docs")],
+  ["docs badge: section with no index page -> plain badge, no 404 link (#486)",
+   { "docs/index.md" => DOCS_INDEX }, {},
+   ->(h) { docs_badge_hrefs(h).empty? && h.include?('<span class="bd-intro-badge">Setup</span>') },
+   docs_page("docs", "setup")],
+  ["docs badge: section index as a page -> badge links it", { "docs/setup.md" => SETUP_INDEX }, {},
+   ->(h) { docs_badge_hrefs(h) == ["/docs/setup/"] }, docs_page("docs", "setup")],
+  ["docs badge: section index as a docs-collection doc -> badge links it",
+   { "_docs/setup.md" => SETUP_INDEX }, { "collections" => { "docs" => { "output" => true } } },
+   ->(h) { docs_badge_hrefs(h) == ["/docs/setup/"] }, docs_page("docs", "setup")],
+  ["docs badge: baseurl site -> badge keeps the baseurl", { "docs/index.md" => DOCS_INDEX },
+   { "baseurl" => "/proj" },
+   ->(h) { docs_badge_hrefs(h) == ["/proj/docs/"] }, docs_page("docs")],
 ].freeze
 
 failed = 0
-CASES.each do |name, files, config, check|
-  html = build(files: files, config: config)
+CASES.each do |name, files, config, check, page|
+  html = build(files: files, config: config, page: page || PAGE)
   if check.call(html)
     puts "  PASS #{name}"
   else
@@ -100,6 +131,7 @@ CASES.each do |name, files, config, check|
     puts "  FAIL #{name}"
     puts "       icon links: #{icon_links(html).inspect}"
     puts "       tag hrefs:  #{tag_hrefs(html).inspect}"
+    puts "       docs badge: #{docs_badge_hrefs(html).inspect}"
   end
 end
 
