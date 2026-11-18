@@ -14,6 +14,12 @@
 #                        `--strict` exits non-zero
 #   UNIQUE               exists only here → your own file, ignored
 #
+# The theme's data registries (_data/theme_skins.yml, _data/theme_backgrounds.yml)
+# are different: remote_theme cannot deliver _data/, so you KEEP a copy, and an
+# IDENTICAL copy is the current one. A copy that differs and is not listed below
+# is STALE (`--strict` exits non-zero; `--fix` refreshes it from the theme); list
+# it here only if you changed it on purpose.
+#
 # Without this file every shadowed file reads as unjustified drift. it-journey
 # shadows ~55 theme files, so an audit there currently reports 55 problems and
 # is useless. Declaring the deliberate ones turns the audit into a short,
@@ -25,7 +31,7 @@
 # Usage from a theme checkout:
 #   ./scripts/bin/audit-consumer --consumer-path /path/to/site
 #   ./scripts/bin/audit-consumer --consumer-path /path/to/site --strict   # CI
-#   ./scripts/bin/audit-consumer --consumer-path /path/to/site --fix      # drop IDENTICAL
+#   ./scripts/bin/audit-consumer --consumer-path /path/to/site --fix      # drop IDENTICAL, refresh STALE data
 # =============================================================================
 
 overrides:
