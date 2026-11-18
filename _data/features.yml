@@ -1603,11 +1603,11 @@ features:
     description: "Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place"
     implemented: true
     prd: [TBD]
-    version: "0.21.4"
+    version: "1.32.0"
     link: "/admin/"
     docs: "/docs/features/admin-dashboard/"
     tags: [admin, dashboard, ui, configuration]
-    date: 2025-12-28
+    date: 2026-11-15
     provenance:
       introduced_in: "0.21.4"
       pr: 57
@@ -1620,6 +1620,11 @@ features:
       includes:
         - "_includes/navigation/admin-nav.html"
         - "_includes/components/admin-tabs.html"
+      styles: "_sass/layouts/_admin.scss"
+      data: "_data/navigation/admin.yml"
+    features:
+      - "Header actions reachable at every width: the first admin_actions entry is a button, the rest open from a \"More actions\" dropdown"
+      - "Sidebar grouped by each item's group: key (Configure / System / Links) under list labels; counts as plain numerals, statuses as a dot plus a word, the active item a skin tint with aria-current"
 
   - id: ZER0-051
     title: "AGENTS.md Cross-Tool Agent Entry Point"

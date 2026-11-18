@@ -19,13 +19,18 @@ layout: root
   - Admin header with page icon, title, and breadcrumb navigation
   - No author byline, reading time, or share buttons
   - Responsive: sidebar collapses to offcanvas on mobile
+  - Header actions stay reachable at every width: the first is a
+    button, the rest sit in a "More actions" dropdown
   - Supports front matter: icon, admin_nav (true/false)
   
   Front Matter Variables:
   - icon: Bootstrap Icon class for header (e.g., "bi-gear")
   - admin_nav: Show admin sidebar navigation (default: true)
   - admin_section: Active section name for sidebar highlighting
-  - admin_actions: Array of {label, url, icon, style} for header buttons
+  - admin_actions: Array of {label, url, icon, style} for header actions.
+    The first renders as a button (style applies, default
+    btn-outline-secondary); any further entries render as items of
+    a "More actions" dropdown (style is ignored there)
   
   Layout Structure:
   1. Admin header with breadcrumbs, icon, title, description, actions
@@ -61,8 +66,8 @@ layout: root
       </ol>
     </nav>
 
-    {% comment %} Title row {% endcomment %}
-    <div class="d-flex align-items-center">
+    {% comment %} Title row (actions wrap onto their own line below md) {% endcomment %}
+    <div class="d-flex flex-wrap align-items-center row-gap-2">
       {% comment %} Mobile sidebar toggle {% endcomment %}
       {% if show_sidebar %}
       <button class="btn btn-outline-secondary me-3 d-lg-none"
@@ -80,7 +85,7 @@ layout: root
       {% else %}
         <i class="bi bi-gear fs-2 me-3 text-primary"></i>
       {% endif %}
-      <div class="me-auto">
+      <div class="admin-header-title me-3">
         <h1 class="h3 mb-0">{{ page.title }}</h1>
         {% if page.excerpt and page.excerpt != empty %}
           <p class="text-body-secondary mb-0 small">{{ page.excerpt | strip_html }}</p>
@@ -90,16 +95,42 @@ layout: root
         {% endif %}
       </div>
 
-      {% comment %} Page-level action buttons (from front matter admin_actions) {% endcomment %}
-      {% if page.admin_actions %}
-      <div class="d-none d-md-flex gap-2 ms-3">
-        {% for action in page.admin_actions %}
-          <a href="{{ action.url | relative_url }}"
-             class="btn btn-sm {{ action.style | default: 'btn-outline-secondary' }}">
-            {% if action.icon %}<i class="{{ action.icon }} me-1"></i>{% endif %}
-            {{ action.label }}
-          </a>
-        {% endfor %}
+      {% comment %}
+        Page-level actions (from front matter admin_actions). The first is a
+        button at every width; any further entries sit in a "More actions"
+        dropdown, so every action is reachable on a phone.
+      {% endcomment %}
+      {% if page.admin_actions and page.admin_actions.size > 0 %}
+      {% assign primary_action = page.admin_actions | first %}
+      <div class="admin-actions d-flex align-items-center gap-2 ms-auto">
+        <a href="{{ primary_action.url | relative_url }}"
+           class="btn btn-sm {{ primary_action.style | default: 'btn-outline-secondary' }}">
+          {% if primary_action.icon %}<i class="{{ primary_action.icon }} me-1" aria-hidden="true"></i>{% endif %}
+          {{ primary_action.label }}
+        </a>
+        {% if page.admin_actions.size > 1 %}
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary"
+                  type="button"
+                  id="adminActionsMenu"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="More actions"
+                  title="More actions">
+            <i class="bi bi-three-dots" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminActionsMenu">
+            {% for action in page.admin_actions offset: 1 %}
+            <li>
+              <a class="dropdown-item" href="{{ action.url | relative_url }}">
+                {% if action.icon %}<i class="{{ action.icon }} me-2" aria-hidden="true"></i>{% endif %}
+                {{ action.label }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
       </div>
       {% endif %}
     </div>
@@ -123,10 +154,8 @@ layout: root
     <div class="col-lg-3 d-none d-lg-block">
       <div class="position-sticky" style="top: 5rem;">
         <nav class="admin-sidebar" aria-label="Admin navigation">
-          <h6 class="text-uppercase text-body-secondary fw-semibold small mb-3">
-            <i class="bi bi-sliders me-1"></i> Administration
-          </h6>
-          {% include navigation/admin-nav.html %}
+          {% comment %} No heading here: the offcanvas header below owns the one "Administration" heading {% endcomment %}
+          {% include navigation/admin-nav.html id_prefix="admin-nav-desktop" %}
         </nav>
       </div>
     </div>
@@ -141,7 +170,7 @@ layout: root
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        {% include navigation/admin-nav.html %}
+        {% include navigation/admin-nav.html id_prefix="admin-nav-offcanvas" %}
       </div>
     </div>
 

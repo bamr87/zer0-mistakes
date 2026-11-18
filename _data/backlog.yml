@@ -1134,8 +1134,8 @@ tasks:
     created: 2026-08-18
     updated: 2026-09-01
   - id: T-041
-    title: "Admin layout: actions reachable on mobile, grouped sidebar, shared sticky offset, single heading"
-    status: open
+    title: "Admin layout: actions reachable on mobile, grouped sidebar, single heading"
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -1149,18 +1149,24 @@ tasks:
       the rest in a "..." dropdown. Group sidebar items under small-caps headers
       (Configure / System / Links) via a group: key in
       _data/navigation/admin.yml; counts as plain numerals, statuses as colored
-      dot + word; active item = tint + semibold, not solid primary fill. Replace
-      style="top: 5rem" with top: calc(var(--zer0-nav-height) + 1rem) (depends
-      on T-039). Keep the "Administration" heading in the offcanvas header only.
+      dot + word; active item = tint + semibold, not solid primary fill. Keep
+      the "Administration" heading in the offcanvas header only. The sticky
+      offset clause (style="top: 5rem" to calc(var(--zer0-nav-height) + 1rem))
+      moved to T-039, which already lists admin.html's top: 5rem among the
+      offsets it derives from --zer0-nav-height. Done 2026-11-15: first action
+      a button at every width, the rest in a "More actions" dropdown; sidebar
+      grouped under list labels (not headings) with plain counts, dot + word
+      statuses and a tinted active item carrying aria-current; one
+      "Administration" heading. Tests in test/visual/features/admin.spec.js,
+      evidence in test/visual/evidence/admin-layout/.
     acceptance:
       - "Every admin action reachable at 375px width."
-      - "Sidebar grouped; no solid-primary active fill; sticky offset uses the shared variable."
+      - "Sidebar grouped; no solid-primary active fill."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 630, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
-    depends_on: [T-039]
+    updated: 2026-11-15
 
   - id: T-042
     title: "Skin contrast sweep: AA link params, tertiary meta text, per-skin badge/button audit"
