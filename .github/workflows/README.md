@@ -124,6 +124,8 @@ Requires: `RUBYGEMS_API_KEY` secret (publish), shared workflow definitions in `b
 
 Runs `bundle update` and opens an automated PR for review. Complements `.github/dependabot.yml`, which only manages GitHub Actions versions.
 
+Requires: `FLEET_TOKEN` secret. The PR is pushed and opened with it, because a PR opened with `GITHUB_TOKEN` runs no CI. The job probes the token with `gh api user` first and fails before pushing if it is missing or rejected.
+
 ### `sync.yml` — Data-file mirrors
 
 **Triggers:** Push to `main` / PRs touching `_data/backlog.yml`, `_data/roadmap.yml`, or their scripts
@@ -240,6 +242,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 ```yaml
 # Required Secrets
 GITHUB_TOKEN            # Automatically provided
+FLEET_TOKEN             # update-dependencies.yml — opens the gem-update PR so its CI runs
 RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
 DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
 CLAUDE_CODE_OAUTH_TOKEN # Claude credential `oauth` — all AI tiers (claude.yml,
