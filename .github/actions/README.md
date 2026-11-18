@@ -152,7 +152,7 @@ The universal AI step — one Claude Code invocation as a named agent (`.claude/
 - uses: bamr87/bamr87/.github/actions/claude-run@main
   env:
     CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional fallback
+    # ANTHROPIC_API_KEY (the API fallback) is disabled for now (2026-11-15) — OAuth only.
   with:
     agent: issue-triager
     prompt: "..."

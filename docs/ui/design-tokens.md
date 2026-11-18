@@ -2,7 +2,7 @@
 title: "Design tokens — quick reference"
 description: "Quick reference for the semantic --zer0-* CSS custom properties used across Zer0-Mistakes, with pointers to the full design-system architecture."
 date: 2026-05-31T20:54:57.000Z
-lastmod: 2026-05-31T20:54:57.000Z
+lastmod: 2026-11-16T12:00:00.000Z
 categories: [docs]
 tags: [ui, styling, theme]
 author: bamr87
@@ -38,6 +38,7 @@ Semantic CSS custom properties (`--zer0-*`) used across zer0-mistakes. For archi
 | `--zer0-color-primary` | `var(--bs-primary)` | `theme_color.main` |
 | `--zer0-color-secondary` | `var(--bs-secondary)` | `theme_color.secondary` |
 | `--zer0-color-accent` | `var(--bd-accent)` | `theme_color.purple` |
+| `--zer0-color-on-primary` | `#fff` | — (each palette skin sets its own: `#000` on the light brands) |
 | `--zer0-color-success` | `var(--bs-success)` | `theme_color.green` |
 | `--zer0-color-info` | `var(--bs-info)` | `theme_color.teal` |
 | `--zer0-color-warning` | `var(--bs-warning)` | `theme_color.yellow` |
@@ -65,7 +66,7 @@ theme_color:
 Strongest first:
 
 1. **Appearance panel.** `localStorage["zer0-appearance"]` is written as an inline style on `<html>`, and an inline style beats any selector.
-2. **The active skin.** The palette skins (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) set `--zer0-color-primary` (and `-rgb`), `--zer0-color-link` (and `-hover`) and `--zer0-color-accent`, together with `--bs-primary` and `--bs-link-color`. So switching skin moves the theme layer and Bootstrap as one.
+2. **The active skin.** The palette skins (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) set `--zer0-color-primary` (and `-rgb`), `--zer0-color-link` (and `-hover`), `--zer0-color-accent` and `--zer0-color-on-primary`, together with `--bs-primary` and `--bs-link-color`. So switching skin moves the theme layer and Bootstrap as one. Each skin's text colours reach WCAG AA (4.5:1) on every surface they are used on; the measured ratios sit beside each skin in `_sass/theme/_skins.scss`, and `test/visual/core/skin-contrast.spec.js` checks them in light and dark.
 3. **`_config.yml` `theme_color`.** It sets every token in the table above. For `primary`, `link` and `accent` this only takes effect when no palette skin is active, as with the `dark` and `contrast` skins. `secondary`, `danger`, `warning`, `success` and `info` are not set by any skin, so they always come from `theme_color`.
 4. **The defaults** in `_sass/tokens/_color.scss`.
 
@@ -105,6 +106,8 @@ Strongest first:
 | `--zer0-radius-xl` | 0.75rem | Landing feature cards |
 | `--zer0-radius-pill` | 50rem | Pills, badges |
 | `--zer0-radius-circle` | 50% | Icon chips, avatars, FABs |
+
+Every rounded surface in `_sass/` uses these tokens, so overriding one (say `--zer0-radius: 0.75rem`) re-rounds the whole theme. A partial never spells out a value the scale names: write `var(--zer0-radius)`, not `0.375rem`. A radius that is deliberately off the scale (a 2px underline, a 10px card corner, a book cover's spine) stays a literal and says why on the same line with an `// off-scale: <why>` comment. There is no `--zer0-radius-md`: the step between `--zer0-radius` and `--zer0-radius-xl` is `--zer0-radius-lg`. `ruby scripts/design-system-check.rb` enforces all three rules (#390).
 
 ---
 

@@ -6,23 +6,32 @@
   Purpose:      Embeds the Giscus widget so page comments are stored as
                 GitHub Discussions (no database, privacy-friendly).
   Location:     _includes/content/giscus.html
-  Usage:        Rendered by the article / note / notebook layouts, gated on
-                `page.comments != false and site.giscus.enabled`.
-                To include manually elsewhere, use the FULL path:
+  Usage:        Rendered by content/comments.html, which owns the gate
+                (`page.comments` and `site.giscus.enabled`), the heading and
+                the section for the article / note / notebook / recipe /
+                book-story layouts. A layout that wants comments includes
+                content/comments.html, not this file. To embed the bare
+                widget elsewhere, use the FULL path:
                   include content/giscus.html   (wrap in Liquid tags)
   Dependencies: site.repository, site.giscus.* (see _config.yml), a public
                 repo with Discussions enabled + the Giscus app installed.
 
   Features:
   • GitHub Discussions-based commenting
-  • Automatic light/dark theme (preferred_color_scheme)
-  • Pathname-based mapping for one thread per page (data-strict)
-  • Reactions enabled, input positioned at the top
+  • Strict title matching for one thread per page (data-strict)
+  • Reactions enabled
 
   Config-driven attributes (from _config.yml `giscus:` block):
-  • data-repo        ← site.repository
-  • data-repo-id     ← site.giscus.data-repo-id
-  • data-category-id ← site.giscus.data-category-id
+  • data-repo           ← site.repository
+  • data-repo-id        ← site.giscus.data-repo-id
+  • data-category-id    ← site.giscus.data-category-id
+  • data-mapping        ← site.giscus.data-mapping        (default: pathname)
+  • data-input-position ← site.giscus.data-input-position (default: top)
+  • data-theme          ← site.giscus.data-theme          (default: preferred_color_scheme)
+  • data-lang           ← site.giscus.data-lang           (default: en)
+  The last four are optional: an unset or blank key keeps the default, so a
+  site that sets none of them renders exactly the tag it rendered before
+  they existed. Values are passed to giscus as given (HTML-escaped).
 
   Docs:      pages/_docs/features/giscus-comments.md
   Reference: https://giscus.app/ (Feature Request #FR000001)
@@ -36,13 +45,13 @@
         data-repo="{{ site.repository }}"
         data-repo-id="{{ site.giscus.data-repo-id }}"
         data-category-id="{{ site.giscus.data-category-id }}"
-        data-mapping="pathname"
+        data-mapping="{{ site.giscus.data-mapping | default: 'pathname' | escape }}"
         data-strict="1"
         data-reactions-enabled="1"
         data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
+        data-input-position="{{ site.giscus.data-input-position | default: 'top' | escape }}"
+        data-theme="{{ site.giscus.data-theme | default: 'preferred_color_scheme' | escape }}"
+        data-lang="{{ site.giscus.data-lang | default: 'en' | escape }}"
         crossorigin="anonymous"
         async>
 </script>

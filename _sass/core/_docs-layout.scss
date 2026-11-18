@@ -428,7 +428,7 @@
     &:focus-visible {
         outline: 2px solid #fff;
         outline-offset: 2px;
-        border-radius: .125rem
+        border-radius: .125rem; // off-scale: 2px focus-ring corner
     }
 }
 

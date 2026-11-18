@@ -26,7 +26,7 @@
     &:focus-visible {
       outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
       outline-offset: 2px;
-      border-radius: 0.25rem;
+      border-radius: var(--zer0-radius-sm);
     }
   }
 }
@@ -128,7 +128,7 @@
     padding: 0.75rem 1rem;
     background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
     border: 1px solid var(--zer0-color-border, var(--bs-border-color));
-    border-radius: 0.625rem;
+    border-radius: 0.625rem; // off-scale: 10px card corner shared with .post-nav-card, between --zer0-radius-lg and -xl
     color: inherit;
     cursor: pointer;
     transition:

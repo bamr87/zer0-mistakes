@@ -642,12 +642,12 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
                         <a href="{{ archives_url | relative_url }}#{{ month.name | slugify }}-{{ year.name }}"
                            class="text-decoration-none">
                           {{ month.name }}
-                          <span class="badge bg-secondary text-body">{{ month.items.size }}</span>
+                          <span class="badge text-bg-secondary">{{ month.items.size }}</span>
                         </a>
                         {% else %}
                         <span>
                           {{ month.name }}
-                          <span class="badge bg-secondary text-body">{{ month.items.size }}</span>
+                          <span class="badge text-bg-secondary">{{ month.items.size }}</span>
                         </span>
                         {% endif %}
                       </li>

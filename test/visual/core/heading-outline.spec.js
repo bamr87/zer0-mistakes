@@ -21,7 +21,7 @@
  * Run: npm run test:smoke
  */
 const { test, expect } = require('@playwright/test');
-const { UI_ROUTES, waitForJekyll } = require('../fixtures');
+const { UI_ROUTES, waitForJekyll, gotoOrSkip } = require('../fixtures');
 
 /** The outline as assistive tech walks it. Hidden headings still count: a
  *  collapsed dialog is in the accessibility tree and reachable by heading
@@ -199,5 +199,62 @@ test.describe('heading outline does not skip levels', { tag: '@critical' }, () =
       `is a font-size choice wearing a structural tag (issue #436). ` +
       `Full-page h5/h6 census for context: ${mismatched.length}`
     ).toEqual([]);
+  });
+});
+
+// Regression: #593. default.html renders page.title as the intro hero's <h1>,
+// and most Markdown pages open with their own `# Title`, so 225 of the 244
+// pages that render the intro exposed two <h1>s (the docs index and nearly
+// every doc page among them). default.html now rewrites the body's first <h1>:
+// dropped (its id kept on an empty span) when it leads the body and repeats
+// the title, demoted to <h2> otherwise. The landing layout behind `/` already
+// hid its body <h1> in CSS; it is asserted here so it stays that way.
+const SINGLE_H1_ROUTES = [
+  { path: UI_ROUTES.home, why: 'home: landing layout' },
+  { path: '/docs/', why: 'docs index: body heading differs from the title' },
+  { path: '/docs/installation/', why: 'doc page: body heading repeats the title' },
+];
+
+test.describe('one h1 per page (#593)', { tag: '@critical' }, () => {
+  for (const { path, why } of SINGLE_H1_ROUTES) {
+    test(`exactly one h1 in the accessibility tree on ${path} (${why})`, async ({ page }) => {
+      await gotoOrSkip(page, path);
+      // getByRole skips what assistive tech cannot reach (display:none,
+      // [hidden]), which is the outline a screen-reader user navigates.
+      const h1s = (await page.getByRole('heading', { level: 1 }).allTextContents())
+        .map((t) => t.replace(/\s+/g, ' ').trim());
+      expect(
+        h1s,
+        `${path} exposes ${h1s.length} level-1 headings. The page title is the ` +
+        `one <h1>; a body heading that repeats it is dropped, any other is an <h2> (issue #593).`
+      ).toHaveLength(1);
+    });
+  }
+
+  test('a leading body h1 that repeats the title is dropped and keeps its anchor', async ({ page }) => {
+    await gotoOrSkip(page, '/docs/installation/');
+    await expect(page.locator('.bd-intro-title')).toHaveText('Installation');
+
+    const body = page.locator('#page-content');
+    await expect(
+      body.getByRole('heading', { name: 'Installation', exact: true }),
+      'the body repeats the title the intro already shows'
+    ).toHaveCount(0);
+
+    // Links to #installation (the TOC entry, old bookmarks) still land.
+    const anchor = body.locator('#installation');
+    await expect(anchor, 'the dropped heading took its id with it').toHaveCount(1);
+    await expect(page.locator('a[href="#installation"]').first()).toBeAttached();
+  });
+
+  test('a body h1 with different text stays visible as an h2', async ({ page }) => {
+    await gotoOrSkip(page, '/docs/');
+    // pages/_docs/index.md opens with `# Zer0-Mistakes Documentation` under the
+    // title "Documentation": the author's words stay, one level down.
+    const heading = page.locator('#page-content #zer0-mistakes-documentation');
+    test.skip((await heading.count()) === 0, 'the docs index no longer opens with its own heading');
+    await expect(heading).toBeVisible();
+    expect(await heading.evaluate((el) => el.tagName)).toBe('H2');
+    await expect(heading).toHaveText('Zer0-Mistakes Documentation');
   });
 });

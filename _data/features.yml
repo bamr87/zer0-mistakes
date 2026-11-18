@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.29.0
-# Last Updated: 2026-10-21
+# Version: 1.31.3
+# Last Updated: 2026-11-15
 
 # PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
 prd: docs/architecture/prd-requirements.md
@@ -591,6 +591,7 @@ features:
     title: "Automated Version Bump Workflow"
     description: "Removed in v1.20.0 — the manual version-bump GitHub Actions workflow was superseded by the release-please pipeline (see ZER0-015). Kept for ID stability and historical reference"
     implemented: false
+    status: deprecated
     prd: ["Feature 5"]
     removed_in: "1.20.0"
     superseded_by: "ZER0-015"
@@ -1147,14 +1148,14 @@ features:
 
   - id: ZER0-035
     title: "Giscus Comments"
-    description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
+    description: "GitHub Discussions-powered comments with a configurable widget theme, mapping, input position and language, one gated section for every layout, reactions, and Claude-Code-driven conversations"
     implemented: true
     prd: [TBD]
-    version: "0.1.0"
+    version: "1.32.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
     tags: [comments, github, discussions, engagement, claude-code]
-    date: 2025-01-01
+    date: 2026-11-15
     provenance:
       introduced_in: "0.1.0"
       pr: null
@@ -1162,10 +1163,12 @@ features:
       issue: null
     tests:
       - "test/visual/features/comments.spec.js"
+      - "test/test_giscus_config.rb"
     references:
       includes:
+        - "_includes/content/comments.html"
         - "_includes/content/giscus.html"
-      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html"]
+      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html", "_layouts/recipe.html", "_layouts/book-story.html"]
       config: "_config.yml"
       script: "scripts/bin/giscus-discussions"
       skill: ".github/skills/giscus-conversation/SKILL.md"
@@ -1174,11 +1177,11 @@ features:
         - "pages/_docs/features/giscus-comments.md"
     features:
       - "GitHub Discussions integration"
-      - "Automatic theme detection"
-      - "Pathname-based mapping"
+      - "Widget theme from giscus.data-theme: follows the visitor's OS (preferred_color_scheme) by default, or a fixed theme such as transparent_dark for a dark skin (#574)"
+      - "Page-to-discussion mapping from giscus.data-mapping (pathname by default; url, title, og:title)"
       - "Reaction support"
-      - "Top-positioned input"
-      - "Consistent site.giscus.enabled gating across layouts"
+      - "Comment box position from giscus.data-input-position (top by default) and widget language from giscus.data-lang (en by default)"
+      - "One comment section for every layout (content/comments.html): gated on site.giscus.enabled, on by default in article/note/notebook, opt-in (comments: true) in recipe/book-story; a consumer layout needs one include line"
       - "Claude Code conversation building (read/draft/seed/post via gh)"
 
   - id: ZER0-036
@@ -1514,11 +1517,11 @@ features:
     description: "Three-file welcome starter (_config.yml + Gemfile + index.md) that bootstraps a working remote-theme site with no scaffolding required. Footer, welcome, and info partials degrade gracefully when collections are empty"
     implemented: true
     prd: [TBD]
-    version: "1.2.0"
+    version: "1.32.0"
     link: "/"
     docs: "/docs/quickstart/bare-minimum/"
     tags: [setup, quickstart, remote-theme, github-pages]
-    date: 2026-02-25
+    date: 2026-11-15
     provenance:
       introduced_in: "1.2.0"
       pr: null
@@ -1526,11 +1529,17 @@ features:
       issue: null
     tests:
       - "test/test_site_generation.sh"
+      - "test/test_newsletter_gate.rb"
+      - "test/visual/core/footer-newsletter.spec.js"
     references:
       includes:
         - "_includes/components/info-section.html"
         - "_includes/core/footer.html"
       layout: "_layouts/welcome.html"
+      config: "_config.yml"
+      docs: "pages/_docs/quickstart/bare-minimum.md"
+    features:
+      - "Footer newsletter signup is opt-in: it renders only when a provider endpoint is configured (newsletter.endpoint, else news.newsletter.endpoint) and then POSTs the address there; enabled: false hides it, and with no form the policy links span the row (#554)"
 
   - id: ZER0-047
     title: "Site Configuration Detection & Smart 404"
@@ -1602,11 +1611,11 @@ features:
     description: "Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place"
     implemented: true
     prd: [TBD]
-    version: "0.21.4"
-    link: "/admin/"
+    version: "1.32.0"
+    link: "/about/config/"
     docs: "/docs/features/admin-dashboard/"
     tags: [admin, dashboard, ui, configuration]
-    date: 2025-12-28
+    date: 2026-11-15
     provenance:
       introduced_in: "0.21.4"
       pr: 57
@@ -1619,6 +1628,11 @@ features:
       includes:
         - "_includes/navigation/admin-nav.html"
         - "_includes/components/admin-tabs.html"
+      styles: "_sass/layouts/_admin.scss"
+      data: "_data/navigation/admin.yml"
+    features:
+      - "Header actions reachable at every width: the first admin_actions entry is a button, the rest open from a \"More actions\" dropdown"
+      - "Sidebar grouped by each item's group: key (Configure / System / Links) under list labels; counts as plain numerals, statuses as a dot plus a word, the active item a skin tint with aria-current"
 
   - id: ZER0-051
     title: "AGENTS.md Cross-Tool Agent Entry Point"
@@ -1762,6 +1776,7 @@ features:
     title: "Local Docker Publishing Pipeline"
     description: "Removed in v1.8.1 — the dedicated docker-compose.publish.yml / docker-compose.prod.yml local-publish path was retired; gem publishing now runs through the release-please CI pipeline (see ZER0-015) and scripts/bin/release. Kept for ID stability"
     implemented: false
+    status: deprecated
     prd: ["Feature 10"]
     removed_in: "1.8.1"
     superseded_by: "ZER0-015"
@@ -2642,9 +2657,10 @@ features:
     title: "zer0 studio — the Rails theme workbench"
     description: "A Rails 8.1 app at studio/ that designs, customizes and updates this theme from a browser: token and skin editors with live diffs and WCAG contrast, a read-only theme doctor, docs-site preview builds shown in a cross-origin iframe, consumer-site registration with the audit as a live-logged job, the version lockstep table, release dry runs and the consumer pin matrix. Every write is a digest-guarded atomic rename of a file the allow-list names; every script run is the theme's own"
     implemented: true
+    prd: ["Feature 13"]
     version: "1.32.0"
     link: "https://github.com/bamr87/zer0-mistakes/tree/main/studio"
-    docs: "studio/README.md"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/studio/README.md"
     tags: [studio, rails, design-tokens, skins, doctor, preview, consumers, release]
     date: 2026-10-21
     provenance:

@@ -140,6 +140,13 @@ en: &DEFAULT_EN
   diagram_error_hint         : "Check the syntax in the Mermaid Live Editor. The source is shown below so nothing is lost."
   diagram_source_label       : "Diagram source"
   diagram_loading            : "Loading diagram"
+  # Footer newsletter signup (#554) — core/footer.html renders it only when a
+  # provider endpoint is configured (`newsletter:` in _config.yml) and carries a
+  # literal `| default:` for each (see the language-menu note above).
+  newsletter_label           : "Newsletter signup"
+  newsletter_email_label     : "Email"
+  newsletter_placeholder     : "Enter your email"
+  newsletter_subscribe       : "Subscribe"
 
 en-US:
   <<: *DEFAULT_EN
