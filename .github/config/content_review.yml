@@ -181,7 +181,7 @@ collections:
 # AI (Claude Code agent) tier
 # -------------------------------------------------------------------------
 ai_review:
-  enabled: true                  # gated on ANTHROPIC_API_KEY at runtime
+  enabled: true                  # gated on CLAUDE_CODE_OAUTH_TOKEN at runtime (OAuth only; ANTHROPIC_API_KEY disabled for now, 2026-11-15)
   model: "claude-sonnet-5-5"
   max_files_per_run: 20
   post_inline_comments: true
