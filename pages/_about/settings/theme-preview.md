@@ -6,12 +6,15 @@ icon: bi-easel
 permalink: /about/settings/theme-preview/
 excerpt: Live style guide — preview skins, color modes, and component coverage in one place.
 admin_section: Theme Preview
-lastmod: 2026-05-24T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 admin_actions:
   - label: Theme Customizer
     url: /about/settings/theme/
     icon: bi-palette
     style: btn-outline-primary
+  - label: Component Showcase
+    url: /about/settings/components/
+    icon: bi-grid-3x3-gap
 ---
 
 {% include components/theme-controls-bar.html show_status=true %}

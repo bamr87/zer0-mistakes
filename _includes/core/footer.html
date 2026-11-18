@@ -7,20 +7,25 @@
   File: footer.html
   Path: _includes/footer.html
   Purpose: Rich footer inspired by bashconsultants with Powered-by row,
-           branding/contact, quick links, social/RSS, subscribe form, and
-           policy links. Fully responsive with Bootstrap 5 utilities.
+           branding/contact, quick links, social/RSS, an opt-in newsletter
+           signup, and policy links. Fully responsive with Bootstrap 5 utilities.
   
   Template Logic:
   - Top row: "Powered by" credits from site.powered_by
   - Branding block: Site title, optional address/phone/email
   - Quick links: Common pages (adjust as needed)
   - Social links: site.links with icons + RSS feed
-  - Subscribe form: Non-functional placeholder endpoint (/subscribe)
+  - Newsletter signup: only when a provider endpoint is configured
+    (site.newsletter, else site.news.newsletter); the form POSTs the email
+    to that endpoint. With none, no form renders and the policy links
+    take the whole row
   - Bottom bar: Dynamic copyright year
   
   Dependencies:
   - site.powered_by: Framework and service credits
   - site.links: Social media and affiliate links
+  - site.newsletter: Newsletter provider (enabled, endpoint, method,
+    email_field); falls back to site.news.newsletter
   - site.default_icon: Icon framework (Bootstrap Icons)
   - core/i18n.html: UI strings (per-page language via the `lang` param)
   - Bootstrap 5 classes provided by the theme
@@ -223,25 +228,38 @@
           </div>
         </div>
 
-        {% comment %} Middle: Subscribe + Policies {% endcomment %}
+        {%- comment -%}
+          Middle: newsletter signup + policies. The signup renders only when it
+          can work (#554): a provider endpoint from the top-level `newsletter:`
+          block, falling back to `news.newsletter:` (the news band's block in
+          _layouts/news.html), so one provider lights up both. `enabled: false`
+          hides it. A blank endpoint counts as unset, because '' is truthy in
+          Liquid. There is deliberately no mailto: fallback here. Without a
+          form, the policy links take the whole row.
+        {%- endcomment -%}
+        {%- assign _footer_nl = site.newsletter | default: site.news.newsletter -%}
+        {%- assign _footer_nl_endpoint = _footer_nl.endpoint | strip -%}
+        {%- assign _footer_nl_on = false -%}
+        {%- assign _footer_policy_cols = "col-12 text-center" -%}
+        {%- if _footer_nl_endpoint != "" and _footer_nl.enabled != false -%}
+          {%- assign _footer_nl_on = true -%}
+          {%- assign _footer_policy_cols = "col-12 col-md-4 col-lg-4 text-md-end text-lg-end" -%}
+        {%- endif -%}
         <div class="row mb-3 mb-lg-4 align-items-center justify-content-center g-2 footer-subscribe-row">
+          {% if _footer_nl_on %}
           <div class="col-12 col-md-8 col-lg-8">
-            <form class="row g-2 footer-subscribe-form" aria-label="Newsletter signup" onsubmit="return false;">
+            <form class="row g-2 footer-subscribe-form" aria-label="{{ ui.newsletter_label | default: 'Newsletter signup' | escape }}" action="{{ _footer_nl_endpoint | escape }}" method="{{ _footer_nl.method | default: 'post' | escape }}">
               <div class="col-8 col-md-8">
-                <label for="footer-email" class="visually-hidden">Email</label>
-                <input type="email" name="email" id="footer-email" class="form-control" placeholder="Enter your email" autocomplete="email" disabled aria-describedby="footer-subscribe-hint">
+                <label for="footer-email" class="visually-hidden">{{ ui.newsletter_email_label | default: "Email" }}</label>
+                <input type="email" name="{{ _footer_nl.email_field | default: 'email' | escape }}" id="footer-email" class="form-control" placeholder="{{ ui.newsletter_placeholder | default: 'Enter your email' | escape }}" autocomplete="email" required>
               </div>
               <div class="col-4 col-md-4">
-                <button type="button" class="btn btn-primary w-100" disabled title="Configure a newsletter endpoint in your site config">Subscribe</button>
-              </div>
-              <div class="col-12">
-                {% comment %} The describedby target must stay in the a11y tree at every width (#522); the d-none paragraph is the sighted ≥md duplicate only. {% endcomment %}
-                <span id="footer-subscribe-hint" class="visually-hidden">Newsletter is a placeholder until you connect a provider.</span>
-                <p class="small text-white-50 mb-0 d-none d-md-block" aria-hidden="true">Newsletter is a placeholder until you connect a provider.</p>
+                <button type="submit" class="btn btn-primary w-100">{{ ui.newsletter_subscribe | default: "Subscribe" }}</button>
               </div>
             </form>
           </div>
-          <div class="col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links">
+          {% endif %}
+          <div class="{{ _footer_policy_cols }} footer-policy-links">
             <ul class="list-inline mb-0">
               {% comment %} Only render policy links whose pages exist (or that are explicitly configured). {% endcomment %}
               {% assign _privacy_needle = "|/privacy-policy/|" %}

@@ -78,6 +78,8 @@ ruby scripts/tag-features --check        # source-file tags (…--write to apply
 # or, both plus the README-count check:  ./test/test_runner.sh --suites features
 ```
 
+The PRD's generated "Feature catalog" block in `docs/architecture/prd-requirements.md` has its own gate: `.github/workflows/governance.yml` runs the hub's `governance_lint.py check .` and fails a PR whose block no longer matches the registry. Regenerate it in the same commit as any registry edit, never by hand, with `python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write`, then confirm with `… check .`. A removed feature also needs `status: deprecated`, or the block lists it as `planned`.
+
 ## 🔄 Validate (REQUIRED)
 
 After every edit:
@@ -113,7 +115,7 @@ Add, modify, or flag (`implemented: false` + `removed_in:`) an entry **in the sa
 | Renaming or moving referenced files | Update every affected `references:` block |
 | Accepting a feature request that is not built yet | Add a `ZER0-NNN` entry with `implemented: false` + `status: planned` (no `removed_in`, `provenance` or `tests` until it ships) |
 | Shipping a planned feature | Set `implemented: true`, drop `status: planned`, add `provenance` + `tests` + `references` |
-| Removing a feature | Set `implemented: false`, add `removed_in: "X.Y.Z"`, keep the entry |
+| Removing a feature | Set `implemented: false`, add `removed_in: "X.Y.Z"` and `status: deprecated`, keep the entry |
 | Cutting a release (`./scripts/bin/release …`) | Bump the `# Version:` header to the new gem version, refresh `# Last Updated:` |
 
 Documentation-only changes (typos, formatting in `pages/features.md` or `features/README.md`) do **not** require a `version` bump on individual feature entries.
@@ -128,6 +130,7 @@ Documentation-only changes (typos, formatting in `pages/features.md` or `feature
 - [ ] Every active feature has a `provenance:` block and a `tests:` block
 - [ ] `ruby scripts/validate-features.rb` passes (the canonical gate)
 - [ ] `ruby scripts/tag-features --check` passes (referenced source files carry their `Feature: ZER0-NNN` comment; `--write` applies them)
+- [ ] The PRD feature block is regenerated (`python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write`) and `… check .` reports ok
 - [ ] Jekyll renders the showcase page without Liquid errors:
       `docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'`
 

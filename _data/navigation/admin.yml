@@ -1,58 +1,76 @@
+# Feature: ZER0-050
 # Admin Navigation Configuration
 # Used by: _includes/navigation/admin-nav.html
 # Purpose: Data-driven sidebar navigation for admin/settings pages
-# Schema: title, url, icon, description, badge (optional), external (optional)
+# Schema: title, url, icon, group, description, badge (optional), external (optional)
+#   group: sidebar section the item is listed under (Configure / System / Links).
+#          Sections render in order of first appearance, each under a small-caps
+#          label; items without a group render in one unlabelled list, so a data
+#          file written before groups existed keeps working.
+#   badge: static text shown after the title as a plain numeral or word.
 
-# ── Admin Pages ──────────────────────────────────────────────────
+# ── Configure ────────────────────────────────────────────────────
 
 - title: Configuration
   url: /about/config/
   icon: bi-gear
+  group: Configure
   description: View and export site configuration
-
-- title: Statistics
-  url: /about/stats/
-  icon: bi-bar-chart-line
-  description: Content analytics and metrics
 
 - title: Theme Customizer
   url: /about/settings/theme/
   icon: bi-palette
+  group: Configure
   description: Skin, colors, and typography
 
 - title: Theme Preview
   url: /about/settings/theme-preview/
   icon: bi-easel
+  group: Configure
   description: Live component style guide
 
 - title: Navigation Editor
   url: /about/settings/navigation/
   icon: bi-signpost-2
+  group: Configure
   description: Menu structure and links
+
+# ── System ───────────────────────────────────────────────────────
+
+- title: Statistics
+  url: /about/stats/
+  icon: bi-bar-chart-line
+  group: System
+  description: Content analytics and metrics
 
 - title: Collection Manager
   url: /about/settings/collections/
   icon: bi-collection
+  group: System
   description: Jekyll collections overview
 
 - title: Analytics Dashboard
   url: /about/settings/analytics/
   icon: bi-graph-up
+  group: System
   description: PostHog and tracking settings
 
 - title: Environment & Build
   url: /about/settings/environment/
   icon: bi-hdd-network
+  group: System
   description: Jekyll, Ruby, and build info
 
-# ── External Links ───────────────────────────────────────────────
+# ── Links ────────────────────────────────────────────────────────
 
 - title: Repository
   url: https://github.com/{github_user}/{repository_name}
   icon: bi-github
+  group: Links
   external: true
 
 - title: Jekyll Docs
   url: https://jekyllrb.com/docs/configuration/
   icon: bi-book
+  group: Links
   external: true

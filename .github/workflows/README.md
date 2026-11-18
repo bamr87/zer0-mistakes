@@ -10,13 +10,15 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 ├───────────────────────────────────────────────────────────────────────┤
 │                                                                       │
 │  Pull request ──────► ci.yml, evidence-gate.yml, secret-scan.yml,    │
+│                       governance.yml,                                │
 │                       visual-evidence-autogen.yml (same-repo UI PRs),│
 │                       ai-content-review.yml*, codeql.yml*,           │
 │                       install-matrix.yml*, sync.yml* (path-filtered*)│
 │                                                                       │
 │  Push to main ──────► release.yml (release-please) ─► release PR     │
 │                       merge of release PR ─► tag + gem publish       │
-│                       ci.yml, test-latest.yml, sync.yml, …           │
+│                       ci.yml, governance.yml, test-latest.yml,       │
+│                       sync.yml, …                                    │
 │                                                                       │
 │  Schedules ─────────► test-latest.yml (daily canary),                │
 │                       update-dependencies.yml, install-matrix.yml,   │
@@ -80,6 +82,12 @@ Fails a PR if credential shapes (Anthropic/GitHub tokens, private keys) appear i
 
 Runs `actionlint` over the workflow definitions, plus a guard that the `quality-checks` job in `ci.yml` keeps its always-runs invariant.
 
+### `governance.yml` — Governance check
+
+**Triggers:** Pull Requests (all), push to `main`, Manual dispatch
+
+Runs the fleet governance check, `tools/governance_lint.py check .` from the [bamr87/bamr87](https://github.com/bamr87/bamr87) hub, fetched at its `v2` tag. The generated "Feature catalog" block in `docs/architecture/prd-requirements.md` must equal what `prd-sync` renders from `_data/features.yml`. Every catalog `status:` must be a fleet status, every `prd:` ref must resolve in the PRD, and `docs/constitution.md` and `docs/amendments/` must be well formed. Errors fail the job and show as annotations; warnings, such as a feature that names no PRD requirement, do not. A stale block is regenerated, never hand-edited: `python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write`, using a hub checkout at `v2` if the hub's `main` renders differently. The job has no path filter, because the rendering also depends on which `link`/`docs` paths exist in the repo. Added for [#591](https://github.com/bamr87/zer0-mistakes/issues/591), after the block had drifted from the catalog with nothing to catch it.
+
 ### `codeql.yml` — CodeQL Security Scanning
 
 **Triggers:** Push/PR to `main` (code paths only), Weekly schedule
@@ -98,7 +106,7 @@ trigger: `main` is protected, so every change already ran this on its PR.
 
 **Triggers:** Push to `main` (code/docker paths), Daily schedule, Manual dispatch
 
-Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile.
+Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile. Build, tests and publish run in one job (`build-test-publish`), so the image never leaves the runner's Docker daemon; the publish steps run only on `main` or with the `force_publish` dispatch input, and `debug-failure` lists the latest Ruby and Bundler versions when the build or a test fails.
 
 ## Release & Dependencies
 
@@ -115,6 +123,8 @@ Requires: `RUBYGEMS_API_KEY` secret (publish), shared workflow definitions in `b
 **Triggers:** Weekly schedule, Manual dispatch
 
 Runs `bundle update` and opens an automated PR for review. Complements `.github/dependabot.yml`, which only manages GitHub Actions versions.
+
+Requires: `FLEET_TOKEN` secret. The PR is pushed and opened with it, because a PR opened with `GITHUB_TOKEN` runs no CI. The job probes the token with `gh api user` first and fails before pushing if it is missing or rejected.
 
 ### `sync.yml` — Data-file mirrors
 
@@ -135,7 +145,7 @@ Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview; pushe
 
 **Triggers:** Push to `main` touching `templates/deploy/chat-proxy/`, Manual dispatch
 
-Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. It no longer uploads `ANTHROPIC_API_KEY` to the Worker (the key is disabled for now, 2026-11-15); the Worker keeps whatever Anthropic credential is already set on the Cloudflare side.
 
 ## Automation & AI Pipeline
 
@@ -143,15 +153,15 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 **Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
 
-Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
+Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential is set and content actually changed), run through the fleet's `claude-run` step: the credential in this repo's `CLAUDE_AUTH_ORDER`, `claude-sonnet-5-5`, 30 turns, a $10 cap, metered; (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`). Kill switch for tier 2 only: `AI_CONTENT_REVIEW_ENABLED=false`.
 
-**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice.
+**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice. The guard also treats an answer from the runner's single-shot API fallback as no review: that call has no tools, so it cannot have read the diff.
 
 ### `issue-autopilot.yml` — Issue autopilot
 
 **Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
 
-One bounded pass of the autonomous issue pipeline: gate → triage (label/route open issues) → verify-close (close human issues already fixed on `main`, CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). See `docs/systems/continuous-evolution.md`.
+One bounded pass of the autonomous issue pipeline: gate → triage (label/route open issues) → verify-close (close human issues already fixed on `main`, CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). An `autopilot:go` label starts a run only when the repository owner applied it. Each agent step is turn-capped (triage 20, verify 20, resolve 60) under the `claude-run` default $10 cap, and each job that runs one has a timeout. See `docs/systems/continuous-evolution.md`.
 
 ### `issue-pr-auto-merge.yml` — Issue PR auto-merge
 
@@ -169,7 +179,7 @@ Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist 
 
 **Triggers:** `workflow_run` completion of the Comprehensive CI Pipeline
 
-For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths. Stands down when the only red job is `Visual Snapshots` — stale baselines are producible artifacts that `visual-evidence-autogen.yml` owns.
+For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless (the fleet's `claude-run` step: `claude-sonnet-5-5`, 40 turns, a $10 cap, metered) to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths. Stands down when the only red job is `Visual Snapshots` — stale baselines are producible artifacts that `visual-evidence-autogen.yml` owns. Kill switch: `CI_SELF_REPAIR_ENABLED=false`.
 
 ### `milestone-assign.yml` — Milestone assignment
 
@@ -181,7 +191,7 @@ Assigns merged PRs to the milestone when exactly one is open; otherwise no-op.
 
 **Triggers:** Weekly schedule (Mon 07:23 UTC), Manual dispatch
 
-Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential. Findings land in one sticky issue labeled `source:ui-audit`.
+Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential and run through the fleet's `claude-run` step (`claude-sonnet-5-5`, 40 turns, a $10 cap, metered; read tools only, in the `default` permission mode, so a tool outside that grant is refused). Findings land in one sticky issue labeled `source:ui-audit`. Kill switch for the scheduled audit: `UI_AUDIT_ENABLED=false` (a manual dispatch always runs).
 
 **The serve step must not use `--detach`.** It disables Jekyll's watch thread, which the LiveReload reactor rides on — leaving `livereload_port: 35729` bound but silent while pages still load `livereload.js`. The hanging subresource blocks `load`, so every `page.goto(..., waitUntil: 'load')` times out. The `curl -sf` readiness gate cannot detect this (it never requests a subresource), which is how the audit captured **zero** evidence for six weeks while reporting success ([#321](https://github.com/bamr87/zer0-mistakes/issues/321)). Keep the invocation in step with `test/test_playwright.sh:69-74`: background it with `&`, and stop it in an `always()` step.
 
@@ -222,6 +232,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 | Claude review actually ran (no silent-green non-review) | `python3 scripts/ci/test_agent_review_result.py` | `ai-content-review.yml` (guard) · `ci.yml` → `test` (its tests) | PR (docs/content changes) |
 | Secret shapes in diff/PR body | — | `secret-scan.yml` | PR (always) |
 | Workflow definitions (actionlint + invariants) | `actionlint` | `lint-workflows.yml` | PR + push (workflow changes) |
+| PRD feature block ↔ `_data/features.yml`, catalog statuses and `prd:` refs, constitution + amendments | `python3 <bamr87/bamr87>/tools/governance_lint.py check .` | `governance.yml` | PR + push (always) |
 | Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + push to main |
 | Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code paths) + weekly |
 | Installer cross-platform matrix | `./scripts/bin/test install` | `install-matrix.yml` | PR (installer paths) + weekly |
@@ -231,12 +242,14 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 ```yaml
 # Required Secrets
 GITHUB_TOKEN            # Automatically provided
+FLEET_TOKEN             # update-dependencies.yml — opens the gem-update PR so its CI runs
 RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
 DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
-CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential — all AI tiers (claude.yml,
-                        # ai-content-review, ci-self-repair, ui-audit, autopilot)
-ANTHROPIC_API_KEY       # Fallback Claude credential — same AI tiers, used only
-                        # when CLAUDE_CODE_OAUTH_TOKEN is absent
+CLAUDE_CODE_OAUTH_TOKEN # Claude credential `oauth` — all AI tiers (claude.yml,
+                        # ai-content-review, ci-self-repair, ui-audit, autopilot,
+                        # visual-evidence-autogen)
+ANTHROPIC_API_KEY       # DISABLED for now (2026-11-15): Claude auth is OAuth only;
+                        # no workflow reads it. Re-add the references to restore.
 CLOUDFLARE_API_TOKEN    # Chat proxy deploy
 CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 
@@ -244,8 +257,11 @@ CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 ISSUE_AUTOPILOT_ENABLED / ISSUE_RESOLVE_ENABLED / ISSUE_AUTOCLOSE_ENABLED /
 ISSUE_VERIFY_CLOSE_ENABLED / ISSUE_AUTOMERGE_ENABLED
 
-# Kill switch (default ON — set to `false` to stop the lane)
+# Kill switches (default ON — set to `false` to stop the lane)
 VISUAL_EVIDENCE_AUTOGEN_ENABLED   # visual-evidence-autogen.yml
+AI_CONTENT_REVIEW_ENABLED         # ai-content-review.yml (the Claude tier only)
+CI_SELF_REPAIR_ENABLED            # ci-self-repair.yml
+UI_AUDIT_ENABLED                  # ui-audit.yml (scheduled runs; dispatch bypasses)
 ```
 
 ## Composite Actions Used
@@ -257,7 +273,7 @@ Shared composite actions live in `.github/actions/`:
 - `test-suite` — theme test suite execution
 - `playwright-tests` — Playwright tier runner with artifact upload
 - `configure-git` — git identity for automated commits
-- `claude-run` — the universal Claude Code step for the issue autopilot
+- `claude-run` — the universal Claude Code step (consumed from the hub) behind every AI lane here except the `@claude` handler: issue autopilot, visual-evidence autogen, content review, CI self-repair, UI audit
 
 See [`.github/actions/README.md`](../actions/README.md).
 
