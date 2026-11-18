@@ -10,13 +10,15 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 ├───────────────────────────────────────────────────────────────────────┤
 │                                                                       │
 │  Pull request ──────► ci.yml, evidence-gate.yml, secret-scan.yml,    │
+│                       governance.yml,                                │
 │                       visual-evidence-autogen.yml (same-repo UI PRs),│
 │                       ai-content-review.yml*, codeql.yml*,           │
 │                       install-matrix.yml*, sync.yml* (path-filtered*)│
 │                                                                       │
 │  Push to main ──────► release.yml (release-please) ─► release PR     │
 │                       merge of release PR ─► tag + gem publish       │
-│                       ci.yml, test-latest.yml, sync.yml, …           │
+│                       ci.yml, governance.yml, test-latest.yml,       │
+│                       sync.yml, …                                    │
 │                                                                       │
 │  Schedules ─────────► test-latest.yml (daily canary),                │
 │                       update-dependencies.yml, install-matrix.yml,   │
@@ -79,6 +81,12 @@ Fails a PR if credential shapes (Anthropic/GitHub tokens, private keys) appear i
 **Triggers:** PR/push touching `.github/workflows/**` or `.github/actions/**`
 
 Runs `actionlint` over the workflow definitions, plus a guard that the `quality-checks` job in `ci.yml` keeps its always-runs invariant.
+
+### `governance.yml` — Governance check
+
+**Triggers:** Pull Requests (all), push to `main`, Manual dispatch
+
+Runs the fleet governance check, `tools/governance_lint.py check .` from the [bamr87/bamr87](https://github.com/bamr87/bamr87) hub, fetched at its `v2` tag. The generated "Feature catalog" block in `docs/architecture/prd-requirements.md` must equal what `prd-sync` renders from `_data/features.yml`. Every catalog `status:` must be a fleet status, every `prd:` ref must resolve in the PRD, and `docs/constitution.md` and `docs/amendments/` must be well formed. Errors fail the job and show as annotations; warnings, such as a feature that names no PRD requirement, do not. A stale block is regenerated, never hand-edited: `python3 <bamr87/bamr87>/tools/governance_lint.py prd-sync . --write`, using a hub checkout at `v2` if the hub's `main` renders differently. The job has no path filter, because the rendering also depends on which `link`/`docs` paths exist in the repo. Added for [#591](https://github.com/bamr87/zer0-mistakes/issues/591), after the block had drifted from the catalog with nothing to catch it.
 
 ### `codeql.yml` — CodeQL Security Scanning
 
@@ -222,6 +230,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 | Claude review actually ran (no silent-green non-review) | `python3 scripts/ci/test_agent_review_result.py` | `ai-content-review.yml` (guard) · `ci.yml` → `test` (its tests) | PR (docs/content changes) |
 | Secret shapes in diff/PR body | — | `secret-scan.yml` | PR (always) |
 | Workflow definitions (actionlint + invariants) | `actionlint` | `lint-workflows.yml` | PR + push (workflow changes) |
+| PRD feature block ↔ `_data/features.yml`, catalog statuses and `prd:` refs, constitution + amendments | `python3 <bamr87/bamr87>/tools/governance_lint.py check .` | `governance.yml` | PR + push (always) |
 | Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + push to main |
 | Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code paths) + weekly |
 | Installer cross-platform matrix | `./scripts/bin/test install` | `install-matrix.yml` | PR (installer paths) + weekly |
