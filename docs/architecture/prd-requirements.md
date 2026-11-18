@@ -696,7 +696,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-047](../../_data/features.yml) | Site Configuration Detection & Smart 404 | shipped | [`404.html`](../../404.html) · route `/docs/features/smart-404/` | TBD |
 | [ZER0-048](../../_data/features.yml) | Config-Driven Frontmatter Validation | shipped | route `/` · route `/docs/development/frontmatter-validation/` | TBD |
 | [ZER0-049](../../_data/features.yml) | Dynamic Collection-Based Navigation Fallback | shipped | route `/` · route `/docs/features/dynamic-navigation/` | TBD |
-| [ZER0-050](../../_data/features.yml) | Admin Layout & Configuration Dashboards | shipped | route `/admin/` · route `/docs/features/admin-dashboard/` | TBD |
+| [ZER0-050](../../_data/features.yml) | Admin Layout & Configuration Dashboards | shipped | route `/about/config/` · route `/docs/features/admin-dashboard/` | TBD |
 | [ZER0-051](../../_data/features.yml) | AGENTS.md Cross-Tool Agent Entry Point | shipped | [link](https://github.com/bamr87/zer0-mistakes/blob/main/AGENTS.md) · route `/docs/development/agents/` | Feature 7 |
 | [ZER0-052](../../_data/features.yml) | Data-Driven Roadmap with Auto-Generated Diagram | shipped | route `/roadmap/` | TBD |
 | [ZER0-053](../../_data/features.yml) | Vendored Bootstrap & Icon Assets | shipped | route `/` · route `/docs/features/vendored-assets/` | TBD |
@@ -734,7 +734,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-085](../../_data/features.yml) | Visual Evidence Autogen | shipped | route `/` · route `/docs/development/testing/` | TBD |
 | [ZER0-086](../../_data/features.yml) | Claude-Guided Site Builder | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
 | [ZER0-087](../../_data/features.yml) | Bring-Your-Own AI Provider (Claude or Grok) and Open Site Builder Sessions | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
-| [ZER0-088](../../_data/features.yml) | zer0 studio — the Rails theme workbench | shipped | [link](https://github.com/bamr87/zer0-mistakes/tree/main/studio) · [`studio/README.md`](../../studio/README.md) | Feature 13 |
+| [ZER0-088](../../_data/features.yml) | zer0 studio — the Rails theme workbench | shipped | [link](https://github.com/bamr87/zer0-mistakes/tree/main/studio) · [docs](https://github.com/bamr87/zer0-mistakes/blob/main/studio/README.md) | Feature 13 |
 
 **Requirement → feature trace**
 
