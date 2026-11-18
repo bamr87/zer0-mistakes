@@ -106,7 +106,7 @@ trigger: `main` is protected, so every change already ran this on its PR.
 
 **Triggers:** Push to `main` (code/docker paths), Daily schedule, Manual dispatch
 
-Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile.
+Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile. Build, tests and publish run in one job (`build-test-publish`), so the image never leaves the runner's Docker daemon; the publish steps run only on `main` or with the `force_publish` dispatch input, and `debug-failure` lists the latest Ruby and Bundler versions when the build or a test fails.
 
 ## Release & Dependencies
 
