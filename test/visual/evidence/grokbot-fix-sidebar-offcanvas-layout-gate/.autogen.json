@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "grokbot-fix-sidebar-offcanvas-layout-gate",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "c6decdef57ecd33868af194a396019922d011bb2",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-11-03T05:15:34+00:00"
+}
