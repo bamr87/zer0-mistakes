@@ -1,0 +1,225 @@
+{
+  "slug": "admin-layout",
+  "before": "http://127.0.0.1:4062",
+  "after": "http://127.0.0.1:4061",
+  "header": [
+    {
+      "width": 375,
+      "before": {
+        "viewport": 375,
+        "headerActionsInDom": 1,
+        "headerActionsVisible": 0,
+        "moreActionsToggle": false,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 2,
+        "sidebarGroupLabels": [],
+        "sidebarBadgePills": 3,
+        "activeAriaCurrent": null,
+        "activeBackground": "rgb(13, 110, 253)",
+        "activeColor": "rgb(255, 255, 255)"
+      },
+      "after": {
+        "viewport": 375,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 1,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      },
+      "afterMenuOpen": {
+        "viewport": 375,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 2,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      }
+    },
+    {
+      "width": 768,
+      "before": {
+        "viewport": 768,
+        "headerActionsInDom": 1,
+        "headerActionsVisible": 1,
+        "moreActionsToggle": false,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 2,
+        "sidebarGroupLabels": [],
+        "sidebarBadgePills": 3,
+        "activeAriaCurrent": null,
+        "activeBackground": "rgb(13, 110, 253)",
+        "activeColor": "rgb(255, 255, 255)"
+      },
+      "after": {
+        "viewport": 768,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 1,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      },
+      "afterMenuOpen": {
+        "viewport": 768,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 2,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      }
+    },
+    {
+      "width": 1280,
+      "before": {
+        "viewport": 1280,
+        "headerActionsInDom": 1,
+        "headerActionsVisible": 1,
+        "moreActionsToggle": false,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 2,
+        "sidebarGroupLabels": [],
+        "sidebarBadgePills": 3,
+        "activeAriaCurrent": null,
+        "activeBackground": "rgb(13, 110, 253)",
+        "activeColor": "rgb(255, 255, 255)"
+      },
+      "after": {
+        "viewport": 1280,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 1,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      },
+      "afterMenuOpen": {
+        "viewport": 1280,
+        "headerActionsInDom": 2,
+        "headerActionsVisible": 2,
+        "moreActionsToggle": true,
+        "headerOverflowPx": 0,
+        "administrationHeadings": 1,
+        "sidebarGroupLabels": [
+          "Configure",
+          "System",
+          "Links"
+        ],
+        "sidebarBadgePills": 0,
+        "activeAriaCurrent": "page",
+        "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+        "activeColor": "rgb(0, 0, 0)"
+      }
+    }
+  ],
+  "sidebar": {
+    "width": 1280,
+    "route": "/about/config/",
+    "before": {
+      "viewport": 1280,
+      "headerActionsInDom": 0,
+      "headerActionsVisible": 0,
+      "moreActionsToggle": false,
+      "headerOverflowPx": 0,
+      "administrationHeadings": 2,
+      "sidebarGroupLabels": [],
+      "sidebarBadgePills": 3,
+      "activeAriaCurrent": null,
+      "activeBackground": "rgb(13, 110, 253)",
+      "activeColor": "rgb(255, 255, 255)"
+    },
+    "after": {
+      "viewport": 1280,
+      "headerActionsInDom": 0,
+      "headerActionsVisible": 0,
+      "moreActionsToggle": false,
+      "headerOverflowPx": 0,
+      "administrationHeadings": 1,
+      "sidebarGroupLabels": [
+        "Configure",
+        "System",
+        "Links"
+      ],
+      "sidebarBadgePills": 0,
+      "activeAriaCurrent": "page",
+      "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+      "activeColor": "rgb(0, 0, 0)"
+    }
+  },
+  "offcanvas": {
+    "width": 375,
+    "route": "/about/config/",
+    "before": {
+      "viewport": 375,
+      "headerActionsInDom": 0,
+      "headerActionsVisible": 0,
+      "moreActionsToggle": false,
+      "headerOverflowPx": 0,
+      "administrationHeadings": 2,
+      "sidebarGroupLabels": [],
+      "sidebarBadgePills": 3,
+      "activeAriaCurrent": null,
+      "activeBackground": "rgb(13, 110, 253)",
+      "activeColor": "rgb(255, 255, 255)"
+    },
+    "after": {
+      "viewport": 375,
+      "headerActionsInDom": 0,
+      "headerActionsVisible": 0,
+      "moreActionsToggle": false,
+      "headerOverflowPx": 0,
+      "administrationHeadings": 1,
+      "sidebarGroupLabels": [
+        "Configure",
+        "System",
+        "Links"
+      ],
+      "sidebarBadgePills": 0,
+      "activeAriaCurrent": "page",
+      "activeBackground": "color(srgb 0.435294 0.658824 0.862745 / 0.14)",
+      "activeColor": "rgb(0, 0, 0)"
+    }
+  }
+}
