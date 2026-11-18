@@ -106,7 +106,7 @@ trigger: `main` is protected, so every change already ran this on its PR.
 
 **Triggers:** Push to `main` (code/docker paths), Daily schedule, Manual dispatch
 
-Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile.
+Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile. Build, tests and publish run in one job (`build-test-publish`), so the image never leaves the runner's Docker daemon; the publish steps run only on `main` or with the `force_publish` dispatch input, and `debug-failure` lists the latest Ruby and Bundler versions when the build or a test fails.
 
 ## Release & Dependencies
 
@@ -145,7 +145,7 @@ Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview; pushe
 
 **Triggers:** Push to `main` touching `templates/deploy/chat-proxy/`, Manual dispatch
 
-Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. It no longer uploads `ANTHROPIC_API_KEY` to the Worker (the key is disabled for now, 2026-11-15); the Worker keeps whatever Anthropic credential is already set on the Cloudflare side.
 
 ## Automation & AI Pipeline
 
@@ -248,10 +248,8 @@ DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
 CLAUDE_CODE_OAUTH_TOKEN # Claude credential `oauth` — all AI tiers (claude.yml,
                         # ai-content-review, ci-self-repair, ui-audit, autopilot,
                         # visual-evidence-autogen)
-ANTHROPIC_API_KEY       # Claude credential `api_key` — same AI tiers. Which one
-                        # is tried first is the CLAUDE_AUTH_ORDER variable
-                        # (default oauth,api_key); on the claude-run lanes a
-                        # refused credential hands over to the next
+ANTHROPIC_API_KEY       # DISABLED for now (2026-11-15): Claude auth is OAuth only;
+                        # no workflow reads it. Re-add the references to restore.
 CLOUDFLARE_API_TOKEN    # Chat proxy deploy
 CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 

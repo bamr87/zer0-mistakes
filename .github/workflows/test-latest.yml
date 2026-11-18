@@ -77,17 +77,25 @@ env:
 
 jobs:
   # ==========================================================================
-  # Stage 1: Build with Latest Dependencies
+  # Build, test and publish in ONE job
   # ==========================================================================
-  build-latest:
-    name: Build (Latest Deps)
+  # The image stays in this runner's Docker daemon from the build to the push.
+  # As three jobs (build → test → publish) it crossed runners as an artifact
+  # tarball, saved and uploaded once, then downloaded and loaded twice: about
+  # 2-3 billed minutes a run spent moving the image.
+  build-test-publish:
+    name: Build, Test & Publish (Latest Deps)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     outputs:
-      image_tag: ${{ steps.tag.outputs.tag }}
-      build_date: ${{ steps.tag.outputs.date }}
-    
+      # The last test step's outcome. debug-failure reads it, so a failure in
+      # the publish steps (Docker Hub) is not reported as a dependency break.
+      tests_outcome: ${{ steps.htmlproofer.outcome }}
+
     steps:
+      # ------------------------------------------------------------------------
+      # Stage 1: Build with Latest Dependencies
+      # ------------------------------------------------------------------------
       - name: Checkout Repository
         uses: actions/checkout@v7
 
@@ -164,68 +172,38 @@ jobs:
           docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm jekyll bundle list >> $GITHUB_STEP_SUMMARY 2>&1 || true
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Save Docker Image
-        run: |
-          # List all images to debug
-          echo "📋 Available images:"
-          docker images | grep -E "(zer0-mistakes|jekyll)" || true
-          echo ""
-          echo "📋 Docker compose images:"
-          docker compose -f docker-compose.yml -f docker-compose.test.yml images || true
-          echo ""
-          # Get the image ID
-          IMAGE_ID=$(docker compose -f docker-compose.yml -f docker-compose.test.yml images -q jekyll)
-          if [ -z "$IMAGE_ID" ]; then
-            echo "⚠️  No image found with 'docker compose images -q jekyll', trying docker images..."
-            IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
-          fi
-          echo "💾 Saving image: $IMAGE_ID"
-          docker save -o /tmp/jekyll-image.tar $IMAGE_ID
-
-      - name: Upload Docker Image Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: docker-image
-          path: /tmp/jekyll-image.tar
-          retention-days: 1
-
-  # ==========================================================================
-  # Stage 2: Run Tests
-  # ==========================================================================
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    needs: build-latest
-    timeout-minutes: 15
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
-      - name: Download Docker Image
-        uses: actions/download-artifact@v8
-        with:
-          name: docker-image
-          path: /tmp
-
-      - name: Load Docker Image
+      - name: Resolve Built Image
+        id: image
+        env:
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          # Take the ID from docker load's own output. `docker images | head -1`
-          # returned whichever image on the runner was newest (a preinstalled
-          # agent-firewall image), so validation ran in the wrong container.
-          OUTPUT=$(docker load -i /tmp/jekyll-image.tar)
-          echo "$OUTPUT"
-          IMAGE_ID=$(echo "$OUTPUT" | awk '/Loaded image ID:/ {print $4}' | head -1)
-          if [[ -z "${IMAGE_ID}" ]]; then
-            echo "::error::docker load reported no image ID"
+          # Name the image the build step above produced; never guess one.
+          # `docker compose images` lists only the images of existing
+          # containers (none are left after `run --rm`), and
+          # `docker images | head -1` returns an arbitrary image on current
+          # runners (a preinstalled one, or the compose `validate` service's).
+          # If the build left no image by that name, the run fails here.
+          if [[ "${EVENT_NAME}" == 'schedule' ]]; then
+            # The jekyll service's image, as `docker compose build` named it
+            IMAGE_REF=$(docker compose -f docker-compose.yml -f docker-compose.test.yml config --images jekyll)
+          else
+            IMAGE_REF='zer0-mistakes-jekyll:dev-test'
+          fi
+          if ! IMAGE_ID=$(docker image inspect --format '{{.Id}}' "${IMAGE_REF}") || [[ -z "${IMAGE_ID}" ]]; then
+            echo "::error::The build left no image named '${IMAGE_REF}'"
+            docker images
             exit 1
           fi
-          echo "📋 Loaded image ID: $IMAGE_ID"
-          # Tag it for easy reference
-          docker tag $IMAGE_ID zer0-mistakes-jekyll-test:latest
+          echo "📋 Built image: ${IMAGE_REF} (${IMAGE_ID})"
+          echo "id=${IMAGE_ID}" >> "$GITHUB_OUTPUT"
+          # The test steps below run this tag
+          docker tag "${IMAGE_ID}" zer0-mistakes-jekyll-test:latest
           echo "✅ Tagged as zer0-mistakes-jekyll-test:latest"
 
+      # ------------------------------------------------------------------------
+      # Stage 2: Run Tests
+      # ------------------------------------------------------------------------
       - name: Run Validation
         id: validation
         run: |
@@ -309,7 +287,8 @@ jobs:
             }
 
       - name: Generate Test Summary
-        if: always()
+        # Whenever the tests ran: the build half produced an image for them
+        if: always() && steps.image.outcome == 'success'
         run: |
           echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -320,53 +299,25 @@ jobs:
           echo "| RSpec Tests | ${{ steps.rspec.outcome }} |" >> $GITHUB_STEP_SUMMARY
           echo "| HTML Proofer | ${{ steps.htmlproofer.outcome }} |" >> $GITHUB_STEP_SUMMARY
 
-  # ==========================================================================
-  # Stage 3: Publish (Only on main branch success)
-  # ==========================================================================
-  publish:
-    name: Publish Image
-    runs-on: ubuntu-latest
-    needs: [build-latest, test]
-    if: github.ref == 'refs/heads/main' || inputs.force_publish
-    timeout-minutes: 10
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
-      - name: Download Docker Image
-        uses: actions/download-artifact@v8
-        with:
-          name: docker-image
-          path: /tmp
-
-      - name: Load Docker Image
-        id: load
-        run: |
-          set -euo pipefail
-          OUTPUT=$(docker load -i /tmp/jekyll-image.tar)
-          echo "$OUTPUT"
-
-          IMAGE_ID=$(echo "$OUTPUT" | awk '/Loaded image ID:/ {print $4}' | head -1)
-          if [[ -z "${IMAGE_ID}" ]]; then
-            echo "::error::docker load reported no image ID"
-            exit 1
-          fi
-
-          echo "image_id=${IMAGE_ID}" >> "$GITHUB_OUTPUT"
-          docker tag "${IMAGE_ID}" zer0-mistakes-jekyll-test:latest
-
+      # ------------------------------------------------------------------------
+      # Stage 3: Publish (Only on main branch success)
+      # ------------------------------------------------------------------------
+      # Gated per step. A step `if:` without a status function also requires
+      # every earlier step to have succeeded, so nothing is pushed unless the
+      # build and all the tests above passed.
       - name: Login to Docker Hub
+        if: github.ref == 'refs/heads/main' || inputs.force_publish
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Tag and Push Immutable Image
+        if: github.ref == 'refs/heads/main' || inputs.force_publish
         run: |
           IMAGE=${{ env.DOCKER_IMAGE }}
-          TAG=${{ needs.build-latest.outputs.image_tag }}
-          SOURCE_IMAGE=${{ steps.load.outputs.image_id }}
+          TAG=${{ steps.tag.outputs.tag }}
+          SOURCE_IMAGE=${{ steps.image.outputs.id }}
           
           echo "📦 Tagging image: ${IMAGE}:${TAG}"
           docker tag ${SOURCE_IMAGE} ${IMAGE}:${TAG}
@@ -382,10 +333,12 @@ jobs:
           echo "- \`${IMAGE}:latest\` (updated)" >> $GITHUB_STEP_SUMMARY
 
       - name: Save Latest Tag Reference
+        if: github.ref == 'refs/heads/main' || inputs.force_publish
         run: |
-          echo "${{ needs.build-latest.outputs.image_tag }}" > LATEST_SUCCESSFUL_TAG
-          
+          echo "${{ steps.tag.outputs.tag }}" > LATEST_SUCCESSFUL_TAG
+
       - name: Upload Tag Reference
+        if: github.ref == 'refs/heads/main' || inputs.force_publish
         uses: actions/upload-artifact@v7
         with:
           name: latest-tag
@@ -398,8 +351,10 @@ jobs:
   debug-failure:
     name: Debug Failure
     runs-on: ubuntu-latest
-    needs: [build-latest, test]
-    if: failure()
+    needs: [build-test-publish]
+    # A build or test failure only, as before the merge: once the tests have
+    # passed, a failure is in the publish steps, not a dependency break.
+    if: failure() && needs.build-test-publish.outputs.tests_outcome != 'success'
     
     steps:
       - name: Show Incompatibility Info

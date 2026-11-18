@@ -1381,6 +1381,37 @@ test_cookie_consent_gate() {
     fi
 }
 
+test_newsletter_gate() {
+    log_info "Testing the footer newsletter form renders only with a configured provider (issue #554)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the newsletter gate check"
+        return 0
+    fi
+
+    # Builds throwaway sites through the real footer include, so it needs the
+    # bundle (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the newsletter gate check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_newsletter_gate.rb; then
+        log_success "footer newsletter form follows the newsletter config"
+        return 0
+    else
+        log_error "newsletter gate check failed (see above)"
+        return 1
+    fi
+}
+
 test_build_overlay_recipe() {
     log_info "Testing the documented safe-mode build overlay is Pages-faithful (issue #565)..."
 
@@ -2065,6 +2096,7 @@ run_core_tests() {
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
+    run_test "Newsletter Gate" "test_newsletter_gate" "unit"
     run_test "Build Overlay Recipe" "test_build_overlay_recipe" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"

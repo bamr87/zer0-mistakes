@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-a11y-ui-audit-486/ -->
+  (evidence: [`test/visual/evidence/fix-a11y-ui-audit-486/`](test/visual/evidence/fix-a11y-ui-audit-486/README.md))
