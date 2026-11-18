@@ -42,8 +42,11 @@
     background-color: var(--bs-tertiary-bg);
   }
   
+  // Current page: the strong link shade on the subtle fill. #0d6efd was
+  // 3.42:1 on #cfe2ff; the palette skins set the same colour on these
+  // anchors in _sass/theme/_skins.scss.
   &.active {
-    color: var(--bs-primary);
+    color: var(--bs-link-hover-color);
     background-color: var(--bs-primary-bg-subtle);
     font-weight: 500;
   }
@@ -56,6 +59,11 @@
 
 // Navigation Tree Toggle Buttons
 .nav-tree-toggle {
+  // WCAG 2.5.8 target size: the chevron-only toggles (`btn-sm p-1`) rendered
+  // 22px wide and failed axe `target-size` on every sidebar page. The
+  // full-width section toggles are already larger, so this only grows those.
+  min-width: 24px;
+  min-height: 24px;
   color: var(--bs-body-color);
   text-decoration: none;
   border: none;
@@ -116,7 +124,7 @@
   color: var(--bs-secondary-color);
   
   &.active {
-    color: var(--bs-primary);
+    color: var(--bs-link-hover-color);
   }
 }
 

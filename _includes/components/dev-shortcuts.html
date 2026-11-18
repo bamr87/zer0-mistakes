@@ -9,23 +9,17 @@
   Purpose: Provide quick access to source code editing in various IDEs
   
   Dependencies:
-  - site.repository, site.branch, site.collections_dir, site.local_git, site.repository_name
-  - page.collection, page.path
+  - site.repository, site.branch, site.local_git, site.repository_name
+  - core/source-path.html (`source_path`: collections_dir prefix, pager template)
   - is_production (from env-detect.html in info-section.html) — vscode:// link only when not production
   ===================================================================
 {% endcomment %}
 
-{% comment %} Determine page directory for collections (same segments as GitHub blob links) {% endcomment %}
-{% if page.collection %}
-  {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
-{% else %}
-  {% assign page_dir = "" %}
-{% endif %}
-
-{% assign rel_site_path = page.path %}
-{% if page_dir != "" %}
-  {% assign rel_site_path = page_dir | append: "/" | append: page.path %}
-{% endif %}
+{% comment %} The page's source file, as every GitHub blob link resolves it
+   (collection docs get the collections_dir prefix; a pager page n > 1 its
+   template, issue #538). {% endcomment %}
+{% include core/source-path.html %}
+{% assign rel_site_path = source_path %}
 
 {% assign git_home = site.local_git | join: "" %}
 {% assign vscode_full_path = git_home | append: "/" | append: site.repository_name | append: "/" | append: rel_site_path %}

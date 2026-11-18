@@ -2,7 +2,7 @@
 applyTo: "_layouts/**"
 description: "Jekyll layout development guidelines for Zer0-Mistakes theme"
 date: 2026-05-18T12:00:00.000Z
-lastmod: 2026-05-18T12:00:00.000Z
+lastmod: 2026-11-15T12:00:00.000Z
 ---
 
 # Jekyll Layout Guidelines
@@ -71,6 +71,8 @@ Components: `card`, `navbar`, `modal`, `accordion`, `offcanvas`. Wire JS via `da
 ## Accessibility (non-negotiable)
 
 - One `<h1>` per page; heading levels never skip.
+- `default.html` owns the page `<h1>`: its intro hero renders `page.title`. When the intro renders, the body's **first** `<h1>` is rewritten once (issue #593): dropped when it leads the body and its text is the title (compared through `slugify`, so case, punctuation and a decorative emoji do not count), with its `id` kept on an empty `<span>` so `#anchor` links and the TOC entry still land; demoted to `<h2>`, attributes and text intact, in every other case. The TOC is built from the original `content`, so its entries do not change. A layout that prints its own title must add itself to the `_skip_intro` list (article, note, recipe, cookbook) or set `hide_intro: true`; otherwise its heading is demoted. The landing layout, which does not inherit `default.html`, hides its body `<h1>` in CSS instead (`.landing-content-body > h1:first-of-type`).
+- A component rendered as a `<body>` child (a dialog, an overlay) never uses `<header>`/`<footer>` for its own bars: outside a sectioning element they are page-level `banner`/`contentinfo` landmarks (#593). Use a `<div>`.
 - All `<img>` have `alt` (empty `alt=""` only for purely decorative).
 - All interactive elements have a visible focus ring (do not strip `:focus-visible`).
 - Modals: `aria-labelledby`, focus trap, restore focus on close.

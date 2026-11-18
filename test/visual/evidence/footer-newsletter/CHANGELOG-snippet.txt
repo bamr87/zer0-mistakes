@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/footer-newsletter/`](test/visual/evidence/footer-newsletter/README.md) — default site: newsletter form 1 → 0, disabled footer controls 2 → 0; with newsletter.endpoint: an enabled form that POSTs the address)

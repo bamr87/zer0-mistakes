@@ -38,6 +38,7 @@ Semantic CSS custom properties (`--zer0-*`) used across zer0-mistakes. For archi
 | `--zer0-color-primary` | `var(--bs-primary)` | `theme_color.main` |
 | `--zer0-color-secondary` | `var(--bs-secondary)` | `theme_color.secondary` |
 | `--zer0-color-accent` | `var(--bd-accent)` | `theme_color.purple` |
+| `--zer0-color-on-primary` | `#fff` | — (each palette skin sets its own: `#000` on the light brands) |
 | `--zer0-color-success` | `var(--bs-success)` | `theme_color.green` |
 | `--zer0-color-info` | `var(--bs-info)` | `theme_color.teal` |
 | `--zer0-color-warning` | `var(--bs-warning)` | `theme_color.yellow` |
@@ -65,7 +66,7 @@ theme_color:
 Strongest first:
 
 1. **Appearance panel.** `localStorage["zer0-appearance"]` is written as an inline style on `<html>`, and an inline style beats any selector.
-2. **The active skin.** The palette skins (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) set `--zer0-color-primary` (and `-rgb`), `--zer0-color-link` (and `-hover`) and `--zer0-color-accent`, together with `--bs-primary` and `--bs-link-color`. So switching skin moves the theme layer and Bootstrap as one.
+2. **The active skin.** The palette skins (`air`, `aqua`, `dirt`, `neon`, `mint`, `plum`, `sunrise`) set `--zer0-color-primary` (and `-rgb`), `--zer0-color-link` (and `-hover`), `--zer0-color-accent` and `--zer0-color-on-primary`, together with `--bs-primary` and `--bs-link-color`. So switching skin moves the theme layer and Bootstrap as one. Each skin's text colours reach WCAG AA (4.5:1) on every surface they are used on; the measured ratios sit beside each skin in `_sass/theme/_skins.scss`, and `test/visual/core/skin-contrast.spec.js` checks them in light and dark.
 3. **`_config.yml` `theme_color`.** It sets every token in the table above. For `primary`, `link` and `accent` this only takes effect when no palette skin is active, as with the `dark` and `contrast` skins. `secondary`, `danger`, `warning`, `success` and `info` are not set by any skin, so they always come from `theme_color`.
 4. **The defaults** in `_sass/tokens/_color.scss`.
 

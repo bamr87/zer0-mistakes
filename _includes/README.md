@@ -14,6 +14,7 @@ Essential layout components that form the foundation of the site:
 - `footer.html` - Site footer (if exists)
 - `branding.html` - Site branding and title display
 - `i18n.html` - Resolves the per-page-language UI-string set into the `ui` variable (generated translations fall back to English)
+- `source-path.html` - Resolves `source_path`, the repo file that generated the page, for every GitHub blob link (intro, env-switcher, dev-shortcuts, page-feedback): `page.path` with the `collections_dir` prefix for collection docs, and the pagination template on a `jekyll-paginate` page n > 1
 - `hreflang.html` - `<link rel="alternate" hreflang>` tags for pages with machine-generated translations
 
 ### `navigation/`
@@ -86,7 +87,8 @@ Content-specific features and enhancements:
 
 - `seo.html` - SEO meta tags and structured data
 - `toc.html` - Table of contents generation
-- `giscus.html` - GitHub Discussions comment system
+- `comments.html` - Comment section (gate, heading, giscus widget) used by every layout that shows comments
+- `giscus.html` - GitHub Discussions comment widget; theme, mapping, input position and language come from `_config.yml` `giscus:`
 - `intro.html` - Page introduction section
 - `sitemap.html` - Sitemap generation
 
