@@ -44,7 +44,10 @@ jobs:
   repair:
     name: Self-repair
     # Only failed PR runs whose head is in THIS repo (never a fork).
+    # Kill switch: repo variable CI_SELF_REPAIR_ENABLED=false stops the lane
+    # without a commit; unset means on, as before the switch existed.
     if: >-
+      vars.CI_SELF_REPAIR_ENABLED != 'false' &&
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.head_repository.full_name == github.repository
@@ -122,25 +125,13 @@ jobs:
         if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
         run: gh run view "$RUN_ID" --log-failed 2>/dev/null | tail -c 16000 > /tmp/ci-failure.log || true
 
-      - name: Install Claude Code
+      # The prompt is the checked-in instructions plus the failing log, so it is
+      # assembled here — the same text as before — and handed to the model step
+      # as one input.
+      - name: Build the self-repair prompt
+        id: prompt
         if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Run Claude self-repair (headless)
-        if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-            echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY set — skipping self-repair (PR will be gated)."; exit 0
-          fi
-          # House convention: OAuth wins when both are set — drop the API key
-          # entirely so an empty-string secret never triggers empty-key auth.
-          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-            unset ANTHROPIC_API_KEY
-          fi
-          set +e
           PROMPT="$(cat .github/prompts/ci-self-repair.prompt.md)
 
           --- Failing CI run #${RUN_ID} on branch \`${BRANCH}\`. The log excerpt below
@@ -150,13 +141,39 @@ jobs:
           \`\`\`
           $(cat /tmp/ci-failure.log 2>/dev/null)
           \`\`\`"
-          claude -p "$PROMPT" \
-            --model claude-sonnet-5-5 \
-            --max-turns 40 \
-            --permission-mode acceptEdits \
-            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(bundle:*),Bash(ruby:*),Bash(rake:*),Bash(npm:*),Bash(npx:*),Bash(./scripts/bin/test:*),Bash(./scripts/bin/validate:*),Bash(./scripts/validate:*),Bash(./test/test_runner.sh:*),Bash(git diff:*),Bash(git status:*),Bash(sed:*),Bash(grep:*),Bash(cat:*),Bash(ls:*)" \
-            --output-format text 2>&1 | tail -50
-          echo "claude exit: ${PIPESTATUS[0]}"
+          # A random delimiter: the log is untrusted, and a fixed one could be
+          # closed from inside it to write a second step output.
+          delim="PROMPT_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          {
+            echo "text<<${delim}"
+            printf '%s\n' "$PROMPT"
+            echo "${delim}"
+          } >> "$GITHUB_OUTPUT"
+
+      # The fleet's AI step (bamr87/bamr87 .github/actions/claude-run): it
+      # installs the CLI, takes the credential in this repo's CLAUDE_AUTH_ORDER
+      # (a refused one hands over to the next), enforces the dollar cap and
+      # meters the call. With no credential it is a no-op, and the PR is gated
+      # below. It runs with `--permission-mode acceptEdits`, as this step did.
+      #
+      # `continue-on-error`: an agent that failed, hit a cap or changed nothing
+      # must not end the job here — the next step decides what happens to the
+      # PR (push a fix, or draft + `agent-hold`), exactly as when this step
+      # swallowed the CLI's exit status itself.
+      - name: Run Claude self-repair (headless)
+        if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
+        continue-on-error: true
+        uses: bamr87/bamr87/.github/actions/claude-run@main
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}
+        with:
+          prompt: ${{ steps.prompt.outputs.text }}
+          tools: "Read,Edit,Write,Grep,Glob,Bash(bundle:*),Bash(ruby:*),Bash(rake:*),Bash(npm:*),Bash(npx:*),Bash(./scripts/bin/test:*),Bash(./scripts/bin/validate:*),Bash(./scripts/validate:*),Bash(./test/test_runner.sh:*),Bash(git diff:*),Bash(git status:*),Bash(sed:*),Bash(grep:*),Bash(cat:*),Bash(ls:*)"
+          model: claude-sonnet-5-5
+          max-turns: "40"
+          max-budget-usd: "10"
 
       - name: Push fix, or gate to draft
         if: steps.gate.outputs.go == 'true'
