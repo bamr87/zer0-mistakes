@@ -90,18 +90,12 @@
   children:
     - title: Jekyll Overview
       url: /docs/jekyll/
-    - title: Configuration
-      url: /docs/jekyll/jekyll-config/
-    - title: Liquid Templating
-      url: /docs/jekyll/jekyll-liquid/
+    - title: Collections
+      url: /docs/jekyll/collections/
     - title: Code Highlighting
       url: /docs/jekyll/code-highlighting/
     - title: Pagination
       url: /docs/jekyll/pagination/
-    - title: Performance
-      url: /docs/jekyll/jekyll-performance-optimization/
-    - title: Security
-      url: /docs/jekyll/jekyll-security/
 
 # ============================================================
 # Other Technologies

@@ -165,9 +165,11 @@
       color: var(--bs-primary);
     }
 
+    // Current page: the strong link shade on the subtle fill (brand text was
+    // 1.92:1 on #cfe2ff for air; the plain link colour still fails mint).
     &[aria-current="page"] {
       font-weight: 600;
-      color: var(--bs-primary);
+      color: var(--bs-link-hover-color);
       border-color: var(--bs-primary);
       background-color: var(--bs-primary-bg-subtle);
     }

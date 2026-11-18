@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fix-a11y-single-h1-landmarks/ -->
+  (evidence: [`test/visual/evidence/fix-a11y-single-h1-landmarks/`](test/visual/evidence/fix-a11y-single-h1-landmarks/README.md))

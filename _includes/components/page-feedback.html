@@ -91,12 +91,16 @@
      `position-fixed` is required, not cosmetic: it opts this <body> child out of
      the .zer0-bg-body flattening rule (_sass/theme/_backgrounds.scss) that would
      otherwise force position:relative; z-index:1 and let the cookie banner steal
-     the dialog's clicks. {% endcomment %}
+     the dialog's clicks.
+     The dialog's header and footer bars are <div>s, not <header>/<footer>: this
+     overlay is a <body> child, so those elements became a second `banner` and
+     `contentinfo` landmark beside the site's own whenever the dialog was open
+     (axe landmark-no-duplicate-banner / -contentinfo / landmark-unique, #593). {% endcomment %}
 <div class="pf-overlay position-fixed" id="pageFeedbackModal" role="dialog" aria-modal="true"
      aria-labelledby="pfTitle" aria-describedby="pfIntro" hidden>
   <div class="pf-dialog shadow-lg" role="document">
 
-    <header class="pf-header">
+    <div class="pf-header">
       <div class="pf-header-text">
         <h2 id="pfTitle" class="pf-title h5 mb-1">
           <i class="bi bi-megaphone me-2" aria-hidden="true"></i>Share feedback
@@ -109,7 +113,7 @@
       <button type="button" class="pf-close btn btn-sm" id="pfClose" aria-label="Close feedback dialog">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
-    </header>
+    </div>
 
     <form id="pfForm" class="pf-body" novalidate>
 
@@ -251,7 +255,7 @@
 
     </form>
 
-    <footer class="pf-footer">
+    <div class="pf-footer">
       <button type="button" class="btn btn-link btn-sm pf-copy" id="pfCopy">
         <i class="bi bi-clipboard me-1" aria-hidden="true"></i>Copy details
       </button>
@@ -262,7 +266,7 @@
           <span class="pf-submit-label">Open GitHub issue</span>
         </button>
       </div>
-    </footer>
+    </div>
 
   </div>
 </div>

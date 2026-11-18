@@ -20,6 +20,9 @@
   --zer0-color-primary-rgb: var(--bs-primary-rgb, 0, 123, 255);
   --zer0-color-secondary: var(--bs-secondary, #6c757d);
   --zer0-color-accent: var(--bd-accent, #ffe484);
+  // Text on a primary fill. White passes on Bootstrap's #0d6efd (4.50:1); the
+  // palette skins in _sass/theme/_skins.scss set #000 on their light brands.
+  --zer0-color-on-primary: #fff;
 
   // Semantic state ---------------------------------------------------------
   --zer0-color-success: var(--bs-success, #28a745);

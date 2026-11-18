@@ -87,7 +87,8 @@ Content-specific features and enhancements:
 
 - `seo.html` - SEO meta tags and structured data
 - `toc.html` - Table of contents generation
-- `giscus.html` - GitHub Discussions comment system
+- `comments.html` - Comment section (gate, heading, giscus widget) used by every layout that shows comments
+- `giscus.html` - GitHub Discussions comment widget; theme, mapping, input position and language come from `_config.yml` `giscus:`
 - `intro.html` - Page introduction section
 - `sitemap.html` - Sitemap generation
 

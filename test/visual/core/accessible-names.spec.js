@@ -30,6 +30,14 @@
  * each box at its item's own text with `aria-labelledby`; _ui-enhancements.scss
  * drops the bullet and spaces the box.
  *
+ * #486 — the weekly UI audit's axe findings: the icon-only Documentation and
+ * live-page links in the /features/ "All Features Reference" table (110+ nodes,
+ * `link-name`), and in the component showcase (the include on
+ * /about/settings/components/ and its inlined copy on /news/) the three
+ * icon-only view-toggle buttons (`button-name`) and the four progress bars
+ * (`aria-progressbar-name`). Each now carries an `aria-label`; the icons are
+ * `aria-hidden`.
+ *
  * Run: npm run test:smoke
  */
 const { test, expect } = require('@playwright/test');
@@ -148,6 +156,43 @@ test.describe('Task lists — checkboxes are named and spaced (#573)', { tag: '@
     expect(style.listStyle, 'the item must not keep its bullet').toBe('none');
     expect(style.marginRight, 'the box must not sit flush against its text').toBeGreaterThan(0);
   });
+});
+
+test.describe('UI audit findings — icon-only controls and progress bars are named (#486)', { tag: '@critical' }, () => {
+  // The selectors of every node axe flags for `rules`, so a failure names them.
+  const axeTargets = async (page, rules) => {
+    const results = await new AxeBuilder({ page }).withRules(rules).analyze();
+    return results.violations.flatMap((v) => v.nodes.map((n) => `${v.id}: ${n.target.join(' ')}`));
+  };
+
+  for (const vp of ['mobile', 'desktop']) {
+    test(`/features/ reference table links have accessible names @ ${vp}`, async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS[vp]);
+      await gotoOrSkip(page, UI_ROUTES.features);
+
+      const links = page.locator('.table-responsive td a.btn-sm:has(i.bi)');
+      expect(await links.count(), 'the reference table should render icon links').toBeGreaterThan(0);
+      expect(
+        await axeTargets(page, ['link-name']),
+        'each icon-only link needs an aria-label naming its feature (WCAG 2.4.4 / 4.1.2)'
+      ).toEqual([]);
+    });
+  }
+
+  for (const route of ['/news/', '/about/settings/components/']) {
+    test(`component showcase controls are named on ${route}`, async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS.desktop);
+      await gotoOrSkip(page, route);
+
+      await expect(page.getByRole('group', { name: 'View toggle' }).getByRole('button')).toHaveCount(3);
+      await expect(page.getByRole('button', { name: 'List view', exact: true })).toHaveCount(1);
+      await expect(page.getByRole('progressbar', { name: 'Lighthouse Performance', exact: true })).toHaveCount(1);
+      expect(
+        await axeTargets(page, ['button-name', 'aria-progressbar-name']),
+        'icon-only buttons and progress bars need an accessible name (WCAG 4.1.2 / 1.3.1)'
+      ).toEqual([]);
+    });
+  }
 });
 
 test.describe('Search modal — results are announced', { tag: '@critical' }, () => {

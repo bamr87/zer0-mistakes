@@ -5,7 +5,9 @@
    skins re-point --zer0-color-primary / --bs-primary / --zer0-color-accent and
    their WCAG-AA link colors. Apply by setting [data-theme-skin="<name>"] on a
    container (or :root). Each skin ships a light link color (AA on white) and a
-   dark link color (AA on Bootstrap dark #212529).
+   dark link color (AA on Bootstrap dark #212529), plus --zer0-color-on-primary,
+   the text color for its brand fill (#000 on the light brands, #fff on dirt
+   and neon). Measured ratios live beside each skin in _skins.scss.
 
    Skins: air · aqua · dirt · neon · mint · plum · sunrise
    ============================================================================ */
@@ -14,6 +16,7 @@
   --zer0-color-primary: #6fa8dc;
   --zer0-color-primary-rgb: 111, 168, 220; /* @kind color */
   --zer0-color-accent: #b8d4e3;
+  --zer0-color-on-primary: #000;
   --bs-primary: #6fa8dc;
   --bs-primary-rgb: 111, 168, 220; /* @kind color */
   --bs-link-color: #1e5fa8;
@@ -33,6 +36,7 @@
   --zer0-color-primary: #00b4d8;
   --zer0-color-primary-rgb: 0, 180, 216; /* @kind color */
   --zer0-color-accent: #90e0ef;
+  --zer0-color-on-primary: #000;
   --bs-primary: #00b4d8;
   --bs-primary-rgb: 0, 180, 216; /* @kind color */
   --bs-link-color: #006d99;
@@ -52,6 +56,7 @@
   --zer0-color-primary: #8b6914;
   --zer0-color-primary-rgb: 139, 105, 20; /* @kind color */
   --zer0-color-accent: #d4a574;
+  --zer0-color-on-primary: #fff;
   --bs-primary: #8b6914;
   --bs-primary-rgb: 139, 105, 20; /* @kind color */
   --bs-link-color: #7a5a10;
@@ -71,6 +76,7 @@
   --zer0-color-primary: #8338ec;
   --zer0-color-primary-rgb: 131, 56, 236; /* @kind color */
   --zer0-color-accent: #3a86ff;
+  --zer0-color-on-primary: #fff;
   --bs-primary: #8338ec;
   --bs-primary-rgb: 131, 56, 236; /* @kind color */
   --bs-link-color: #5e22cc;
@@ -90,10 +96,11 @@
   --zer0-color-primary: #52b788;
   --zer0-color-primary-rgb: 82, 183, 136; /* @kind color */
   --zer0-color-accent: #95d5b2;
+  --zer0-color-on-primary: #000;
   --bs-primary: #52b788;
   --bs-primary-rgb: 82, 183, 136; /* @kind color */
-  --bs-link-color: #2d8059;
-  --zer0-color-link: #2d8059;
+  --bs-link-color: #287652;
+  --zer0-color-link: #287652;
   --bs-link-hover-color: #1f5a3b;
   --zer0-color-link-hover: #1f5a3b;
   --zer0-color-border: rgba(82, 183, 136, 0.28);
@@ -109,6 +116,7 @@
   --zer0-color-primary: #c77dff;
   --zer0-color-primary-rgb: 199, 125, 255; /* @kind color */
   --zer0-color-accent: #812f85;
+  --zer0-color-on-primary: #000;
   --bs-primary: #c77dff;
   --bs-primary-rgb: 199, 125, 255; /* @kind color */
   --bs-link-color: #6b2477;
@@ -128,6 +136,7 @@
   --zer0-color-primary: #ff6b35;
   --zer0-color-primary-rgb: 255, 107, 53; /* @kind color */
   --zer0-color-accent: #f7c59f;
+  --zer0-color-on-primary: #000;
   --bs-primary: #ff6b35;
   --bs-primary-rgb: 255, 107, 53; /* @kind color */
   --bs-link-color: #b54418;
