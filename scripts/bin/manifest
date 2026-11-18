@@ -160,7 +160,7 @@ MANIFEST_CONTENT=$(cat << YAML
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "${CURRENT_VERSION}"
+version: "${CURRENT_VERSION}" # x-release-please-version
 generated_at: "${TIMESTAMP}"
 
 # Directories owned by this theme.  A consumer file in any of these paths
