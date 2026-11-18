@@ -12,7 +12,10 @@
 #   - _data/features.yml (the single registry) is missing
 #   - the header is missing a `# Last Updated:` line
 #   - schema violations (missing required field, bad id/version, duplicate id)
-#   - implemented:false without `removed_in:`
+#   - implemented:false without `removed_in:`, unless the entry is
+#     `status: planned` (requested, not yet built — UPS-WORK-15)
+#   - `status:` outside the fleet set (shipped partial planned deprecated tbd)
+#   - `status: planned` combined with `implemented: true` or `removed_in:`
 #   - a reference path on an ACTIVE feature does not exist in the repo
 #   - missing/malformed `provenance:` block on an active feature (since PR B)
 #   - missing/unresolvable `tests:` linkage on an active feature (since PR C):
@@ -30,6 +33,8 @@ require 'yaml'
 
 MIRROR = '_data/features.yml'
 REQUIRED = %w[id title description implemented version link docs tags date].freeze
+# The fleet's catalog statuses (UPS-WORK-15; hub tools/governance_lint.py STATUSES).
+STATUSES = %w[shipped partial planned deprecated tbd].freeze
 STRICT = ENV['FEATURES_STRICT'] == '1'
 
 def die(msg)
@@ -91,6 +96,17 @@ feats.each_with_index do |f, i|
   die "#{id}: version must be X.Y.Z" unless f['version'].to_s =~ /\A\d+\.\d+\.\d+/
   die "#{id}: tags must be a non-empty list" unless f['tags'].is_a?(Array) && !f['tags'].empty?
 
+  status = f['status']
+  die "#{id}: status must be one of #{STATUSES.join(' ')}" if status && !STATUSES.include?(status)
+
+  if status == 'planned'
+    # Planned features are requested but not built: no code, provenance or
+    # tests yet, and nothing was removed. They must not claim either state.
+    die "#{id}: status:planned requires implemented:false" unless f['implemented'] == false
+    die "#{id}: status:planned contradicts `removed_in:` (use status: deprecated for a removed feature)" if f['removed_in']
+    next
+  end
+
   if f['implemented'] == false
     # Removed features keep their (now-absent) references for history but must
     # record when they went away.
@@ -143,4 +159,6 @@ unless warnings.empty?
 end
 
 active = feats.count { |f| f['implemented'] != false }
-puts "Feature registry valid: #{feats.length} entries (#{active} active), refs resolved, _data registry (single copy)"
+planned = feats.count { |f| f['status'] == 'planned' }
+summary = planned.zero? ? "#{active} active" : "#{active} active, #{planned} planned"
+puts "Feature registry valid: #{feats.length} entries (#{summary}), refs resolved, _data registry (single copy)"

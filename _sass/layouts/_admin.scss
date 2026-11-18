@@ -1,0 +1,60 @@
+// Feature: ZER0-050
+// ============================================================================
+// Admin layout (settings and configuration pages)
+// ----------------------------------------------------------------------------
+// _layouts/admin.html + _includes/navigation/admin-nav.html
+// Data: _data/navigation/admin.yml (`group:` drives the sidebar sections)
+// ============================================================================
+
+// Header title block. A 10rem basis lets it share the row with the actions
+// from md up; below that the actions wrap onto their own line instead of
+// pushing the row wider than a phone screen.
+.admin-header-title {
+  flex: 1 1 10rem;
+}
+
+// Sidebar nav. The active item is a tint of the skin's primary
+// (--zer0-color-primary, set per [data-theme-skin]) under the body-emphasis
+// text colour, semibold via the markup's .fw-semibold, instead of Bootstrap's
+// solid --bs-primary pill. Skin link colours sit at about 4.5:1 on the plain
+// body background (Bootstrap's #0d6efd is 4.50:1 on white), so link-coloured
+// text on any tint would drop below WCAG AA; the emphasis colour keeps the
+// active label readable on every skin, in light and dark mode.
+.nav-pills.admin-nav {
+  --bs-nav-pills-link-active-bg: color-mix(in srgb, var(--zer0-color-primary) 14%, transparent);
+  --bs-nav-pills-link-active-color: var(--bs-emphasis-color);
+  gap: .75rem;
+}
+
+// Small-caps section label (Configure / System / Links). Plain text, not a
+// heading, so the page outline stays h1 → content; the nested list it heads
+// takes its accessible name from it (aria-labelledby).
+.admin-nav-group-label {
+  display: block;
+  padding: 0 var(--bs-nav-link-padding-x, 1rem) .25rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+}
+
+// Trailing count or status: a plain numeral, or a coloured dot plus a word.
+// Regular weight even on the semibold active item, so the label leads.
+.admin-nav-meta {
+  padding-left: .5rem;
+  font-size: .75rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--bs-secondary-color);
+  white-space: nowrap;
+}
+
+// The dot is decorative (aria-hidden): the word next to it carries the state.
+.admin-nav-dot {
+  display: inline-block;
+  width: .5rem;
+  height: .5rem;
+  margin-right: .3rem;
+  border-radius: 50%;
+}

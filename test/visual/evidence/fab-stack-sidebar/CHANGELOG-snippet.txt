@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fab-stack-sidebar/ -->
+  (evidence: [`test/visual/evidence/fab-stack-sidebar/`](test/visual/evidence/fab-stack-sidebar/README.md) — sidebar↔local-graph FAB overlap 3136px² → 0 below lg).

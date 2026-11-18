@@ -54,9 +54,11 @@
       box-shadow: none;
     }
 
+    // Open category: text in the strong link shade, not the brand (air was
+    // about 2.3:1 on this tint); the accent bar keeps the brand.
     &:not(.collapsed),
     &[aria-expanded="true"] {
-      color: var(--zer0-color-primary);
+      color: var(--zer0-color-link-hover);
       background-color: color-mix(in srgb, var(--zer0-color-primary) 10%, var(--zer0-color-bg-elevated));
       border-left-color: var(--zer0-color-primary);
     }
@@ -99,7 +101,7 @@
     }
 
     &.active {
-      color: var(--zer0-color-primary);
+      color: var(--zer0-color-link-hover);
       font-weight: var(--zer0-font-weight-medium);
     }
 

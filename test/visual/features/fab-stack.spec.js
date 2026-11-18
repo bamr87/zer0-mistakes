@@ -3,8 +3,14 @@
 // =============================================================================
 // Left-side FAB stack (bottom → top):
 //   slot 1  #pageFeedbackFab                 always on (global "Improve this page")
-//   slot 2  #obsidianLocalGraphFab           conditional (pages in the wiki-index)
-//   slot 2  .bd-sidebar-fab--restore         conditional (docs sidebar hidden, <lg)
+//   slot 2  #sidebarFab (.bd-sidebar-fab)    conditional (docs sidebar, <lg only)
+//   slot 2  #obsidianLocalGraphFab           conditional (wiki-index pages) — at lg+,
+//                                            or <lg on a page without #sidebarFab
+//   slot 3  #obsidianLocalGraphFab           <lg when #sidebarFab is also present (#571)
+//
+// #571: the sidebar FAB and the graph FAB both resolved to slot 2 below lg, so
+// the graph FAB (z-index 1060 > 1055) covered the sidebar FAB and the docs nav
+// could not be opened by tap. The pairwise case at the bottom guards it.
 //
 // Regression guard for #288 / PR #289: the feedback FAB (added in #286) and the
 // pre-existing Obsidian local-graph FAB were BOTH anchored at
@@ -144,5 +150,58 @@ test.describe('Left-side FAB stack — no overlap', () => {
     expect(Math.abs(feedback.bottomPx - tokens.offset)).toBeLessThanOrEqual(1);
     expect(Math.abs(probe.bottomPx - slot2)).toBeLessThanOrEqual(1);
     expect(boxesOverlap(feedback, probe)).toBe(false);
+  });
+
+  test('Below lg, the local-graph FAB moves to slot 3 when the sidebar FAB is present (#571)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 780 }); // <lg: #sidebarFab is visible here
+    const { sidebar, graph, hitInSidebar, tokens } = await page.evaluate((sel) => {
+      const parent = document.querySelector(sel).parentElement;
+      const read = (el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.x, y: r.y, width: r.width, height: r.height, bottomPx: parseFloat(getComputedStyle(el).bottom) };
+      };
+      const mount = (id, className) => {
+        const el = document.createElement('div');
+        el.id = id;
+        el.className = className;
+        el.style.width = 'var(--zer0-space-fab-size, 3.5rem)';
+        el.style.height = 'var(--zer0-space-fab-size, 3.5rem)';
+        parent.appendChild(el);
+        return el;
+      };
+      // The page under test may already render its own #sidebarFab; park it so
+      // the probe below is the only one (ids are unique in production).
+      const existing = document.getElementById('sidebarFab');
+      if (existing) existing.id = 'sidebarFab-parked';
+      // Production ids/classes, together: _layouts/default.html #sidebarFab and
+      // _includes/navigation/local-graph-fab.html #obsidianLocalGraphFab.
+      const sb = mount('sidebarFab', 'position-fixed bd-sidebar-fab d-lg-none');
+      const gr = mount('obsidianLocalGraphFab', 'obsidian-local-graph-fab');
+      const sidebar = read(sb);
+      const graph = read(gr);
+      const hit = document.elementFromPoint(sidebar.x + sidebar.width / 2, sidebar.y + sidebar.height / 2);
+      const hitInSidebar = !!hit && sb.contains(hit);
+      const rootCs = getComputedStyle(document.documentElement);
+      const remPx = parseFloat(rootCs.fontSize) || 16;
+      const num = (v) => { v = (v || '').trim(); return v.endsWith('rem') ? parseFloat(v) * remPx : parseFloat(v); };
+      const tokens = {
+        offset: num(rootCs.getPropertyValue('--zer0-space-fab-offset') || '1rem'),
+        size: num(rootCs.getPropertyValue('--zer0-space-fab-size') || '3.5rem'),
+        gap: num(rootCs.getPropertyValue('--zer0-space-fab-gap') || '0.75rem'),
+      };
+      sb.remove();
+      gr.remove();
+      if (existing) existing.id = 'sidebarFab';
+      return { sidebar, graph, hitInSidebar, tokens };
+    }, FEEDBACK);
+
+    const slot2 = tokens.offset + tokens.size + tokens.gap;
+    const slot3 = tokens.offset + 2 * (tokens.size + tokens.gap);
+    // The sidebar FAB keeps slot 2; the graph FAB yields to slot 3.
+    expect(Math.abs(sidebar.bottomPx - slot2)).toBeLessThanOrEqual(1);
+    expect(Math.abs(graph.bottomPx - slot3)).toBeLessThanOrEqual(1);
+    expect(boxesOverlap(sidebar, graph)).toBe(false);
+    // A tap at the sidebar FAB's centre reaches the sidebar FAB, not the graph FAB.
+    expect(hitInSidebar).toBe(true);
   });
 });

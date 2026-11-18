@@ -129,3 +129,65 @@ test.describe('Author avatar URLs (issue #297)', () => {
     });
   }
 });
+
+// =============================================================================
+// Author-card social links — explicit, author-specific names (issue #568)
+// =============================================================================
+// The full author card ("About the Author", on every post via
+// author-bio.html) renders its GitHub / X / LinkedIn / Website / Email links
+// as icon-only buttons. Before the fix only X had an aria-label (the bare
+// "X"); the others were named by `title=` alone — a last-resort naming source
+// touch and screen-reader users don't reliably get — and none said WHOSE
+// profile it was. The Bootstrap Icons glyphs, including the person
+// placeholders, were exposed to assistive tech.
+//
+// The fix mirrors the footer's #435/#441 pattern: an explicit aria-label
+// naming the author and destination ("(opens in a new tab)" on target=_blank
+// links), aria-hidden="true" on every glyph, and `title` kept as the tooltip.
+//
+// WCAG criteria: SC 2.4.4 Link Purpose (In Context), SC 4.1.2 Name, Role, Value.
+// =============================================================================
+
+// A committed post by `vega` (an author with a github handle in _data/authors.yml).
+const AUTHOR_CARD_POST = '/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/';
+const AUTHOR_CARD_NAME = 'Vega';
+
+test.describe('Author-card social link names (issue #568)', () => {
+  test('every social/contact link has an aria-label naming the author', async ({ page }) => {
+    await waitForJekyll(page, AUTHOR_CARD_POST);
+
+    const card = page.locator('.author-card');
+    await expect(card).toHaveCount(1);
+
+    const links = card.locator('.author-social a.btn');
+    const count = await links.count();
+    expect(count).toBeGreaterThan(0);
+
+    for (let i = 0; i < count; i++) {
+      const link = links.nth(i);
+      const href = await link.getAttribute('href');
+      const label = (await link.getAttribute('aria-label')) || '';
+      expect(label, `author-card link ${href} has no aria-label`).not.toBe('');
+      expect(label, `author-card link ${href} does not name the author`).toContain(AUTHOR_CARD_NAME);
+      // title stays as the visual tooltip (no visual change).
+      expect(await link.getAttribute('title'), `author-card link ${href} lost its title tooltip`).toBeTruthy();
+      if ((await link.getAttribute('target')) === '_blank') {
+        expect(label, `author-card link ${href} opens a new tab without saying so`).toContain('opens in a new tab');
+      }
+    }
+
+    // The accessible name the browser computes is the author-specific one.
+    await expect(
+      card.getByRole('link', { name: new RegExp(`^${AUTHOR_CARD_NAME} on GitHub`) }),
+    ).toHaveCount(1);
+  });
+
+  test('every Bootstrap Icons glyph in the author card is aria-hidden', async ({ page }) => {
+    await waitForJekyll(page, AUTHOR_CARD_POST);
+
+    const exposed = await page.$$eval('.author-card i.bi', (icons) =>
+      icons.filter((i) => i.getAttribute('aria-hidden') !== 'true').map((i) => i.className),
+    );
+    expect(exposed, `exposed author-card glyphs: ${exposed.join(', ')}`).toEqual([]);
+  });
+});

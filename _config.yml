@@ -288,6 +288,14 @@ posthog:
                                   # `google_analytics_require_consent` is set.
     geoip_disable        : false  # true = stop PostHog resolving IP → location on every event
 
+# Cookie consent banner (components/cookie-consent.html) ######################
+# The banner, its "Manage Cookies" modal and the footer "Cookie Preferences"
+# button render only when something above needs consent: google_analytics,
+# google_tag_manager, or posthog.enabled. A site with no tracker shows none.
+cookie_consent:
+  # enabled              : true   # unset = auto; true = always render (trackers added via
+                                  # _includes/custom/ hooks); false = never render
+
 # Page Views - Per-page view counter ##############################################
 # Tracks a view for the page being read and displays the count in the article
 # meta row (components/page-views.html; badge markup, behaviour in
@@ -590,8 +598,14 @@ resources:
 
 ## Giscus Comments (GitHub Discussions) #########################################
 # Powered by https://giscus.app/ — comments are stored as GitHub Discussions.
-# The theme reads exactly three keys: enabled, data-repo-id, data-category-id.
+# Required keys: enabled, data-repo-id, data-category-id. The four commented-out
+# keys below are optional; each falls back to the value shown, so leaving them
+# out renders the widget exactly as before. Values are giscus's own (see the
+# configurator at https://giscus.app/).
 # data-repo is filled automatically from `repository` above.
+# Layouts show comments through _includes/content/comments.html: on by default in
+# article, note and notebook (`comments: false` hides them), opt-in
+# (`comments: true`) in recipe and book-story.
 # Docs: pages/_docs/features/giscus-comments.md
 # NOTE: the key MUST be `giscus` — layouts/includes read `site.giscus.*`.
 
@@ -602,6 +616,10 @@ giscus:
   #   ./scripts/bin/giscus-discussions categories
   data-repo-id: "R_kgDOMFgJHQ"
   data-category-id: "DIC_kwDOMFgJHc4C52bX"
+  # data-theme: "preferred_color_scheme"  # follows the visitor's OS; a dark-skin site wants "transparent_dark"
+  # data-mapping: "pathname"              # page <-> discussion: pathname | url | title | og:title
+  # data-input-position: "top"            # comment box above (top) or below (bottom) the thread
+  # data-lang: "en"                       # widget language, a giscus locale code: fr, de, ja, zh-CN, ...
 
 ## Mermaid Diagram Configuration #################################################
 # Mermaid diagrams support both native markdown code blocks and div syntax

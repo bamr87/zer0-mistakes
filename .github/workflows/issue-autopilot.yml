@@ -4,7 +4,9 @@
 # -----------------------------------------------------------------------------
 # The zer0-mistakes port of it-journey's issue autopilot. Each run is ONE bounded
 # pass of a loop:
-#   1. gate     — opt-in kill switch (ISSUE_AUTOPILOT_ENABLED) + Claude auth.
+#   1. gate     — opt-in kill switch (ISSUE_AUTOPILOT_ENABLED) + Claude auth;
+#                 an `autopilot:go` label counts only when the repository
+#                 owner applied it.
 #   2. triage   — the deterministic engine (scripts/issues/triage.py) classifies
 #                 every open issue; the issue-triager agent applies area:*/
 #                 priority:* labels, flags stale bot-noise, decomposes epics, and
@@ -59,7 +61,9 @@ concurrency:
   # Give every non-actionable label event its own group. It still skips, but it
   # no longer queues behind — or cancels — a real pass, and real passes
   # (schedule, dispatch, `autopilot:go`) stay serialized under the shared name.
-  group: issue-autopilot${{ (github.event_name == 'issues' && github.event.label.name != 'autopilot:go') && format('-noop-{0}', github.run_id) || '' }}
+  # An `autopilot:go` the repository owner did not apply is non-actionable too
+  # (the gate job's `if:` below), so it takes its own group like any other label.
+  group: issue-autopilot${{ (github.event_name == 'issues' && (github.event.label.name != 'autopilot:go' || github.event.sender.login != github.repository_owner)) && format('-noop-{0}', github.run_id) || '' }}
   cancel-in-progress: false
 
 jobs:
@@ -72,7 +76,18 @@ jobs:
     # alone produced a burst of ~10 such runs). Skip at the JOB level (no
     # runner boot) unless it's the one label we act on. The step-level check
     # below stays as defense in depth.
-    if: github.event_name != 'issues' || github.event.label.name == 'autopilot:go'
+    #
+    # Trusted author: `autopilot:go` starts the resolve lane — write tokens and
+    # the Claude credential — on an issue anyone may have written, so the run
+    # is gated on WHO APPLIED THE LABEL (the event's sender), and only the
+    # repository owner counts. GitHub already limits labelling to people with
+    # triage access; this makes the workflow say so itself, and keeps a label
+    # applied any other way (an issue template, a new collaborator, an app)
+    # from starting a run.
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.label.name == 'autopilot:go' &&
+       github.event.sender.login == github.repository_owner)
     runs-on: ubuntu-latest
     outputs:
       go: ${{ steps.check.outputs.go }}
@@ -101,6 +116,7 @@ jobs:
     needs: gate
     if: ${{ needs.gate.outputs.go == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: write          # the agent comments/labels; a later step closes bot-noise
@@ -111,6 +127,7 @@ jobs:
     env:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}   # the runner tries the credentials in this order
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
@@ -130,6 +147,10 @@ jobs:
         uses: bamr87/bamr87/.github/actions/claude-run@main
         with:
           agent: issue-triager
+          # Turn cap from the lane's usage ledger: four metered passes took
+          # 7-11 turns (ai-usage artifacts, 2026-10-19 to 2026-11-09);
+          # 1.5 x 11, rounded up to the next 10.
+          max-turns: "20"
           prompt: >-
             Use the issue-triage skill to run ONE bounded triage pass over the
             zer0-mistakes open-issue queue. Read today's
@@ -222,6 +243,7 @@ jobs:
     needs: [gate, triage]
     if: ${{ needs.gate.outputs.go == 'true' && vars.ISSUE_VERIFY_CLOSE_ENABLED == 'true' && github.event_name != 'issues' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: write          # the gated step closes verified-resolved issues
@@ -230,6 +252,7 @@ jobs:
     env:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}   # the runner tries the credentials in this order
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
@@ -248,6 +271,9 @@ jobs:
         uses: bamr87/bamr87/.github/actions/claude-run@main
         with:
           agent: issue-verifier
+          # Turn cap from the lane's usage ledger: four metered passes took
+          # 8-11 turns (same window); 1.5 x 11, rounded up to the next 10.
+          max-turns: "20"
           prompt: >-
             Use the issue-triage skill context. Run
             `python3 scripts/issues/triage.py plan`, then for EVERY issue in
@@ -309,6 +335,7 @@ jobs:
     needs: triage
     if: ${{ needs.triage.outputs.has_resolve == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30      # per matrix leg (one batch)
     permissions:
       contents: write
       pull-requests: write
@@ -320,6 +347,7 @@ jobs:
     env:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AI_AUTH_ORDER: ${{ vars.CLAUDE_AUTH_ORDER }}   # the runner tries the credentials in this order
       # A PAT so the resolver's PR ALSO triggers CI (github.token-authored PRs
       # don't). Falls back to github.token (PR opens but checks won't fire).
       GH_TOKEN: ${{ secrets.AUTO_PR_GITHUB_TOKEN || secrets.PAT_TOKEN || github.token }}
@@ -346,6 +374,11 @@ jobs:
           BATCH_ISSUES: ${{ matrix.issue_numbers }}
         with:
           agent: issue-resolver
+          # Turn cap BY RULE, not by data: the only metered resolve (5 turns,
+          # 2026-11-02) opened no PR, so nothing shows what a real one takes.
+          # 60 is what the action's default $10 cap covers at the fleet's
+          # $0.15 a turn. Raise both together if a real resolve is cut short.
+          max-turns: "60"
           prompt: >-
             Use the issue-triage skill (resolve lane) to resolve ONE batch of
             zer0-mistakes DOCS issues into ONE pull request. The batch id is in

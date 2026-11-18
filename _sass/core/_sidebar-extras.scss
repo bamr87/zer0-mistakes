@@ -32,11 +32,12 @@
 
 // Smooth scroll behavior is declared once below (see "Smooth Scroll Enhancement")
 
-// Category sidebar active state (nav-tree--categories)
+// Category sidebar active state (nav-tree--categories). Text in the strong
+// link shade: the brand on its own 10% tint failed 4.5:1 on the light skins.
 .nav-tree--categories .sidebar-categories-link.active {
     font-weight: var(--zer0-font-weight-medium);
     background-color: color-mix(in srgb, var(--zer0-color-primary) 10%, transparent);
-    color: var(--zer0-color-primary);
+    color: var(--zer0-color-link-hover);
 }
 
 // Improve sidebar link hover states

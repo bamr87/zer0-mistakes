@@ -1,0 +1,52 @@
+{
+  "slug": "fab-stack-sidebar",
+  "issue": 571,
+  "method": "dart-sass compiled theme CSS + host Chromium (position:fixed → live-site-equivalent geometry)",
+  "widths": [
+    {
+      "width": 390,
+      "sidebarVisible": true,
+      "before": {
+        "graphBottomPx": 84,
+        "sidebarGraphOverlapPx2": 3136,
+        "sidebarTapReaches": "graph"
+      },
+      "after": {
+        "graphBottomPx": 152,
+        "sidebarGraphOverlapPx2": 0,
+        "sidebarTapReaches": "sidebar"
+      },
+      "sidebarBottomPx": 84
+    },
+    {
+      "width": 768,
+      "sidebarVisible": true,
+      "before": {
+        "graphBottomPx": 84,
+        "sidebarGraphOverlapPx2": 3136,
+        "sidebarTapReaches": "graph"
+      },
+      "after": {
+        "graphBottomPx": 152,
+        "sidebarGraphOverlapPx2": 0,
+        "sidebarTapReaches": "sidebar"
+      },
+      "sidebarBottomPx": 84
+    },
+    {
+      "width": 1280,
+      "sidebarVisible": false,
+      "before": {
+        "graphBottomPx": 84,
+        "sidebarGraphOverlapPx2": 0,
+        "sidebarTapReaches": null
+      },
+      "after": {
+        "graphBottomPx": 84,
+        "sidebarGraphOverlapPx2": 0,
+        "sidebarTapReaches": null
+      },
+      "sidebarBottomPx": null
+    }
+  ]
+}

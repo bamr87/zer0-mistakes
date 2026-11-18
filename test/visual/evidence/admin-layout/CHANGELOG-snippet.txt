@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/admin-layout/ -->
+  (evidence: [`test/visual/evidence/admin-layout/`](test/visual/evidence/admin-layout/README.md) — header actions reachable at 375px 0 → 2, "Administration" headings 2 → 1, sidebar groups 0 → 3)

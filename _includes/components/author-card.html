@@ -138,10 +138,10 @@
     {% if has_avatar %}
       <img src="{{ avatar_url }}" alt="" class="author-inline__avatar rounded-circle me-1" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" loading="lazy">
     {% else %}
-      <i class="bi bi-person-circle me-1"></i>
+      <i class="bi bi-person-circle me-1" aria-hidden="true"></i>
     {% endif %}
   {% else %}
-    <i class="bi bi-person me-1"></i>
+    <i class="bi bi-person me-1" aria-hidden="true"></i>
   {% endif %}
   {%- if include.name_itemprop -%}
     <span class="author-name" itemprop="{{ include.name_itemprop }}">{{ author_name }}</span>
@@ -163,7 +163,7 @@
       <img src="{{ avatar_url }}" alt="{{ author_name }}" class="rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
     {% else %}
       <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">
-        <i class="bi bi-person fs-5"></i>
+        <i class="bi bi-person fs-5" aria-hidden="true"></i>
       </div>
     {% endif %}
   {% endif %}
@@ -187,7 +187,7 @@
           <img src="{{ avatar_url }}" alt="{{ author_name }}" class="author-card__avatar rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
         {% else %}
           <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">
-            <i class="bi bi-person fs-1"></i>
+            <i class="bi bi-person fs-1" aria-hidden="true"></i>
           </div>
         {% endif %}
       {% endif %}
@@ -219,19 +219,19 @@
         {% if show_social %}
           <div class="author-social d-flex gap-2 mt-2">
             {% if author_data.github %}
-              <a href="https://github.com/{{ author_data.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="GitHub" itemprop="sameAs"><i class="bi bi-github"></i></a>
+              <a href="https://github.com/{{ author_data.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="GitHub" aria-label="{{ author_name | escape }} on GitHub (opens in a new tab)" itemprop="sameAs"><i class="bi bi-github" aria-hidden="true"></i></a>
             {% endif %}
             {% if author_data.twitter %}
-              <a href="https://x.com/{{ author_data.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="X" aria-label="X" itemprop="sameAs"><i class="bi bi-twitter-x"></i></a>
+              <a href="https://x.com/{{ author_data.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="X" aria-label="{{ author_name | escape }} on X (opens in a new tab)" itemprop="sameAs"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
             {% endif %}
             {% if author_data.linkedin %}
-              <a href="https://linkedin.com/in/{{ author_data.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="LinkedIn" itemprop="sameAs"><i class="bi bi-linkedin"></i></a>
+              <a href="https://linkedin.com/in/{{ author_data.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="LinkedIn" aria-label="{{ author_name | escape }} on LinkedIn (opens in a new tab)" itemprop="sameAs"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
             {% endif %}
             {% if author_data.website %}
-              <a href="{{ author_data.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="Website" itemprop="url"><i class="bi bi-globe"></i></a>
+              <a href="{{ author_data.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="Website" aria-label="{{ author_name | escape }} website (opens in a new tab)" itemprop="url"><i class="bi bi-globe" aria-hidden="true"></i></a>
             {% endif %}
             {% if author_data.email %}
-              <a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary" title="Email"><i class="bi bi-envelope"></i></a>
+              <a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary" title="Email" aria-label="Email {{ author_name | escape }}"><i class="bi bi-envelope" aria-hidden="true"></i></a>
             {% endif %}
           </div>
         {% endif %}

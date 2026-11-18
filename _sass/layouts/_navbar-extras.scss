@@ -69,7 +69,10 @@
   }
 }
 
-// Left docs sidebar FAB — mirrors .bd-toc-fab on the opposite edge
+// Left docs sidebar FAB — mirrors .bd-toc-fab on the opposite edge.
+// Owns slot 2 of the left-side FAB stack below lg (slot 1 = #pageFeedbackFab);
+// the Obsidian local-graph FAB yields and moves to slot 3 whenever this FAB is
+// on the page (see _sass/core/_obsidian.scss, #571).
 .bd-sidebar-fab {
   left: var(--zer0-space-fab-offset, 1rem);
   z-index: var(--zer0-layer-fab-toc);
@@ -162,9 +165,11 @@
       color: var(--bs-primary);
     }
 
+    // Current page: the strong link shade on the subtle fill (brand text was
+    // 1.92:1 on #cfe2ff for air; the plain link colour still fails mint).
     &[aria-current="page"] {
       font-weight: 600;
-      color: var(--bs-primary);
+      color: var(--bs-link-hover-color);
       border-color: var(--bs-primary);
       background-color: var(--bs-primary-bg-subtle);
     }
