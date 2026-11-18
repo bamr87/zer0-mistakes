@@ -58,6 +58,7 @@
   --zer0-color-primary-rgb: var(--bs-primary-rgb); /* @kind color */
   --zer0-color-secondary: var(--bs-secondary);
   --zer0-color-accent: var(--bd-accent);
+  --zer0-color-on-primary: #fff; /* text on a primary fill; skins set #000 on light brands */
 
   /* Semantic state */
   --zer0-color-success: var(--bs-success);

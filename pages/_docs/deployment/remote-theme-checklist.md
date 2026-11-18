@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-10-18T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 title: Remote-Theme Consumer Checklist
 description: What remote_theme does not deliver on GitHub Pages, and the files and config every Zer0-Mistakes consumer must add to avoid silent breakage.
 preview: /images/previews/remote-theme-consumer-checklist.png
@@ -81,6 +81,20 @@ At minimum:
   search modal; without it labels are blank.
 - `_data/authors.yml` — without it bylines and author cards have no data.
 
+**Vendored `_data/` does not float with `remote_theme`.** The theme also reads two registries it owns: `_data/theme_skins.yml` (skin order and default) and `_data/theme_backgrounds.yml` (each skin's colors and background assets). A Pages site gets them only from a copy it commits. Without a copy the theme falls back to built-in defaults. With one, the copy stays as old as the day you made it, while the floating `remote_theme` keeps your layouts current. A fix the theme makes to its data, such as the `dark` and `contrast` skins added in [#240](https://github.com/bamr87/zer0-mistakes/issues/240), never reaches a stale copy, and `_data/ui-text.yml` falls behind the same way whenever the theme adds a label.
+
+Re-run the consumer audit after every theme update. From a checkout of [`bamr87/zer0-mistakes`](https://github.com/bamr87/zer0-mistakes):
+
+```bash
+./scripts/bin/audit-consumer --consumer-path /path/to/your-site                  # report
+./scripts/bin/audit-consumer --consumer-path /path/to/your-site --fix --dry-run  # preview the refresh
+./scripts/bin/audit-consumer --consumer-path /path/to/your-site --fix            # refresh STALE copies
+```
+
+- `STALE` — your copy of a theme registry differs from the theme's. `--fix` replaces it with the theme's copy. If you changed it on purpose, list it in `.theme-overrides.yml` and it reads `DIFFERS_JUSTIFIED` instead. `STALE` fails `--strict`.
+- `MISSING` — you have no copy. The theme falls back to its built-in defaults, so this is informational. `--fix` copies the theme's file.
+- `MISSING_KEYS` — your `_data/ui-text.yml` lacks labels the theme's English (`en:`) block has. The audit lists them. Add them in your own wording: `--fix` never edits this file, and `MISSING_KEYS` never fails `--strict`.
+
 ### 5. Hand-author `/search.json` and `/sitemap/`
 
 Both endpoints are produced by `_plugins/search_and_sitemap_generator.rb`, which Pages skips in safe mode — and the committed fallback stubs are not delivered by `remote_theme`. So the navbar search returns nothing and `/sitemap/` 404s.
@@ -146,6 +160,7 @@ Tag badges, the local-graph "Full graph" link, the breadcrumb collection-root cr
 - View source on a post — no `google_analytics` ID or PostHog key you didn't set
   (item 3).
 - Run a link checker over the built `_site` — no theme-injected 404s.
+- Run `audit-consumer` against your repo after each theme update — no `STALE` vendored data (item 4).
 
 ## See also
 

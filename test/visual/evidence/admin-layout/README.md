@@ -1,0 +1,15 @@
+# Evidence — admin layout: actions on mobile, grouped sidebar, one heading (#409)
+
+Before/after proof for [#409](https://github.com/bamr87/zer0-mistakes/issues/409) (backlog T-041). BEFORE is a build of `main`; AFTER is a build of the PR branch. This is a template change (a new header-actions block, grouped sidebar markup, a removed `<h6>`), so the evidence kit's single-server `unfixCss` path does not apply: [`admin-layout-evidence.mjs`](../../admin-layout-evidence.mjs) drives the two builds and composes the montages with the kit's shared `montage` helper. The AFTER build gives `/about/settings/theme-preview/` a second `admin_actions` entry (Component Showcase), so the montages show both the button and the "More actions" dropdown; `main` has one.
+
+| Image | What it shows |
+| --- | --- |
+| `01-header-375.png` | 375 px phone, `/about/settings/theme-preview/`. BEFORE: the actions sat in a `d-none d-md-flex` wrapper, so no action rendered below 768 px (0 of 1 visible). AFTER: the first action is a button and the second sits behind a "More actions" (⋯) toggle; below md the group wraps onto its own line under the title. With the menu open, both actions are on screen (2 of 2) and nothing in the header passes the right edge (overflow 0 px). |
+| `02-header-768.png` | 768 px. BEFORE: the action was an inline button. AFTER: the same button plus the "More actions" toggle on the title row; the menu opens inside the screen. |
+| `03-header-1280.png` | 1280 px. The same control as at every other width: button first, the rest in the menu. |
+| `04-sidebar-1280.png` | Desktop sidebar on `/about/config/`. BEFORE: an "Administration" `<h6>` over one flat list, the collections count and the analytics/environment statuses as pill badges (3), the active item a solid `rgb(13, 110, 253)` pill. AFTER: Configure / System / Links list labels (they name their lists through `aria-labelledby` and are not headings), the count a plain numeral, statuses a coloured dot plus a word, the active item a 14% tint of the skin colour, semibold, with `aria-current="page"`. |
+| `05-offcanvas-375.png` | Mobile offcanvas sidebar. BEFORE: 2 "Administration" headings in the DOM (the hidden desktop `<h6>` and the offcanvas title). AFTER: 1, the offcanvas title; the grouped list renders here too, with its own label ids. |
+
+`metrics.json` records what each state exposes at 375, 768 and 1280 px: header actions in the DOM and visible (375 px: 0 of 1 → 1 of 2 closed, 2 of 2 with the menu open), header overflow (0 px in every state), "Administration" headings (2 → 1), sidebar group labels (none → Configure / System / Links), badge pills (3 → 0) and the active item's `aria-current` and computed fill. The same behaviour is pinned by the `@critical` block "Admin layout — actions, groups and heading (#409)" in [`test/visual/features/admin.spec.js`](../../features/admin.spec.js): 9 tests, 8 of which fail against `main` and all of which pass on this branch.
+
+The sticky sidebar offset (`style="top: 5rem"`) is unchanged here: T-039 (#407) derives every sticky offset from `--zer0-nav-height`, admin.html's included.

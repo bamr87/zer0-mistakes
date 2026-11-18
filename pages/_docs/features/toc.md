@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-10-30T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 title: Table of Contents with Scroll Spy
 description: Automatic table of contents built from a page's h1-h3 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
 keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
@@ -37,63 +37,83 @@ The **On this page** panel on the right is the table of contents, built from the
 
 ## Implementation
 
+The theme builds the TOC in Liquid while Jekyll renders the page, with no plugin, so it also works on GitHub Pages. Three files take part:
+
+| File | Role |
+|------|------|
+| `_layouts/default.html` | Wraps the panel in `<div class="bd-toc">` and includes `navigation/sidebar-right.html`, unless the page [hides the panel](#showing-and-hiding-the-panel) |
+| `_includes/navigation/sidebar-right.html` | Renders the `#tocContents` panel and its `<nav id="TableOfContents">`, then runs the parser on the rendered page |
+| `_includes/content/toc.html` | The parser: a vendored copy of [allejo/jekyll-toc](https://github.com/allejo/jekyll-toc) 1.1.0, which splits the HTML at its headings and returns a nested list of links |
+
+Every layout whose chain reaches `default` gets the panel, `article`, `note` and `collection` among them. Layouts built directly on `root`, such as `home`, `landing` and `admin`, render no TOC.
+
 ### Include Template
 
+`sidebar-right.html` calls the parser like this:
+
 ```liquid
-{% raw %}{% include content/toc.html %}{% endraw %}
+{% raw %}{% include content/toc.html sanitize=true html=toc_src h_min=toc_h_min h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}{% endraw %}
 ```
 
-### TOC Generation
+`toc_src` is the rendered page (`content`), or only the slice between the [body sentinels](#scoping-the-toc-to-the-body) when the layout sets them; `toc_h_min` is `1`, or `2` inside the sentinels. When that HTML has no `<h2>`, `<h3>` or `<h4>`, the call is skipped and the panel reads "No sections on this page." instead.
 
-The `toc.html` include uses Kramdown's built-in TOC:
+### Include Parameters
+
+| Parameter | Default | Set by `sidebar-right.html` | Purpose |
+|-----------|---------|-----------------------------|---------|
+| `html` | required | the rendered page | The compiled HTML to read headings from; without it the include outputs nothing |
+| `sanitize` | `false` | `true` | Strip markup (links, code, emphasis) from the heading text in the list |
+| `h_min` | `1` | `1`, or `2` inside the sentinels | Lowest heading level listed |
+| `h_max` | `6` | `3` | Highest heading level listed |
+| `class` | none | `list-group-flush` | Class on the root list |
+| `id` | none | none | `id` on the root list |
+| `ordered` | `false` | none | Emit `<ol>` instead of `<ul>` |
+| `item_class` | none | `list-group-item` | Class on each `<li>`; `%level%` becomes the heading level |
+| `submenu_class` | none | none | Class on each nested list; `%level%` becomes the nested heading level minus one |
+| `anchor_class` | none | empty | Class on each link |
+| `base_url` | none | none | Prefix for each link, for a TOC placed on another page than its headings |
+| `skip_no_ids` | `false` | `true` | Leave out headings that have no `id` |
+
+### Inline TOC in Your Own Layout
+
+The include works wherever the rendered HTML is at hand. In a layout, `content` holds it, so a layout of your own can print an inline TOC above the body:
 
 ```liquid
-{% raw %}<nav id="TableOfContents" class="toc">
-  <h2 class="toc-title">On This Page</h2>
-  {{ content | toc_only }}
-</nav>{% endraw %}
-```
-
-Or manual extraction:
-
-```liquid
-{% raw %}<nav id="TableOfContents">
-  <ul class="toc-list">
-    {% for heading in page.content | split: '<h' %}
-      {% if heading contains 'id="' %}
-        {% assign id = heading | split: 'id="' | last | split: '"' | first %}
-        {% assign level = heading | slice: 0, 1 %}
-        {% assign text = heading | split: '>' | last | split: '<' | first %}
-        <li class="toc-item toc-level-{{ level }}">
-          <a href="#{{ id }}" class="toc-link">{{ text }}</a>
-        </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
-</nav>{% endraw %}
+{% raw %}{% include content/toc.html html=content sanitize=true h_min=2 h_max=3 class="inline_toc" %}
+{{ content }}{% endraw %}
 ```
 
 ## Configuration
 
-### Enable TOC
+### Showing and Hiding the Panel
 
-In front matter:
+The theme reads no `toc` key from front matter. The panel is on for every page whose layout reaches `default`, and it shares its switch with the left sidebar, which `_includes/navigation/sidebar-config.html` resolves from the `sidebar` key:
+
+| Front matter | Panel |
+|--------------|-------|
+| No `sidebar` key | Shown, except on a post with `post_type: featured` or `post_type: breaking`, where it is hidden by default |
+| `sidebar: false` | Hidden, together with the left sidebar and the mobile TOC button |
+| `sidebar: true`, or a mapping such as `sidebar: { nav: docs }` | Shown, featured and breaking posts included |
+
+To hide it on one page:
 
 ```yaml
 ---
-toc: true
+sidebar: false
 ---
 ```
 
-Or site-wide in `_config.yml`:
+To hide it for a whole collection, set the same key in the `defaults` of `_config.yml`:
 
 ```yaml
 defaults:
   - scope:
-      type: docs
+      type: posts
     values:
-      toc: true
+      sidebar: false
 ```
+
+Readers can also collapse the panel themselves, with its hide button or the `t` key. The choice is kept per browser, in `localStorage`.
 
 ### Heading Levels
 
@@ -245,25 +265,24 @@ document.querySelectorAll('.toc-link').forEach((link) => {
 
 ## Responsive Behavior
 
-### Desktop
-
-TOC appears in right sidebar:
+One panel serves every width. `sidebar-right.html` renders it as a Bootstrap responsive offcanvas:
 
 ```html
-<aside class="d-none d-lg-block">
-  {% raw %}{% include content/toc.html %}{% endraw %}
-</aside>
+<div class="offcanvas-lg offcanvas-end" tabindex="-1" id="tocContents" aria-labelledby="tocLabel">
+  <div class="offcanvas-header">…</div>
+  <div class="offcanvas-body">
+    <nav id="TableOfContents" role="navigation" aria-label="Table of Contents">…</nav>
+  </div>
+</div>
 ```
+
+### Desktop
+
+From the `lg` breakpoint up, `offcanvas-lg` leaves the panel in place, in the right-hand `.bd-toc` column beside the content.
 
 ### Mobile
 
-TOC in offcanvas (see [Mobile TOC](/docs/features/mobile-toc/)):
-
-```html
-<div class="offcanvas offcanvas-end d-lg-none" id="tocSidebar">
-  {% raw %}{% include content/toc.html %}{% endraw %}
-</div>
-```
+Below `lg` the same panel becomes a drawer that slides in from the right, opened by the floating TOC button from `_includes/navigation/toc-fab.html` (see [Mobile TOC](/docs/features/mobile-toc/)).
 
 ## Accessibility
 
@@ -285,9 +304,10 @@ TOC in offcanvas (see [Mobile TOC](/docs/features/mobile-toc/)):
 
 ### TOC Not Generating
 
-1. Verify headings have IDs
-2. Check `toc: true` in front matter
-3. Ensure Kramdown processor
+1. Verify headings have IDs — Kramdown adds them to Markdown headings, but a heading written in raw HTML needs its own `id`, because the panel skips headings without one (`skip_no_ids=true`)
+2. Check the page does not set `sidebar: false`, and is not a `featured` or `breaking` post without a `sidebar` key (see [Showing and Hiding the Panel](#showing-and-hiding-the-panel))
+3. Check the layout reaches `default` — layouts built directly on `root` render no TOC panel
+4. "No sections on this page." means the parsed HTML has no `<h2>`, `<h3>` or `<h4>`; on a layout with [body sentinels](#scoping-the-toc-to-the-body), only the headings between them count
 
 ### Scroll Spy Not Working
 

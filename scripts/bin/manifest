@@ -29,8 +29,9 @@ USAGE:
 DESCRIPTION:
     Generates _data/theme-manifest.yml from the current state of the theme
     repo.  The manifest records the version, owned directories, plugin files
-    that remote-theme consumers must vendor, required config keys, and a
-    SHA-256 checksum for every themable file.
+    that remote-theme consumers must vendor, the theme data they must copy
+    (vendored_data_paths), required config keys, and a SHA-256 checksum for
+    every themable file and vendored data file.
 
     Run automatically by scripts/bin/release before tagging.
 
@@ -61,11 +62,18 @@ THEMABLE_PATHS=(
 )
 
 # Data files the theme ships that consumers may override with their own content
-# (excluded from the overlap audit; listed for documentation only).
+# (excluded from the overlap audit; for a YAML file here, audit-consumer compares
+# only the keys, to catch a consumer copy that lacks a label the theme reads).
 THEME_DATA_PATHS=(
     "_data/navigation"
     "_data/ui-text.yml"
 )
+
+# Theme-owned data registries consumers copy verbatim. Jekyll 3.10 never loads
+# a theme's _data/, so these reach a site only as its own copy, which does not
+# float with remote_theme (#556). The list lives in scripts/lib/audit.sh so the
+# consumer audit can fall back to it when it reads an older manifest.
+VENDORED_DATA_PATHS=("${THEME_VENDORED_DATA_PATHS[@]}")
 
 # Plugins that remote_theme consumers MUST vendor locally.
 #
@@ -136,8 +144,9 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # Build the per-file checksum block
 # ---------------------------------------------------------------------------
 build_checksums() {
-    for dir in "${THEMABLE_PATHS[@]}"; do
-        [[ -d "$dir" ]] || continue
+    # A vendored data path is a file; find(1) walks a file as readily as a dir.
+    for dir in "${THEMABLE_PATHS[@]}" "${VENDORED_DATA_PATHS[@]}"; do
+        [[ -e "$dir" ]] || continue
         while IFS= read -r -d '' file; do
             local relpath="${file#./}"
             # Skip README files and compiled/generated output
@@ -160,7 +169,7 @@ MANIFEST_CONTENT=$(cat << YAML
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "${CURRENT_VERSION}"
+version: "${CURRENT_VERSION}" # x-release-please-version
 generated_at: "${TIMESTAMP}"
 
 # Directories owned by this theme.  A consumer file in any of these paths
@@ -170,9 +179,18 @@ themable_paths:
 $(printf '  - %s\n' "${THEMABLE_PATHS[@]}")
 
 # Data paths the theme ships but that consumers are *expected* to customise.
-# Not included in the shadow audit.
+# Not included in the shadow audit. audit-consumer compares only the keys of a
+# YAML file here: MISSING_KEYS lists the keys of the theme's en: block that a
+# consumer's copy lacks (warn-only).
 theme_data_paths:
 $(printf '  - %s\n' "${THEME_DATA_PATHS[@]}")
+
+# Theme-owned data registries a consumer copies verbatim. Jekyll 3.10 (GitHub
+# Pages) never loads a theme's _data/, so a site reads these only from its own
+# copy, which does not float with remote_theme. audit-consumer flags a copy that
+# has fallen behind as STALE, and --fix refreshes it from the theme.
+vendored_data_paths:
+$(yaml_list_items "${VENDORED_DATA_PATHS[@]}")
 
 # Plugin files a consumer MUST vendor locally. Empty by design: GitHub Pages
 # builds in safe mode and loads no local plugins at all, so nothing the theme
@@ -201,7 +219,8 @@ config_schema:
   deprecated:
     - site_configured  # Removed in 1.5.0; safe to delete
 
-# Per-file SHA-256 checksums for every file in themable_paths.
+# Per-file SHA-256 checksums for every file in themable_paths and
+# vendored_data_paths.
 file_checksums:
 $(build_checksums)
 YAML
