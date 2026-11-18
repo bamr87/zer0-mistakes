@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-10-19
-  next_id: 56
+  updated: 2026-11-15
+  next_id: 57
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1134,8 +1134,8 @@ tasks:
     created: 2026-08-18
     updated: 2026-09-01
   - id: T-041
-    title: "Admin layout: actions reachable on mobile, grouped sidebar, shared sticky offset, single heading"
-    status: open
+    title: "Admin layout: actions reachable on mobile, grouped sidebar, single heading"
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -1149,22 +1149,28 @@ tasks:
       the rest in a "..." dropdown. Group sidebar items under small-caps headers
       (Configure / System / Links) via a group: key in
       _data/navigation/admin.yml; counts as plain numerals, statuses as colored
-      dot + word; active item = tint + semibold, not solid primary fill. Replace
-      style="top: 5rem" with top: calc(var(--zer0-nav-height) + 1rem) (depends
-      on T-039). Keep the "Administration" heading in the offcanvas header only.
+      dot + word; active item = tint + semibold, not solid primary fill. Keep
+      the "Administration" heading in the offcanvas header only. The sticky
+      offset clause (style="top: 5rem" to calc(var(--zer0-nav-height) + 1rem))
+      moved to T-039, which already lists admin.html's top: 5rem among the
+      offsets it derives from --zer0-nav-height. Done 2026-11-15: first action
+      a button at every width, the rest in a "More actions" dropdown; sidebar
+      grouped under list labels (not headings) with plain counts, dot + word
+      statuses and a tinted active item carrying aria-current; one
+      "Administration" heading. Tests in test/visual/features/admin.spec.js,
+      evidence in test/visual/evidence/admin-layout/.
     acceptance:
       - "Every admin action reachable at 375px width."
-      - "Sidebar grouped; no solid-primary active fill; sticky offset uses the shared variable."
+      - "Sidebar grouped; no solid-primary active fill."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 630, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
-    depends_on: [T-039]
+    updated: 2026-11-15
 
   - id: T-042
     title: "Skin contrast sweep: AA link params, tertiary meta text, per-skin badge/button audit"
-    status: open
+    status: done
     priority: P1
     area: a11y
     risk: standard
@@ -1172,23 +1178,25 @@ tasks:
     source: user
     route: a11y
     summary: >-
-      _sass/theme/_skins.scss: several skins omit the zer0-skin-palette mixin's
-      $link-light/$link-dark params and fall back to $brand/$accent, which fail
-      4.5:1 (yellow/orange/cyan brands on white, saturated brands on #212529) —
-      pass explicit AA-checked values for every skin with a comment table of
-      measured ratios. text-body-tertiary on 11-12px meta text (admin header
-      "Updated…", wizard hints) falls below AA — use --bs-secondary-color at
-      small sizes, tertiary only >= 16px. Audit .btn-primary text per skin
-      (auto-switch to dark text when brand luminance > 0.55 via color-contrast()
-      or a precomputed token).
+      Done 2026-11-15 (PR #632). The zer0-skin-palette mixin painted text with the raw
+      brand and left Bootstrap's white text on brand fills (air: current nav
+      link 2.40:1, .btn-primary 2.53:1). Every skin now passes a measured
+      $on-brand ink (--zer0-color-on-primary) for brand fills and all button
+      states, brand text uses the AA link colours, selected/current states the
+      link-hover shade, mint's light link is #287652 and dirt's button states
+      mix darker; the measured-ratio table sits beside each skin. Gray badges
+      use text-bg-secondary, small meta text text-body-secondary, and
+      .nav-tree-toggle is 24px. test/visual/core/skin-contrast.spec.js checks
+      the 7 palette skins in light and dark; evidence in
+      test/visual/evidence/skin-contrast/. Follow-ups outside the mixin: T-056.
     acceptance:
       - "axe/Lighthouse contrast passes on light + dark for all skins."
       - "Every skin passes explicit link colors; measured-ratio table committed as comments."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 632, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
+    updated: 2026-11-15
 
   - id: T-043
     title: "Mermaid diagrams: render-in-place (no CLS), token-driven theming, figure shell, flash-free theme switch"
@@ -1348,7 +1356,7 @@ tasks:
 
   - id: T-047
     title: "pages/_docs/features/toc.md documents a TOC API the theme does not implement"
-    status: open
+    status: done
     priority: P3
     area: docs
     risk: low
@@ -1356,6 +1364,13 @@ tasks:
     source: issue
     route: content-reviewer
     summary: >-
+      Done 2026-11-15 (#637): the Implementation section now names
+      default.html, navigation/sidebar-right.html and the vendored
+      allejo/jekyll-toc parser, quotes the real include call and lists every
+      include parameter; "Enable TOC" became "Showing and Hiding the Panel",
+      documenting the `sidebar` / `post_type` gate that
+      navigation/sidebar-config.html resolves; the Responsive and
+      Troubleshooting sections match the shipped markup and gates.
       Discovered while correcting the scroll-spy sections of
       pages/_docs/features/toc.md: the page's Implementation and Configuration
       halves describe a table of contents this theme does not have. "TOC
@@ -1374,6 +1389,9 @@ tasks:
       - "Front-matter keys documented on the page are read somewhere in _includes, _layouts, _plugins or _config.yml."
       - "scripts/content-review.rb still scores the page in the green band."
       - "Jekyll build with the layered dev configs is green and the page's anchors keep resolving."
+    links: { issue: null, pr: 637, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-11-15
 
   - id: T-048
     title: "Site-level theme_color re-pins --zer0-color-primary over the active skin"
@@ -1430,20 +1448,20 @@ tasks:
 
   - id: T-051
     title: "Preview-image engine: the xAI default model grok-2-image is retired — default to grok-imagine-image-2.0"
-    status: open
+    status: done
     priority: P2
     area: infra
     risk: low
     effort: S
     source: issue
-    summary: "Discovered while adding the xAI provider to the chat proxy and Site Builder (ZER0-087): scripts/lib/preview_generator.py's XAIProvider.default_model() still returns 'grok-2-image', which xAI has retired in favour of the Grok Imagine family (grok-imagine-image-2.0, per docs.x.ai release notes). A site with preview_images.provider: xai and no explicit model gets an upstream error. The Site Builder now writes preview_images.model explicitly for generated sites, so only the engine default (and the .env.example comment for IMAGE_MODEL) is stale. scripts/lib/ is CODEOWNERS-owned, so this is a human-review change."
+    summary: "Done 2026-10-07 (#499): XAIProvider.default_model() and the engine header's provider table name grok-imagine-image-2.0, test/test_preview_generator.py pins the new default and keeps an explicit grok-imagine-image-2.0, and scripts/lib/README.md lists each renderer's default model. Discovered while adding the xAI provider to the chat proxy and Site Builder (ZER0-087): scripts/lib/preview_generator.py's XAIProvider.default_model() still returns 'grok-2-image', which xAI has retired in favour of the Grok Imagine family (grok-imagine-image-2.0, per docs.x.ai release notes). A site with preview_images.provider: xai and no explicit model gets an upstream error. The Site Builder now writes preview_images.model explicitly for generated sites, so only the engine default (and the .env.example comment for IMAGE_MODEL) is stale. scripts/lib/ is CODEOWNERS-owned, so this is a human-review change."
     acceptance:
       - "XAIProvider.default_model() returns grok-imagine-image-2.0 and the provider table comment in the engine header matches."
       - "The image request keeps working with the current xAI response shape (data[0].url or b64_json)."
       - "scripts/lib/README.md / .env.example mention the new default."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: null, pr: 499, roadmap: null }
     created: 2026-09-07
-    updated: 2026-09-07
+    updated: 2026-11-15
 
   - id: T-054
     title: "Footer prints the copyright notice twice"
@@ -1514,3 +1532,36 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-10-29
     updated: 2026-10-29
+
+  - id: T-056
+    title: "Brand-colour contrast outside the skin mixin: text-white on bg-primary, brand hover text, sidebar count badge"
+    status: open
+    priority: P2
+    area: a11y
+    risk: standard
+    effort: M
+    source: issue
+    route: a11y
+    summary: >-
+      Discovered during the T-042 sweep (#410), which fixed the zer0-skin-palette
+      mixin and the navigation current states only. Still open: about a dozen
+      `bg-primary text-white` sites (card headers, author-avatar fallbacks,
+      feature and landing icons, an offcanvas header) keep white on the light
+      brands (2.2-2.8:1); hover states that paint the raw brand as text
+      (.nav-tree-link, the quicklinks chip over the gray outline-secondary
+      hover fill, .sidebar-categories-link, #info-section tabs) and the
+      $accent hover text on .nav-tabs / .list-group-item-action; brand text in
+      _sass/notebooks.scss, _sass/layouts/_landing.scss, _sass/core/_obsidian.scss
+      ([aria-pressed]) and white-on-primary in _setup-wizard.scss; the
+      sidebar-categories count badge (`text-bg-secondary bg-opacity-25`, white on
+      a 25% gray tint); and the contrast/dark skins keep Bootstrap's #0d6efd link
+      (4.27:1 on the #f8f9fa navbar).
+    acceptance:
+      - "`bg-primary text-white` markup in _includes and _layouts uses text-bg-primary (or an equivalent that follows --zer0-color-on-primary)."
+      - "Hover and focus text on skin-coloured controls reaches 4.5:1 in every palette skin, light and dark."
+      - "The sidebar-categories count badge reaches 4.5:1."
+      - "test/visual/core/skin-contrast.spec.js covers the new cases."
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-11-15
+    updated: 2026-11-15
