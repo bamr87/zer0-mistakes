@@ -145,7 +145,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Post-type badge | `_includes/components/post-type-badge.html` | — | 🔴 none |
 | Feature card | `_includes/components/feature-card.html` | — | 🔴 none |
 | Preview image | `_includes/components/preview-image.html` | — | 🔴 none |
-| Comments (Giscus) | `_includes/content/giscus.html` | — | 🔴 none |
+| Comments (Giscus) | `_includes/content/comments.html`, `_includes/content/giscus.html` | `features/comments.spec.js`, `test/test_giscus_config.rb` | 🟡 partial |
 | Share actions (LinkedIn enhancement) | `assets/js/share-actions.js` | — | 🔴 none |
 | Posts pagination | `assets/js/posts-pagination.js` | `features/layouts.spec.js` | 🟡 partial |
 | Article layout | `_layouts/article.html` | `features/layouts.spec.js` | 🟡 partial |
@@ -1065,14 +1065,14 @@ The components that render long-form and reference content in zer0-mistakes — 
 
 ### Comments (Giscus)
 
-- **Purpose:** GitHub-Discussions-backed comment thread embedded at the foot of articles/notes/notebooks, themed to the reader's color scheme.
-- **Capabilities:** loads `giscus.app/client.js` async; pathname-based strict thread mapping; reactions enabled; top input position; `preferred_color_scheme` theming; English; configured from `site.repository` + `site.giscus.{data-repo-id,data-category-id}`. Gated per-layout (`comments != false` and `site.giscus`/`site.giscus.enabled`).
+- **Purpose:** GitHub-Discussions-backed comment thread embedded at the foot of articles/notes/notebooks (and recipes/book stories that opt in), themed to the reader's color scheme or a theme the site sets.
+- **Capabilities:** loads `giscus.app/client.js` async; strict thread mapping; reactions enabled; configured from `site.repository` + `site.giscus.{data-repo-id,data-category-id}`, with `site.giscus.{data-theme,data-mapping,data-input-position,data-lang}` falling back to `preferred_color_scheme`, `pathname`, `top` and `en` (#574). One gate for every layout in `content/comments.html`: `site.giscus.enabled`, then on unless `comments: false` (article/note/notebook) or only with `comments: true` (recipe/book-story, `default_on=false`).
 - **Source:**
-  - Markup: `_includes/content/giscus.html`
+  - Markup: `_includes/content/comments.html` (gate, heading, section), `_includes/content/giscus.html` (widget)
   - Plugin/data: `site.giscus` config in `_config.yml`
-- **API surface:** `<script data-repo data-repo-id data-category-id data-mapping="pathname" data-strict="1" data-reactions-enabled="1" data-theme="preferred_color_scheme" …>`. No classes/vars.
-- **Tests:** No automated tests (third-party iframe; specs don't load it).
-- **Gaps / improvement ideas:** `data-theme="preferred_color_scheme"` follows OS preference, not the site's manual `[data-bs-theme]` toggle — comments mismatch the chosen theme. Inconsistent gating: `article.html` checks `site.giscus` truthiness while note/notebook check `site.giscus.enabled` — three layouts, two conditions. No graceful fallback/placeholder if Discussions is disabled. No `loading`/visibility deferral until scrolled into view.
+- **API surface:** `<script data-repo data-repo-id data-category-id data-mapping data-strict="1" data-reactions-enabled="1" data-input-position data-theme data-lang …>`; `content/comments.html` params `default_on`, `class`, `compact`; `section#comments.post-comments` (or `div.note-comments`/`div.notebook-comments` in compact form).
+- **Tests:** `test/test_giscus_config.rb` (throwaway builds of every comment layout: per-layout gates, legacy tag byte for byte, config overlay), `test_giscus_comments` static checks in `test/test_core.sh`, `features/comments.spec.js` (served article section and tag; the third-party iframe is stubbed).
+- **Gaps / improvement ideas:** `data-theme` is fixed at build time, so it cannot follow the site's manual `[data-bs-theme]` toggle — a dark-only skin can set `giscus.data-theme`, but a site whose visitors switch modes needs giscus's `setConfig` postMessage on toggle. `data-lang` is one site-wide value; it does not follow `page.lang` on translated pages. No graceful fallback/placeholder if Discussions is disabled. No `loading`/visibility deferral until scrolled into view.
 
 ### Share actions (LinkedIn enhancement)
 

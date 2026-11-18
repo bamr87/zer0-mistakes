@@ -225,12 +225,8 @@ layout: default
   {% comment %} ================================ {% endcomment %}
   {% comment %} COMMENTS SECTION                 {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {% if page.comments != false and site.giscus.enabled %}
-    <div class="notebook-comments mt-5 pt-4 border-top">
-      <h5 class="mb-4">Comments</h5>
-      {% include content/giscus.html %}
-    </div>
-  {% endif %}
+  {% comment %} On unless the page sets comments: false; h5 like the other footer sections. {% endcomment %}
+  {% include content/comments.html class="notebook-comments" compact=true %}
   
 </article>
 
