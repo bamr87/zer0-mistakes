@@ -509,6 +509,19 @@ test_jekyll_build() {
                 rm -rf "$temp_site"
                 return 1
             fi
+            # The four configurable attributes (issue #574) fall back to the
+            # include's defaults when _config.yml leaves them unset, so each must
+            # render a value. test/test_giscus_config.rb pins the exact defaults.
+            local giscus_attr
+            for giscus_attr in data-mapping data-input-position data-theme data-lang; do
+                if ! grep -A12 '<script src="https://giscus.app/client.js"' "$giscus_page" | grep -qE "${giscus_attr}=\"[^\"]+\""; then
+                    log_error "Giscus widget rendered with an EMPTY ${giscus_attr} (lost its default?): $giscus_page"
+                    cd "$PROJECT_ROOT"
+                    rm -rf "$temp_site"
+                    return 1
+                fi
+            done
+            log_success "Giscus widget rendered its mapping, input position, theme and language"
         else
             log_error "No built page rendered the Giscus widget (comments disabled or include broken)"
             cd "$PROJECT_ROOT"
@@ -702,7 +715,8 @@ test_liquid_templates() {
 
 test_giscus_comments() {
     # SCOPE: this test is static-only — it proves the config keys exist, the
-    # include interpolates them, and the layouts gate on them. It canNOT tell
+    # include interpolates them, and the layouts render comments through the
+    # one gated wrapper (content/comments.html). It canNOT tell
     # you whether comments actually work, because the two things that break
     # them in practice live on GitHub's side and are invisible to a build:
     #   1. the giscus GitHub App not being installed on the repo
@@ -748,7 +762,9 @@ test_giscus_comments() {
     # 3. Include interpolates config values and is not self-referential.
     if [[ -f "$include" ]]; then
         local token
-        for token in "site.repository" "site.giscus.data-repo-id" "site.giscus.data-category-id"; do
+        for token in "site.repository" "site.giscus.data-repo-id" "site.giscus.data-category-id" \
+                     "site.giscus.data-mapping" "site.giscus.data-input-position" \
+                     "site.giscus.data-theme" "site.giscus.data-lang"; do
             if grep -qF "$token" "$include"; then
                 log_success "giscus include references {{ $token }}"
             else
@@ -770,25 +786,79 @@ test_giscus_comments() {
         failed=1
     fi
 
-    # 4. All comment-bearing layouts gate consistently on site.giscus.enabled.
+    # 4. One gate for every comment-bearing layout (issue #574): the
+    #    content/comments.html wrapper checks page.comments and
+    #    site.giscus.enabled and renders the widget, and the layouts include
+    #    it rather than the bare widget, so the gate cannot drift between
+    #    layouts. test/test_giscus_config.rb builds each layout to prove the
+    #    per-layout default (on for article/note/notebook, opt-in for
+    #    recipe/book-story).
+    local wrapper="$PROJECT_ROOT/_includes/content/comments.html"
+    if [[ -f "$wrapper" ]] && grep -qF 'site.giscus.enabled' "$wrapper" \
+        && grep -qF 'include content/giscus.html' "$wrapper"; then
+        log_success "content/comments.html gates on site.giscus.enabled and renders content/giscus.html"
+    else
+        log_error "content/comments.html is missing, or no longer gates on site.giscus.enabled and renders content/giscus.html"
+        failed=1
+    fi
     local layout
-    for layout in "_layouts/article.html" "_layouts/note.html" "_layouts/notebook.html"; do
+    for layout in "_layouts/article.html" "_layouts/note.html" "_layouts/notebook.html" \
+                  "_layouts/recipe.html" "_layouts/book-story.html"; do
         if [[ ! -f "$PROJECT_ROOT/$layout" ]]; then
             continue
         fi
-        if grep -qF 'site.giscus.enabled' "$PROJECT_ROOT/$layout"; then
-            log_success "$layout gates comments on site.giscus.enabled"
+        if grep -qE '\{%-?[[:space:]]*include[[:space:]]+content/comments\.html' "$PROJECT_ROOT/$layout"; then
+            log_success "$layout renders comments through content/comments.html"
         else
-            log_error "$layout does not gate comments on site.giscus.enabled"
+            log_error "$layout does not render comments through content/comments.html"
             failed=1
         fi
     done
+    local direct
+    direct=$(grep -lE '\{%-?[[:space:]]*include[[:space:]]+content/giscus\.html' "$PROJECT_ROOT"/_layouts/*.html 2>/dev/null || true)
+    if [[ -n "$direct" ]]; then
+        log_error "Layouts include content/giscus.html directly, bypassing the comments gate: $direct"
+        failed=1
+    else
+        log_success "No layout includes the giscus widget directly"
+    fi
 
     if [[ "$failed" -ne 0 ]]; then
         return 1
     fi
     log_success "Giscus comments configuration is valid"
     return 0
+}
+
+test_giscus_config() {
+    log_info "Testing the giscus attributes follow the config and every layout keeps its comments gate (issue #574)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the giscus config check"
+        return 0
+    fi
+
+    # Builds throwaway sites through the real layouts, so it needs the bundle
+    # (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the giscus config check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_giscus_config.rb; then
+        log_success "giscus attributes follow the config; every layout keeps its comments gate and markup"
+        return 0
+    else
+        log_error "giscus config check failed (see above)"
+        return 1
+    fi
 }
 
 test_favicon_wiring() {
@@ -1311,6 +1381,37 @@ test_cookie_consent_gate() {
     fi
 }
 
+test_newsletter_gate() {
+    log_info "Testing the footer newsletter form renders only with a configured provider (issue #554)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the newsletter gate check"
+        return 0
+    fi
+
+    # Builds throwaway sites through the real footer include, so it needs the
+    # bundle (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the newsletter gate check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_newsletter_gate.rb; then
+        log_success "footer newsletter form follows the newsletter config"
+        return 0
+    else
+        log_error "newsletter gate check failed (see above)"
+        return 1
+    fi
+}
+
 test_build_overlay_recipe() {
     log_info "Testing the documented safe-mode build overlay is Pages-faithful (issue #565)..."
 
@@ -1780,7 +1881,7 @@ test_navbar_attribute_whitespace() {
 }
 
 test_sidebar_offcanvas_layout_gate() {
-    log_info "Testing sidebar offcanvas layout gate (issue #373)..."
+    log_info "Testing sidebar offcanvas layout gate (issues #373, #570)..."
 
     cd "$PROJECT_ROOT"
 
@@ -1793,20 +1894,44 @@ test_sidebar_offcanvas_layout_gate() {
 import re, sys, pathlib
 
 layouts_dir = pathlib.Path("_layouts")
-cfg = pathlib.Path("_includes/navigation/sidebar-config.html").read_text(encoding="utf-8")
+cfg_path = pathlib.Path("_includes/navigation/sidebar-config.html")
+cfg = cfg_path.read_text(encoding="utf-8")
 
-m = re.search(r'_sidebar_offcanvas_layouts\s*=\s*"([^"]*)"', cfg)
-if not m:
-    print("::error::_sidebar_offcanvas_layouts not found in sidebar-config.html")
-    sys.exit(1)
-declared = {x.strip() for x in m.group(1).split(",") if x.strip()}
+KEY = "renders_sidebar_offcanvas"
+errors = []
 
-# parent[layout] = its `layout:` front-matter value (None when standalone)
-parent = {}
+# ---------------------------------------------------------------------------
+# 1. The gate asks the LAYOUT CHAIN, not a hard-coded list of theme layouts.
+#    The list fails closed for every consumer layout that extends default
+#    (issue #570): #tocContents rendered, #tocFab did not.
+# ---------------------------------------------------------------------------
+if "_sidebar_offcanvas_layouts" in cfg:
+    errors.append(
+        "::error file=%s::the hard-coded _sidebar_offcanvas_layouts list is back. It only "
+        "knows the theme's own layout names, so a consumer layout that extends default gets "
+        "the offcanvas and no way to open it (issue #570). Gate on "
+        "`layout.%s` instead." % (cfg_path, KEY)
+    )
+if not re.search(r"\{%-?\s*if\s+layout\." + KEY + r"\s*-?%\}", cfg):
+    errors.append(
+        "::error file=%s::expected the gate `{%%- if layout.%s -%%}`; "
+        "sidebar_offcanvas_rendered must come from the merged layout front matter." % (cfg_path, KEY)
+    )
+
+# ---------------------------------------------------------------------------
+# 2. Front matter of every layout: its `layout:` parent and whether it declares
+#    the key. Jekyll deep-merges layout data down the chain, so declaring it on
+#    default.html alone covers every descendant, consumer layouts included.
+# ---------------------------------------------------------------------------
+parent, declares = {}, set()
 for f in sorted(layouts_dir.glob("*.html")):
-    head = f.read_text(encoding="utf-8", errors="replace")[:600]
-    pm = re.search(r'^layout:\s*(\S+)\s*$', head, re.M)
+    head = f.read_text(encoding="utf-8", errors="replace")[:900]
+    fm = head.split("---", 2)[1] if head.startswith("---") else head
+    pm = re.search(r'^layout:\s*(\S+)\s*$', fm, re.M)
     parent[f.stem] = pm.group(1) if pm else None
+    km = re.search(r'^' + KEY + r':\s*(\S+)\s*$', fm, re.M)
+    if km and km.group(1).lower() == "true":
+        declares.add(f.stem)
 
 def reaches_default(name, seen=None):
     """True when name is `default` or inherits from it (cycle-safe)."""
@@ -1819,34 +1944,40 @@ def reaches_default(name, seen=None):
     p = parent[name]
     return bool(p) and reaches_default(p, seen)
 
-actual = {n for n in parent if reaches_default(n)}
+# default.html is the layout that emits #bdSidebar / #tocContents, so it is the
+# one that must declare the key.
+if "default" not in declares:
+    errors.append(
+        "::error file=_layouts/default.html::default.html must declare `%s: true` in its front "
+        "matter — it is the layout that emits #bdSidebar/#tocContents, and the merge is what "
+        "lets consumer layouts inherit the toggles (issue #570)." % KEY
+    )
 
-missing = sorted(actual - declared)   # renders the offcanvas, gate says no
-extra   = sorted(declared - actual)   # gate says yes, renders nothing
+# Nothing outside the default chain may declare it: that would re-create #373's
+# dead toggle pointing at an offcanvas the layout never renders.
+stray = sorted(n for n in declares if not reaches_default(n))
+if stray:
+    errors.append(
+        "::error::these layouts declare `%s` but their `layout:` chain never reaches "
+        "default.html, so they render no offcanvas and their toggles would point at nothing "
+        "(issue #373): %s" % (KEY, ", ".join(stray))
+    )
 
-if missing or extra:
-    if missing:
-        print("::error file=_includes/navigation/sidebar-config.html::these layouts reach "
-              "default.html (so they DO render #bdSidebar/#tocContents) but are missing from "
-              "_sidebar_offcanvas_layouts: " + ", ".join(missing) +
-              ". Their sidebar toggle and TOC FAB will not render.")
-    if extra:
-        print("::error file=_includes/navigation/sidebar-config.html::these layouts are listed "
-              "in _sidebar_offcanvas_layouts but do NOT reach default.html, so they render no "
-              "offcanvas: " + ", ".join(extra) +
-              ". Their toggles would point at nothing (issue #373).")
+if errors:
+    for e in errors:
+        print(e)
     sys.exit(1)
 
-print("OK - _sidebar_offcanvas_layouts matches the layout graph: " + ", ".join(sorted(actual)))
+inherit = sorted(n for n in parent if reaches_default(n))
+print("OK - layout.%s gates the offcanvas toggles; declared by %s, inherited by %s"
+      % (KEY, ", ".join(sorted(declares)), ", ".join(inherit)))
 PYEOF
     then
-        log_success "Sidebar offcanvas layout gate matches the layout inheritance graph"
+        log_success "Sidebar offcanvas gate is driven by the layout chain, not a layout-name list"
     else
-        log_error "Sidebar offcanvas layout gate has drifted from _layouts/ (issue #373)"
+        log_error "Sidebar offcanvas layout gate is wrong (issues #373, #570)"
         return 1
     fi
-
-    return 0
 }
 
 test_design_token_parity() {
@@ -1965,6 +2096,7 @@ run_core_tests() {
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
+    run_test "Newsletter Gate" "test_newsletter_gate" "unit"
     run_test "Build Overlay Recipe" "test_build_overlay_recipe" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
@@ -1979,6 +2111,7 @@ run_core_tests() {
     log_info "=== VALIDATION TESTS ==="
     run_test "Liquid Template Validation" "test_liquid_templates" "validation"
     run_test "Giscus Comments Configuration" "test_giscus_comments" "validation"
+    run_test "Giscus Config Overlay" "test_giscus_config" "validation"
     run_test "Favicon and Analytics Wiring" "test_favicon_wiring" "validation"
     run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
     run_test "Cookbook Recipe Collection" "test_recipe_collection" "validation"

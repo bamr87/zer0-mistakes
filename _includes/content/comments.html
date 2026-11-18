@@ -1,0 +1,46 @@
+{%- comment -%} Feature: ZER0-035 {%- endcomment -%}
+{%- comment -%}
+  Component:   comments
+  Path:        _includes/content/comments.html
+  Purpose:     A page's comment section in one include: the gate, the
+               "Comments" heading and the giscus widget (content/giscus.html).
+               The article, note, notebook, recipe and book-story layouts all
+               render comments through it, so a consumer layout needs one
+               include line to show comments the way the theme does.
+  Params:      default_on (bool, optional, default: true)
+                 true  — shown unless the page sets `comments: false`
+                 false — shown only when the page sets `comments: true`
+               class (string, optional, default: "post-comments")
+                 the wrapper's own class; the spacing utilities are added
+               compact (bool, optional, default: false)
+                 a div with an h5 heading and no id, the style of the note
+                 and notebook footer sections; the default is a
+                 section#comments with an h2 heading
+  Depends on:  content/giscus.html, site.giscus.enabled, page.comments
+  Notes:       Renders nothing unless `site.giscus.enabled` is true.
+               article, note and notebook keep the default (on unless a page
+               opts out); recipe and book-story pass default_on=false (off
+               unless a page opts in). The giscus attributes (theme, mapping,
+               input position, language) come from the `giscus:` block in
+               _config.yml; see content/giscus.html.
+{%- endcomment -%}
+{%- assign _comments_on = false -%}
+{%- if include.default_on == false -%}
+  {%- if page.comments -%}{%- assign _comments_on = true -%}{%- endif -%}
+{%- elsif page.comments != false -%}
+  {%- assign _comments_on = true -%}
+{%- endif -%}
+{%- if _comments_on and site.giscus.enabled -%}
+{%- assign _comments_class = include.class | default: 'post-comments' -%}
+{%- if include.compact %}
+<div class="{{ _comments_class }} mt-5 pt-4 border-top">
+  <h5 class="mb-4">Comments</h5>
+  {% include content/giscus.html %}
+</div>
+{%- else %}
+<section class="{{ _comments_class }} mt-5 pt-4 border-top" id="comments">
+  <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>
+  {% include content/giscus.html %}
+</section>
+{%- endif -%}
+{%- endif -%}

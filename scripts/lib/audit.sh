@@ -46,6 +46,15 @@ manifest_list() {
     ' "$manifest_file"
 }
 
+# manifest_has_key <manifest_file> <key>
+# Succeeds when the manifest declares the top-level key at all, so a list that
+# is deliberately empty is told apart from a snapshot that predates the key.
+manifest_has_key() {
+    local manifest_file="$1"
+    local key="$2"
+    grep -qE "^${key}:" "$manifest_file"
+}
+
 # Read the per-file checksum section from the manifest.
 # Emits lines of: <relpath> <sha256>
 manifest_checksums() {
@@ -159,6 +168,76 @@ classify_plugin() {
     fi
 
     echo "OK"
+}
+
+# ---------------------------------------------------------------------------
+# Vendored theme data
+# ---------------------------------------------------------------------------
+# Jekyll 3.10 (GitHub Pages, and the theme's own Gemfile) never loads a theme's
+# _data/, so a consumer reads the theme's data only from its own copy, and that
+# copy does not float with remote_theme. A fix the theme makes to its data
+# (#240 added the `dark` and `contrast` skins) never reaches the sites that
+# vendored the file before it, and nothing reported it (#556).
+#
+# Theme-owned registries a consumer copies verbatim. scripts/bin/manifest
+# publishes this list as `vendored_data_paths`; scripts/bin/audit-consumer falls
+# back to it when the manifest it reads was cut before that key existed.
+# shellcheck disable=SC2034  # read by scripts/bin/manifest and scripts/bin/audit-consumer
+THEME_VENDORED_DATA_PATHS=(
+    "_data/theme_skins.yml"
+    "_data/theme_backgrounds.yml"
+)
+
+# classify_vendored_data <theme_root> <consumer_root> <relpath> <override_paths_file>
+# Emits one of: IDENTICAL STALE DIFFERS_JUSTIFIED MISSING, or nothing when the
+# theme checkout does not ship the file (an older theme has nothing to compare).
+classify_vendored_data() {
+    local theme_root="$1"
+    local consumer_root="$2"
+    local relpath="$3"
+    local override_paths_file="$4"
+
+    [[ -f "$theme_root/$relpath" ]] || return 0
+
+    case "$(classify_file "$theme_root" "$consumer_root" "$relpath" "$override_paths_file")" in
+        IDENTICAL)           echo "IDENTICAL" ;;
+        DIFFERS_JUSTIFIED)   echo "DIFFERS_JUSTIFIED" ;;
+        DIFFERS_UNJUSTIFIED) echo "STALE" ;;
+        MISSING_LOCALLY)     echo "MISSING" ;;
+    esac
+}
+
+# missing_data_keys <theme_yml> <consumer_yml>
+# Prints, one per line, every key the theme's `en:` block has that the
+# consumer's `en:` block lacks (the top-level keys, for a file without an `en:`
+# block). A consumer customises the VALUES in these files, so bytes are not
+# compared; a key it lacks is a label the theme reads and the site never got.
+# Returns 2 when ruby is unavailable, 1 when either file does not parse.
+missing_data_keys() {
+    local theme_yml="$1"
+    local consumer_yml="$2"
+
+    command -v ruby >/dev/null 2>&1 || return 2
+
+    # Runs on Ruby 2.6: its Psych 3.1 already takes these keywords. `aliases`
+    # is needed because ui-text.yml builds its regional blocks from &DEFAULT_EN.
+    ruby -ryaml -rdate -e '
+        def load_yaml(path)
+          YAML.safe_load(File.read(path), permitted_classes: [Date, Time], aliases: true)
+        end
+        begin
+          theme = load_yaml(ARGV[0])
+          consumer = load_yaml(ARGV[1])
+        rescue Psych::Exception, SystemCallError => e
+          abort e.message
+        end
+        abort "#{ARGV[0]}: not a YAML mapping" unless theme.is_a?(Hash)
+        scoped = theme["en"].is_a?(Hash)
+        want = scoped ? theme["en"] : theme
+        have = consumer.is_a?(Hash) ? (scoped ? consumer["en"] : consumer) : nil
+        have = {} unless have.is_a?(Hash)
+        (want.keys.map(&:to_s) - have.keys.map(&:to_s)).each { |key| puts key }
+    ' "$theme_yml" "$consumer_yml"
 }
 
 # ---------------------------------------------------------------------------
@@ -293,6 +372,18 @@ print_classification() {
             local color="${CYAN}"
             local icon="?"
             ;;
+        STALE)
+            local color="${RED}"
+            local icon="✗"
+            ;;
+        MISSING)
+            local color="${YELLOW}"
+            local icon="?"
+            ;;
+        MISSING_KEYS)
+            local color="${YELLOW}"
+            local icon="!"
+            ;;
         *)
             local color="${NC}"
             local icon="?"
@@ -321,4 +412,69 @@ print_classification() {
     else
         echo -e "${color}[$classification]${NC} $relpath"
     fi
+}
+
+# json_escape <string> — escape backslashes and double quotes for a JSON string.
+json_escape() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    printf '%s' "$s"
+}
+
+# print_data_classification <classification> <relpath> <format> [missing_keys]
+# Text and github output for the vendored-data pass. missing_keys is the
+# newline-separated list missing_data_keys printed. (--format json collects
+# these into the report's separate "vendored_data" array instead: for data,
+# IDENTICAL means "current, keep it", never the themable "safe to delete".)
+print_data_classification() {
+    local classification="$1"
+    local relpath="$2"
+    local format="${3:-text}"
+    local keys="${4:-}"
+    local count=0 list=""
+
+    if [[ -n "$keys" ]]; then
+        count=$(printf '%s\n' "$keys" | wc -l | tr -d ' ')
+        list=$(printf '%s\n' "$keys" | paste -s -d ',' - | sed 's/,/, /g')
+    fi
+
+    if [[ "$format" == "github" ]]; then
+        case "$classification" in
+            STALE)
+                echo "::warning file=$relpath::STALE vendored theme data: differs from the theme and is not declared in .theme-overrides.yml (refresh it with audit-consumer --fix)" ;;
+            MISSING)
+                echo "::notice file=$relpath::MISSING: this site has no copy, so the theme's includes fall back to built-in defaults" ;;
+            MISSING_KEYS)
+                echo "::warning file=$relpath::MISSING_KEYS ($count): $list" ;;
+        esac
+        return 0
+    fi
+
+    print_classification "$classification" "$relpath" "$format"
+    if [[ "$classification" == "MISSING_KEYS" ]]; then
+        echo "    $count key(s) absent from en: $list"
+    fi
+    return 0
+}
+
+# data_json_entry <classification> <relpath> [missing_keys]
+# One object of the JSON report's "vendored_data" array.
+data_json_entry() {
+    local classification="$1"
+    local relpath="$2"
+    local keys="${3:-}"
+    local entry key sep=""
+
+    entry="{\"path\":\"$(json_escape "$relpath")\",\"status\":\"$classification\""
+    if [[ -n "$keys" ]]; then
+        entry+=',"missing_keys":['
+        while IFS= read -r key; do
+            [[ -n "$key" ]] || continue
+            entry+="${sep}\"$(json_escape "$key")\""
+            sep=","
+        done <<< "$keys"
+        entry+=']'
+    fi
+    printf '%s}' "$entry"
 }

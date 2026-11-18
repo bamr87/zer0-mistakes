@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-09-03T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
 preview: /images/previews/include-components.png
@@ -109,7 +109,8 @@ _includes/
 
 | Include | Purpose |
 |---------|---------|
-| `content/giscus.html` | GitHub Discussions comments |
+| `content/comments.html` | Comment section: the gate, heading, and giscus widget |
+| `content/giscus.html` | GitHub Discussions comments widget |
 | `content/intro.html` | Page introduction |
 | `content/seo.html` | SEO meta tags |
 | `content/sitemap.html` | Sitemap entry |
@@ -126,10 +127,10 @@ _includes/
 ### Comments Include
 
 ```liquid
-{% raw %}{% if page.comments != false and site.giscus.enabled %}
-  {% include content/giscus.html %}
-{% endif %}{% endraw %}
+{% raw %}{% include content/comments.html %}{% endraw %}
 ```
+
+One line renders the whole comment section, and only when `site.giscus.enabled` is true and the page has not set `comments: false`. Pass `default_on=false` to show comments only on pages that set `comments: true`. See [Giscus Comments](/docs/features/giscus-comments/#comments-in-your-own-layout) for the other parameters and the widget's config keys.
 
 ## Core Includes
 
