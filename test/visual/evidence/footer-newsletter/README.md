@@ -1,0 +1,13 @@
+# Evidence: opt-in footer newsletter signup (#554)
+
+**The bug.** `_includes/core/footer.html` rendered a newsletter form on every page of every site, whatever the config: a disabled email input, a disabled "Subscribe" button whose tooltip was a setup note ("Configure a newsletter endpoint in your site config"), and a visible "Newsletter is a placeholder until you connect a provider." caption. No config key enabled the form or hid it.
+
+**The fix.** The footer reads `site.newsletter`, falling back to `site.news.newsletter` (the news band's block), and renders the form only when that block has a non-blank `endpoint` and is not `enabled: false`. The form then submits the address to the endpoint (`method` and `email_field` are configurable) with an enabled, required email input and a submit button, and its strings come from `_data/ui-text.yml`. Without a form, the policy links take the whole row, centred.
+
+**How this was generated.** Three static builds of the same dev config (`_config.yml,_config_dev.yml`, incremental off): BEFORE is `main` @ `93e7062`, AFTER is this branch, and the third is this branch with `newsletter: { endpoint: "https://example.com/subscribe" }` layered on top. The captures are by [`test/visual/footer-newsletter-evidence.mjs`](../../footer-newsletter-evidence.mjs), run with Playwright 1.58.2 driving a locally cached Chromium headless shell (not the jammy image CI uses), as a returning visitor (consent stored) with the fixed FABs hidden so they do not cover the crop.
+
+- `01-footer-before-after.png`: the dark footer block on `/` at 390px and 1280px for all three builds.
+- `02-subscribe-row-1280.png`: a close-up of the subscribe row at 1280px. BEFORE shows the dead form and its caption with the policy links squeezed right; AFTER shows the policy links centred across the row; the configured build shows an enabled email field and button.
+- `metrics.json`: the per-width DOM probe (whether the form renders, its action and method, the input's disabled and required state, the button's type, disabled state and title, the placeholder caption, the disabled controls in the footer, and the policy links' classes and alignment). It also records one submission of the configured form: an empty field is blocked by `required`, and a filled one sends `POST https://example.com/subscribe` with `email=reader%40example.com`. The request was intercepted and answered locally, so nothing left the machine.
+
+Whole-site counts with the dev config: 384 of 407 HTML files carried the dead form before, and 0 after. With `newsletter.endpoint` set, all 384 carry the working form. With only `news.newsletter.endpoint` set, they carry it with that endpoint, and with `enabled: false` plus an endpoint, none do.

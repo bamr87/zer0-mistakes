@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 title: Admin Layout & Configuration Dashboards
 description: Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place.
 preview: /images/previews/admin-layout-configuration-dashboards.png
@@ -46,13 +46,28 @@ icon: bi-gear
 | `icon` | string | Bootstrap Icons class shown in the page header (e.g. `bi-gear`) |
 | `admin_nav` | boolean | Show the admin sidebar (default: `true`) |
 | `admin_section` | string | Active section key for sidebar highlighting |
-| `admin_actions` | array | Header action buttons (`label`, `url`, `icon`, `style`) |
+| `admin_actions` | array | Header actions (`label`, `url`, `icon`, `style`): the first is a button, the rest open from "More actions" |
+
+### Header Actions
+
+`admin_actions` stays usable at every screen width. The first entry renders as a button (its `style` applies, default `btn-outline-secondary`); any further entries become items of a **More actions** (⋯) dropdown next to it, where `style` is ignored. On narrow screens the actions wrap onto their own line under the page title:
+
+```yaml
+admin_actions:
+  - label: Theme Customizer
+    url: /about/settings/theme/
+    icon: bi-palette
+    style: btn-outline-primary
+  - label: Component Showcase
+    url: /about/settings/components/
+    icon: bi-grid-3x3-gap
+```
 
 ### Layout Structure
 
 ```text
 Admin page
-├── Admin header  (breadcrumbs + icon + title + action buttons)
+├── Admin header  (breadcrumbs + icon + title + actions)
 ├── Admin sidebar (collapsible; collapses to offcanvas on mobile)
 └── Main content  (page body, tab panels, data tables, …)
 ```
@@ -65,7 +80,17 @@ A dedicated sidebar navigation partial is included automatically with the admin 
 _includes/navigation/admin-nav.html
 ```
 
-It renders a vertical nav with links to all admin/settings pages.
+It renders a vertical nav with links to all admin/settings pages, read from `_data/navigation/admin.yml`. Each item's `group:` key places it under a small-caps section label — **Configure**, **System** and **Links** in the theme's own file — and sections appear in the order they first occur in the file. Items without a `group:` are listed together without a label, so a navigation file written before groups existed keeps working:
+
+```yaml
+- title: Configuration
+  url: /about/config/
+  icon: bi-gear
+  group: Configure
+  description: View and export site configuration
+```
+
+The current page is marked with `aria-current` and a light tint of the active skin's colour. Counts show as plain numbers and statuses as a coloured dot with a word (for example Analytics "Off", Environment "Dev").
 
 ## Tabbed Admin Pages
 

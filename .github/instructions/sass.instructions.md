@@ -2,7 +2,7 @@
 applyTo: "_sass/**,assets/css/**"
 description: "Use when editing Sass partials, the main stylesheet, or layering custom CSS on top of bundled Bootstrap 5.3.3. Covers the partial hierarchy, the `!default` override pattern, and the rule against loading two Bootstraps."
 date: 2026-05-18T12:00:00.000Z
-lastmod: 2026-05-18T12:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 ---
 
 # Sass / CSS
@@ -31,7 +31,7 @@ core/code-copy, core/syntax            →  Code copy button + Rouge syntax them
 
 `custom.scss` is **a thin barrel, not a monolith** (it was decomposed in the design-framework refactor). It imports, in order: `layouts/_global-chrome.scss` (base resets, sticky/shadow helpers), `core/_toc.scss` (table-of-contents), `core/_sidebar-extras.scss` (sidebar/TOC active states + banner shims), `components/_ui-enhancements.scss` (Bootstrap component polish — buttons, cards, hero, motion, mobile, print), and `components/_notes-index.scss` (notes/notebooks index grids). It stays as a barrel so forks that `@import "custom"` keep working.
 
-The design-token layer lives in `_sass/tokens/` (`_color`, `_spacing`, `_typography`, `_shadow`, `_motion`, `_breakpoints`, `_layers`, all surfaced via `tokens/_index.scss`). The theme/skin layer is in `_sass/theme/` (`_skins.scss` is a single parameterised `zer0-skin-palette` mixin — add a skin by `@include`-ing it with brand/accent/WCAG-AA link colors, not by copying blocks; `_css-variables.scss`/`_color-modes.scss` hold the `--bd-*` docs-heritage colors; `_backgrounds`/`_background-mixins`/`_wizard-mode`). Feature partials live under `_sass/core/`; notebook-specific styles in `_sass/notebooks.scss`.
+The design-token layer lives in `_sass/tokens/` (`_color`, `_spacing`, `_typography`, `_shadow`, `_motion`, `_breakpoints`, `_layers`, all surfaced via `tokens/_index.scss`). The theme/skin layer is in `_sass/theme/` (`_skins.scss` is a single parameterised `zer0-skin-palette` mixin — add a skin by `@include`-ing it with brand/accent/WCAG-AA link colors and an `$on-brand` text colour that reaches 4.5:1 on the brand and on its button hover/active mixes, not by copying blocks; follow the contrast contract at the top of that file, record the measured ratios beside the skin, and mirror it in `_design-system/tokens/skins.css`; `test/visual/core/skin-contrast.spec.js` checks every palette skin in light and dark; `_css-variables.scss`/`_color-modes.scss` hold the `--bd-*` docs-heritage colors; `_backgrounds`/`_background-mixins`/`_wizard-mode`). Feature partials live under `_sass/core/`; notebook-specific styles in `_sass/notebooks.scss`.
 
 ## Hard rules
 

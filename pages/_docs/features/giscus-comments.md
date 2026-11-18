@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-23T00:00:00.000Z
+lastmod: 2026-11-15T00:00:00.000Z
 title: Giscus Comments
 description: Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus.
 preview: /images/previews/giscus-comments.png
@@ -33,7 +33,7 @@ sidebar:
 - **Requires no database** — comments are stored in GitHub Discussions
 - **Respects privacy** — no tracking, no ads
 - **Supports reactions** — GitHub emoji reactions on comments
-- **Auto theme detection** — matches your site's light/dark mode
+- **Configurable theme** — follows the visitor's light/dark preference by default, or a fixed theme you set
 - **Free and open source** — MIT licensed
 
 ## Prerequisites
@@ -82,7 +82,7 @@ Before setting up Giscus, ensure you have:
 
 ### Step 4: Configure Jekyll
 
-Add the Giscus configuration to your `_config.yml`. The theme reads exactly three keys — `enabled`, `data-repo-id`, and `data-category-id`:
+Add the Giscus configuration to your `_config.yml`. Three keys are required — `enabled`, `data-repo-id`, and `data-category-id`:
 
 ```yaml
 # Giscus Comment System Configuration
@@ -92,15 +92,20 @@ giscus:
   data-category-id: "YOUR_CATEGORY_ID"
 ```
 
-The `data-repo` value is filled in automatically from `site.repository` (set near the top of `_config.yml`), so you don't repeat the owner/repo here.
+The `data-repo` value is filled in automatically from `site.repository` (set near the top of `_config.yml`), so you don't repeat the owner/repo here. Four more keys — the widget's theme, mapping, input position and language — are optional; see [Configuration Options](#configuration-options).
 
 ---
 
 ## Verify it works
 
-The comment section renders at the bottom of the `article`, `note`, and `notebook` layouts, gated consistently on `page.comments != false` **and** `site.giscus.enabled`. Keeping `enabled: true` in the config block renders comments on all three layouts.
+Every layout that shows comments renders them through one include, `_includes/content/comments.html`: the `article`, `note`, `notebook`, `recipe`, and `book-story` layouts. It renders nothing unless `site.giscus.enabled` is true, and then follows the page's `comments` front matter:
 
-Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comments by default; docs and general pages do not. Override per page with `comments: false` (or `comments: true`) in a page's front matter.
+| Layouts | Comments shown | Change it per page |
+|---------|----------------|--------------------|
+| `article`, `note`, `notebook` | By default | `comments: false` hides them |
+| `recipe`, `book-story` | Only when the page opts in | `comments: true` shows them |
+
+So blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comments by default; docs and general pages do not, because their layouts have no comment section.
 
 1. Build the site with the dev config:
 
@@ -132,7 +137,7 @@ Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comm
    | The comment box and any existing thread (above) | Fully working |
    | `An error occurred: giscus is not installed on this repository` | The [giscus app](https://github.com/apps/giscus) is not installed — see [Troubleshooting](#the-giscus-app-is-not-installed) |
    | `An error occurred: Discussion not found` | Normal for a page nobody has commented on yet; Giscus creates the discussion on the first comment |
-   | Nothing at all | `enabled: false`, `comments: false` on the page, or the include isn't reached |
+   | Nothing at all | `enabled: false`, `comments: false` on the page (or no `comments: true` on a recipe or book-story page), or the include isn't reached |
 
    You will not be able to *sign in and post* from `localhost` (GitHub's OAuth redirect is bound to the deployed origin), but everything up to that point is faithful.
 
@@ -156,37 +161,59 @@ Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comm
 
 ### Data attributes
 
-The theme's include lives at `_includes/content/giscus.html`. Only the first three attributes below are wired to your `_config.yml`; the rest are fixed in the include. To change a fixed attribute you must edit `_includes/content/giscus.html` directly.
+The theme's include lives at `_includes/content/giscus.html`. Seven of its attributes come from your `_config.yml`; three are fixed in the include.
 
-| Attribute | Source | Value |
-|-----------|--------|-------|
-| `data-repo` | Config | `{% raw %}{{ site.repository }}{% endraw %}` |
-| `data-repo-id` | Config | `{% raw %}{{ site.giscus.data-repo-id }}{% endraw %}` (required) |
-| `data-category-id` | Config | `{% raw %}{{ site.giscus.data-category-id }}{% endraw %}` (required) |
-| `data-mapping` | Fixed in include | `pathname` |
+| Attribute | Config key | Default |
+|-----------|------------|---------|
+| `data-repo` | `repository` (top level) | — (required) |
+| `data-repo-id` | `giscus.data-repo-id` | — (required) |
+| `data-category-id` | `giscus.data-category-id` | — (required) |
+| `data-theme` | `giscus.data-theme` | `preferred_color_scheme` |
+| `data-mapping` | `giscus.data-mapping` | `pathname` |
+| `data-input-position` | `giscus.data-input-position` | `top` |
+| `data-lang` | `giscus.data-lang` | `en` |
 | `data-strict` | Fixed in include | `1` |
 | `data-reactions-enabled` | Fixed in include | `1` |
 | `data-emit-metadata` | Fixed in include | `0` |
-| `data-input-position` | Fixed in include | `top` |
-| `data-theme` | Fixed in include | `preferred_color_scheme` |
-| `data-lang` | Fixed in include | `en` |
+
+The four optional keys sit in the same `giscus:` block:
+
+```yaml
+giscus:
+  enabled: true
+  data-repo-id: "YOUR_REPO_ID"
+  data-category-id: "YOUR_CATEGORY_ID"
+  # Optional: each falls back to the default in the table above
+  data-theme: "transparent_dark"
+  data-mapping: "pathname"
+  data-input-position: "top"
+  data-lang: "en"
+```
+
+An unset or blank key keeps its default, so a site that sets none of them renders exactly the widget it rendered before these keys existed. The values go to giscus as written (HTML-escaped), so use giscus's own values; the configurator at [giscus.app](https://giscus.app/) lists them all.
+
+- **`data-mapping`** — how a page finds its discussion: `pathname`, `url`, `title`, or `og:title`. giscus's `specific` and `number` mappings also need a `data-term`, which the theme does not emit, so they are not supported. Changing the mapping on a site that already has comments points every page at a new discussion title, so existing threads stop showing on their pages (the discussions themselves are not touched).
+- **`data-input-position`** — the comment box above (`top`) or below (`bottom`) the thread.
+- **`data-lang`** — the widget's language, one site-wide value from the languages giscus ships (for example `fr`, `de`, `ja`, `zh-CN`). It does not follow a page's `lang` or `site.locale`, so on a multilingual site every language shows the widget in this one language.
 
 ### Theme options
 
-The include ships with `data-theme="preferred_color_scheme"` (auto light/dark). To use a different theme, edit `data-theme` in `_includes/content/giscus.html` to one of:
+The default, `preferred_color_scheme`, follows the visitor's operating system, not your site. On a site with a dark skin, a visitor whose OS is in light mode gets a light widget on a dark page. Set `giscus.data-theme` to a fixed theme to match the site:
 
 | Value | Description |
 |-------|-------------|
-| `preferred_color_scheme` | Auto-detect from browser settings (default) |
+| `preferred_color_scheme` | Follows the visitor's OS light/dark setting (default) |
 | `light` | Always light mode |
 | `dark` | Always dark mode |
 | `dark_dimmed` | Dimmed dark mode |
-| `transparent_dark` | Transparent dark background |
-| Custom URL | Load custom CSS theme |
+| `transparent_dark` | Transparent dark background — blends into a dark skin |
+| Custom URL | A CSS theme of your own, e.g. `https://yoursite.com/giscus-custom.css` |
 
-### Disabling comments per page
+giscus has more built-in themes (high-contrast and colour-blind variants among them); the configurator at [giscus.app](https://giscus.app/) previews every one. A fixed value stays the same when a visitor switches the site between light and dark mode. A custom URL loads that stylesheet into the widget, so only point it at CSS you trust.
 
-To disable comments on specific pages, add to front matter:
+### Turning comments off or on per page
+
+In the `article`, `note`, and `notebook` layouts comments are on by default. To disable them on a page, add to its front matter:
 
 ```yaml
 ---
@@ -194,6 +221,26 @@ title: "Page Without Comments"
 comments: false
 ---
 ```
+
+In the `recipe` and `book-story` layouts comments are off by default; `comments: true` turns them on for that page.
+
+### Comments in your own layout
+
+A layout of your own shows the theme's comment section — the same gate, heading, and widget — with one line:
+
+```liquid
+{% raw %}{% include content/comments.html %}{% endraw %}
+```
+
+It takes three optional parameters:
+
+| Parameter | Default | Effect |
+|-----------|---------|--------|
+| `default_on` | `true` | `true`: shown unless the page sets `comments: false`. `false`: shown only when the page sets `comments: true` |
+| `class` | `post-comments` | The section's own class; the spacing classes are always added |
+| `compact` | `false` | A `<div>` with an `<h5>` heading and no `id`, the style the note and notebook layouts use for their footer sections |
+
+By default it renders a `<section id="comments">` with an `<h2>` heading, so links to `#comments` land on it. Like the theme's layouts, it renders nothing unless `site.giscus.enabled` is true.
 
 ---
 
@@ -232,7 +279,7 @@ The script reads the repository from `gh repo view` and the category from `_conf
 
 ## How a page maps to a discussion
 
-With `data-mapping="pathname"` and `data-strict="1"` (both fixed in the include), Giscus finds a page's thread by matching the discussion **title** against the page's pathname — with the **leading slash removed**.
+With `data-mapping="pathname"` (the default) and `data-strict="1"` (fixed in the include), Giscus finds a page's thread by matching the discussion **title** against the page's pathname — with the **leading slash removed**.
 
 For `https://zer0-mistakes.com/posts/2025/01/21/remote-work-revolution/` the widget requests:
 
@@ -305,35 +352,36 @@ curl -s -G https://giscus.app/api/discussions \
 4. **Validate configuration IDs** match your repository — `data-repo-id` must
 belong to **this** repo (a forked-in ID from the upstream repo will make the widget show a "repository does not match" error even though the script tag renders). Regenerate at [giscus.app](https://giscus.app/), or list valid category IDs with `./scripts/bin/giscus-discussions categories`.
 5. **Check the config key spelling** — it must be `giscus:` (not `gisgus:`);
-the layouts read `site.giscus.enabled`. The `Giscus Comments Configuration` core test guards this.
+the comment section (`_includes/content/comments.html`) reads `site.giscus.enabled`. The `Giscus Comments Configuration` core test guards this.
 
 ### Theme Not Matching
 
-The include uses `data-theme="preferred_color_scheme"`, which follows the browser's light/dark preference. To force a theme, edit `data-theme` in `_includes/content/giscus.html`:
+By default the widget uses `data-theme="preferred_color_scheme"`, which follows the visitor's OS light/dark preference rather than your site, so a dark-skin site shows a light widget to every visitor whose OS is in light mode. Set a fixed theme in `_config.yml` (see [Theme options](#theme-options)):
 
-```html
-<!-- Force a specific theme -->
-data-theme="light"
-
-<!-- Or load a custom CSS theme -->
-data-theme="https://yoursite.com/giscus-custom.css"
+```yaml
+giscus:
+  # ...enabled, data-repo-id, data-category-id...
+  data-theme: "transparent_dark"   # or "light", "dark", "dark_dimmed", ...
+  # or load a custom CSS theme:
+  # data-theme: "https://yoursite.com/giscus-custom.css"
 ```
 
 ### Multiple Comment Threads
 
 If pages are creating duplicate discussions:
 
-1. The include already ships with `data-strict="1"` and `data-mapping="pathname"` — confirm you haven't changed them in `_includes/content/giscus.html`
+1. The include always sets `data-strict="1"`, and `data-mapping` defaults to `pathname` — check that `giscus.data-mapping` in `_config.yml` is unset or the mapping you intend, and that your site does not override `_includes/content/giscus.html`
 2. Verify page URLs are stable (no trailing-slash issues), since `pathname` mapping keys discussions to the URL path
 
 ---
 
 ## Best Practices
 
-1. **Pathname mapping and strict mode are on by default** — the include already sets `data-mapping="pathname"` and `data-strict="1"`, which is the most reliable setup for Jekyll sites
+1. **Pathname mapping and strict mode are on by default** — `data-mapping` defaults to `pathname` and the include always sets `data-strict="1"`, which is the most reliable setup for Jekyll sites
 2. **Create a dedicated category** — keeps comments organized
 3. **Test locally** — the embedded thread won't load on localhost, but verify the `https://giscus.app/client.js` script tag is present
-4. **Disable per page when needed** — set `comments: false` in a page's front matter (works in the `article`, `note`, and `notebook` layouts)
+4. **Disable per page when needed** — set `comments: false` in a page's front matter (in the `article`, `note`, and `notebook` layouts; `recipe` and `book-story` pages opt in with `comments: true`)
+5. **Match the widget to your skin** — on a dark-skin site, set `giscus.data-theme` (for example `transparent_dark`) so light-mode visitors don't get a light widget on a dark page
 
 ---
 

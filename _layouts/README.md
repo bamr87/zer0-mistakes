@@ -58,7 +58,7 @@ root.html (base template)
 - **Purpose**: Single article display with post_type variations
 - **Features**: Conditional rendering based on `post_type` front matter
 - **Post Types**: standard, featured, breaking, opinion, review, tutorial, listicle, interview
-- **Dependencies**: post-type-badge.html, giscus.html for comments
+- **Dependencies**: post-type-badge.html, content/comments.html for comments
 - **Usage**: Individual news articles and blog posts
 
 #### `section.html`

@@ -1,5 +1,5 @@
 ---
-# Feature: ZER0-084
+# Features: ZER0-035, ZER0-084
 layout: default
 ---
 {%- comment -%}
@@ -153,12 +153,8 @@ layout: default
   {% comment %} ================================ {% endcomment %}
   {% comment %} COMMENTS                         {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {%- if page.comments and site.giscus.enabled -%}
-  <section class="post-comments mt-5 pt-4 border-top" id="comments">
-    <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>
-    {%- include content/giscus.html -%}
-  </section>
-  {%- endif -%}
+  {% comment %} Opt-in: only when the page sets comments: true (and site.giscus.enabled). {% endcomment %}
+  {%- include content/comments.html default_on=false -%}
 </article>
 
 {%- comment -%}

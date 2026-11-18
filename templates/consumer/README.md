@@ -146,10 +146,12 @@ From a theme checkout:
 ```bash
 ./scripts/bin/audit-consumer --consumer-path /path/to/site            # report
 ./scripts/bin/audit-consumer --consumer-path /path/to/site --strict   # CI gate
-./scripts/bin/audit-consumer --consumer-path /path/to/site --fix      # delete IDENTICAL copies
+./scripts/bin/audit-consumer --consumer-path /path/to/site --fix      # delete IDENTICAL copies, refresh STALE vendored _data
 ./scripts/bin/sync-plugins   --consumer-path /path/to/site            # vendor required plugins
 ```
 
-`--fix` deletes only files byte-identical to the theme's, which is the cheapest cleanup available: those forks are doing nothing but going stale. Files you fork on purpose belong in `.theme-overrides.yml`, and an override whose `reason` has been fixed upstream is your cue to delete the fork and take the theme's copy back.
+Among themable files, `--fix` deletes only those byte-identical to the theme's, which is the cheapest cleanup available: those forks are doing nothing but going stale. Files you fork on purpose belong in `.theme-overrides.yml`, and an override whose `reason` has been fixed upstream is your cue to delete the fork and take the theme's copy back.
 
 > `remote_theme` does not deliver `_plugins/` — GitHub Pages will not load plugins from a remote theme. `sync-plugins` is how those get vendored, and it is why they rot independently of the theme version.
+
+> `remote_theme` does not deliver `_data/` either, so your copies of the theme's registries (`_data/theme_skins.yml`, `_data/theme_backgrounds.yml`) and of `_data/ui-text.yml` never update with it. Re-run the audit after every theme update: `STALE` registries are replaced by `--fix`, and `MISSING_KEYS` lists the labels to add to your `ui-text.yml`.

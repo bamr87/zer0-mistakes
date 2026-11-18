@@ -41,13 +41,18 @@ jobs:
       - uses: actions/checkout@v7
         if: steps.creds.outputs.go == 'true'
 
-      # Deploys the AI chat proxy Worker to Cloudflare and sets its secret.
+      # Deploys the AI chat proxy Worker to Cloudflare.
       # Required GitHub Actions secrets:
       #   CLOUDFLARE_API_TOKEN   - token with "Edit Cloudflare Workers" permission
       #   CLOUDFLARE_ACCOUNT_ID  - your Cloudflare account id
-      #   ANTHROPIC_API_KEY      - Anthropic API key the Worker calls Claude with
-      # Optional (proxy-mode issue/PR creation): add GITHUB_TOKEN to the
-      # `secrets:` list below and a CHAT_GITHUB_TOKEN repo secret mapped in env.
+      # Claude auth: OAuth only (CLAUDE_CODE_OAUTH_TOKEN). ANTHROPIC_API_KEY disabled for now (2026-11-15); to restore, re-add the secrets.ANTHROPIC_API_KEY reference.
+      # The Worker calls the Anthropic API directly (not Claude Code), so this
+      # deploy no longer uploads ANTHROPIC_API_KEY as a Worker secret; it ships
+      # code only and the Worker keeps whatever credential Cloudflare already
+      # holds. To restore, add back `secrets: |` ANTHROPIC_API_KEY under `with:`
+      # and `env: ANTHROPIC_API_KEY: <the secret>` on this step.
+      # Optional (proxy-mode issue/PR creation): add a `secrets:` list with
+      # GITHUB_TOKEN below and a CHAT_GITHUB_TOKEN repo secret mapped in env.
       - name: Deploy Worker to Cloudflare
         if: steps.creds.outputs.go == 'true'
         uses: cloudflare/wrangler-action@v4
@@ -56,7 +61,3 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: templates/deploy/chat-proxy
           wranglerVersion: '3'
-          secrets: |
-            ANTHROPIC_API_KEY
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
