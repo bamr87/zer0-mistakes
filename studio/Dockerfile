@@ -9,7 +9,8 @@
 # studio's own gems live apart in /usr/local/studio-bundle so the shared
 # volume can never shadow them. The build tools the theme's Gemfile needs are
 # here too, so a first preview on a fresh volume can `bundle install` the
-# theme from inside the studio.
+# theme from inside the studio (libssl-dev: the theme's openssl gem, pulled in
+# by jekyll-remote-theme 0.6.x, compiles against the system OpenSSL headers).
 #
 # Three stages, like the fleet CMS image: base (what runs), build (toolchain,
 # the locked bundle, precompiled assets), final (both, unprivileged).
@@ -38,6 +39,7 @@ RUN apt-get update -qq && \
       git \
       libjemalloc2 \
       libsqlite3-0 \
+      libssl-dev \
       libyaml-0-2 \
       libyaml-dev \
       pkg-config \
