@@ -12,6 +12,40 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.32.0](https://github.com/bamr87/zer0-mistakes/compare/v1.31.3...v1.32.0) (2026-11-18)
+
+
+### Features
+
+* **audit-consumer:** detect stale vendored theme _data ([#629](https://github.com/bamr87/zer0-mistakes/issues/629)) ([e128dfa](https://github.com/bamr87/zer0-mistakes/commit/e128dfab42edee035f7eed0dbc2eeddea00bf105))
+* **includes:** configurable giscus theme, mapping and language ([#634](https://github.com/bamr87/zer0-mistakes/issues/634)) ([9d50a02](https://github.com/bamr87/zer0-mistakes/commit/9d50a02098fccc80b2439a5c78e5cb66981aa119)), closes [#574](https://github.com/bamr87/zer0-mistakes/issues/574)
+* **includes:** show the footer newsletter form only when a provider is configured ([#633](https://github.com/bamr87/zer0-mistakes/issues/633)) ([646e0ba](https://github.com/bamr87/zer0-mistakes/commit/646e0bac1b400e19180f861323cbe3598908ae39))
+* **layouts:** keep admin actions reachable on mobile and group the admin sidebar ([#630](https://github.com/bamr87/zer0-mistakes/issues/630)) ([cb9b313](https://github.com/bamr87/zer0-mistakes/commit/cb9b313c6f1b096520113e45528a092eba0e3cf2))
+* **studio:** zer0 studio — the Rails workbench beside the theme ([#560](https://github.com/bamr87/zer0-mistakes/issues/560)) ([8817fbe](https://github.com/bamr87/zer0-mistakes/commit/8817fbe84e7d643668a689a941018319e38c549a))
+
+
+### Bug Fixes
+
+* **a11y:** author-card social links name the author ([#568](https://github.com/bamr87/zer0-mistakes/issues/568)) ([#603](https://github.com/bamr87/zer0-mistakes/issues/603)) ([2dfa4bb](https://github.com/bamr87/zer0-mistakes/commit/2dfa4bbae6473f59c27732fbfaab8c67a0a53f33))
+* **a11y:** label and lay out GFM task-list checkboxes ([#587](https://github.com/bamr87/zer0-mistakes/issues/587)) ([ce1c35d](https://github.com/bamr87/zer0-mistakes/commit/ce1c35d8d00915b2724a5cb1424dd82630aa7d6d))
+* **a11y:** meet WCAG AA contrast in every skin; 24px sidebar toggles ([#632](https://github.com/bamr87/zer0-mistakes/issues/632)) ([3ca3415](https://github.com/bamr87/zer0-mistakes/commit/3ca34159560d966351eda84642f1b9907f8be653))
+* **a11y:** name section-page navigation landmarks, mark the current section ([#567](https://github.com/bamr87/zer0-mistakes/issues/567)) ([863192b](https://github.com/bamr87/zer0-mistakes/commit/863192b5f86bcda05cdde407cf3164b71f77aa58))
+* **a11y:** name the icon-only controls and drop dead links flagged by the UI audit ([#639](https://github.com/bamr87/zer0-mistakes/issues/639)) ([be36ff8](https://github.com/bamr87/zer0-mistakes/commit/be36ff8521eb62770f713f22de767024904606c5))
+* **a11y:** one h1 per page, no duplicate banner, contentinfo or region landmarks ([#638](https://github.com/bamr87/zer0-mistakes/issues/638)) ([96013c6](https://github.com/bamr87/zer0-mistakes/commit/96013c6ad9daba8c5e03079bda14371ba692b233))
+* **a11y:** section layout heading outline follows document depth ([#575](https://github.com/bamr87/zer0-mistakes/issues/575)) ([d47eb49](https://github.com/bamr87/zer0-mistakes/commit/d47eb49f7372c88e416350e5b5baa20994a1a825))
+* **ci:** install libssl-dev so the latest-deps canary can build the openssl gem ([f02ec37](https://github.com/bamr87/zer0-mistakes/commit/f02ec37fa135fa0984ffac79edae12cea36c05c6))
+* **ci:** tag the loaded image, not the runner's newest, in test-latest ([#619](https://github.com/bamr87/zer0-mistakes/issues/619)) ([4347b00](https://github.com/bamr87/zer0-mistakes/commit/4347b00e63a05478302105c70f1bd282ad8723d1))
+* **deps:** open dependency PRs with FLEET_TOKEN so CI runs ([#628](https://github.com/bamr87/zer0-mistakes/issues/628)) ([bf42ae6](https://github.com/bamr87/zer0-mistakes/commit/bf42ae6e3f72be63d764d38ac1b0177dc905ab2a))
+* **deps:** re-lock github-pages 233 to lift rubyzip to 3.7.0 (GHSA-47m2-wp7j-p9vc) ([#599](https://github.com/bamr87/zer0-mistakes/issues/599)) ([f223bd7](https://github.com/bamr87/zer0-mistakes/commit/f223bd7eee3c7df0f6b0a0e820dd531584fa833c))
+* **fab:** move the local-graph FAB to slot 3 below lg when the sidebar FAB is present ([#589](https://github.com/bamr87/zer0-mistakes/issues/589)) ([bb013ab](https://github.com/bamr87/zer0-mistakes/commit/bb013aba64044a6fb9b6c3dede0db555e1e78e3e))
+* **includes:** render the cookie-consent banner only when a tracker needs consent ([#583](https://github.com/bamr87/zer0-mistakes/issues/583)) ([1ac8164](https://github.com/bamr87/zer0-mistakes/commit/1ac816404de33fa0679feab294c5b664653db624))
+* **navigation:** gate the offcanvas toggles on the layout chain ([#579](https://github.com/bamr87/zer0-mistakes/issues/579)) ([93e7062](https://github.com/bamr87/zer0-mistakes/commit/93e7062441ae7451ee752f85b2494bf086356799))
+* **privacy:** cookie preferences default Analytics to off ([#578](https://github.com/bamr87/zer0-mistakes/issues/578)) ([0d4a517](https://github.com/bamr87/zer0-mistakes/commit/0d4a517aaf39c71c5d14c2ba464886ecc5e10752))
+* **release:** let release-please bump the theme manifest version ([#618](https://github.com/bamr87/zer0-mistakes/issues/618)) ([746cc9b](https://github.com/bamr87/zer0-mistakes/commit/746cc9bb2ec984575bd2ca6bdba86559e55ddf78))
+* **scripts:** accept status: planned catalog entries in validate-features ([#598](https://github.com/bamr87/zer0-mistakes/issues/598)) ([f206ad6](https://github.com/bamr87/zer0-mistakes/commit/f206ad6a63910ea378c11afe0256f0ab561774ff))
+* **styles:** move the FAB layer band below the overlay surfaces ([#580](https://github.com/bamr87/zer0-mistakes/issues/580)) ([35eb01e](https://github.com/bamr87/zer0-mistakes/commit/35eb01ec4f1571852540c356a7bd71d20336a976))
+* **toc:** scope the article TOC to the post body ([#576](https://github.com/bamr87/zer0-mistakes/issues/576)) ([6620b04](https://github.com/bamr87/zer0-mistakes/commit/6620b04dcf8985047816ccd22d0347dcd8f1b6aa))
+
 ## [1.31.3](https://github.com/bamr87/zer0-mistakes/compare/v1.31.2...v1.31.3) (2026-10-20)
 
 
