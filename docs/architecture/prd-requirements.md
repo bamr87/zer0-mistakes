@@ -33,6 +33,16 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 
 ---
 
+## 1.1 Missions
+
+zer0-mistakes's direction is to become the ultimate open home for all things Jekyll themes and GitHub Pages craft — data, tools, resources and transparency, gathered in one place that anyone can inspect and reuse.
+
+1. **Provide data, tools, resources and transparency for all stakeholders, developers, technical writers, theme practitioners and the general public.** Developers, technical writers, content creators, open-source projects, AI agents, and the general public are first-class audiences. The aim is a shared, open commons: the same sources, the same tools, and the same trail of evidence for everyone.
+2. **Eliminate setup friction through intelligent automation, Docker-first development and zero-configuration deployment, while delivering enterprise-grade features with privacy-first principles.** Consent-based analytics, no surprise telemetry, and a theme that works immediately on GitHub Pages are part of that path. The theme is published as a Ruby gem and a remote theme, built on Bootstrap 5.
+3. **Empower both human developers and AI agents to build beautiful, functional GitHub Pages sites without configuration complexity.** Serve the theme, the install path and the agent-friendly docs so anyone can adopt it — an open toolkit for working with all things Jekyll themes and GitHub Pages craft.
+
+These missions set the course; they do not claim the work is finished. They serve the vision in docs/architecture/prd-requirements.md. The earlier single mission sentence is absorbed into these three. Privacy-first and AI-and-human authoring principles are kept. Every feature must trace to them.
+
 ## 🎯 Product Goals & Objectives
 
 ### Primary Goals

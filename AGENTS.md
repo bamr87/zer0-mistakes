@@ -1,5 +1,7 @@
 # AGENTS.md — AI Agent Guide for zer0-mistakes
 
+> zer0-mistakes's direction is to become the ultimate open home for all things Jekyll themes and GitHub Pages craft: data, tools, resources and transparency, with Docker-first setup, privacy-first features, and an AI-friendly theme for everyone ([constitution](docs/constitution.md) §1).
+
 > **Cross-tool entry point** for AI coding agents working in this repository
 > (GitHub Copilot, OpenAI Codex, Cursor, Aider, Jules, Continue, Claude Code,
 > and any future agent that follows the [agents.md](https://agents.md/)
