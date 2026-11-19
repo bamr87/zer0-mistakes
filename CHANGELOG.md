@@ -12,6 +12,15 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.32.1](https://github.com/bamr87/zer0-mistakes/compare/v1.32.0...v1.32.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **a11y:** title the AI chat panel with an h2 sized as h6 ([178dd89](https://github.com/bamr87/zer0-mistakes/commit/178dd894234a1f640fa966972311f6c263cd2efb))
+* **includes:** link the pagination template from pager pages ([e199c2d](https://github.com/bamr87/zer0-mistakes/commit/e199c2dd96f20db7834f26a3fa2fe9e2683e776b))
+* **page-feedback:** let consumers name the no-JS issue template ([ad06c2c](https://github.com/bamr87/zer0-mistakes/commit/ad06c2cd41a0d815ce2d26d1e6b45e275bcdb3c4))
+
 ## [1.32.0](https://github.com/bamr87/zer0-mistakes/compare/v1.31.3...v1.32.0) (2026-11-18)
 
 
