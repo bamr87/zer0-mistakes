@@ -1313,7 +1313,7 @@
     if (r && r.id !== 'soft') {
       L.push('/* Corners: ' + r.label + '. */');
       L.push(':root {');
-      L.push('  --zer0-radius-sm: ' + r.sm + '; --zer0-radius: ' + r.base + '; --zer0-radius-md: ' + r.base + '; --zer0-radius-lg: ' + r.lg + '; --zer0-radius-xl: ' + r.xl + ';');
+      L.push('  --zer0-radius-sm: ' + r.sm + '; --zer0-radius: ' + r.base + '; --zer0-radius-lg: ' + r.lg + '; --zer0-radius-xl: ' + r.xl + ';');
       L.push('  --bs-border-radius-sm: ' + r.sm + '; --bs-border-radius: ' + r.base + '; --bs-border-radius-lg: ' + r.lg + '; --bs-border-radius-xl: ' + r.xl + ';');
       L.push('}');
       L.push('.btn, .card, .form-control, .form-select, .alert, .badge:not(.rounded-pill), .accordion-item, .nav-pills .nav-link { border-radius: var(--bs-border-radius); }');

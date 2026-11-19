@@ -13,7 +13,7 @@
     color: inherit;
     background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
     border: 1px solid var(--zer0-color-border, var(--bs-border-color));
-    border-radius: 0.625rem;
+    border-radius: 0.625rem; // off-scale: 10px card corner shared with .author-card, between --zer0-radius-lg and -xl
     box-shadow: var(--zer0-shadow-sm);
     transition:
       transform var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
