@@ -23,12 +23,33 @@
 #      same skin names, and each mirror skin's brand hex must appear in the
 #      matching SCSS block.
 #   3. Dangling-token audit: any fallback-less `var(--zer0-…)` reference in
-#      `_sass/` must be declared somewhere (tokens, includes, or JS).
+#      `_sass/` must be declared somewhere (tokens, includes, or JS). So must a
+#      reference WITH a fallback when it names a design-token family — the
+#      first segment after `--zer0-` of any name `_sass/tokens/` declares
+#      (`radius`, `color`, `motion`, …). There a fallback only hides a typo:
+#      `var(--zer0-radius-md, 0.5rem)` rendered its fallback for months because
+#      the scale has no `-md` step (#390). Component hooks outside those
+#      families (`--zer0-navbar-max-width`, `--zer0-cookie-banner-inset`) are
+#      opt-in by design and keep their fallbacks. KNOWN_GAPS lists the family
+#      references that predate the rule; it may only shrink.
+#   4. Radius-literal audit: a radius declaration in `_sass/` (`border-radius`,
+#      `border-*-radius`, or a custom property named `*radius*`) may not spell
+#      out a value the `--zer0-radius-*` scale already names — `0.375rem` is
+#      `var(--zer0-radius)`. The scale is read from `_sass/tokens/_radius.scss`;
+#      values inside `var()` (Bootstrap's `--bs-border-radius*` and fallbacks)
+#      are not literals. A deliberate literal carries an `// off-scale: <why>`
+#      comment on the same line (#390).
 #
 #   ruby scripts/design-system-check.rb        # exit 1 + report on drift
 #
-# Runs in the `core` test suite (test/test_core.sh). Plain Ruby, no gems.
+# Runs in the `core` test suite (test/test_core.sh); test/test_core_checks.sh
+# plants a literal and an undeclared token to prove both audits can fail.
+# Plain Ruby, no gems.
 # ---------------------------------------------------------------------------
+
+# The partials are UTF-8 (em dashes in comments). Under a US-ASCII locale the
+# regex scans raised "invalid byte sequence" instead of reporting anything.
+Encoding.default_external = Encoding::UTF_8
 
 ROOT = File.expand_path('..', __dir__)
 
@@ -151,20 +172,138 @@ declared += Dir.glob(File.join(ROOT, 'assets/js/**/*.js')).flat_map do |f|
 end
 declared = declared.uniq
 
+# Family = the first segment after `--zer0-`: `--zer0-radius-lg` is `radius`.
+def family(token)
+  token.sub('--zer0-', '').split('-').first
+end
+
+families = Dir.glob(File.join(ROOT, '_sass/tokens/*.scss'))
+              .flat_map { |f| File.read(f).scan(/(--zer0-[\w-]+)\s*:/).flatten }
+              .map { |t| family(t) }.uniq
+
+# Design-token-family references that predated the fallback rule (#390). Each
+# renders its fallback today; fixing one changes what renders, so each is its
+# own change. Remove an entry when its reference is fixed — the check fails on
+# an entry that is no longer needed, so this list can only shrink.
+KNOWN_GAPS = {
+  '--zer0-color-text-muted' => 'author byline (_author.scss); --zer0-color-ink-muted is the declared token with the same value',
+  '--zer0-motion-duration' => 'page-feedback fades (_page-feedback.scss) run on the 180ms fallback; the nearest token, -base, is 200ms',
+  '--zer0-sidebar-rail-width' => 'docs sidebar rail (_docs-layout.scss) lives only in its 2.25rem fallback',
+  '--zer0-sidebar-toc-rail-width' => 'docs TOC rail (_docs-layout.scss) lives only in its 2.25rem fallback'
+}.freeze
+
+gaps_seen = []
 Dir.glob(File.join(ROOT, '_sass/**/*.scss')).sort.each do |f|
-  File.read(f).scan(/var\(\s*(--zer0-[\w-]+)\s*\)/).flatten.uniq.each do |token|
+  File.read(f).scan(/var\(\s*(--zer0-[\w-]+)\s*([,)])/).uniq.each do |token, after|
     next if declared.include?(token)
 
-    failures << "#{f.sub("#{ROOT}/", '')}: references #{token} with no fallback, but it is never declared"
+    rel = f.sub("#{ROOT}/", '')
+    if after == ')'
+      failures << "#{rel}: references #{token} with no fallback, but it is never declared"
+    elsif families.include?(family(token))
+      if KNOWN_GAPS.key?(token)
+        gaps_seen << token
+      else
+        failures << "#{rel}: references #{token} behind a fallback, but the --zer0-#{family(token)}-* " \
+                    'token family declares no such token — the fallback is hiding a typo'
+      end
+    end
+  end
+end
+(KNOWN_GAPS.keys - gaps_seen).each do |token|
+  failures << "KNOWN_GAPS lists #{token}, but no _sass/ fallback reference to an undeclared #{token} remains — remove the entry"
+end
+
+# --- 4. radius-literal audit ------------------------------------------------
+RADIUS_TOKENS = '_sass/tokens/_radius.scss'
+OFF_SCALE = '// off-scale:'
+RADIUS_DECL = /(?:\A|[\s{;])(border(?:-(?:top|bottom)-(?:left|right)|-(?:start|end)-(?:start|end))?-radius|--[\w-]*radius[\w-]*)\s*:\s*([^;{}]*)/.freeze
+LENGTH = /\A(-?\d*\.?\d+)(rem|em|px|%)\z/.freeze
+
+# `0.25rem`, `.25rem` and `0.250rem` are one length.
+def length_key(value)
+  m = value.match(LENGTH)
+  m && "#{m[1].to_f}#{m[2]}"
+end
+
+# Drop every var(...) group, innermost first: a value read from a custom
+# property (`var(--bs-border-radius)`, `var(--x, 0.5rem)`) is not a literal.
+def without_vars(value)
+  v = value.dup
+  v = v.gsub(/var\([^()]*\)/, ' ') while v.match?(/var\([^()]*\)/)
+  v
+end
+
+# The code on each source line: /* */ blocks (which may span lines) and //
+# line comments removed, one entry per line so line numbers hold. A `/*` inside
+# a `//` comment (`see _sass/tokens/*`) does not open a block.
+def code_lines(src)
+  in_block = false
+  src.each_line.map do |line|
+    code = +''
+    rest = line
+    until rest.empty?
+      if in_block
+        close = rest.index('*/')
+        break unless close
+
+        rest = rest[(close + 2)..-1]
+        in_block = false
+        next
+      end
+      open = rest.index('/*')
+      slashes = rest.index('//')
+      if slashes && (open.nil? || slashes < open)
+        code << rest[0...slashes]
+        break
+      elsif open
+        code << rest[0...open]
+        rest = rest[(open + 2)..-1]
+        in_block = true
+      else
+        code << rest
+        break
+      end
+    end
+    code
+  end
+end
+
+scale = declarations(strip(read(RADIUS_TOKENS), scss: true)).each_with_object({}) do |(name, value), h|
+  key = length_key(value)
+  h[key] ||= name if key
+end
+
+Dir.glob(File.join(ROOT, '_sass/**/*.scss')).sort.each do |f|
+  rel = f.sub("#{ROOT}/", '')
+  next if rel.start_with?('_sass/tokens/') # the scale's own definitions
+
+  src = File.read(f)
+  raw = src.lines
+  code_lines(src).each_with_index do |code, i|
+    next if raw[i].include?(OFF_SCALE)
+
+    code.scan(RADIUS_DECL).each do |prop, value|
+      without_vars(value).split(%r{[\s,/*+()]+}).uniq.each do |part|
+        token = scale[length_key(part)]
+        next unless token
+
+        failures << "#{rel}:#{i + 1}: #{prop}: #{value.strip} spells out #{part} — use var(#{token}), " \
+                    "or keep the literal with `#{OFF_SCALE} <why>` on the line"
+      end
+    end
   end
 end
 
 # --- report -----------------------------------------------------------------
 if failures.empty?
-  puts "design-system-check: OK — #{PAIRS.size} token file pairs, #{css_skins.size} skins, no dangling tokens"
+  puts "design-system-check: OK — #{PAIRS.size} token file pairs, #{css_skins.size} skins, no dangling tokens, " \
+       'no on-scale radius literals'
 else
-  warn "design-system-check: #{failures.size} problem(s) — theme (_sass/tokens) and mirror (_design-system/tokens) have drifted:"
+  warn "design-system-check: #{failures.size} problem(s) — token drift (_sass/tokens vs _design-system/tokens), " \
+       'dangling tokens or on-scale radius literals:'
   failures.each { |f| warn "  - #{f}" }
-  warn 'Fix the drift (see _design-system/SYNC.md), then re-run: ruby scripts/design-system-check.rb'
+  warn 'Fix them (token drift: _design-system/SYNC.md; tokens and radii: docs/ui/design-tokens.md), ' \
+       'then re-run: ruby scripts/design-system-check.rb'
   exit 1
 end

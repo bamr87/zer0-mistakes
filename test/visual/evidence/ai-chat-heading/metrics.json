@@ -1,0 +1,144 @@
+{
+  "slug": "ai-chat-heading",
+  "issue": 586,
+  "beforeUrl": "http://127.0.0.1:4587",
+  "scenarios": [
+    {
+      "url": "/",
+      "label": "home · 1280px · light",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "before": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h6",
+        "titleClass": "mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h2",
+        "titleClass": "h6 mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 0
+      },
+      "pixelIdentical": true,
+      "baseBuildIdentical": true
+    },
+    {
+      "url": "/",
+      "label": "home · 1280px · dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "dark": true,
+      "before": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h6",
+        "titleClass": "mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h2",
+        "titleClass": "h6 mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 0
+      },
+      "pixelIdentical": true,
+      "baseBuildIdentical": true
+    },
+    {
+      "url": "/docs/",
+      "label": "docs · 1280px · light",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "before": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h6",
+        "titleClass": "mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h2",
+        "titleClass": "h6 mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 0
+      },
+      "pixelIdentical": true,
+      "baseBuildIdentical": true
+    },
+    {
+      "url": "/404.html",
+      "label": "404 · 390px · light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "before": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h6",
+        "titleClass": "mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h3",
+        "prevText": "Your Privacy Rights",
+        "titleTag": "h2",
+        "titleClass": "h6 mb-0 fw-semibold",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "19.2px",
+        "marginBottom": "0px",
+        "labelResolves": true,
+        "skips": 0
+      },
+      "pixelIdentical": true,
+      "baseBuildIdentical": true
+    }
+  ]
+}

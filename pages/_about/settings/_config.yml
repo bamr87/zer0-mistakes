@@ -440,6 +440,8 @@ page_feedback:
   endpoint           : '/api/feedback'    # Proxy triage/analysis route (AI layer)
   issue_endpoint     : '/api/github/issue' # Proxy real-issue route (proxy mode)
   default_labels     : ['page-feedback']  # Marker label added to every issue (MUST exist in repo)
+  issue_template     : 'page_improvement.yml' # .github/ISSUE_TEMPLATE file the no-JS links open
+                                          # (fleet feedback kit consumers: 'page_feedback.yml')
   assignee           : 'copilot'          # Assignee for agent-actionable types ('' to disable)
   ai:
     enabled          : true               # Offer AI clarify/vet/prioritize (needs the proxy deployed)

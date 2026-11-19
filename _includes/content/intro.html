@@ -14,10 +14,6 @@
     - Metadata row: author, dates, category, difficulty, tags, view source
 {% endcomment %}
 {%- include core/i18n.html -%}
-{% if page.collection %}
-  {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
-  {% assign testvar = "collection exists" %}
-{% endif %}
 
 {% comment %} Intro Section {% endcomment %}
 
@@ -53,15 +49,12 @@
 {% endcomment %}
 {% assign repo_branch = site.branch | default: "main" %}
 {% comment %}
-  Only join with "/" when there is a collection directory. Pages outside a
-  collection have an empty page_dir, and the unconditional join produced
-  ".../blob/main//pages/tags.md" (double slash) in the edit/source links.
+  core/source-path.html computes the file once for every GitHub blob link:
+  the collections_dir prefix only for collection docs (no "//" on plain
+  pages), and the template on a pager page n > 1 (issue #538).
 {% endcomment %}
-{% if page_dir and page_dir != "" %}
-  {% assign file_path = page_dir | append: "/" | append: page.path %}
-{% else %}
-  {% assign file_path = page.path %}
-{% endif %}
+{% include core/source-path.html %}
+{% assign file_path = source_path %}
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
 {% assign page_absolute_url = page.url | absolute_url %}
@@ -331,8 +324,9 @@
          works without JavaScript; page-feedback.js intercepts [data-pf-open]
          clicks and opens the richer capture modal (context + logs + AI) instead. {% endcomment %}
     {% if site.page_feedback.enabled %}
+    {% assign _intro_pf_template = site.page_feedback.issue_template | default: "page_improvement.yml" %}
     <a class="btn btn-sm btn-success bd-intro-action-link"
-       href="https://github.com/{{ site.repository }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+       href="https://github.com/{{ site.repository }}/issues/new?template={{ _intro_pf_template | url_encode }}&labels=page-feedback"
        data-pf-open
        target="_blank"
        rel="noopener noreferrer"

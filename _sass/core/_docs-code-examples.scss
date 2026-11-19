@@ -290,7 +290,7 @@
     width: 2rem;
     height: 2rem;
     background-color: var(--bs-body-color);
-    border-radius: .375rem
+    border-radius: var(--zer0-radius)
 }
 
 .bd-example-position-examples::after {
@@ -421,7 +421,7 @@
     color: var(--bs-body-color);
     background-color: var(--bd-pre-bg);
     border: 0;
-    border-radius: .25rem
+    border-radius: var(--zer0-radius-sm)
 }
 
 .btn-clipboard:hover,.btn-edit:hover {
