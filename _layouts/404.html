@@ -240,10 +240,11 @@ git push origin main</code></pre>
   {%- endcomment -%}
   {% assign _404_repo = site.repository | default: site.github_user | append: '/' | append: site.repository_name %}
   {% if site.page_feedback.enabled and _404_repo != '/' %}
+  {% assign _404_pf_template = site.page_feedback.issue_template | default: "page_improvement.yml" %}
   <div class="mt-3">
     <a id="github-issue-link"
        class="btn btn-secondary"
-       href="https://github.com/{{ _404_repo }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+       href="https://github.com/{{ _404_repo }}/issues/new?template={{ _404_pf_template | url_encode }}&labels=page-feedback"
        data-pf-open
        data-pf-type="fix-page"
        target="_blank"

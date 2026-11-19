@@ -199,6 +199,64 @@ PYEOF
         check_gem_contents "$NOT_A_GEM"
 fi
 
+# --------------------------------------------------------------------------
+# test_design_token_parity (scripts/design-system-check.rb), #390
+#
+# The radius-literal and fallback-typo audits landed with the sweep that made
+# _sass/ pass them, so on the real tree they only ever print OK. The fixture is
+# a copy of everything the script reads; each spec plants one partial and
+# requires the verdict to flip.
+# --------------------------------------------------------------------------
+
+echo "test_design_token_parity"
+
+if ! command -v ruby &> /dev/null; then
+    echo "  - ruby not available; skipping the design-system-check specs"
+else
+    DS_SITE="$WORK_DIR/design-system"
+    mkdir -p "$DS_SITE/scripts" "$DS_SITE/_design-system" "$DS_SITE/assets"
+    cp "$PROJECT_ROOT/scripts/design-system-check.rb" "$DS_SITE/scripts/"
+    cp -R "$PROJECT_ROOT/_sass" "$PROJECT_ROOT/_includes" "$PROJECT_ROOT/_layouts" "$DS_SITE/"
+    cp -R "$PROJECT_ROOT/_design-system/tokens" "$DS_SITE/_design-system/"
+    cp -R "$PROJECT_ROOT/assets/js" "$DS_SITE/assets/"
+    PLANTED="$DS_SITE/_sass/components/_planted.scss"
+
+    # ds_check_with <scss> ; runs the check with that one partial planted
+    ds_check_with() {
+        printf '%s\n' "$1" > "$PLANTED"
+        PROJECT_ROOT="$DS_SITE" test_design_token_parity
+    }
+
+    expect_check pass "a copy of the real tree passes" ds_check_with ''
+
+    expect_check fail "an on-scale radius literal fails" \
+        ds_check_with '.planted { border-radius: 0.375rem; }'
+    expect_check fail "an on-scale literal inside a shorthand, written .5rem, fails" \
+        ds_check_with '.planted { border-radius: 0 .5rem .5rem 0; }'
+    expect_check fail "an on-scale literal in a radius custom property fails" \
+        ds_check_with '.planted { --planted-radius: 50%; }'
+    expect_check fail "a /* inside a // comment does not hide the next line" \
+        ds_check_with $'// see _sass/tokens/*\n.planted { border-top-left-radius: 0.75rem; }\n/* end */'
+    expect_check pass "a literal with an off-scale comment passes" \
+        ds_check_with '.planted { border-radius: 0.375rem; } // off-scale: fixture'
+    expect_check pass "an off-scale literal passes" \
+        ds_check_with '.planted { border-radius: 0.625rem; }'
+    expect_check pass "a value read through var() is not a literal" \
+        ds_check_with '.planted { border-radius: var(--bs-border-radius, 0.375rem); }'
+    expect_check pass "a radius inside a /* */ comment is not a declaration" \
+        ds_check_with '/* .planted { border-radius: 0.375rem; } */'
+
+    # The bug #390 found: no -md step exists, so the fallback always rendered.
+    expect_check fail "an undeclared token-family name behind a fallback fails" \
+        ds_check_with '.planted { border-radius: var(--zer0-radius-md, 0.5rem); }'
+    expect_check pass "a component hook outside the token families keeps its fallback" \
+        ds_check_with '.planted { max-width: var(--zer0-planted-hook, 100%); }'
+    expect_check fail "an undeclared token with no fallback still fails" \
+        ds_check_with '.planted { color: var(--zer0-planted-nope); }'
+
+    rm -f "$PLANTED"
+fi
+
 echo ""
 echo "specs: $SPECS_RUN run, $SPECS_FAILED failed"
 

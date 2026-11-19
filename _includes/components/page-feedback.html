@@ -55,6 +55,8 @@
    core/source-path.html, as in content/intro.html: collection docs keep the
    collections_dir prefix and a pager page n > 1 names its template (issue #538). {%- endcomment -%}
 {%- assign pf_repo = site.repository | join: "" -%}
+{%- comment -%} Issue form the no-JS href opens; fleet-kit consumers ship page_feedback.yml. {%- endcomment -%}
+{%- assign pf_template = site.page_feedback.issue_template | default: "page_improvement.yml" -%}
 {%- assign pf_branch = site.branch | default: "main" -%}
 {%- include core/source-path.html -%}
 {%- assign pf_source_url = "" -%}
@@ -74,7 +76,7 @@
 {%- endcomment -%}
 <a id="pageFeedbackFab"
    class="pf-fab btn shadow-lg position-fixed"
-   href="https://github.com/{{ pf_repo }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+   href="https://github.com/{{ pf_repo }}/issues/new?template={{ pf_template | url_encode }}&labels=page-feedback"
    role="button"
    data-pf-open
    target="_blank"

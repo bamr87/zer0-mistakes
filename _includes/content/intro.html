@@ -324,8 +324,9 @@
          works without JavaScript; page-feedback.js intercepts [data-pf-open]
          clicks and opens the richer capture modal (context + logs + AI) instead. {% endcomment %}
     {% if site.page_feedback.enabled %}
+    {% assign _intro_pf_template = site.page_feedback.issue_template | default: "page_improvement.yml" %}
     <a class="btn btn-sm btn-success bd-intro-action-link"
-       href="https://github.com/{{ site.repository }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+       href="https://github.com/{{ site.repository }}/issues/new?template={{ _intro_pf_template | url_encode }}&labels=page-feedback"
        data-pf-open
        target="_blank"
        rel="noopener noreferrer"

@@ -47,7 +47,7 @@
   pre:not(.highlight) {
     background: var(--zer0-color-code-bg);
     border: 1px solid var(--zer0-color-border);
-    border-radius: 0.5rem;
+    border-radius: var(--zer0-radius-lg);
     padding: var(--zer0-space-2) var(--zer0-space-3);
     overflow-x: auto;
 
@@ -68,7 +68,7 @@
     background: var(--zer0-color-bg-muted);
     color: var(--zer0-color-code-ink);
     padding: 0.15em 0.4em;
-    border-radius: 0.25rem;
+    border-radius: var(--zer0-radius-sm);
     font-size: 0.875em;
   }
 
@@ -101,7 +101,7 @@
     display: block;
     padding: var(--zer0-space-3);
     background: var(--zer0-color-bg-elevated);
-    border-radius: 0.5rem;
+    border-radius: var(--zer0-radius-lg);
     text-decoration: none;
     color: inherit;
     transition: background var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
