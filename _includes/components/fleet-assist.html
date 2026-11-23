@@ -2,8 +2,10 @@
   ===================================================================
   FLEET-ASSIST — Jekyll adapter for the fleet's page bridge
   ===================================================================
-  Path: _includes/custom/fleet-assist.html, included once before </body>
-        (the zer0-mistakes theme's seam is _includes/custom/body-end.html).
+  Feature: ZER0-089
+  Path: _includes/components/fleet-assist.html, included once before </body>
+        by _layouts/root.html (the theme's own layout, not the consumer stub
+        _includes/custom/body-end.html: a site that shadows the stub keeps it).
   Spec: bamr87/bamr87 specs/ASSIST.md (UPS-AST). Kit: templates/assistant.
 
   Renders <fleet-assist> so an assistant session can see the page you have

@@ -92,6 +92,7 @@ If a component needs a token that doesn't exist yet, propose it in `_sass/tokens
 | `js-cdn.html`            | Body-end script bundle.                               |
 | `search-modal.html`      | Global search modal.                                  |
 | `page-feedback.html`     | "Improve this page" capture widget — request type + live page context + captured console logs → GitHub issue (base prefill + optional AI enrichment). Pairs with `assets/js/page-feedback.js` and `core/console-capture.html`; types from `_data/feedback_types.yml`. |
+| `fleet-assist.html`      | Fleet page bridge, a developer tool: renders `<fleet-assist>` so a Claude Code session paired through the Harness Console on the same machine can see the page you have open and, as far as you allow, use it. Off by default; `fleet_assist.enabled: true` writes the tag in development only, `fleet_assist.deployed: true` also on a production build (launcher hidden until the address ends `#fleet-assist`), `fleet_assist.broker` names another loopback console. Mounted once by `_layouts/root.html`, so a consumer site needs the one key and no file. Pairs with `assets/js/fleet-assist.js`; both are vendored from the `bamr87/bamr87` assistant kit (`templates/assistant/`), which holds the payload byte-identical: change them there. Kit 0.1.1 draws its launcher bottom-left, over the page-feedback FAB, which is why this repo's own dev config leaves the key off. |
 
 ## Adding a new component
 

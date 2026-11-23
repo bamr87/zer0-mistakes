@@ -1381,6 +1381,37 @@ test_page_feedback_template() {
     fi
 }
 
+test_fleet_assist_gate() {
+    log_info "Testing the fleet page bridge is opt-in, development-only and mounted once (ZER0-089)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the fleet-assist gate check"
+        return 0
+    fi
+
+    # Builds throwaway consumer sites with the real Jekyll, so it needs the
+    # bundle (same load-path caveat as test_consumer_404_gates).
+    local ruby_run=(ruby)
+    if ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "jekyll"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "jekyll gem not loadable; skipping the fleet-assist gate check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" test/test_fleet_assist_gate.rb; then
+        log_success "<fleet-assist> renders only when enabled outside production (or deployed), from one mount"
+        return 0
+    else
+        log_error "fleet-assist gate check failed (see above)"
+        return 1
+    fi
+}
+
 test_cookie_consent_gate() {
     log_info "Testing the cookie-consent banner renders only when a tracker needs consent (issue #566)..."
 
@@ -2160,6 +2191,7 @@ run_core_tests() {
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Consumer 404 Gates (favicon, tag badges)" "test_consumer_404_gates" "unit"
     run_test "Page Feedback Issue Template" "test_page_feedback_template" "unit"
+    run_test "Fleet Assist Gate" "test_fleet_assist_gate" "unit"
     run_test "Cookie Consent Gate" "test_cookie_consent_gate" "unit"
     run_test "Source Links (pager template, collections_dir)" "test_source_links" "unit"
     run_test "Newsletter Gate" "test_newsletter_gate" "unit"

@@ -63,6 +63,19 @@ page_feedback:
 site_builder:
   endpoint             : 'http://localhost:8787/api/wizard'
 
+# Fleet page bridge (<fleet-assist>) — see `fleet_assist:` in _config.yml.
+# Left OFF here on purpose. This file is also what every test stack serves
+# (docker-compose.yml, test/test_playwright.sh), and the kit (0.1.1) draws its
+# launcher in the bottom-left corner, on top of the page-feedback FAB: with the
+# key on, a click on that FAB lands on the launcher and 6 of the 8 tests in
+# test/visual/features/page-feedback.spec.js fail. To pair a Claude Code session
+# with a page of this site, turn it on for that session only: layer a config,
+#   printf 'fleet_assist:\n  enabled: true\n' > /tmp/assist-on.yml
+#   bundle exec jekyll serve --config _config.yml,_config_dev.yml,/tmp/assist-on.yml
+# or, under docker compose, uncomment the two lines below and do not commit them.
+# fleet_assist:
+#   enabled              : true
+
 # Disable production optimizations for faster builds.
 # `limit_posts` caps the post-processing window during dev serves. Category
 # index pages (index: true) use a recent date so they stay inside this window.

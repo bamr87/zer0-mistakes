@@ -1,5 +1,5 @@
 ---
-# Features: ZER0-001, ZER0-019, ZER0-031, ZER0-060
+# Features: ZER0-001, ZER0-019, ZER0-031, ZER0-060, ZER0-089
 ---
 {% comment %}
   ===================================================================
@@ -24,7 +24,8 @@
   - info-section.html: Settings offcanvas (Appearance / Site / Developer)
   - footer.html: Site footer with links and copyright
   - js-cdn.html: JavaScript dependencies and custom scripts
-  
+  - fleet-assist.html: Fleet page bridge (opt-in, development only)
+
   Theme: jekyll-theme-zer0 (MIT) — https://github.com/bamr87/zer0-mistakes
   ===================================================================
 {% endcomment %}
@@ -183,6 +184,17 @@
 
         {% comment %} Page-feedback capture widget ("Improve this page" → GitHub issue) {% endcomment %}
         {%- include components/page-feedback.html -%}
+
+        {%- comment -%} Fleet page bridge (<fleet-assist>): lets a Claude Code session
+             paired through the Harness Console see the page a developer has open.
+             A developer tool, off by default: the include emits NOTHING unless
+             fleet_assist.enabled, and then only outside production (or with
+             fleet_assist.deployed), so a site without the key is byte-identical
+             to its previous build. Mounted here, in the theme-owned layout, and
+             not in custom/body-end.html: a consumer that shadows that stub still
+             gets it. This is the only mount: a second tag draws a second launcher
+             (test/test_fleet_assist_gate.rb holds it to one). {%- endcomment -%}
+        {%- include components/fleet-assist.html -%}
 
         {% comment %} JavaScript dependencies and custom scripts {% endcomment %}
         <div>

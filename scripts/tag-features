@@ -20,7 +20,9 @@
 # comment): .rb .js .mjs .scss .sh .html .yml, plus Dockerfile/Makefile and the
 # scripts/{bin/*,build,release} wrappers. Excluded by design: markdown docs,
 # JSON (no comment syntax), vendored/minified third-party libs, directory refs,
-# and _config.yml (it has an exact-copy admin mirror enforced elsewhere).
+# _config.yml (it has an exact-copy admin mirror enforced elsewhere), and
+# assets/js/fleet-assist.js (the fleet hub's drift check holds it byte-identical
+# to bamr87/bamr87 templates/assistant, so a tag line would read as an edit).
 #
 # Portable across Ruby 2.6 (macOS system) and 3.x (CI/Docker).
 # ---------------------------------------------------------------------------
@@ -34,7 +36,7 @@ MODE = ARGV.include?('--write') ? :write : :check
 CODE_EXT = %w[.rb .js .mjs .scss .sh .html .yml].freeze
 SLASH_EXT = %w[.js .mjs .scss].freeze
 NOEXT_FILES = %w[docker/Dockerfile Makefile scripts/release scripts/build].freeze
-EXCLUDE_FILES = %w[_config.yml assets/js/particles.js assets/js/halfmoon.js].freeze
+EXCLUDE_FILES = %w[_config.yml assets/js/particles.js assets/js/halfmoon.js assets/js/fleet-assist.js].freeze
 
 def load_yaml(path)
   YAML.load_file(path, permitted_classes: [Date, Time], aliases: true)

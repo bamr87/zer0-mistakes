@@ -60,6 +60,7 @@ Reusable UI components and widgets:
 - `post-card.html` - Reusable post card component for listings
 - `page-views.html` - Inline "N views" badge for a page (hidden until a count is known)
 - `page-views-init.html` - Page-view counter bootstrap: injects `site.page_views` config and loads `assets/js/page-views.js` (included once from `core/head.html`)
+- `fleet-assist.html` - Fleet page bridge (`<fleet-assist>` + `assets/js/fleet-assist.js`, vendored from the `bamr87/bamr87` assistant kit): a developer tool, off unless `fleet_assist.enabled`, written in development only unless `fleet_assist.deployed` (included once from `_layouts/root.html`)
 - `mermaid.html` - Mermaid loader for pages with `mermaid: true` (included from `core/head.html`): injects `site.mermaid` config + translated toolbar labels and loads `assets/js/mermaid-diagrams.js` (deferred), which injects the vendored bundle only when a diagram is present and nears the viewport. Every ```` ```mermaid ```` fence becomes a figure with a zoom / fullscreen / copy / download toolbar, an `accTitle` caption, token-derived colours, and an error card that keeps the source
 - `data-card.html` - One generic card rendered from a plain data hash (title/url/icon/badge/meta/buttons schema in its header)
 - `card-grid.html` - Responsive grid of `data-card`s from any data array — hub dashboards, fleet registries, service grids

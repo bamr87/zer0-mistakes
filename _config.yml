@@ -448,6 +448,36 @@ page_feedback:
     model            : 'claude-opus-5-5'  # Model for the triage call
     max_tokens       : 1024
 
+## Fleet Assist — page bridge for a paired Claude Code session ################
+# Developer tool, OFF by default: _includes/components/fleet-assist.html +
+# assets/js/fleet-assist.js (vendored from bamr87/bamr87 templates/assistant;
+# never edit the copy). Renders <fleet-assist>, which lets a Claude Code session
+# paired through the Harness Console on the same machine see the page you have
+# open and, as far as you allow, use it. The theme carries the include and the
+# payload and mounts it once in _layouts/root.html, so a site built on the theme
+# needs one key in its own _config.yml and no copy of either file:
+#
+#   fleet_assist:
+#     enabled: true
+#
+# The tag is written in DEVELOPMENT ONLY: nothing is rendered when
+# jekyll.environment is "production", unless `deployed` is true. GitHub's own
+# Pages builder sets JEKYLL_ENV=production; a `jekyll build` in a workflow of
+# your own counts as development until it sets that too. The payload sends no
+# request until its panel is opened, and then talks to one loopback address.
+# `repo`, `branch` and `source` on the tag come from `repository`, `branch` and
+# page.path, which tell a session which repo and file are behind the page (for
+# a collection document page.path is relative to `collections_dir`).
+# Spec: bamr87/bamr87 specs/ASSIST.md.
+
+fleet_assist:
+  enabled            : false              # Master switch. true writes <fleet-assist> on every page of a
+                                          # development build (`jekyll serve`); production stays without it
+  deployed           : false              # true also writes the tag on a production build, where the
+                                          # launcher stays hidden until the address ends #fleet-assist
+  # broker           : 'http://127.0.0.1:4001'  # The Harness Console to pair through; loopback addresses
+                                          # only. Leave unset for the default shown here
+
 ## Site Builder — guided, Claude-assisted setup wizard ########################
 # The nine-step wizard at /setup/ (and on the `welcome` layout for fresh
 # remote-theme sites): prerequisites → identity → URLs → structure →
