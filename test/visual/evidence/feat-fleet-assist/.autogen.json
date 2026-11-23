@@ -1,0 +1,9 @@
+{
+  "schema": "visual-autogen-manifest/v1",
+  "slug": "feat-fleet-assist",
+  "generator": "test/visual/pr-evidence.mjs",
+  "rendered_from": "3283b6d3a23dfecbb52ba34d03feebb4a32f3809",
+  "base_ref": "origin/main",
+  "before_site": true,
+  "generated_at": "2026-11-23T03:18:35+00:00"
+}
