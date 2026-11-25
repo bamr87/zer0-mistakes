@@ -352,7 +352,7 @@ jobs:
   # Visual pixel-snapshot gate — its own job so the jammy-image pull + 9-skin
   # render gets a full timeout budget instead of sharing the Test Suite job's
   # (which hit its 25-min limit mid-render). Renders inside the SAME Playwright
-  # image (mcr.microsoft.com/playwright:v1.58.2-jammy) that
+  # image (mcr.microsoft.com/playwright:v1.65.1-jammy) that
   # test/update-snapshots.sh generates baselines in, so a refreshed Linux
   # baseline matches CI exactly (the runner's own chromium renders fonts
   # differently → false whole-page diffs).
@@ -381,7 +381,7 @@ jobs:
           # port-mapped — reachable from the --network host Playwright container; a
           # host-only `--host 127.0.0.1` bundle serve was NOT, so page.goto timed
           # out) and runs the snapshots project inside
-          # mcr.microsoft.com/playwright:v1.58.2-jammy. UPDATE_SNAPSHOTS=0 compares
+          # mcr.microsoft.com/playwright:v1.65.1-jammy. UPDATE_SNAPSHOTS=0 compares
           # instead of regenerating, so generation and verification share ONE
           # environment (Jekyll + browser) and cannot drift. Needs only Docker.
           UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh

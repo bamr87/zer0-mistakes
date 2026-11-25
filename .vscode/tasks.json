@@ -131,7 +131,7 @@
       "label": "Playwright",
       "detail": "Docker (official Playwright image) against the running dev server at host.docker.internal:4000; runs npm ci in an isolated node_modules volume. Snapshot baselines are Linux-generated — run that tier on Linux for matching pixels.",
       "type": "shell",
-      "command": "docker compose up -d && docker run --rm --add-host host.docker.internal:host-gateway -v \"$PWD:/work\" -v /work/node_modules -w /work -e BASE_URL=http://host.docker.internal:4000 mcr.microsoft.com/playwright:v1.58.2-noble bash -lc 'npm ci && npm run test:${input:playwrightProject}'",
+      "command": "docker compose up -d && docker run --rm --add-host host.docker.internal:host-gateway -v \"$PWD:/work\" -v /work/node_modules -w /work -e BASE_URL=http://host.docker.internal:4000 mcr.microsoft.com/playwright:v1.65.1-noble bash -lc 'npm ci && npm run test:${input:playwrightProject}'",
       "options": {
         "cwd": "${workspaceFolder}"
       },

@@ -47,7 +47,7 @@ UPDATE_SNAPSHOTS="${UPDATE_SNAPSHOTS:-1}"
 # Match the Playwright version in package-lock.json. CI uses
 # `npx playwright install` so it always gets the right binaries; this image
 # is only used by this local snapshot-update helper.
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.58.2-jammy}"
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.65.1-jammy}"
 # Seconds to wait for Jekyll to answer on :4000 after `docker compose up`.
 # This is NOT just process start-up: on a cold runner the `bundle_cache` volume
 # is empty, so the container runs a full `bundle install` AND Jekyll's first
