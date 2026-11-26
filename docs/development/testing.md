@@ -105,7 +105,7 @@ The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
 - **smoke** (default) — every spec in `core/` and `features/` except the
   pixel-snapshot test.
 - **snapshots** — pixel screenshots of the homepage in each of the 9 theme
-skins, isolated in `features/appearance-snapshot.spec.js` (path-filtered in CI).
+skins, isolated in `features/appearance-snapshot.spec.js` (path-filtered in CI). The README-derived homepage body (`.landing-content-body`) is masked, so a README edit never changes a skin baseline (#648).
 - **regression-{chromium,firefox,webkit}** — all specs across all browsers
   (manual `workflow_dispatch` only).
 
