@@ -135,9 +135,9 @@ A single runner script invokes the appropriate Playwright project (tier). All ti
 | Critical | `critical` | Only tests tagged `@critical` — the user-facing essentials (navigation, search, mobile survival, theming baseline, security) | Every code-change PR — **the blocking gate** (`ci.yml`) |
 | Smoke | `smoke` (default) | Every spec in `core/` and `features/` except the pixel-snapshot test | Nightly (`nightly-extended.yml`) — failures file a sticky issue instead of blocking PRs |
 | Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | PRs path-filtered on styling changes (non-blocking) + nightly |
+| Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
 **Masking rule (snapshots).** The skin snapshot compares chrome, not content. Anything that renders project prose or build-varying data is masked in `features/appearance-snapshot.spec.js`: the homepage's README body (`.landing-content-body`, below the hero's link bar) and the build stamp. Editing `README.md` must never change a `homepage-*.png` baseline (#648); a new content region in the snapshot viewport gets a `mask:` locator, not a baseline refresh.
-| Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
 Parallelism: the config is `workers: 1`, `fullyParallel: false`. The **critical** tier is the one exception — `ci.yml` passes `workers: '3'` to the `playwright-tests` action (`PLAYWRIGHT_WORKERS` on the runner), which parallelises across spec *files* only; order within a file is unchanged. It is safe there because `critical` grep-inverts the snapshot block, so nothing in the tier drives the shared 9-skin theme state. **Never set `PLAYWRIGHT_WORKERS` for `snapshots`** — those specs walk all 9 skins through one server and must stay serial.
 
