@@ -73,7 +73,11 @@ jobs:
 
   extended-suites:
     name: Extended shell + Playwright smoke
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest became ubuntu-26.04 (2026-11-19) and Playwright 1.58.2
+    # refuses it ("Playwright does not support chromium on ubuntu26.04-x64"), so
+    # `playwright install --with-deps` failed every night. Unpin once the
+    # @playwright/test version in use lists 26.04 as supported.
+    runs-on: ubuntu-24.04
     needs: preflight
     if: needs.preflight.outputs.go == 'true'
     timeout-minutes: 45
