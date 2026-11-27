@@ -1,0 +1,47 @@
+{%- comment -%}
+  ===================================================================
+  FLEET-ASSIST — Jekyll adapter for the fleet's page bridge
+  ===================================================================
+  Feature: ZER0-089
+  Path: _includes/components/fleet-assist.html, included once before </body>
+        by _layouts/root.html (the theme's own layout, not the consumer stub
+        _includes/custom/body-end.html: a site that shadows the stub keeps it).
+  Spec: bamr87/bamr87 specs/ASSIST.md (UPS-AST). Kit: templates/assistant.
+
+  Renders <fleet-assist> so an assistant session can see the page you have
+  open and, as far as you allow, use it. It is a tool for whoever runs the
+  site, not for its visitors: by default the tag is written in development
+  only (`jekyll serve`), and GitHub Pages builds as production.
+
+  Requires, vendored from the kit into the site:
+    assets/js/fleet-assist.js
+
+  Config (_config.yml):
+    repository: owner/name          # tells a session which repo this page is
+    branch: main
+    fleet_assist:
+      enabled: true
+      deployed: false               # true also writes the tag on the built site, where
+                                    # the button stays hidden until the address ends #fleet-assist
+      broker: http://127.0.0.1:4001 # the Harness Console on this machine (the default)
+
+  `source` is the file this page was rendered from: with it a paired Claude
+  Code session knows what to edit when you say "fix this heading".
+  ===================================================================
+{%- endcomment -%}
+{%- assign fa = site.fleet_assist -%}
+{%- if fa.enabled -%}
+{%- if jekyll.environment != "production" or fa.deployed -%}
+<script src="{{ '/assets/js/fleet-assist.js' | relative_url }}" defer></script>
+<fleet-assist
+  repo="{{ site.repository }}"
+  branch="{{ site.branch | default: 'main' }}"
+  source="{{ page.path }}"
+  route="{{ page.collection | default: page.url }}"
+  page-title="{{ page.title | default: site.title | escape }}"
+  base="{{ site.baseurl }}"
+  framework="jekyll"
+  env="{{ jekyll.environment }}"
+  {%- if fa.broker %} broker="{{ fa.broker }}"{% endif %}></fleet-assist>
+{%- endif -%}
+{%- endif -%}

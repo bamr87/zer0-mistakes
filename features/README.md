@@ -44,7 +44,7 @@ Features are organized into these categories:
 4. **Navigation & UI** — Sidebar, Keyboard nav, Mobile TOC, ES6 modular nav, Dynamic nav fallback
 5. **Content Management** — Jupyter Notebooks, Mermaid, Collections, Notes
 6. **Obsidian Vault Integration** — Wiki-links, embeds, callouts, backlinks, graph view
-7. **Developer Experience** — Testing, CI/CD, Release Automation, DevContainer, Local Docker Publishing
+7. **Developer Experience** — Testing, CI/CD, Release Automation, DevContainer, Local Docker Publishing, Fleet Assist page bridge
 8. **Layouts & Templates** — 15+ layouts, 70+ includes, Admin dashboard
 9. **Plugins & Extensions** — Custom Jekyll plugins
 10. **Legal & Compliance** — Privacy Policy, Terms of Service
@@ -77,4 +77,4 @@ python3 -c "import yaml; yaml.safe_load(open('_data/features.yml'))"
 
 ## Feature Count
 
-Current count: **88 features** (as of 2026-10-21, gem v1.31.3)
+Current count: **89 features** (as of 2026-11-22, gem v1.32.0)

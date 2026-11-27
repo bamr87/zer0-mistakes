@@ -745,6 +745,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | [ZER0-086](../../_data/features.yml) | Claude-Guided Site Builder | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
 | [ZER0-087](../../_data/features.yml) | Bring-Your-Own AI Provider (Claude or Grok) and Open Site Builder Sessions | shipped | route `/setup/` · route `/docs/features/site-builder/` | TBD |
 | [ZER0-088](../../_data/features.yml) | zer0 studio — the Rails theme workbench | shipped | [link](https://github.com/bamr87/zer0-mistakes/tree/main/studio) · [docs](https://github.com/bamr87/zer0-mistakes/blob/main/studio/README.md) | Feature 13 |
+| [ZER0-089](../../_data/features.yml) | Fleet Assist Page Bridge | shipped | route `/` · [docs](https://github.com/bamr87/bamr87/blob/main/templates/assistant/README.md) | TBD |
 
 **Requirement → feature trace**
 
@@ -753,7 +754,7 @@ Every user-facing capability has a stable id in the feature catalog [`_data/feat
 | Feature 3 | ZER0-001 |
 | Feature 2 | ZER0-002 |
 | Feature 1 | ZER0-003 |
-| TBD | ZER0-004, ZER0-007, ZER0-008, ZER0-009, ZER0-010, ZER0-011, ZER0-012, ZER0-014, ZER0-018, ZER0-019, ZER0-020, ZER0-021, ZER0-023, ZER0-024, ZER0-025, ZER0-026, ZER0-028, ZER0-029, ZER0-030, ZER0-031, ZER0-032, ZER0-033, ZER0-034, ZER0-035, ZER0-036, ZER0-037, ZER0-039, ZER0-040, ZER0-041, ZER0-042, ZER0-043, ZER0-044, ZER0-045, ZER0-046, ZER0-047, ZER0-048, ZER0-049, ZER0-050, ZER0-052, ZER0-053, ZER0-054, ZER0-055, ZER0-056, ZER0-058, ZER0-059, ZER0-060, ZER0-061, ZER0-062, ZER0-063, ZER0-064, ZER0-066, ZER0-067, ZER0-068, ZER0-069, ZER0-070, ZER0-071, ZER0-072, ZER0-073, ZER0-074, ZER0-075, ZER0-076, ZER0-077, ZER0-078, ZER0-079, ZER0-080, ZER0-081, ZER0-082, ZER0-083, ZER0-084, ZER0-085, ZER0-086, ZER0-087 |
+| TBD | ZER0-004, ZER0-007, ZER0-008, ZER0-009, ZER0-010, ZER0-011, ZER0-012, ZER0-014, ZER0-018, ZER0-019, ZER0-020, ZER0-021, ZER0-023, ZER0-024, ZER0-025, ZER0-026, ZER0-028, ZER0-029, ZER0-030, ZER0-031, ZER0-032, ZER0-033, ZER0-034, ZER0-035, ZER0-036, ZER0-037, ZER0-039, ZER0-040, ZER0-041, ZER0-042, ZER0-043, ZER0-044, ZER0-045, ZER0-046, ZER0-047, ZER0-048, ZER0-049, ZER0-050, ZER0-052, ZER0-053, ZER0-054, ZER0-055, ZER0-056, ZER0-058, ZER0-059, ZER0-060, ZER0-061, ZER0-062, ZER0-063, ZER0-064, ZER0-066, ZER0-067, ZER0-068, ZER0-069, ZER0-070, ZER0-071, ZER0-072, ZER0-073, ZER0-074, ZER0-075, ZER0-076, ZER0-077, ZER0-078, ZER0-079, ZER0-080, ZER0-081, ZER0-082, ZER0-083, ZER0-084, ZER0-085, ZER0-086, ZER0-087, ZER0-089 |
 | Feature 7 | ZER0-005, ZER0-051 |
 | Feature 4 | ZER0-006, ZER0-022, ZER0-038 |
 | Feature 8 | ZER0-013 |

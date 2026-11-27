@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.31.3
-# Last Updated: 2026-11-15
+# Version: 1.32.0
+# Last Updated: 2026-11-22
 
 # PRD this catalog is linked to (governance kit, UPS-WORK-15); the PRD's Feature catalog block is generated from this file.
 prd: docs/architecture/prd-requirements.md
@@ -2695,3 +2695,35 @@ features:
       - "Customize — consumer checkouts under SITES_DIR registered by realpath, their theme keys in _config.yml rewritten one line at a time, scripts/bin/audit-consumer as a job whose JSON report lands on the site, _data/consumers.yml joined by repository name"
       - "Update — the six version files against lib/jekyll-theme-zer0/version.rb, scripts/bin/release --dry-run and scripts/propagate.rb (report mode) as jobs; the studio never releases or dispatches"
       - "Boundary — studio/ is excluded by both Jekyll configs and scripts/bin/validate, never packaged by the gemspec (gem_boundary_test), never in the theme image (.dockerignore); loopback-only unless STUDIO_PASSWORD; nonce CSP without unsafe-inline; every path through ConfinedPath, every write through AtomicWrite; the Docker image runs Solid Queue inside Puma with Solid Cable for live logs"
+
+  - id: ZER0-089
+    title: "Fleet Assist Page Bridge"
+    description: "Opt-in developer tool: the theme mounts the fleet-assist element so a Claude Code session paired through the local Harness Console can see, and with permission use, the page a developer has open"
+    implemented: true
+    prd: [TBD]
+    version: "1.33.0"
+    link: "/"
+    docs: "https://github.com/bamr87/bamr87/blob/main/templates/assistant/README.md"
+    tags: [ai, claude, agents, development, developer-experience, privacy]
+    date: 2026-11-22
+    provenance:
+      introduced_in: "1.33.0"
+      pr: 651
+      commit: "3283b6d3"
+      issue: null
+    tests:
+      - "test/test_fleet_assist_gate.rb"
+      - "test/visual/features/fleet-assist.spec.js"
+    references:
+      layouts: ["_layouts/root.html"]
+      includes: ["_includes/components/fleet-assist.html"]
+      scripts: ["assets/js/fleet-assist.js"]
+      config: "_config.yml"
+      docs: "_includes/components/README.md"
+    features:
+      - "Switch — fleet_assist.enabled, off by default; a site built on the theme adds that one key to its own _config.yml and vendors nothing, because the theme carries the include and the payload"
+      - "Development only — nothing is rendered when jekyll.environment is production, unless fleet_assist.deployed; there the launcher stays hidden until the address ends #fleet-assist. A site without the key builds byte-identical pages"
+      - "One mount — _layouts/root.html, the theme-owned layout, not the custom/body-end.html stub, so a consumer that shadows the stub keeps it"
+      - "Context — repo, branch, source, route, page title, base and environment come from site.repository, site.branch and the page (source is page.path, which for a collection document is relative to collections_dir); fleet_assist.broker names another loopback console"
+      - "Vendored — the include and the payload come from the bamr87/bamr87 assistant kit (templates/assistant, spec UPS-AST); the hub holds assets/js/fleet-assist.js byte-identical, so scripts/tag-features leaves it untagged"
+      - "Validation — test/test_fleet_assist_gate.rb renders the include for every switch and environment and holds the mount to one; fleet-assist.spec.js checks the default-off page and the payload in a browser"
