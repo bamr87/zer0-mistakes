@@ -118,7 +118,17 @@ test.describe('Theme skins', () => {
           // yet and cannot itself change a baseline — it is here so the tier
           // does not start flaking the day that panel is shown by default.
           // A locator matching no elements is a no-op for `mask` (#417).
-          mask: [page.locator('[data-testid="theme-build-stamp"]')],
+          //
+          // `.landing-content-body` is README.md's prose, rendered below the
+          // hero's link bar by _layouts/landing.html. It is project content,
+          // not skin chrome: a README edit (the amendment-0003 mission line)
+          // turned all 9 baselines red without any skin changing (#648).
+          // Masking it keeps this tier a test of the skins alone; the hero,
+          // navbar, link bar and colours above it are still compared.
+          mask: [
+            page.locator('[data-testid="theme-build-stamp"]'),
+            page.locator('.landing-content-body'),
+          ],
         });
       });
     });
