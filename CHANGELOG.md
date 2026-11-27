@@ -12,6 +12,21 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.33.0](https://github.com/bamr87/zer0-mistakes/compare/v1.32.0...v1.33.0) (2026-11-27)
+
+
+### Features
+
+* **assist:** let an assistant session see and use this repo's pages ([#651](https://github.com/bamr87/zer0-mistakes/issues/651)) ([a3658e0](https://github.com/bamr87/zer0-mistakes/commit/a3658e079bf3789d5bee84d04222579643ac8828))
+
+
+### Bug Fixes
+
+* **a11y:** title the AI chat panel with an h2 sized as h6 ([178dd89](https://github.com/bamr87/zer0-mistakes/commit/178dd894234a1f640fa966972311f6c263cd2efb))
+* **ci:** bump Playwright to 1.65.1 so it installs on ubuntu-latest (26.04) ([#649](https://github.com/bamr87/zer0-mistakes/issues/649)) ([f90c402](https://github.com/bamr87/zer0-mistakes/commit/f90c40261b4dd37378ff9f67eb09fc444845af02))
+* **includes:** link the pagination template from pager pages ([e199c2d](https://github.com/bamr87/zer0-mistakes/commit/e199c2dd96f20db7834f26a3fa2fe9e2683e776b))
+* **page-feedback:** let consumers name the no-JS issue template ([ad06c2c](https://github.com/bamr87/zer0-mistakes/commit/ad06c2cd41a0d815ce2d26d1e6b45e275bcdb3c4))
+
 ## [1.32.0](https://github.com/bamr87/zer0-mistakes/compare/v1.31.3...v1.32.0) (2026-11-18)
 
 
